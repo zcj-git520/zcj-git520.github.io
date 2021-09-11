@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>我的博客</title>
+    <title>Chengji Zhao&#39;s blog</title>
     <link>https://zcj-git520.github.io/</link>
-    <description>Recent content on 我的博客</description>
+    <description>Recent content on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
+    <language>zh-cn</language>
     <lastBuildDate>Sat, 04 Sep 2021 10:05:40 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>我的第一份博客</title>
@@ -13,13 +13,12 @@
       <pubDate>Sat, 04 Sep 2021 10:05:40 +0800</pubDate>
       
       <guid>https://zcj-git520.github.io/post/first/</guid>
-      <description>为什么选择使用hugo呢 我正在学习go语言 公司正在使用go 语言开发，在机缘巧合中学习go,hugo是基于go语言的开发，接触hugo的源码，恰好学习
-下载hogo的源码  git clone https://github.com/gohugoio/hugo.git
+      <description>为什么写博客  总结开发中遇到的问题。工作过后发现自己并不擅长对知识点的总结，导致总是遇到相同的问题，过段时间需要重新查找解决方案 记录学习的知识，不断的温习。学的东西过于碎片化，导致知识不成体系。时间长了，碎片的知识也忘记了 提升自己的专业技能。通过写博客提升自己的能力 形成自己的技术栈，遇到的志同道合的朋友  为什么选择hugo来搭建自己的博客  Hugo是由Go语言实现的静态网站生成器。简单、易用、高效、易扩展、快速部署。 操作简单，使用Markdown直接生成静态网页 免费且以维护, 在github上就可供他人访问，无需购买服务器，维护简单 发表文章直接push到自己仓库即可  下载hogo的源码  git clone https://github.com/gohugoio/hugo.git
 git branch 查看单前代码的分支
 git branch -a 查看全部分支
 git checkout branch 切换分支
 git branch 分支名 创建自己的本地分子
- 编译源码  在master分支下，在main.go 的目录下使用命令: go build 在目录下生成hugo.exe 在cmd下使用hugo 查看是否编译成功 编译成功 会打印hugo的版本 安装成功  生成站点  使用命令：hugo new site /目录 cd /目录 查看到   ▸ archetypes/ ▸ content/ ▸ layouts/ ▸ static/ config.</description>
+ 编译源码  在master分支下，在main.go 的目录下使用命令: go build 在目录下生成hugo.exe 在cmd下使用hugo 查看是否编译成功 编译成功 会打印hugo的版本 安装成功  生成站点  使用命令：hugo new site /目录 cd /目录 查看到   ▸ archetypes/ ▸ content/ ▸ layouts/ ▸ static/ config.toml   创建站点成功  创建md文章  使用命令: hugo new 文章名.</description>
     </item>
     
   </channel>
