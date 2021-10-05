@@ -6,7 +6,16 @@
     <description>Recent content in Posts on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Wed, 15 Sep 2021 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 20 Sep 2021 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>go 基础之map</title>
+      <link>https://zcj-git520.github.io/post/map/</link>
+      <pubDate>Mon, 20 Sep 2021 22:00:38 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/post/map/</guid>
+      <description>goland 基础之map map的内部结构  go map是使用的哈希表构建的 map的结构可分为：hmap的结构体和bmap(桶)，hmap结构体记录这map的基础信息(包括map存储个数， 桶的个数，hash种子，桶的数据，扩容时旧桶的数据以及迁移个数（map扩容不是一次性迁移完）) 源码如下    定义hmap的结构： type hmap struct { // Note: the format of the hmap is also encoded in cmd/compile/internal/gc/reflect.go. // Make sure this stays in sync with the compiler&#39;s definition. // map 存储元素的计数 count int // # live cells == size of map. Must be first (used by len() builtin) flags uint8 // map的状态标识，桶是否在增改，扩容或者缩容 //桶的个数/采用的与运算法计算桶的个数，桶的个数为2的整数次幂 B uint8 // log_2 of # of buckets (can hold up to loadFactor * 2^B items) //溢出的桶的数量的近似值 noverflow uint16 // approximate number of overflow buckets; see incrnoverflow for details hash0 uint32 // hash seed //指向桶数据的指针 buckets unsafe.</description>
+    </item>
+    
     <item>
       <title>go 基础之切片</title>
       <link>https://zcj-git520.github.io/post/second/</link>
