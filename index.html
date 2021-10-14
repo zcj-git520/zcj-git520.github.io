@@ -47,7 +47,22 @@
         
             <article class="post">
     
-<h1><a href="https://zcj-git520.github.io/post/gpm/" title="go gmp原理与调度">go gmp原理与调度</a></h1>
+<h1><a href="https://zcj-git520.github.io/post/errortojsion/" title="go error类型转json">go error类型转json</a></h1>
+
+<footer class="post-info"> <span class="post-meta"><time datetime="2021.10.09">2021.10.09</time>
+
+</span>
+</footer>
+
+    <p>问题  在收集服务的访问记录时，需要将访问记录保存，定义结构体如下    type accessData struct { RemoteAddr string // 远程访问主机地址 RequestURI string //访问的路由 ServerName string // 访问的服务名称 AccessDate string //访问的时间 RunStatus bool //服务是否正常运行 RunError error //运行报错：报错信息. ServerParam interface{} // 访问服务的参数 }   通过结构体转json，同时通过get请求得到图下结果   “RunError”: {},被json转为{}的字符， 打印结构体，发现错误信息是有的：{192.168.1.101:53364 /v1/alarms/out/d GetOutAlarms 2021-10-12 10:09:42 false 没有这个报警🆔id },说明是error 转json问题
+问题分析与解决  问题分析查看error类型定义发现：error类型只是一个接口。它可以包含任何实现它的具体类型的值 解决：将结构体中错误转化为字符串类型，同时用err.Error()返回是错误的字符串  type accessData struct { RemoteAddr string // 远程访问主机地址 RequestURI string //访问的路由 ServerName string // 访问的服务名称 AccessDate string //访问的时间 RunStatus bool //服务是否正常运行 RunError string //运行报错：报错信息.&hellip;</p>
+    <a href="https://zcj-git520.github.io/post/errortojsion/" title="go error类型转json"> &raquo;</a>
+</article>
+
+        
+            <article class="post">
+    
+<h1><a href="https://zcj-git520.github.io/post/gpm/" title="go goroutine与gmp模型">go goroutine与gmp模型</a></h1>
 
 <footer class="post-info"> <span class="post-meta"><time datetime="2021.10.06">2021.10.06</time>
 
@@ -55,7 +70,7 @@
 </footer>
 
     <p>go 协程goroutine  协程是用户级的线程，有用户自己调度，使用协程使得程序调度更加灵活。同时比线程更轻量，占用的栈内存更少。go语言天生支持高并发，go使用协程goroutine的调度器。goroutine 的栈内存最小值为2kb(_StackMin = 2048),它不是固定不变的，可以随需求增大和缩小。goroutine 维护着很大的内存，无需频繁开辟内存，goroutine是使用M:n模型，在用户态切换协程，加上创建协程代价低，使得cpu的利用率大大提升，cup的性能大幅度的被利用。  goroutine 调度器GPM模型 G  G 就是goroutine协程  type g struct { // Stack parameters. // stack describes the actual stack memory: [stack.lo, stack.hi). // stackguard0 is the stack pointer compared in the Go stack growth prologue. // It is stack.lo+StackGuard normally, but can be StackPreempt to trigger a preemption. // stackguard1 is the stack pointer compared in the C stack growth prologue.&hellip;</p>
-    <a href="https://zcj-git520.github.io/post/gpm/" title="go gmp原理与调度"> &raquo;</a>
+    <a href="https://zcj-git520.github.io/post/gpm/" title="go goroutine与gmp模型"> &raquo;</a>
 </article>
 
         
