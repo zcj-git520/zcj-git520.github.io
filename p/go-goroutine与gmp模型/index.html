@@ -12,6 +12,8 @@
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-10-06T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2021-10-06T22:00:38&#43;08:00'/>
 <meta name="twitter:title" content="go goroutine与gmp模型">
 <meta name="twitter:description" content="go 协程goroutine  协程是用户级的线程，有用户自己调度，使用协程使得程序调度更加灵活。同时比线程更轻量，占用的栈内存更少。go语言天生支持高并发，go使用协程goroutine的调度器。goroutine 的栈内存最小值为2kb(_StackMin = 2048),它不是固定不变的，可以随需求增大和缩小。goroutine 维护着很大的内存，无需频繁开辟内存，goroutine是使用M:n模型，在用户态切换协程，加上创建协程代价低，使得cpu的利用率大大提升，cup的性能大幅度的被利用。  goroutine 调度器GPM模型 G  G 就是goroutine协程  type g struct { // Stack parameters. // stack describes the actual stack memory: [stack.lo, stack.hi). // stackguard0 is the stack pointer compared in the Go stack growth prologue. // It is stack.lo&#43;StackGuard normally, but can be StackPreempt to trigger a preemption. // stackguard1 is the stack pointer compared in the C stack growth prologue.">
+    <link rel="shortcut icon" href="img/avatar.png" />
+
     </head>
     <body class="
     article-page has-toc

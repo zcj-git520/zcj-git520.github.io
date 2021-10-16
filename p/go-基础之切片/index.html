@@ -18,6 +18,8 @@
 <meta name="twitter:description" content="切片的内部结构  切片的结构可分为：数组，数据（元素）的地址&amp;amp;data、也存元素个数len、可以存储多少元素cap 源码如下    定义切片的结构： type slice struct { array unsafe.Pointer len int cap int }  如图所示  avatar
  var data [] int 声明一个切片，相当于生成切片的结构，data地址指针为nil, len和cap都为0。这就很清楚为什么，nil切片不可以直接使用了😄 结构如图  avatar
  使用切片时需要make([]type,len,cap)或者初始化[]type{}才能使用，这是因为在在生成切片的结构时，同时也开辟了一段新的内存，类型为type, 结构长度为cap,同时值进行初始化。 make 源码如下：    func makeslice(et *_type, len, cap int) unsafe.Pointer { mem, overflow := math.MulUintptr(et.size, uintptr(cap)) // 判断是否越界 if overflow || mem &amp;gt; maxAlloc || len &amp;lt; 0 || len &amp;gt; cap { // NOTE: Produce a &#39;len out of range&#39; error instead of a // &#39;cap out of range&#39; error when someone does make([]T, bignumber).">
+    <link rel="shortcut icon" href="img/avatar.png" />
+
     </head>
     <body class="
     article-page has-toc
