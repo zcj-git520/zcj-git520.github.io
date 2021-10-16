@@ -13,12 +13,12 @@
  使用切片时需要make([]type,len,cap)或者初始化[]type{}才能使用，这是因为在在生成切片的结构时，同时也开辟了一段新的内存，类型为type, 结构长度为cap,同时值进行初始化。 make 源码如下：    func makeslice(et *_type, len, cap int) unsafe.Pointer { mem, overflow := math.MulUintptr(et.size, uintptr(cap)) // 判断是否越界 if overflow || mem &amp;gt; maxAlloc || len &amp;lt; 0 || len &amp;gt; cap { // NOTE: Produce a &#39;len out of range&#39; error instead of a // &#39;cap out of range&#39; error when someone does make([]T, bignumber).'>
 <meta property='og:url' content='https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/'>
 <meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-09-15T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2021-09-15T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/s4.png' />
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-09-15T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2021-09-15T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s4.png' />
 <meta name="twitter:title" content="go 基础之切片">
 <meta name="twitter:description" content="切片的内部结构  切片的结构可分为：数组，数据（元素）的地址&amp;amp;data、也存元素个数len、可以存储多少元素cap 源码如下    定义切片的结构： type slice struct { array unsafe.Pointer len int cap int }  如图所示  avatar
  var data [] int 声明一个切片，相当于生成切片的结构，data地址指针为nil, len和cap都为0。这就很清楚为什么，nil切片不可以直接使用了😄 结构如图  avatar
  使用切片时需要make([]type,len,cap)或者初始化[]type{}才能使用，这是因为在在生成切片的结构时，同时也开辟了一段新的内存，类型为type, 结构长度为cap,同时值进行初始化。 make 源码如下：    func makeslice(et *_type, len, cap int) unsafe.Pointer { mem, overflow := math.MulUintptr(et.size, uintptr(cap)) // 判断是否越界 if overflow || mem &amp;gt; maxAlloc || len &amp;lt; 0 || len &amp;gt; cap { // NOTE: Produce a &#39;len out of range&#39; error instead of a // &#39;cap out of range&#39; error when someone does make([]T, bignumber)."><meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content='https://zcj-git520.github.io/s4.png' />
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s4.png' />
     </head>
     <body class="
     article-page has-toc
@@ -69,8 +69,12 @@
     <header class="article-header">
         <div class="article-image">
             <a href="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/">
-                
-                    <img src="/s4.png" loading="lazy" alt="Featured image of post go 基础之切片" />
+                <img src="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s4_hu1fce009c184102799b4a69d72efc8ec2_68940_800x0_resize_box_3.png"
+                        srcset="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s4_hu1fce009c184102799b4a69d72efc8ec2_68940_800x0_resize_box_3.png 800w, /p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s4_hu1fce009c184102799b4a69d72efc8ec2_68940_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="410" 
+                        loading="lazy"
+                        alt="Featured image of post go 基础之切片" />
                 
             </a>
         </div>
@@ -148,12 +152,17 @@ type slice struct {
 <li>如图所示</li>
 </ul>
 <p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 447; 
+			flex-basis: 1075px"
 	>
-	<a href="/s1.png" >
-		<img src="/s1.png"
-			
-			
-			
+	<a href="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s1.png" data-size="327x73">
+		<img src="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s1.png"
+			width="327"
+			height="73"
+			srcset="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s1_hufa230f30ea970ac155f1510029c77fa1_16064_480x0_resize_box_3.png 480w, /p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s1_hufa230f30ea970ac155f1510029c77fa1_16064_1024x0_resize_box_3.png 1024w"
 			loading="lazy"
 			alt="avatar">
 	</a>
@@ -165,12 +174,17 @@ type slice struct {
 <li>var data [] int 声明一个切片，相当于生成切片的结构，data地址指针为nil, len和cap都为0。这就很清楚为什么，nil切片不可以直接使用了😄 结构如图</li>
 </ul>
 <p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 425; 
+			flex-basis: 1020px"
 	>
-	<a href="/s2.png" >
-		<img src="/s2.png"
-			
-			
-			
+	<a href="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s2.png" data-size="357x84">
+		<img src="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s2.png"
+			width="357"
+			height="84"
+			srcset="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s2_hu3ecbacb1008bd2eb98e4b57b029321b8_19806_480x0_resize_box_3.png 480w, /p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s2_hu3ecbacb1008bd2eb98e4b57b029321b8_19806_1024x0_resize_box_3.png 1024w"
 			loading="lazy"
 			alt="avatar">
 	</a>
@@ -203,12 +217,17 @@ type slice struct {
 }
 </code></pre><blockquote>
 <p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 318; 
+			flex-basis: 763px"
 	>
-	<a href="/s3.png" >
-		<img src="/s3.png"
-			
-			
-			
+	<a href="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s3.png" data-size="525x165">
+		<img src="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s3.png"
+			width="525"
+			height="165"
+			srcset="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s3_hu288b58219022501a33ccafd08b91cbd7_40298_480x0_resize_box_3.png 480w, /p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s3_hu288b58219022501a33ccafd08b91cbd7_40298_1024x0_resize_box_3.png 1024w"
 			loading="lazy"
 			alt="avatar">
 	</a>
@@ -221,12 +240,17 @@ type slice struct {
 <li>
 <p>也可以通过底层数组初始化，切片的data指针指向就是相同类型的底层数组；通过slince := array[n:m],表示定义了一个类型和array相同，len为m-n,cap默认为array的长度的切片。切片和数组都指向了相同的地址。多个切片可以共用同一个底层数组。
 <figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 195; 
+			flex-basis: 468px"
 	>
-	<a href="/s4.png" >
-		<img src="/s4.png"
-			
-			
-			
+	<a href="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s4.png" data-size="531x272">
+		<img src="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s4.png"
+			width="531"
+			height="272"
+			srcset="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s4_hu1fce009c184102799b4a69d72efc8ec2_68940_480x0_resize_box_3.png 480w, /p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s4_hu1fce009c184102799b4a69d72efc8ec2_68940_1024x0_resize_box_3.png 1024w"
 			loading="lazy"
 			alt="avatar">
 	</a>
@@ -405,9 +429,19 @@ else{ if oldcap &lt; 1024     newcap = 2</em>oldcap     ;  else           newcap
             <div class="flex article-list--tile">
                 
                     
-<article class="">
+<article class="has-image">
     <a href="/p/golang/">
         
+        
+            <div class="article-image">
+                <img src="/p/golang/2.470859f0db80e15c860100d7f8e534f5_hu3607656af67f333528ae9e7b0ed06a62_30106_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="Golang" 
+                        data-hash="md5-RwhZ8NuA4VyGAQDX&#43;OU09Q==">
+                
+            </div>
         
 
         <div class="article-details">
@@ -417,9 +451,19 @@ else{ if oldcap &lt; 1024     newcap = 2</em>oldcap     ;  else           newcap
 </article>
                 
                     
-<article class="">
+<article class="has-image">
     <a href="/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B/">
         
+        
+            <div class="article-image">
+                <img src="/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B/1.d2b7d89ef818d26153faa0457442b815_huda718813a1636432ee91da972c85e460_240629_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-0rfYnvgY0mFT&#43;qBFdEK4FQ==">
+                
+            </div>
         
 
         <div class="article-details">
@@ -429,9 +473,19 @@ else{ if oldcap &lt; 1024     newcap = 2</em>oldcap     ;  else           newcap
 </article>
                 
                     
-<article class="">
+<article class="has-image">
     <a href="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap/">
         
+        
+            <div class="article-image">
+                <img src="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap/3.74ad1cd91c7466eb1e7f5482a85c34d2_hu50c7ad8b87ebb1655f26b2166388bb8a_150234_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-dK0c2Rx0Zusef1SCqFw00g==">
+                
+            </div>
         
 
         <div class="article-details">
