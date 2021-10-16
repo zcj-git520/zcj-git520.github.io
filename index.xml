@@ -76,17 +76,5 @@ git branch 分支名 创建自己的本地分子
  编译源码  在master分支下，在main.go 的目录下使用命令: go build 在目录下生成hugo.exe 在cmd下使用hugo 查看是否编译成功 编译成功 会打印hugo的版本 安装成功  生成站点  使用命令：hugo new site /目录 cd /目录 查看到   ▸ archetypes/ ▸ content/ ▸ layouts/ ▸ static/ config.toml   创建站点成功  创建md文章  使用命令: hugo new 文章名.</description>
     </item>
     
-    <item>
-      <title>Hello World Vno</title>
-      <link>https://zcj-git520.github.io/post/python/hello-world-vno/</link>
-      <pubDate>Mon, 19 Jul 2021 07:28:27 +0800</pubDate>
-      
-      <guid>https://zcj-git520.github.io/post/python/hello-world-vno/</guid>
-      <description>What&amp;rsquo;s this Vno Hugo is a theme for Hugo. It is a port of onevcat&amp;rsquo;s Vno Jekyll, which is originally developed from Dale Anthony&amp;rsquo;s Uno.
-Usage Inside the folder of your Hugo site run:
-$ git submodule add https://github.com/xslingcn/vno-hugo.git themes/vno-hugo Copy everything in the exampleSite folder to the root of your hugo site, then run hugo serve. Your site with Vno Hugo enabled should be accessible in http://localhost:1313/.
-For more information about Hugo, please visit Hugo&amp;rsquo;s site.</description>
-    </item>
-    
   </channel>
 </rss>
