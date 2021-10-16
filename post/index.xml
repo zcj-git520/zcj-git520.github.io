@@ -59,7 +59,7 @@
       <pubDate>Wed, 15 Sep 2021 22:00:38 +0800</pubDate>
       
       <guid>https://zcj-git520.github.io/post/second/</guid>
-      <description>goland 基础之切片 切片的内部结构  切片的结构可分为：数组，数据（元素）的地址&amp;amp;data、也存元素个数len、可以存储多少元素cap 源码如下    定义切片的结构： type slice struct { array unsafe.Pointer len int cap int }  如图所示   var data [] int 声明一个切片，相当于生成切片的结构，data地址指针为nil, len和cap都为0。这就很清楚为什么，nil切片不可以直接使用了😄 结构如图   使用切片时需要make([]type,len,cap)或者初始化[]type{}才能使用，这是因为在在生成切片的结构时，同时也开辟了一段新的内存，类型为type, 结构长度为cap,同时值进行初始化。 make 源码如下：    func makeslice(et *_type, len, cap int) unsafe.Pointer { mem, overflow := math.MulUintptr(et.size, uintptr(cap)) // 判断是否越界 if overflow || mem &amp;gt; maxAlloc || len &amp;lt; 0 || len &amp;gt; cap { // NOTE: Produce a &#39;len out of range&#39; error instead of a // &#39;cap out of range&#39; error when someone does make([]T, bignumber).</description>
+      <description>切片的内部结构  切片的结构可分为：数组，数据（元素）的地址&amp;amp;data、也存元素个数len、可以存储多少元素cap 源码如下    定义切片的结构： type slice struct { array unsafe.Pointer len int cap int }  如图所示   var data [] int 声明一个切片，相当于生成切片的结构，data地址指针为nil, len和cap都为0。这就很清楚为什么，nil切片不可以直接使用了😄 结构如图   使用切片时需要make([]type,len,cap)或者初始化[]type{}才能使用，这是因为在在生成切片的结构时，同时也开辟了一段新的内存，类型为type, 结构长度为cap,同时值进行初始化。 make 源码如下：    func makeslice(et *_type, len, cap int) unsafe.Pointer { mem, overflow := math.MulUintptr(et.size, uintptr(cap)) // 判断是否越界 if overflow || mem &amp;gt; maxAlloc || len &amp;lt; 0 || len &amp;gt; cap { // NOTE: Produce a &#39;len out of range&#39; error instead of a // &#39;cap out of range&#39; error when someone does make([]T, bignumber).</description>
     </item>
     
     <item>
@@ -74,6 +74,18 @@ git branch -a 查看全部分支
 git checkout branch 切换分支
 git branch 分支名 创建自己的本地分子
  编译源码  在master分支下，在main.go 的目录下使用命令: go build 在目录下生成hugo.exe 在cmd下使用hugo 查看是否编译成功 编译成功 会打印hugo的版本 安装成功  生成站点  使用命令：hugo new site /目录 cd /目录 查看到   ▸ archetypes/ ▸ content/ ▸ layouts/ ▸ static/ config.toml   创建站点成功  创建md文章  使用命令: hugo new 文章名.</description>
+    </item>
+    
+    <item>
+      <title>Hello World Vno</title>
+      <link>https://zcj-git520.github.io/post/python/hello-world-vno/</link>
+      <pubDate>Mon, 19 Jul 2021 07:28:27 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/post/python/hello-world-vno/</guid>
+      <description>What&amp;rsquo;s this Vno Hugo is a theme for Hugo. It is a port of onevcat&amp;rsquo;s Vno Jekyll, which is originally developed from Dale Anthony&amp;rsquo;s Uno.
+Usage Inside the folder of your Hugo site run:
+$ git submodule add https://github.com/xslingcn/vno-hugo.git themes/vno-hugo Copy everything in the exampleSite folder to the root of your hugo site, then run hugo serve. Your site with Vno Hugo enabled should be accessible in http://localhost:1313/.
+For more information about Hugo, please visit Hugo&amp;rsquo;s site.</description>
     </item>
     
   </channel>

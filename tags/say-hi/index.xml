@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Say Hi on Chengji Zhao&#39;s blog</title>
+    <link>https://zcj-git520.github.io/tags/say-hi/</link>
+    <description>Recent content in Say Hi on Chengji Zhao&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sat, 09 Oct 2021 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/tags/say-hi/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>go error类型转json</title>
+      <link>https://zcj-git520.github.io/post/errortojsion/</link>
+      <pubDate>Sat, 09 Oct 2021 22:00:38 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/post/errortojsion/</guid>
+      <description>问题  在收集服务的访问记录时，需要将访问记录保存，定义结构体如下    type accessData struct { RemoteAddr string // 远程访问主机地址 RequestURI string //访问的路由 ServerName string // 访问的服务名称 AccessDate string //访问的时间 RunStatus bool //服务是否正常运行 RunError error //运行报错：报错信息. ServerParam interface{} // 访问服务的参数 }   通过结构体转json，同时通过get请求得到图下结果   &amp;ldquo;RunError&amp;rdquo;: {},被json转为{}的字符， 打印结构体，发现错误信息是有的：{192.168.1.101:53364 /v1/alarms/out/d GetOutAlarms 2021-10-12 10:09:42 false 没有这个报警🆔id },说明是error 转json问题
+问题分析与解决  问题分析查看error类型定义发现：error类型只是一个接口。它可以包含任何实现它的具体类型的值 解决：将结构体中错误转化为字符串类型，同时用err.Error()返回是错误的字符串  type accessData struct { RemoteAddr string // 远程访问主机地址 RequestURI string //访问的路由 ServerName string // 访问的服务名称 AccessDate string //访问的时间 RunStatus bool //服务是否正常运行 RunError string //运行报错：报错信息.</description>
+    </item>
+    
+    <item>
+      <title>Hello World Vno</title>
+      <link>https://zcj-git520.github.io/post/python/hello-world-vno/</link>
+      <pubDate>Mon, 19 Jul 2021 07:28:27 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/post/python/hello-world-vno/</guid>
+      <description>What&amp;rsquo;s this Vno Hugo is a theme for Hugo. It is a port of onevcat&amp;rsquo;s Vno Jekyll, which is originally developed from Dale Anthony&amp;rsquo;s Uno.
+Usage Inside the folder of your Hugo site run:
+$ git submodule add https://github.com/xslingcn/vno-hugo.git themes/vno-hugo Copy everything in the exampleSite folder to the root of your hugo site, then run hugo serve. Your site with Vno Hugo enabled should be accessible in http://localhost:1313/.
+For more information about Hugo, please visit Hugo&amp;rsquo;s site.</description>
+    </item>
+    
+  </channel>
+</rss>

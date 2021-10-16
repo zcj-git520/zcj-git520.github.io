@@ -1,57 +1,167 @@
-<!doctype html>
-<html class="no-js">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Chengji Zhao&#39;s blog</title>
-        <meta name="author">
-        <meta name="description" content="The awesome blog of Chengji Zhao.">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="generator" content="Hugo 0.89.0-DEV" />
-        
-        <link href='//fonts.googleapis.com/css?family=Roboto:400,300,700|Noto+Serif:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
-        <link rel="stylesheet" href="https://zcj-git520.github.io/css/styles.css">
-        <link rel="icon" href="https://zcj-git520.github.io/favicon.ico">
-        <link rel="apple-touch-icon" href="https://zcj-git520.github.io/apple-touch-icon.png" />
-        <link rel="stylesheet" href="https://zcj-git520.github.io/css/highlightjs/monokai.css">
-        <script src="https://zcj-git520.github.io/js/vendor/modernizr-2.8.0.min.js"></script>
-        
-        <style>
-        .site-header h2 .logo {
-        background: url(https://zcj-git520.github.io/img/desk1.jpg) no-repeat 0 0;
-        }
-        @media (min--moz-device-pixel-ratio: 1.3), (-o-min-device-pixel-ratio: 2.6 / 2), (-webkit-min-device-pixel-ratio: 1.3), (min-device-pixel-ratio: 1.3), (min-resolution: 1.3dppx) {
-          .site-header h2 .logo {
-            background-image: url(https://zcj-git520.github.io/img/desk1.jpg);
-        }}
-       .site-header {
-         background: #2a373d url(https://zcj-git520.github.io/img/desk1.jpg) no-repeat center center;
-         z-index: -1;
-        }
-        </style>
-    </head>
-    <body>
-        
-        <header class="site-header">
-          <div class="transparent-layer">
-              <h2></h2>
-          </div>
-        </header>
+<!DOCTYPE html>
+<head>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    
+    <link rel="icon" type="image/png" href="/images/favicon.png" />
+<link rel="shortcut icon" type="image/png" href="/images/favicon.png" />
+
+    
+    
+    <title>我的第一份博客 - Chengji Zhao&#39;s blog</title>
+    
+    
+    <meta name="author" content="ChengJi" /> 
+     
+    
+    <meta name="description" content="青春逢盛世·奋斗正当时" /> 
+    
+    
+    <meta property="og:title" content="我的第一份博客" />
+<meta property="og:description" content="为什么写博客  总结开发中遇到的问题。工作过后发现自己并不擅长对知识点的总结，导致总是遇到相同的问题，过段时间需要重新查找解决方案 记录学习的知识，不断的温习。学的东西过于碎片化，导致知识不成体系。时间长了，碎片的知识也忘记了 提升自己的专业技能。通过写博客提升自己的能力 形成自己的技术栈，遇到的志同道合的朋友  为什么选择hugo来搭建自己的博客  Hugo是由Go语言实现的静态网站生成器。简单、易用、高效、易扩展、快速部署。 操作简单，使用Markdown直接生成静态网页 免费且以维护, 在github上就可供他人访问，无需购买服务器，维护简单 发表文章直接push到自己仓库即可  下载hogo的源码  git clone https://github.com/gohugoio/hugo.git
+git branch 查看单前代码的分支
+git branch -a 查看全部分支
+git checkout branch 切换分支
+git branch 分支名 创建自己的本地分子
+ 编译源码  在master分支下，在main.go 的目录下使用命令: go build 在目录下生成hugo.exe 在cmd下使用hugo 查看是否编译成功 编译成功 会打印hugo的版本 安装成功  生成站点  使用命令：hugo new site /目录 cd /目录 查看到   ▸ archetypes/ ▸ content/ ▸ layouts/ ▸ static/ config.toml   创建站点成功  创建md文章  使用命令: hugo new 文章名." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://zcj-git520.github.io/post/first/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2021-09-04T10:05:40+08:00" />
+<meta property="article:modified_time" content="2021-09-04T10:05:40+08:00" />
 
 
-<div class="container clearfix">
-    <main role="main" class="content">
-        <article class="post">
-            <a class="btn home" href="https://zcj-git520.github.io/" title="">&laquo; </a>
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="我的第一份博客"/>
+<meta name="twitter:description" content="为什么写博客  总结开发中遇到的问题。工作过后发现自己并不擅长对知识点的总结，导致总是遇到相同的问题，过段时间需要重新查找解决方案 记录学习的知识，不断的温习。学的东西过于碎片化，导致知识不成体系。时间长了，碎片的知识也忘记了 提升自己的专业技能。通过写博客提升自己的能力 形成自己的技术栈，遇到的志同道合的朋友  为什么选择hugo来搭建自己的博客  Hugo是由Go语言实现的静态网站生成器。简单、易用、高效、易扩展、快速部署。 操作简单，使用Markdown直接生成静态网页 免费且以维护, 在github上就可供他人访问，无需购买服务器，维护简单 发表文章直接push到自己仓库即可  下载hogo的源码  git clone https://github.com/gohugoio/hugo.git
+git branch 查看单前代码的分支
+git branch -a 查看全部分支
+git checkout branch 切换分支
+git branch 分支名 创建自己的本地分子
+ 编译源码  在master分支下，在main.go 的目录下使用命令: go build 在目录下生成hugo.exe 在cmd下使用hugo 查看是否编译成功 编译成功 会打印hugo的版本 安装成功  生成站点  使用命令：hugo new site /目录 cd /目录 查看到   ▸ archetypes/ ▸ content/ ▸ layouts/ ▸ static/ config.toml   创建站点成功  创建md文章  使用命令: hugo new 文章名."/>
+
+
+    
+    
+    <link rel="stylesheet" href="https://zcj-git520.github.io/scss/main.min.14635237847ee06fac20c60448319b125af2da01a23efd86ed8c80affa4f8353.css" integrity="sha256-FGNSN4R&#43;4G&#43;sIMYESDGbElry2gGiPv2G7YyAr/pPg1M=" crossorigin="anonymous" media="screen">
+	<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+    
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/disqusjs@1.3.0/dist/disqusjs.css" />
+    
+    
+
+
+</head>
+  
+</head>
+<body>
+  <span class="mobile btn-mobile-menu">
+
+    <i class="fa fa-list btn-mobile-menu__icon"></i>
+    <i class="fa fa-angle-up btn-mobile-close__icon hidden"></i>
+
+  </span>
+
+  <header class="panel-cover  panel-cover--collapsed " style="background-image: url('/images/background-cover.jpg')">
+    <div class="panel-main">
+  
+      <div class="panel-main__inner panel-inverted">
+      <div class="panel-main__content">
+  
+          <a href="/#blog" title="前往 Chengji Zhao&#39;s blog 的主页" class="blog-button"><img src="/images/avatar.jpg" width="80" alt="Chengji Zhao&#39;s blog logo" class="panel-cover__logo logo" /></a>
+          <h1 class="panel-cover__title panel-title"><a href="/#blog" title="link to homepage for Chengji Zhao&#39;s blog" class="blog-button">Chengji Zhao&#39;s blog</a></h1>
+          
+          <span class="panel-cover__subtitle panel-subtitle">The awesome blog of Chengji Zhao</span>
+          
+          <hr class="panel-cover__divider" />
+          <p class="panel-cover__description">青春逢盛世·奋斗正当时</p>
+          <hr class="panel-cover__divider panel-cover__divider--secondary" />
+          
+          
+          <p class="panel-cover__description">中国·上海</p>
+          
+          
+          <div class="navigation-wrapper">
+            <div>
+              <nav class="cover-navigation cover-navigation--primary">
+                <ul class="navigation">
+                  <li class="navigation__item"><a href="/#blog" title=" Blog" class="blog-button"> Blog</a></li>
+                  
+                </ul>
+              </nav>
+            </div>
             
-<h1><a href="https://zcj-git520.github.io/post/first/" title="我的第一份博客">我的第一份博客</a></h1>
+            <div><nav class="cover-navigation navigation--social">
+    <ul class="navigation">
+  
+    
+  
+    
+    
+    <li class="navigation__item">
+      <a href="https://github.com/zcj-git520/" title="@zcj-git520/ 的 Github" target="_blank">
+        <i class='social fa fa-github'></i>
+        <span class="label">Github</span>
+      </a>
+    </li>
+    
+    
+    
+  
+    
+  
+    
+    <li class="navigation__item">
+      <a href="/index.xml" rel="author" title="RSS" target="_blank">
+        <i class='social fa fa-rss'></i>
+        <span class="label">RSS</span>
+      </a>
+    </li>
+  
+    
+    
+    <li class="navigation__item">
+      <a href="mailto:909536346@qq.com" title="Contact me">
+        <i class='social fa fa-envelope'></i>
+        <span class="label">Email</span>
+      </a>
+    </li>
+    
+  
+    </ul>
+  </nav>
+  </div>
+          </div>
+        </div>
+      </div>
+      
+      
+      <div class="panel-cover--overlay cover-blue"></div>
+      
+    </div>
+  </header>
+  
 
-<footer class="post-info"> <span class="post-meta"><time datetime="2021.09.04">2021.09.04</time>
+  <div class="content-wrapper">
+    <div class="content-wrapper__inner">
 
-</span>
-</footer>
-
-            <h3 id="为什么写博客">为什么写博客</h3>
+        
+<article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
+    <header class="post-header">
+        <div class="post-meta">
+            <time datetime=" 2021-09-04 10:05:40 &#43;0800 " itemprop="datePublished" class="post-meta__date date">2021-09-04</time>
+            
+        </div>
+        <h1 class="post-title">我的第一份博客</h1>
+    </header>
+    <section class="post">
+        <h3 id="为什么写博客">为什么写博客</h3>
 <ul>
 <li>总结开发中遇到的问题。工作过后发现自己并不擅长对知识点的总结，导致总是遇到相同的问题，过段时间需要重新查找解决方案</li>
 <li>记录学习的知识，不断的温习。学的东西过于碎片化，导致知识不成体系。时间长了，碎片的知识也忘记了</li>
@@ -146,74 +256,92 @@ git branch 分支名  创建自己的本地分子</p>
 <li>使用 &ldquo;http://github用户名.github.io&quot;就可访问</li>
 </ul>
 
-            <ul class="share-buttons">
-    <li></li>
-    <li>
-        <a class="icon-facebook-squared" href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fzcj-git520.github.io%2fpost%2ffirst%2f" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;" title=""></a>
-    </li>
-    <li>
-        <a class="icon-twitter" href="https://twitter.com/share?text=%e6%88%91%e7%9a%84%e7%ac%ac%e4%b8%80%e4%bb%bd%e5%8d%9a%e5%ae%a2&amp;url=https%3a%2f%2fzcj-git520.github.io%2fpost%2ffirst%2f" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;" title=""></a>
-    </li>
-    <li>
-        <a class="icon-gplus" href="https://plus.google.com/share?url=https%3a%2f%2fzcj-git520.github.io%2fpost%2ffirst%2f" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;" title=""></a>
-    </li>
-    <li>
-        <a class="icon-linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=https%3a%2f%2fzcj-git520.github.io%2fpost%2ffirst%2f&title=%e6%88%91%e7%9a%84%e7%ac%ac%e4%b8%80%e4%bb%bd%e5%8d%9a%e5%ae%a2" onclick="window.open(this.href, 'linkedin-share', 'width=600,height=494');return false;" title=""></a>
-    </li>
-</ul>
-
-        </article>
-        
-    </main>
-    <aside class="author">
-  <img class="profile-image" src="https://zcj-git520.github.io/img/name.png" alt="Chengji Zhao" />
-  <p class="name"> 
-  <strong>Chengji Zhao</strong></p>
-  <p class="address">中国.上海</p>
-  <p class="link"></p>
-  <ul class="social">
+    </section>
+</article>
+<section class="read-more">
+    
+    <div class="read-more-item">
+        <span class="read-more-item-dim">最近的文章</span>
+        <h2 class="post-list__post-title post-title"><a href="/post/second/" title="link to go 基础之切片">go 基础之切片</a></h2>
+        <p class="excerpt">切片的内部结构  切片的结构可分为：数组，数据（元素）的地址&amp;data、也存元素个数len、可以存储多少元素cap 源码如下    定义切片的结构： type slice struct { array unsafe.Pointer len int cap int }  如图所示   var data [] int 声明一个切片，相当于生成切片的结构，data地址指针为nil, len和cap都为0。这就很清楚为什么，nil切片不可以直接使用了😄 结构如图   使用切片时需 …&hellip;</p>
+        <div class="post-list__meta">
+            <time datetime=" 2021-09-04 10:05:40 &#43;0800" class="post-list__meta--date date">2021-09-15</time>
+            
+            <a class="btn-border-small" href="/post/second/">继续阅读</a></div>
+        </div>
     
 
 
+    
+    <div class="read-more-item">
+        <span class="read-more-item-dim">更早的文章</span>
+        <h2 class="post-list__post-title post-title"><a href="/post/python/hello-world-vno/" title="link to Hello World Vno">Hello World Vno</a></h2>
+        <p class="excerpt">What&rsquo;s this Vno Hugo is a theme for Hugo. It is a port of onevcat&rsquo;s Vno Jekyll, which is originally developed from Dale Anthony&rsquo;s Uno.
+Usage Inside the folder of your Hugo site run:
+$ git submodule add …&hellip;</p>
+        <div class="post-list__meta">
+            <time datetime=" 2021-09-04 10:05:40 &#43;0800" class="post-list__meta--date date">2021-07-19</time>
+             <span class="post-list__meta--tags tags">• Say Hi  • Vno</span> 
+            <a class="btn-border-small" href="/post/python/hello-world-vno/">继续阅读</a></div>
+        </div>
+    
+ </section>
+  
+<section class="post-comments">
+    
+      <div id="disqus_thread"></div>
+      <script>
+      
+      var disqus_config = function () {
+          this.page.url = "https:\/\/zcj-git520.github.io\/post\/first\/";
+          this.page.identifier = "https:\/\/zcj-git520.github.io\/post\/first\/";
+      };
+  
+      var disqus_shortname = 'vno-hugo';
+      
+      (function() { 
+          var d = document, s = d.createElement('script');
+          s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+              (d.head || d.body).appendChild(s);
+          })();
+      </script>
+      <noscript>要查看<a href="http://disqus.com/?ref_noscript"> Disqus </a>评论，请启用 JavaScript</noscript>
+      
+    
 
+    
+    
+  </section>
+  
 
+        <section class="footer">
+    <footer>
+        <span class="footer__copyright">本站点采用<a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">知识共享 署名-非商业性使用-相同方式共享 4.0 国际 许可协议</a></span>
+        <span class="footer__copyright">由 <a href="https://gohugo.io/">Hugo</a> 于 2021-10-16 生成，采用<a href="https://github.com/xslingcn/vno-hugo"> Vno - Hugo </a>作为主题</span>
+    </footer>
+</section>
 
-
-
-
-
-
-
-
-<li><a href="//github.com/zcj-git520" class="icon-github" target="_blank" title="Github"></a></li>
-
-
-
-
-<li><a href="https://zcj-git520.github.io/post/index.xml" class="icon-rss" target="_blank" title="RSS"></a></li>
-
-  </ul>
-  <br><br>
-</aside>
-
-</div>
-
-<footer class="main-footer">
-  <div class="container clearfix">
-        <a class="icon-rss" href="https://zcj-git520.github.io/post/index.xml" title="RSS"></a>
-        <p>&copy; 2021 &middot; </p>
+    </div>
   </div>
-</footer>
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.8.0/highlight.min.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
-<script>window.jQuery || document.write('<script src="https:\/\/zcj-git520.github.io\/js\/vendor\/jquery-1.11.0.min.js"><\/script>')</script>
-<script src="https://zcj-git520.github.io/js/plugins.js"></script>
+  <script type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="/js/main.js"></script><script>
+    (function(i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        i[r] = i[r] || function() {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date();
+        a = s.createElement(o),
+            m = s.getElementsByTagName(o)[0];
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+    ga('create', 'your_ga_id', 'your_host');
+    ga('send', 'pageview');
+</script>
 
-
-
-
+  
 </body>
-</html>
 
