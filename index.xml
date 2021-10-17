@@ -1186,6 +1186,390 @@ func hashGrow(t *maptype, h *hmap) {
 </description>
         </item>
         <item>
+        <title>syslog日志转发配置</title>
+        <link>https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/</link>
+        <pubDate>Mon, 20 Sep 2021 22:00:38 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/8.png" alt="Featured image of post syslog日志转发配置" /&gt;&lt;h2 id=&#34;服务器配置服务器平台x86&#34;&gt;服务器配置(服务器平台：x86)&lt;/h2&gt;
+&lt;h3 id=&#34;rsyslog简介&#34;&gt;Rsyslog简介&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Rsyslog是一个 syslogd 的多线程增强版，在syslog的基础上扩展了很多其他功能，如数据库支持(MySQL, PostgreSQL、Oracle等)、日志内容筛选、定义日志格式模板等。除了默认的udp协议外，rsyslog还支持tcp协议来接收日志。&lt;/li&gt;
+&lt;li&gt;目前的linux的发行版都切换为rsyslog&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;安装rsyslog&#34;&gt;安装Rsyslog&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Linux的发行版中预先安装了Rsyslog,无需安装，rsyslogd –v 查看版本&lt;/li&gt;
+&lt;li&gt;若未安装，以下是安装步骤：
+1.ubuntu：sudo apt install rsyslog
+2.CentOS：yum install rsyslog&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;rsyslogconf配置文件详解&#34;&gt;Rsyslog.conf配置文件详解&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;配置文件位置：/etc/rsyslog.conf
+#### MODULES ####               #定义日志的模块。
+$ModLoad imuxsock             #imuxsock为模块名，支持本地系统日志的模块。
+$ModLoad imjournal            #imjournal为模块名，支持对系统日志的访问。
+#$ModLoad imklog               #imklog为模块名，支持内核日志的模块。
+#$ModLoad immark               #immark为模块名，支持日志标记。
+# Provides UDP syslog reception   #提供udp syslog的接收。
+#$ModLoad imudp               #imudp为模块名，支持udp协议。
+#$UDPServerRun 514               #允许514端口接收使用udp和tcp转发来的日志。
+# Provides TCP syslog reception       #提供tcp syslog的接收。
+#$ModLoad imtcp              #imtcp为模块名，支持tcp协议。
+#$InputTCPServerRun 514
+
+#### GLOBAL DIRECTIVES ####    #定义全局日志格式的指令。
+# Where to place auxiliary files
+$WorkDirectory /var/lib/rsyslog       #工作目录。
+# Use default timestamp format
+$ActionFileDefaultTemplate RSYSLOG_TraditionalFileFormat  #定义日志格式默认模板。
+$IncludeConfig /etc/rsyslog.d/*.conf                     #所有配置文件路径。
+$OmitLocalLogging on                                      #省略本地登录。
+# File to store the position in the journal
+$IMJournalStateFile imjournal.state
+
+#### RULES ####
+#kern.*                                  /dev/console
+#记录所有日志类型的info级别以及大于info级别的信息到messages文件，但是mail邮件信息，authpriv验证方面的信息和corn时间和任务相关信息除外。
+*.info;mail.none;authpriv.none;cron.none      /var/log/messages
+
+# authpriv验证相关的所有信息存放在/var/log/secure。
+authpriv.*                                /var/log/secure
+
+#邮件的所有信息存在/var/log/maillog；这里有一个“-”符号表示是使用异步的方式记录
+mail.*                                   -/var/log/maillog
+
+#任务计划有关的信息存放在/var/log/cron。
+cron.*                                   /var/log/cron
+
+#记录所有的≥emerg级别信息，发送给每个登录到系统的日志。
+*.emerg                                 :omusrmsg:*
+
+#记录uucp，news.crit等存放在/var/log/spooler
+uucp,news.crit                            /var/log/spooler
+
+#本地服务器的启动的所有日志存放在/var/log/boot.log
+local7.*                                  /var/log/boot.log
+
+以下为：rsyslog 客服端的配置
+#发送日志，@表示传输协议（@表示udp，@@表示tcp），后面是ip和端口。
+#*.* @@remote-host:514
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;配置服务器&#34;&gt;配置服务器&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;使用sudo vi /etc/rsyslog.conf 打开配置文件&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;选择传输的协议&#34;&gt;选择传输的协议&lt;/h4&gt;
+&lt;p&gt;1.使用udp传输日志，配置时将前面的#去掉即可&lt;br&gt;
+$ModLoad imudp&lt;br&gt;
+$UDPServerRun 514&lt;br&gt;
+2.使用tcp传输协议, 将#去点即可&lt;br&gt;
+$ModLoad imtcp&lt;br&gt;
+$InputTCPServerRun 514&lt;br&gt;
+配置如图：&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 359; 
+			flex-basis: 863px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/1.png&#34; data-size=&#34;554x154&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/1.png&#34;
+			width=&#34;554&#34;
+			height=&#34;154&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/1_hu77084371b4080a34a3de211f1d39cdb3_32949_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/1_hu77084371b4080a34a3de211f1d39cdb3_32949_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;注明：&lt;br&gt;
+514/5014端口号可以自己配置，默认为514.&lt;br&gt;
+rsyslog后台进程是可以同时监听TCP/UDP连接的&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;配置接收日志模板&#34;&gt;配置接收日志模板&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;在GLOBAL DIRECTIVES内容块的前面增加接收日志模板
+模板如下：&lt;br&gt;
+$template RemoteLogs,&amp;quot;/var/log/%HOSTNAME%/%PROGRAMNAME%.log&amp;quot;&lt;br&gt;
+*.* ?RemoteLogs&lt;br&gt;
+&amp;amp; ~&lt;/li&gt;
+&lt;li&gt;注明：&lt;br&gt;
+1、$template RemoteLogs指令（“RemoteLogs” 可以为其它的描述的名字）迫使rsyslog后台进程隔开本地/var/log/下文件去写日志信息。而日志文件名则依据发送远程日志的机器名及应用程序名来定义。&lt;br&gt;
+2、*.*  ?RemoteLogs）暗含运行用模板RemoteLogs于所有的接收日志。&lt;br&gt;
+3、&amp;amp; ~则告诉rsyslog后台进程停止进一步的去处理日志信息,即不对它们进行本地化写入，它是代表一个重定向规则。如果没有这一行，则意味着接收到的日志会写入两次，一次如前两行写的方式写，第二次则以本地日志记录的方式写入。运行这个规则的另一个结论则是日志服务器自己的日志信息只会写入到依照机器主机名命名的文件中。
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 426; 
+			flex-basis: 1022px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/2.png&#34; data-size=&#34;554x130&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/2.png&#34;
+			width=&#34;554&#34;
+			height=&#34;130&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/2_hu3baee738422c39b2b8b3a15300ae6fe7_26443_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/2_hu3baee738422c39b2b8b3a15300ae6fe7_26443_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;li&gt;设置后，会按照模板格式保存日志
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 1065; 
+			flex-basis: 2556px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/3.png&#34; data-size=&#34;554x52&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/3.png&#34;
+			width=&#34;554&#34;
+			height=&#34;52&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/3_hu8eaabc720939b9f1b459055b1ef23fcf_21246_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/3_hu8eaabc720939b9f1b459055b1ef23fcf_21246_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;设置完成保存&#34;&gt;设置完成，保存&lt;/h4&gt;
+&lt;h3 id=&#34;检查rsyslog配置&#34;&gt;检查Rsyslog配置&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;使用命令：rsyslogd -f /etc/rsyslog.conf -N1&lt;/li&gt;
+&lt;li&gt;配置信息正确有如下提示:
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 1259; 
+			flex-basis: 3021px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/4.png&#34; data-size=&#34;554x44&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/4.png&#34;
+			width=&#34;554&#34;
+			height=&#34;44&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/4_hu7b39900913f27882a0ae7c07277316b2_23299_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/4_hu7b39900913f27882a0ae7c07277316b2_23299_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;li&gt;若配置信息有误，则需要在更改配置文件&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;重启rsyslog服务&#34;&gt;重启RSyslog服务&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Debian,Ubuntu或CentOS/RHEL 6使用:sudo service rsyslog restart&lt;/li&gt;
+&lt;li&gt;Fedora 或 CentOS/RHEL 7使用：sudo systemctl restart rsyslog&lt;/li&gt;
+&lt;li&gt;使用：sudo lsof -i :[端口号]，查看服务是否开启和tcp/udp连接情况
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 548; 
+			flex-basis: 1316px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/5.png&#34; data-size=&#34;554x101&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/5.png&#34;
+			width=&#34;554&#34;
+			height=&#34;101&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/5_hub384d36617421245c9364162c8094a34_49314_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/5_hub384d36617421245c9364162c8094a34_49314_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;li&gt;或使用sudo netstat -pantu | grep rsyslog
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 748; 
+			flex-basis: 1796px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/6.png&#34; data-size=&#34;554x74&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/6.png&#34;
+			width=&#34;554&#34;
+			height=&#34;74&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/6_hud96afeb39ab29624ebbfb8d879fa92f8_35198_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/6_hud96afeb39ab29624ebbfb8d879fa92f8_35198_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;查看日志&#34;&gt;查看日志&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;启动客户端，进入配置文件模板中日志保存的位置：&lt;br&gt;
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 971; 
+			flex-basis: 2332px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/7.png&#34; data-size=&#34;554x57&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/7.png&#34;
+			width=&#34;554&#34;
+			height=&#34;57&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/7_hu31450327525b5e8e578d50ab58e1813e_22403_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/7_hu31450327525b5e8e578d50ab58e1813e_22403_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;br&gt;
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 371; 
+			flex-basis: 892px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/8.png&#34; data-size=&#34;554x149&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/8.png&#34;
+			width=&#34;554&#34;
+			height=&#34;149&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/8_hu442c80cfdca83249146ebd0d5822289f_88346_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/8_hu442c80cfdca83249146ebd0d5822289f_88346_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;li&gt;若没有生成日志文件，需要使用：sudo tcpdump host 客户端ip 查看是否转发日志，有则是保存模板出问题，没有可能的服务端配置或者客户端配置出问题&lt;br&gt;
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 415; 
+			flex-basis: 997px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/9.png&#34; data-size=&#34;553x133&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/9.png&#34;
+			width=&#34;553&#34;
+			height=&#34;133&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/9_hud06aeafa785a175b3e704d37bde11243_109835_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/9_hud06aeafa785a175b3e704d37bde11243_109835_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;客户端配置&#34;&gt;客户端配置&lt;/h2&gt;
+&lt;h3 id=&#34;平台x86&#34;&gt;平台：x86&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;平台是使用的rsyslog&lt;/li&gt;
+&lt;li&gt;使用sudo vi /etc/rsyslog.conf 打开配置文件&lt;/li&gt;
+&lt;li&gt;配置：&lt;br&gt;
+发送日志，@表示传输协议（@表示udp，@@表示tcp），后面是ip和端口。&lt;br&gt;
+*.* @@remote-host:514&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 769; 
+			flex-basis: 1846px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/10.png&#34; data-size=&#34;554x72&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/10.png&#34;
+			width=&#34;554&#34;
+			height=&#34;72&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/10_hu121ce9beda989ac489d36785534a4c07_11404_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/10_hu121ce9beda989ac489d36785534a4c07_11404_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;检查与重启服务和x86服务器平台一样&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;平台开发板&#34;&gt;平台开发板&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;板子是使用的syslog 使用命令：ps进行查看进程&lt;br&gt;
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 266; 
+			flex-basis: 639px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/11.png&#34; data-size=&#34;554x208&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/11.png&#34;
+			width=&#34;554&#34;
+			height=&#34;208&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/11_hu4e6e3e2c799b4a539a43c7ac3ef0cfea_64168_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/11_hu4e6e3e2c799b4a539a43c7ac3ef0cfea_64168_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;li&gt;找到syslogd服务，若未找到，可能不支持syslog服务
+使用命令：syslogd –h 查看syslogd支持的服务&lt;br&gt;
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 271; 
+			flex-basis: 651px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/12.png&#34; data-size=&#34;554x204&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/12.png&#34;
+			width=&#34;554&#34;
+			height=&#34;204&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/12_hu303331932f04e72e99ec8f8ee7478f8d_60851_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/12_hu303331932f04e72e99ec8f8ee7478f8d_60851_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;配置客户端&#34;&gt;配置客户端&lt;/h3&gt;
+&lt;p&gt;1.结束之前的syslogd服务，通过使用kill 进程号 结束进程&lt;br&gt;
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 537; 
+			flex-basis: 1290px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/13.png&#34; data-size=&#34;554x103&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/13.png&#34;
+			width=&#34;554&#34;
+			height=&#34;103&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/13_hu9fb7ecb2769d8f203208712c5df5625e_31804_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/13_hu9fb7ecb2769d8f203208712c5df5625e_31804_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;
+2.通过syslogd提供的服务是通过 -L  –R 服务器的ip:port&lt;br&gt;
+注明：默认端口为：514,端口号应该与服务器配置的端口号一致&lt;br&gt;
+3.启动syslogd服务：/sbin/syslogd -f /etc/syslog.conf -L -R 172.16.193.204:514
+4.通过tcpdump host 172.16.193.204 查看日志是否被转发到服务器&lt;br&gt;
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 537; 
+			flex-basis: 1290px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/13.png&#34; data-size=&#34;554x103&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/13.png&#34;
+			width=&#34;554&#34;
+			height=&#34;103&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/13_hu9fb7ecb2769d8f203208712c5df5625e_31804_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/13_hu9fb7ecb2769d8f203208712c5df5625e_31804_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;注明：开发板的syslog支持UDP传输，需要开发板的日志文件需要在服务器打开UDP&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        <item>
         <title>go 基础之切片</title>
         <link>https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/</link>
         <pubDate>Wed, 15 Sep 2021 22:00:38 +0800</pubDate>

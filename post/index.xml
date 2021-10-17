@@ -56,6 +56,15 @@
     </item>
     
     <item>
+      <title>syslog日志转发配置</title>
+      <link>https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/</link>
+      <pubDate>Mon, 20 Sep 2021 22:00:38 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/</guid>
+      <description>服务器配置(服务器平台：x86) Rsyslog简介  Rsyslog是一个 syslogd 的多线程增强版，在syslog的基础上扩展了很多其他功能，如数据库支持(MySQL, PostgreSQL、Oracle等)、日志内容筛选、定义日志格式模板等。除了默认的udp协议外，rsyslog还支持tcp协议来接收日志。 目前的linux的发行版都切换为rsyslog  安装Rsyslog  Linux的发行版中预先安装了Rsyslog,无需安装，rsyslogd –v 查看版本 若未安装，以下是安装步骤： 1.ubuntu：sudo apt install rsyslog 2.CentOS：yum install rsyslog  Rsyslog.conf配置文件详解 配置文件位置：/etc/rsyslog.conf #### MODULES #### #定义日志的模块。 $ModLoad imuxsock #imuxsock为模块名，支持本地系统日志的模块。 $ModLoad imjournal #imjournal为模块名，支持对系统日志的访问。 #$ModLoad imklog #imklog为模块名，支持内核日志的模块。 #$ModLoad immark #immark为模块名，支持日志标记。 # Provides UDP syslog reception #提供udp syslog的接收。 #$ModLoad imudp #imudp为模块名，支持udp协议。 #$UDPServerRun 514 #允许514端口接收使用udp和tcp转发来的日志。 # Provides TCP syslog reception #提供tcp syslog的接收。 #$ModLoad imtcp #imtcp为模块名，支持tcp协议。 #$InputTCPServerRun 514 #### GLOBAL DIRECTIVES #### #定义全局日志格式的指令。 # Where to place auxiliary files $WorkDirectory /var/lib/rsyslog #工作目录。 # Use default timestamp format $ActionFileDefaultTemplate RSYSLOG_TraditionalFileFormat #定义日志格式默认模板。 $IncludeConfig /etc/rsyslog.</description>
+    </item>
+    
+    <item>
       <title>go 基础之切片</title>
       <link>https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/</link>
       <pubDate>Wed, 15 Sep 2021 22:00:38 +0800</pubDate>
