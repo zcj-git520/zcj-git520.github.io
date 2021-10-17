@@ -2,28 +2,31 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://zcj-git520.github.io/categories/bug/</loc>
-    <lastmod>2021-10-09T22:00:38+08:00</lastmod>
-  </url><url>
     <loc>https://zcj-git520.github.io/categories/</loc>
-    <lastmod>2021-10-09T22:00:38+08:00</lastmod>
+    <lastmod>2021-10-15T22:00:38+08:00</lastmod>
   </url><url>
     <loc>https://zcj-git520.github.io/</loc>
+    <lastmod>2021-10-15T22:00:38+08:00</lastmod>
+  </url><url>
+    <loc>https://zcj-git520.github.io/p/go-channel/</loc>
+    <lastmod>2021-10-15T22:00:38+08:00</lastmod>
+  </url><url>
+    <loc>https://zcj-git520.github.io/categories/golang/</loc>
+    <lastmod>2021-10-15T22:00:38+08:00</lastmod>
+  </url><url>
+    <loc>https://zcj-git520.github.io/post/</loc>
+    <lastmod>2021-10-15T22:00:38+08:00</lastmod>
+  </url><url>
+    <loc>https://zcj-git520.github.io/categories/language/</loc>
+    <lastmod>2021-10-15T22:00:38+08:00</lastmod>
+  </url><url>
+    <loc>https://zcj-git520.github.io/categories/bug/</loc>
     <lastmod>2021-10-09T22:00:38+08:00</lastmod>
   </url><url>
     <loc>https://zcj-git520.github.io/p/golang/</loc>
     <lastmod>2021-10-09T22:00:38+08:00</lastmod>
   </url><url>
-    <loc>https://zcj-git520.github.io/categories/golang/</loc>
-    <lastmod>2021-10-09T22:00:38+08:00</lastmod>
-  </url><url>
-    <loc>https://zcj-git520.github.io/post/</loc>
-    <lastmod>2021-10-09T22:00:38+08:00</lastmod>
-  </url><url>
     <loc>https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B/</loc>
-    <lastmod>2021-10-06T22:00:38+08:00</lastmod>
-  </url><url>
-    <loc>https://zcj-git520.github.io/categories/language/</loc>
     <lastmod>2021-10-06T22:00:38+08:00</lastmod>
   </url><url>
     <loc>https://zcj-git520.github.io/categories/computer/</loc>

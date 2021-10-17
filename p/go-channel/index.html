@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='go Channel  （Do not communicate by sharing memory; instead, share memory by communicating）  CSP并发模型  CSP 即通信顺序进程、交谈循序程序，又被译为交换消息的循序程序(communicating sequential processes)，它是一种用来描述并发性系统之间进行交互的模型。 go Channe是一种特殊的类型，是有特定类型的队列。是链接goroutine(协程)的通信机制，通过通信共享内存而不是通过共享内存而实现通信. Channel 收发操作均遵循了先进先出的设计，具体规则如下：  先从 Channel 读取数据的 Goroutine 会先接收到数据； 先向 Channel 发送数据的 Goroutine 会得到先发送数据的权利；    
+channel 数据结构定义： type hchan struct { // 队列中数据的总数量 qcount uint // total data in the queue //环形队列的大小 dataqsiz uint // size of the circular queue // 存放环形队列的数据 buf unsafe.Pointer // points to an array of dataqsiz elements // 元素的大小 elemsize uint16 // 是否关闭的标识 closed uint32 // 元素的类型 elemtype *_type // element type // 当前发送数据在环形队列的索引 sendx uint // send index // 当前接受数据在环形队列的索引 recvx uint // receive index // 接收者等待队列（&amp;lt;-ch）阻塞在channel的协程队列 recvq waitq // list of recv waiters // 发送者等待队列（ch&amp;lt;- data）阻塞在channel的协程队列 sendq waitq // list of send waiters //锁保护hchan中的所有字段，以及几个 //在这个通道上阻塞sudogs中的字段 //保持这个锁时不要改变另一个G的状态 //(特别是，不要准备一个G)，因为这可能会死锁 //栈收缩。 lock mutex // 保护hchan中的所有字段，保持协程的状态不被更改，避免造成栈收缩引起的死锁，使用互斥锁解决程序中可能存在的线程竞争问题是很常见的 } 发送者/接收者等待队列的结构：一个双向链表 type waitq struct { first *sudog last *sudog } channel sudog结构如下 type sudog struct { // The following fields are protected by the hchan.'><title>Go Channel</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/go-channel/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Go Channel'>
+<meta property='og:description' content='go Channel  （Do not communicate by sharing memory; instead, share memory by communicating）  CSP并发模型  CSP 即通信顺序进程、交谈循序程序，又被译为交换消息的循序程序(communicating sequential processes)，它是一种用来描述并发性系统之间进行交互的模型。 go Channe是一种特殊的类型，是有特定类型的队列。是链接goroutine(协程)的通信机制，通过通信共享内存而不是通过共享内存而实现通信. Channel 收发操作均遵循了先进先出的设计，具体规则如下：  先从 Channel 读取数据的 Goroutine 会先接收到数据； 先向 Channel 发送数据的 Goroutine 会得到先发送数据的权利；    
+channel 数据结构定义： type hchan struct { // 队列中数据的总数量 qcount uint // total data in the queue //环形队列的大小 dataqsiz uint // size of the circular queue // 存放环形队列的数据 buf unsafe.Pointer // points to an array of dataqsiz elements // 元素的大小 elemsize uint16 // 是否关闭的标识 closed uint32 // 元素的类型 elemtype *_type // element type // 当前发送数据在环形队列的索引 sendx uint // send index // 当前接受数据在环形队列的索引 recvx uint // receive index // 接收者等待队列（&amp;lt;-ch）阻塞在channel的协程队列 recvq waitq // list of recv waiters // 发送者等待队列（ch&amp;lt;- data）阻塞在channel的协程队列 sendq waitq // list of send waiters //锁保护hchan中的所有字段，以及几个 //在这个通道上阻塞sudogs中的字段 //保持这个锁时不要改变另一个G的状态 //(特别是，不要准备一个G)，因为这可能会死锁 //栈收缩。 lock mutex // 保护hchan中的所有字段，保持协程的状态不被更改，避免造成栈收缩引起的死锁，使用互斥锁解决程序中可能存在的线程竞争问题是很常见的 } 发送者/接收者等待队列的结构：一个双向链表 type waitq struct { first *sudog last *sudog } channel sudog结构如下 type sudog struct { // The following fields are protected by the hchan.'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/go-channel/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-10-15T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2021-10-15T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/go-channel/2.png' />
+<meta name="twitter:title" content="Go Channel">
+<meta name="twitter:description" content="go Channel  （Do not communicate by sharing memory; instead, share memory by communicating）  CSP并发模型  CSP 即通信顺序进程、交谈循序程序，又被译为交换消息的循序程序(communicating sequential processes)，它是一种用来描述并发性系统之间进行交互的模型。 go Channe是一种特殊的类型，是有特定类型的队列。是链接goroutine(协程)的通信机制，通过通信共享内存而不是通过共享内存而实现通信. Channel 收发操作均遵循了先进先出的设计，具体规则如下：  先从 Channel 读取数据的 Goroutine 会先接收到数据； 先向 Channel 发送数据的 Goroutine 会得到先发送数据的权利；    
+channel 数据结构定义： type hchan struct { // 队列中数据的总数量 qcount uint // total data in the queue //环形队列的大小 dataqsiz uint // size of the circular queue // 存放环形队列的数据 buf unsafe.Pointer // points to an array of dataqsiz elements // 元素的大小 elemsize uint16 // 是否关闭的标识 closed uint32 // 元素的类型 elemtype *_type // element type // 当前发送数据在环形队列的索引 sendx uint // send index // 当前接受数据在环形队列的索引 recvx uint // receive index // 接收者等待队列（&amp;lt;-ch）阻塞在channel的协程队列 recvq waitq // list of recv waiters // 发送者等待队列（ch&amp;lt;- data）阻塞在channel的协程队列 sendq waitq // list of send waiters //锁保护hchan中的所有字段，以及几个 //在这个通道上阻塞sudogs中的字段 //保持这个锁时不要改变另一个G的状态 //(特别是，不要准备一个G)，因为这可能会死锁 //栈收缩。 lock mutex // 保护hchan中的所有字段，保持协程的状态不被更改，避免造成栈收缩引起的死锁，使用互斥锁解决程序中可能存在的线程竞争问题是很常见的 } 发送者/接收者等待队列的结构：一个双向链表 type waitq struct { first *sudog last *sudog } channel sudog结构如下 type sudog struct { // The following fields are protected by the hchan."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/go-channel/2.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/go-channel/">
+                <img src="/p/go-channel/2_hue07f2e8c0ff3d68a0ff64f3f323fd66c_165282_800x0_resize_box_3.png"
+                        srcset="/p/go-channel/2_hue07f2e8c0ff3d68a0ff64f3f323fd66c_165282_800x0_resize_box_3.png 800w, /p/go-channel/2_hue07f2e8c0ff3d68a0ff64f3f323fd66c_165282_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="496" 
+                        loading="lazy"
+                        alt="Featured image of post Go Channel" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/language/" style="background-color: #2a9d8f; color: #fff;">
+                语言学习
+            </a>
+        
+            <a href="/categories/golang/" style="background-color: #2a9d8f; color: #fff;">
+                Golang
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/go-channel/">Go Channel</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Oct 15, 2021</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 6 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h1 id="go-channel">go Channel</h1>
+<ul>
+<li>（<strong>Do not communicate by sharing memory; instead, share memory by communicating</strong>）</li>
+</ul>
+<h2 id="csp并发模型">CSP并发模型</h2>
+<ul>
+<li><strong>CSP</strong> 即<strong>通信顺序进程</strong>、<strong>交谈循序程序</strong>，又被译为<strong>交换消息的循序程序</strong>(communicating sequential processes)，它是一种用来描述并发性系统之间进行交互的模型。</li>
+<li>go  Channe是一种特殊的类型，是有特定类型的队列。是链接goroutine(协程)的通信机制，通过通信共享内存而不是通过共享内存而实现通信.</li>
+<li>Channel 收发操作均遵循了先进先出的设计，具体规则如下：
+<ol>
+<li>先从 Channel 读取数据的 Goroutine 会先接收到数据；</li>
+<li>先向 Channel 发送数据的 Goroutine 会得到先发送数据的权利；</li>
+</ol>
+</li>
+</ul>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 324; 
+			flex-basis: 779px"
+	>
+	<a href="/p/go-channel/1.png" data-size="646x199">
+		<img src="/p/go-channel/1.png"
+			width="646"
+			height="199"
+			srcset="/p/go-channel/1_hu9f71752e01ad0714d9e001d394dc9e2e_27512_480x0_resize_box_3.png 480w, /p/go-channel/1_hu9f71752e01ad0714d9e001d394dc9e2e_27512_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<h2 id="channel-数据结构定义">channel 数据结构定义：</h2>
+<pre tabindex="0"><code>type hchan struct {
+	// 队列中数据的总数量
+	qcount   uint           // total data in the queue
+	//环形队列的大小
+	dataqsiz uint           // size of the circular queue
+	// 存放环形队列的数据
+	buf      unsafe.Pointer // points to an array of dataqsiz elements
+	// 元素的大小
+	elemsize uint16
+	// 是否关闭的标识
+	closed   uint32
+	// 元素的类型
+	elemtype *_type // element type
+	// 当前发送数据在环形队列的索引
+	sendx    uint   // send index
+	// 当前接受数据在环形队列的索引 
+	recvx    uint   // receive index
+	// 接收者等待队列（&lt;-ch）阻塞在channel的协程队列
+	recvq    waitq  // list of recv waiters
+	// 发送者等待队列（ch&lt;- data）阻塞在channel的协程队列
+	sendq    waitq  // list of send waiters
+	//锁保护hchan中的所有字段，以及几个
+	//在这个通道上阻塞sudogs中的字段
+	//保持这个锁时不要改变另一个G的状态
+	//(特别是，不要准备一个G)，因为这可能会死锁
+	//栈收缩。
+	lock mutex  // 保护hchan中的所有字段，保持协程的状态不被更改，避免造成栈收缩引起的死锁，使用互斥锁解决程序中可能存在的线程竞争问题是很常见的
+}
+</code></pre><pre tabindex="0"><code>发送者/接收者等待队列的结构：一个双向链表
+type waitq struct {
+	first *sudog
+	last  *sudog
+}
+</code></pre><pre tabindex="0"><code>channel  sudog结构如下
+type sudog struct {
+	// The following fields are protected by the hchan.lock of the
+	// channel this sudog is blocking on. shrinkstack depends on
+	// this for sudogs involved in channel ops.
+	//以下字段受hchan保护。锁的
+  	//这个sudog正在阻塞。shrinkstack取决于
+	//这是为涉及通道操作的sudogs。
+
+	g *g  // 协程
+	next *sudog
+	prev *sudog
+	// 数据元素(可以指向堆栈)
+	elem unsafe.Pointer // data element (may point to stack)
+
+	// The following fields are never accessed concurrently.
+	// For channels, waitlink is only accessed by g.
+	// For semaphores, all fields (including the ones above)
+	// are only accessed when holding a semaRoot lock.
+	//下面的字段永远不会并发访问。
+   	//对于通道，waitlink只被g访问。
+	//对于信号量，所有的字段(包括上面的字段)
+	//只在持有semaRoot锁时访问。
+	acquiretime int64
+	releasetime int64
+	ticket      uint32
+
+	// isSelect indicates g is participating in a select, so
+	// g.selectDone must be CAS'd to win the wake-up race.
+	// 表示g被选择
+	isSelect bool
+
+	// success indicates whether communication over channel c
+	// succeeded. It is true if the goroutine was awoken because a
+	// value was delivered over channel c, and false if awoken
+	// because c was closed.
+	//成功表示是否通过通道c通信
+	// 成功了。 如果 goroutine 被唤醒是因为一个
+	// 值通过通道 c 传递，如果被唤醒则返回 false
+	// 因为 c 被关闭了
+	success bool  // c 因关闭而唤醒
+
+	parent   *sudog // semaRoot binary tree
+	waitlink *sudog // g.waiting list or semaRoot
+	waittail *sudog // semaRoot
+	c        *hchan // channel
+}
+</code></pre><ul>
+<li>结构如图所示
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 161; 
+			flex-basis: 387px"
+	>
+	<a href="/p/go-channel/2.png" data-size="763x473">
+		<img src="/p/go-channel/2.png"
+			width="763"
+			height="473"
+			srcset="/p/go-channel/2_hue07f2e8c0ff3d68a0ff64f3f323fd66c_165282_480x0_resize_box_3.png 480w, /p/go-channel/2_hue07f2e8c0ff3d68a0ff64f3f323fd66c_165282_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></li>
+</ul>
+<h2 id="channel-创建">channel 创建</h2>
+<ul>
+<li>channel 和 切片、map一样，需要使用make(chan type, int )才能使用,应为make()会调用makeChan()初始化</li>
+</ul>
+<pre tabindex="0"><code>makech函数源码如下:
+// 参数类型：创建chan的类型和环型缓冲区的数量
+func makechan(t *chantype, size int) *hchan {
+	elem := t.elem
+
+	// compiler checks this but be safe.
+	if elem.size &gt;= 1&lt;&lt;16 {
+		throw(&quot;makechan: invalid channel element type&quot;)
+	}
+	if hchanSize%maxAlign != 0 || elem.align &gt; maxAlign {
+		throw(&quot;makechan: bad alignment&quot;)
+	}
+	//判断环型缓冲区是否溢出
+	mem, overflow := math.MulUintptr(elem.size, uintptr(size))
+	if overflow || mem &gt; maxAlloc-hchanSize || size &lt; 0 {
+		panic(plainError(&quot;makechan: size out of range&quot;))
+	}
+
+	// Hchan does not contain pointers interesting for GC when elements stored in buf do not contain pointers.
+	// buf points into the same allocation, elemtype is persistent.
+	// SudoG's are referenced from their owning thread so they can't be collected.
+	// TODO(dvyukov,rlh): Rethink when collector can move allocated objects.
+	var c *hchan
+	switch {
+	case mem == 0:
+		// Queue or element size is zero.
+		// 当队列或者元素大小为0时，定义无缓冲chan（同步chan）
+		c = (*hchan)(mallocgc(hchanSize, nil, true))
+		// Race detector uses this location for synchronization.
+        // Race 竞争检查利用这个地址来进行同步操作
+		c.buf = c.raceaddr()
+	case elem.ptrdata == 0:
+		// Elements do not contain pointers.
+		// Allocate hchan and buf in one call.
+        // 元素不包含指针时。一次分配 hchan 和 buf 的内存。
+		c = (*hchan)(mallocgc(hchanSize+mem, nil, true))
+		c.buf = add(unsafe.Pointer(c), hchanSize)
+	default:
+		// Elements contain pointers.
+        // 定义带缓存的chan或者异步的chan
+		c = new(hchan)
+		c.buf = mallocgc(mem, elem, true)
+	}
+
+	c.elemsize = uint16(elem.size)  // chan元素的大小
+	c.elemtype = elem               // chan元素的类型
+	c.dataqsiz = uint(size)        //  chan缓存区大小
+	lockInit(&amp;c.lock, lockRankHchan)  //初始化互斥锁
+
+	if debugChan {
+		print(&quot;makechan: chan=&quot;, c, &quot;; elemsize=&quot;, elem.size, &quot;; dataqsiz=&quot;, size, &quot;\n&quot;)
+	}
+	return c
+}
+</code></pre><ul>
+<li>channel创建过程：</li>
+</ul>
+<ol>
+<li>编译检查、缓冲区大小检查，判断是否溢出</li>
+<li>判断chan的类型<br>
+1、当创建无缓冲chan时,调用mallocgc()在堆上为chan开辟hchanSize的buf缓存内存空间<br>
+2、创建带缓冲的chan时,判断元素的类型是否为指针类型，若不是，则mallocgc()在堆上为chan和buf缓冲区数组开辟一段大小为 hchanSize+mem连续的内存空间。若是则调用mallocgc()在堆上分别为chan和buf缓冲区分配连续内存空间。</li>
+</ol>
+<h2 id="channel-发送数据与接收数据">channel 发送数据与接收数据</h2>
+<h3 id="channel-发送数据">channel 发送数据</h3>
+<ul>
+<li>chan &lt;- data</li>
+</ul>
+<pre tabindex="0"><code>chan发送数据源码图下:
+func chansend(c *hchan, ep unsafe.Pointer, block bool, callerpc uintptr) bool {
+    // 判断chan是否被初始化，向chan为nil的chan发送数据将会永久阻塞
+	if c == nil {
+		if !block {
+			return false
+		}
+        // 使当前的groutine休眠
+		gopark(nil, nil, waitReasonChanSendNilChan, traceEvGoStop, 2)
+		throw(&quot;unreachable&quot;)
+	}
+
+	if debugChan {
+		print(&quot;chansend: chan=&quot;, c, &quot;\n&quot;)
+	}
+     // 检查在没有获取锁的情况下会导致发送失败的非阻塞操作
+	if raceenabled {
+		racereadpc(c.raceaddr(), callerpc, funcPC(chansend))
+	}
+
+	// Fast path: check for failed non-blocking operation without acquiring the lock.
+	//
+	// After observing that the channel is not closed, we observe that the channel is
+	// not ready for sending. Each of these observations is a single word-sized read
+	// (first c.closed and second full()).
+	// Because a closed channel cannot transition from 'ready for sending' to
+	// 'not ready for sending', even if the channel is closed between the two observations,
+	// they imply a moment between the two when the channel was both not yet closed
+	// and not ready for sending. We behave as if we observed the channel at that moment,
+	// and report that the send cannot proceed.
+	//
+	// It is okay if the reads are reordered here: if we observe that the channel is not
+	// ready for sending and then observe that it is not closed, that implies that the
+	// channel wasn't closed during the first observation. However, nothing here
+	// guarantees forward progress. We rely on the side effects of lock release in
+	// chanrecv() and closechan() to update this thread's view of c.closed and full().
+	if !block &amp;&amp; c.closed == 0 &amp;&amp; full(c) {
+		return false
+	}
+
+	var t0 int64
+	if blockprofilerate &gt; 0 {
+		t0 = cputicks()
+	}
+    // 获得同步锁
+	lock(&amp;c.lock)
+    // 当chan关闭时,释放锁，并panic
+    // 向也关闭的chan发送消息,会引发panic
+	if c.closed != 0 {
+		unlock(&amp;c.lock)
+		panic(plainError(&quot;send on closed channel&quot;))
+	}
+    // 如果接收队列中有等待的接收者，直接发送给接收者（有缓存区时，会绕过缓存区）
+	if sg := c.recvq.dequeue(); sg != nil {
+		// Found a waiting receiver. We pass the value we want to send
+		// directly to the receiver, bypassing the channel buffer (if any).
+		send(c, sg, ep, func() { unlock(&amp;c.lock) }, 3)
+		return true
+	}
+
+	if c.qcount &lt; c.dataqsiz {
+		// Space is available in the channel buffer. Enqueue the element to send.
+		qp := chanbuf(c, c.sendx)
+		if raceenabled {
+			racenotify(c, c.sendx, nil)
+		}
+		typedmemmove(c.elemtype, qp, ep)
+		c.sendx++
+		if c.sendx == c.dataqsiz {
+			c.sendx = 0
+		}
+		c.qcount++
+		unlock(&amp;c.lock)
+		return true
+	}
+
+	if !block {
+		unlock(&amp;c.lock)
+		return false
+	}
+
+	// Block on the channel. Some receiver will complete our operation for us.
+	gp := getg()
+	mysg := acquireSudog()
+	mysg.releasetime = 0
+	if t0 != 0 {
+		mysg.releasetime = -1
+	}
+	// No stack splits between assigning elem and enqueuing mysg
+	// on gp.waiting where copystack can find it.
+	mysg.elem = ep
+	mysg.waitlink = nil
+	mysg.g = gp
+	mysg.isSelect = false
+	mysg.c = c
+	gp.waiting = mysg
+	gp.param = nil
+	c.sendq.enqueue(mysg)
+	// Signal to anyone trying to shrink our stack that we're about
+	// to park on a channel. The window between when this G's status
+	// changes and when we set gp.activeStackChans is not safe for
+	// stack shrinking.
+	atomic.Store8(&amp;gp.parkingOnChan, 1)
+	gopark(chanparkcommit, unsafe.Pointer(&amp;c.lock), waitReasonChanSend, traceEvGoBlockSend, 2)
+	// Ensure the value being sent is kept alive until the
+	// receiver copies it out. The sudog has a pointer to the
+	// stack object, but sudogs aren't considered as roots of the
+	// stack tracer.
+	KeepAlive(ep)
+
+	// someone woke us up.
+	if mysg != gp.waiting {
+		throw(&quot;G waiting list is corrupted&quot;)
+	}
+	gp.waiting = nil
+	gp.activeStackChans = false
+	closed := !mysg.success
+	gp.param = nil
+	if mysg.releasetime &gt; 0 {
+		blockevent(mysg.releasetime-t0, 2)
+	}
+	mysg.c = nil
+	releaseSudog(mysg)
+	if closed {
+		if c.closed == 0 {
+			throw(&quot;chansend: spurious wakeup&quot;)
+		}
+		panic(plainError(&quot;send on closed channel&quot;))
+	}
+	return true
+}
+</code></pre>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B/">
+        
+        
+            <div class="article-image">
+                <img src="/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B/1.d2b7d89ef818d26153faa0457442b815_huda718813a1636432ee91da972c85e460_240629_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-0rfYnvgY0mFT&#43;qBFdEK4FQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">go goroutine与gmp模型</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap/">
+        
+        
+            <div class="article-image">
+                <img src="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap/3.74ad1cd91c7466eb1e7f5482a85c34d2_hu50c7ad8b87ebb1655f26b2166388bb8a_150234_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-dK0c2Rx0Zusef1SCqFw00g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">go 基础之map</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/">
+        
+        
+            <div class="article-image">
+                <img src="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s4.a231cc835b6359433d6a90044bfb9a81_hu1fce009c184102799b4a69d72efc8ec2_68940_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-ojHMg1tjWUM9apAES/uagQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">go 基础之切片</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/golang/">
+        
+        
+            <div class="article-image">
+                <img src="/p/golang/2.470859f0db80e15c860100d7f8e534f5_hu3607656af67f333528ae9e7b0ed06a62_30106_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="Golang" 
+                        data-hash="md5-RwhZ8NuA4VyGAQDX&#43;OU09Q==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">go error类型转json</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#csp并发模型">CSP并发模型</a></li>
+    <li><a href="#channel-数据结构定义">channel 数据结构定义：</a></li>
+    <li><a href="#channel-创建">channel 创建</a></li>
+    <li><a href="#channel-发送数据与接收数据">channel 发送数据与接收数据</a>
+      <ol>
+        <li><a href="#channel-发送数据">channel 发送数据</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
