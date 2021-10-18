@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='切片的内部结构  切片的结构可分为：数组，数据（元素）的地址&amp;amp;data、也存元素个数len、可以存储多少元素cap 源码如下    定义切片的结构： type slice struct { array unsafe.Pointer len int cap int }  如图所示  avatar
+ var data [] int 声明一个切片，相当于生成切片的结构，data地址指针为nil, len和cap都为0。这就很清楚为什么，nil切片不可以直接使用了😄 结构如图  avatar
+ 使用切片时需要make([]type,len,cap)或者初始化[]type{}才能使用，这是因为在在生成切片的结构时，同时也开辟了一段新的内存，类型为type, 结构长度为cap,同时值进行初始化。 make 源码如下：    func makeslice(et *_type, len, cap int) unsafe.Pointer { mem, overflow := math.MulUintptr(et.size, uintptr(cap)) // 判断是否越界 if overflow || mem &amp;gt; maxAlloc || len &amp;lt; 0 || len &amp;gt; cap { // NOTE: Produce a &#39;len out of range&#39; error instead of a // &#39;cap out of range&#39; error when someone does make([]T, bignumber).'><title>go 基础之切片的深入理解</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='go 基础之切片的深入理解'>
+<meta property='og:description' content='切片的内部结构  切片的结构可分为：数组，数据（元素）的地址&amp;amp;data、也存元素个数len、可以存储多少元素cap 源码如下    定义切片的结构： type slice struct { array unsafe.Pointer len int cap int }  如图所示  avatar
+ var data [] int 声明一个切片，相当于生成切片的结构，data地址指针为nil, len和cap都为0。这就很清楚为什么，nil切片不可以直接使用了😄 结构如图  avatar
+ 使用切片时需要make([]type,len,cap)或者初始化[]type{}才能使用，这是因为在在生成切片的结构时，同时也开辟了一段新的内存，类型为type, 结构长度为cap,同时值进行初始化。 make 源码如下：    func makeslice(et *_type, len, cap int) unsafe.Pointer { mem, overflow := math.MulUintptr(et.size, uintptr(cap)) // 判断是否越界 if overflow || mem &amp;gt; maxAlloc || len &amp;lt; 0 || len &amp;gt; cap { // NOTE: Produce a &#39;len out of range&#39; error instead of a // &#39;cap out of range&#39; error when someone does make([]T, bignumber).'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-09-15T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2021-09-15T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s4.png' />
+<meta name="twitter:title" content="go 基础之切片的深入理解">
+<meta name="twitter:description" content="切片的内部结构  切片的结构可分为：数组，数据（元素）的地址&amp;amp;data、也存元素个数len、可以存储多少元素cap 源码如下    定义切片的结构： type slice struct { array unsafe.Pointer len int cap int }  如图所示  avatar
+ var data [] int 声明一个切片，相当于生成切片的结构，data地址指针为nil, len和cap都为0。这就很清楚为什么，nil切片不可以直接使用了😄 结构如图  avatar
+ 使用切片时需要make([]type,len,cap)或者初始化[]type{}才能使用，这是因为在在生成切片的结构时，同时也开辟了一段新的内存，类型为type, 结构长度为cap,同时值进行初始化。 make 源码如下：    func makeslice(et *_type, len, cap int) unsafe.Pointer { mem, overflow := math.MulUintptr(et.size, uintptr(cap)) // 判断是否越界 if overflow || mem &amp;gt; maxAlloc || len &amp;lt; 0 || len &amp;gt; cap { // NOTE: Produce a &#39;len out of range&#39; error instead of a // &#39;cap out of range&#39; error when someone does make([]T, bignumber)."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s4.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/">
+                <img src="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s4_hu1fce009c184102799b4a69d72efc8ec2_68940_800x0_resize_box_3.png"
+                        srcset="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s4_hu1fce009c184102799b4a69d72efc8ec2_68940_800x0_resize_box_3.png 800w, /p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s4_hu1fce009c184102799b4a69d72efc8ec2_68940_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="410" 
+                        loading="lazy"
+                        alt="Featured image of post go 基础之切片的深入理解" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/language/" style="background-color: #2a9d8f; color: #fff;">
+                语言学习
+            </a>
+        
+            <a href="/categories/golang/" style="background-color: #2a9d8f; color: #fff;">
+                Golang
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/">go 基础之切片的深入理解</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Sep 15, 2021</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 3 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h2 id="切片的内部结构">切片的内部结构</h2>
+<ul>
+<li>切片的结构可分为：数组，数据（元素）的地址&amp;data、也存元素个数len、可以存储多少元素cap</li>
+<li>源码如下</li>
+</ul>
+<blockquote>
+</blockquote>
+<pre tabindex="0"><code>定义切片的结构：
+type slice struct {
+	array unsafe.Pointer   
+	len   int
+	cap   int
+}
+</code></pre><ul>
+<li>如图所示</li>
+</ul>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 447; 
+			flex-basis: 1075px"
+	>
+	<a href="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s1.png" data-size="327x73">
+		<img src="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s1.png"
+			width="327"
+			height="73"
+			srcset="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s1_hufa230f30ea970ac155f1510029c77fa1_16064_480x0_resize_box_3.png 480w, /p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s1_hufa230f30ea970ac155f1510029c77fa1_16064_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			alt="avatar">
+	</a>
+	
+	<figcaption>avatar</figcaption>
+	
+</figure></p>
+<ul>
+<li>var data [] int 声明一个切片，相当于生成切片的结构，data地址指针为nil, len和cap都为0。这就很清楚为什么，nil切片不可以直接使用了😄 结构如图</li>
+</ul>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 425; 
+			flex-basis: 1020px"
+	>
+	<a href="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s2.png" data-size="357x84">
+		<img src="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s2.png"
+			width="357"
+			height="84"
+			srcset="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s2_hu3ecbacb1008bd2eb98e4b57b029321b8_19806_480x0_resize_box_3.png 480w, /p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s2_hu3ecbacb1008bd2eb98e4b57b029321b8_19806_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			alt="avatar">
+	</a>
+	
+	<figcaption>avatar</figcaption>
+	
+</figure></p>
+<ul>
+<li>使用切片时需要make([]type,len,cap)或者初始化[]type{}才能使用，这是因为在在生成切片的结构时，同时也开辟了一段新的内存，类型为type, 结构长度为cap,同时值进行初始化。</li>
+<li>make 源码如下：</li>
+</ul>
+<blockquote>
+</blockquote>
+<pre tabindex="0"><code>func makeslice(et *_type, len, cap int) unsafe.Pointer {
+	mem, overflow := math.MulUintptr(et.size, uintptr(cap))    // 判断是否越界
+	if overflow || mem &gt; maxAlloc || len &lt; 0 || len &gt; cap {
+		// NOTE: Produce a 'len out of range' error instead of a
+		// 'cap out of range' error when someone does make([]T, bignumber).
+		// 'cap out of range' is true too, but since the cap is only being
+		// supplied implicitly, saying len is clearer.
+		// See golang.org/issue/4085.
+		mem, overflow := math.MulUintptr(et.size, uintptr(len))
+		if overflow || mem &gt; maxAlloc || len &lt; 0 {
+			panicmakeslicelen()       // 越界直接 panic
+		}
+		panicmakeslicecap()    // 越界直接 panic
+	}
+
+	return mallocgc(mem, et, true)  //开辟内存
+}
+</code></pre><blockquote>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 318; 
+			flex-basis: 763px"
+	>
+	<a href="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s3.png" data-size="525x165">
+		<img src="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s3.png"
+			width="525"
+			height="165"
+			srcset="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s3_hu288b58219022501a33ccafd08b91cbd7_40298_480x0_resize_box_3.png 480w, /p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s3_hu288b58219022501a33ccafd08b91cbd7_40298_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			alt="avatar">
+	</a>
+	
+	<figcaption>avatar</figcaption>
+	
+</figure></p>
+</blockquote>
+<ul>
+<li>
+<p>也可以通过底层数组初始化，切片的data指针指向就是相同类型的底层数组；通过slince := array[n:m],表示定义了一个类型和array相同，len为m-n,cap默认为array的长度的切片。切片和数组都指向了相同的地址。多个切片可以共用同一个底层数组。
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 195; 
+			flex-basis: 468px"
+	>
+	<a href="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s4.png" data-size="531x272">
+		<img src="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s4.png"
+			width="531"
+			height="272"
+			srcset="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s4_hu1fce009c184102799b4a69d72efc8ec2_68940_480x0_resize_box_3.png 480w, /p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s4_hu1fce009c184102799b4a69d72efc8ec2_68940_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			alt="avatar">
+	</a>
+	
+	<figcaption>avatar</figcaption>
+	
+</figure></p>
+</li>
+<li>
+<p>通过append 函数向切片增加切片的元素，增加了len, cap 不变。</p>
+<h2 id="切片扩容">切片扩容</h2>
+</li>
+<li>
+<p>在资源充裕的条件下，切片是可以通过append不断增加元素，当len个数增加到cap一样时，在增加元素时，就需要增加切片的容量cap，那问题来了，切片是怎么扩容的呢？</p>
+<h3 id="扩容规则预估规则">扩容规则（预估规则）</h3>
+</li>
+</ul>
+<ol>
+<li>
+<p>当需要扩容的数量比之前cap的两倍都大，则扩容为需要扩容的数量</p>
+</li>
+<li>
+<p>当需要扩容的数量比之前cap的两倍都大小，之前的cap小于1024 直接扩大之前的2倍</p>
+</li>
+<li>
+<p>当需要扩容的数量比之前cap的两倍都大小，之前的cap大于1024 直接扩大之前的1.25倍</p>
+</li>
+<li>
+<p>伪代码如下</p>
+<blockquote>
+<p>if oldcap<em>2  &lt; newcap 时， 扩容为newcap
+else{ if oldcap &lt; 1024     newcap = 2</em>oldcap     ;  else           newcap = 1.25*oldcap }</p>
+</blockquote>
+</li>
+<li>
+<p>源代码如下：</p>
+<blockquote>
+</blockquote>
+</li>
+</ol>
+<pre tabindex="0"><code>newcap := old.cap
+	doublecap := newcap + newcap     //两倍的oldcap
+	if cap &gt; doublecap {
+//当需要扩容的数量比之前cap的两倍都大，则扩容为需要扩容的数量
+		newcap = cap   
+	} else {
+//当需要扩容的数量比之前cap的两倍都大小，之前的cap小于1024 直接扩大之前的2倍
+		if old.cap &lt; 1024 {   
+			newcap = doublecap
+		} else {
+			// Check 0 &lt; newcap to detect overflow
+			// and prevent an infinite loop.
+当需要扩容的数量比之前cap的两倍都大小，之前的cap大于1024 直接扩大之前的1.25倍
+			for 0 &lt; newcap &amp;&amp; newcap &lt; cap {
+				newcap += newcap / 4
+			}
+			// Set newcap to the requested cap when
+			// the newcap calculation overflowed.
+			if newcap &lt;= 0 {
+				newcap = cap
+			}
+		}
+	}
+</code></pre><h3 id="扩容调整">扩容调整</h3>
+<ul>
+<li>在预估扩容后，会根据内存对齐（减少内存浪费）在进行调整，代码：capmem := roundupsize(uintptr(newcap) * uintptr(et.size))newcap就是前文中计算出的newcap，et.size代表slice中一个元素的大小，capmem计算出来的就是此次扩容需要申请的内存大小。roundupsize函数就是处理内存对齐的函数</li>
+<li>源码如下</li>
+</ul>
+<pre tabindex="0"><code> var overflow bool
+ 	var lenmem, newlenmem, capmem uintptr
+ 	switch {
+ 	case et.size == 1:    //例如byte 大小为1， 扩容的大小为向上取整的数值
+ 		lenmem = uintptr(old.len)
+ 		newlenmem = uintptr(cap)
+ 		capmem = roundupsize(uintptr(newcap)) 
+ 		overflow = uintptr(newcap) &gt; maxAlloc
+ 		newcap = int(capmem)
+ 	case et.size == sys.PtrSize:
+ 		lenmem = uintptr(old.len) * sys.PtrSize
+ 		newlenmem = uintptr(cap) * sys.PtrSize
+ 		capmem = roundupsize(uintptr(newcap) * sys.PtrSize)
+ 		overflow = uintptr(newcap) &gt; maxAlloc/sys.PtrSize
+ 		newcap = int(capmem / sys.PtrSize)
+ 	case isPowerOfTwo(et.size):  //处理2的倍数
+ 		var shift uintptr
+ 		if sys.PtrSize == 8 {
+ 			// Mask shift for better code generation.
+ 			shift = uintptr(sys.Ctz64(uint64(et.size))) &amp; 63
+ 		} else {
+ 			shift = uintptr(sys.Ctz32(uint32(et.size))) &amp; 31
+ 		}
+ 		lenmem = uintptr(old.len) &lt;&lt; shift
+ 		newlenmem = uintptr(cap) &lt;&lt; shift
+ 		capmem = roundupsize(uintptr(newcap) &lt;&lt; shift)
+ 		overflow = uintptr(newcap) &gt; (maxAlloc &gt;&gt; shift)
+ 		newcap = int(capmem &gt;&gt; shift)
+ 	default:
+ 		lenmem = uintptr(old.len) * et.size
+ 		newlenmem = uintptr(cap) * et.size
+ 		capmem, overflow = math.MulUintptr(et.size, uintptr(newcap))
+ 		capmem = roundupsize(capmem)
+ 		newcap = int(capmem / et.size)
+ 	}
+ 
+ 	// The check of overflow in addition to capmem &gt; maxAlloc is needed
+ 	// to prevent an overflow which can be used to trigger a segfault
+ 	// on 32bit architectures with this example program:
+ 	//
+ 	// type T [1&lt;&lt;27 + 1]int64
+ 	//
+ 	// var d T
+ 	// var s []T
+ 	//
+ 	// func main() {
+ 	//   s = append(s, d, d, d, d)
+ 	//   print(len(s), &quot;\n&quot;)
+ 	// }
+ 	if overflow || capmem &gt; maxAlloc {
+ 		panic(errorString(&quot;growslice: cap out of range&quot;))
+ 	}
+
+### 扩容后内存分配
+
+* 分配 大于cap的内存，没有数据指针，memclrNoHeapPointers创建
+* 源码如下：
+  &gt; 
+	var p unsafe.Pointer
+	if et.ptrdata == 0 {
+		p = mallocgc(capmem, nil, false)
+		// The append() that calls growslice is going to overwrite from old.len to cap (which will be the new length).
+		// Only clear the part that will not be overwritten.
+		memclrNoHeapPointers(add(p, newlenmem), capmem-newlenmem)
+	} else {
+		// Note: can't use rawmem (which avoids zeroing of memory), because then GC can scan uninitialized memory.
+		p = mallocgc(capmem, et, true)  //分配内存地址
+		if lenmem &gt; 0 &amp;&amp; writeBarrier.enabled {
+			// Only shade the pointers in old.array since we know the destination slice p
+			// only contains nil pointers because it has been cleared during alloc.
+			bulkBarrierPreWriteSrcOnly(uintptr(p), uintptr(old.array), lenmem-et.size+et.ptrdata)
+		}
+	}
+	memmove(p, old.array, lenmem)  //数据迁移
+
+	return slice{p, old.len, newcap}  
+}
+</code></pre>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/go-channel%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/">
+        
+        
+            <div class="article-image">
+                <img src="/p/go-channel%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/2.f30aa808ea4d46897a675d982b2082ac_hue07f2e8c0ff3d68a0ff64f3f323fd66c_165282_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-8wqoCOpNRol6Z12YKyCCrA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Go Channel的深入理解</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/">
+        
+        
+            <div class="article-image">
+                <img src="/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/1.d2b7d89ef818d26153faa0457442b815_huda718813a1636432ee91da972c85e460_240629_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-0rfYnvgY0mFT&#43;qBFdEK4FQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">go goroutine与gmp模型的深入理解</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/">
+        
+        
+            <div class="article-image">
+                <img src="/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/3.74ad1cd91c7466eb1e7f5482a85c34d2_hu50c7ad8b87ebb1655f26b2166388bb8a_150234_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-dK0c2Rx0Zusef1SCqFw00g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">go 基础之map的深入理解</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/golang/">
+        
+        
+            <div class="article-image">
+                <img src="/p/golang/2.470859f0db80e15c860100d7f8e534f5_hu3607656af67f333528ae9e7b0ed06a62_30106_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="Golang" 
+                        data-hash="md5-RwhZ8NuA4VyGAQDX&#43;OU09Q==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">go error类型转json</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#切片的内部结构">切片的内部结构</a></li>
+    <li><a href="#切片扩容">切片扩容</a>
+      <ol>
+        <li><a href="#扩容规则预估规则">扩容规则（预估规则）</a></li>
+        <li><a href="#扩容调整">扩容调整</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

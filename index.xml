@@ -7,12 +7,12 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <lastBuildDate>Fri, 15 Oct 2021 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
-        <title>Go Channel</title>
-        <link>https://zcj-git520.github.io/p/go-channel/</link>
+        <title>Go Channel的深入理解</title>
+        <link>https://zcj-git520.github.io/p/go-channel%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/</link>
         <pubDate>Fri, 15 Oct 2021 22:00:38 +0800</pubDate>
         
-        <guid>https://zcj-git520.github.io/p/go-channel/</guid>
-        <description>&lt;img src="https://zcj-git520.github.io/p/go-channel/2.png" alt="Featured image of post Go Channel" /&gt;&lt;h1 id=&#34;go-channel&#34;&gt;go Channel&lt;/h1&gt;
+        <guid>https://zcj-git520.github.io/p/go-channel%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/go-channel%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/2.png" alt="Featured image of post Go Channel的深入理解" /&gt;&lt;h1 id=&#34;go-channel&#34;&gt;go Channel&lt;/h1&gt;
 &lt;ul&gt;
 &lt;li&gt;（&lt;strong&gt;Do not communicate by sharing memory; instead, share memory by communicating&lt;/strong&gt;）&lt;/li&gt;
 &lt;/ul&gt;
@@ -34,11 +34,11 @@
 			flex-grow: 324; 
 			flex-basis: 779px&#34;
 	&gt;
-	&lt;a href=&#34;https://zcj-git520.github.io/p/go-channel/1.png&#34; data-size=&#34;646x199&#34;&gt;
-		&lt;img src=&#34;https://zcj-git520.github.io/p/go-channel/1.png&#34;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/go-channel%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/1.png&#34; data-size=&#34;646x199&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/go-channel%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/1.png&#34;
 			width=&#34;646&#34;
 			height=&#34;199&#34;
-			srcset=&#34;https://zcj-git520.github.io/p/go-channel/1_hu9f71752e01ad0714d9e001d394dc9e2e_27512_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/go-channel/1_hu9f71752e01ad0714d9e001d394dc9e2e_27512_1024x0_resize_box_3.png 1024w&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/go-channel%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/1_hu9f71752e01ad0714d9e001d394dc9e2e_27512_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/go-channel%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/1_hu9f71752e01ad0714d9e001d394dc9e2e_27512_1024x0_resize_box_3.png 1024w&#34;
 			loading=&#34;lazy&#34;
 			&gt;
 	&lt;/a&gt;
@@ -134,11 +134,11 @@ type sudog struct {
 			flex-grow: 161; 
 			flex-basis: 387px&#34;
 	&gt;
-	&lt;a href=&#34;https://zcj-git520.github.io/p/go-channel/2.png&#34; data-size=&#34;763x473&#34;&gt;
-		&lt;img src=&#34;https://zcj-git520.github.io/p/go-channel/2.png&#34;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/go-channel%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/2.png&#34; data-size=&#34;763x473&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/go-channel%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/2.png&#34;
 			width=&#34;763&#34;
 			height=&#34;473&#34;
-			srcset=&#34;https://zcj-git520.github.io/p/go-channel/2_hue07f2e8c0ff3d68a0ff64f3f323fd66c_165282_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/go-channel/2_hue07f2e8c0ff3d68a0ff64f3f323fd66c_165282_1024x0_resize_box_3.png 1024w&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/go-channel%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/2_hue07f2e8c0ff3d68a0ff64f3f323fd66c_165282_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/go-channel%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/2_hue07f2e8c0ff3d68a0ff64f3f323fd66c_165282_1024x0_resize_box_3.png 1024w&#34;
 			loading=&#34;lazy&#34;
 			&gt;
 	&lt;/a&gt;
@@ -438,12 +438,12 @@ func chansend(c *hchan, ep unsafe.Pointer, block bool, callerpc uintptr) bool {
 </description>
         </item>
         <item>
-        <title>go goroutine与gmp模型</title>
-        <link>https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B/</link>
+        <title>go goroutine与gmp模型的深入理解</title>
+        <link>https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/</link>
         <pubDate>Wed, 06 Oct 2021 22:00:38 +0800</pubDate>
         
-        <guid>https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B/</guid>
-        <description>&lt;img src="https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B/1.png" alt="Featured image of post go goroutine与gmp模型" /&gt;&lt;h2 id=&#34;go-协程goroutine&#34;&gt;go 协程goroutine&lt;/h2&gt;
+        <guid>https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/1.png" alt="Featured image of post go goroutine与gmp模型的深入理解" /&gt;&lt;h2 id=&#34;go-协程goroutine&#34;&gt;go 协程goroutine&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;协程是用户级的线程，有用户自己调度，使用协程使得程序调度更加灵活。同时比线程更轻量，占用的栈内存更少。go语言天生支持高并发，go使用协程goroutine的调度器。goroutine 的栈内存最小值为2kb(_StackMin = 2048),它不是固定不变的，可以随需求增大和缩小。goroutine 维护着很大的内存，无需频繁开辟内存，goroutine是使用M:n模型，在用户态切换协程，加上创建协程代价低，使得cpu的利用率大大提升，cup的性能大幅度的被利用。&lt;/li&gt;
 &lt;/ul&gt;
@@ -751,11 +751,11 @@ type gQueue struct {
 			flex-grow: 90; 
 			flex-basis: 218px&#34;
 	&gt;
-	&lt;a href=&#34;https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B/1.png&#34; data-size=&#34;662x728&#34;&gt;
-		&lt;img src=&#34;https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B/1.png&#34;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/1.png&#34; data-size=&#34;662x728&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/1.png&#34;
 			width=&#34;662&#34;
 			height=&#34;728&#34;
-			srcset=&#34;https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B/1_huda718813a1636432ee91da972c85e460_240629_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B/1_huda718813a1636432ee91da972c85e460_240629_1024x0_resize_box_3.png 1024w&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/1_huda718813a1636432ee91da972c85e460_240629_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/1_huda718813a1636432ee91da972c85e460_240629_1024x0_resize_box_3.png 1024w&#34;
 			loading=&#34;lazy&#34;
 			&gt;
 	&lt;/a&gt;
@@ -916,11 +916,11 @@ func newproc1(fn *funcval, argp unsafe.Pointer, narg int32, callergp *g, callerp
 			flex-grow: 214; 
 			flex-basis: 514px&#34;
 	&gt;
-	&lt;a href=&#34;https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B/2.png&#34; data-size=&#34;1903x887&#34;&gt;
-		&lt;img src=&#34;https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B/2.png&#34;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/2.png&#34; data-size=&#34;1903x887&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/2.png&#34;
 			width=&#34;1903&#34;
 			height=&#34;887&#34;
-			srcset=&#34;https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B/2_hu005dba7d92ca61057a969757b05a2c3b_575926_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B/2_hu005dba7d92ca61057a969757b05a2c3b_575926_1024x0_resize_box_3.png 1024w&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/2_hu005dba7d92ca61057a969757b05a2c3b_575926_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/2_hu005dba7d92ca61057a969757b05a2c3b_575926_1024x0_resize_box_3.png 1024w&#34;
 			loading=&#34;lazy&#34;
 			&gt;
 	&lt;/a&gt;
@@ -937,6 +937,415 @@ func newproc1(fn *funcval, argp unsafe.Pointer, narg int32, callergp *g, callerp
 &lt;li&gt;得到唯一的goid, 并添加到runq队列中&lt;/li&gt;
 &lt;li&gt;如果当前有空闲的P,没有睡眠的M,并且主协程开始运行时，就会创建新的活跃的M&lt;/li&gt;
 &lt;li&gt;当g运行结束后，设置允许当前m被抢占&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;goroutine的让出与恢复调度抢占监控&#34;&gt;goroutine的让出与恢复、调度、抢占、监控&lt;/h2&gt;
+&lt;h3 id=&#34;goroutine-让出与恢复&#34;&gt;goroutine 让出与恢复&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;协程的让出是由函数gopark()执行的&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;源码如下：
+func gopark(unlockf func(*g, unsafe.Pointer) bool, lock unsafe.Pointer, reason waitReason, traceEv byte, traceskip int) {
+	if reason != waitReasonSleep {
+		checkTimeouts() // timeouts may expire while two goroutines keep the scheduler busy
+	}
+    // 禁止当前m被抢占
+	mp := acquirem()
+	gp := mp.curg
+	status := readgstatus(gp)
+    // 判断协程的是否在运行状态
+	if status != _Grunning &amp;amp;&amp;amp; status != _Gscanrunning {
+		throw(&amp;quot;gopark: bad g status&amp;quot;)
+	}
+	mp.waitlock = lock
+	mp.waitunlockf = unlockf
+	gp.waitreason = reason
+	mp.waittraceev = traceEv
+	mp.waittraceskip = traceskip
+    // 解除对m的抢占
+	releasem(mp)
+	// can&#39;t do anything that might move the G between Ms here.
+    // 不能做任何可能在 Ms 之间移动 G 的事情。
+    // 保存协程，切换在go
+	mcall(park_m)
+}
+func park_m(gp *g) {
+	_g_ := getg()
+
+	if trace.enabled {
+		traceGoPark(_g_.m.waittraceev, _g_.m.waittraceskip)
+	}
+    //更改协程由运行状态到等待状态
+	casgstatus(gp, _Grunning, _Gwaiting)
+	dropg()
+    &amp;quot;&amp;quot;&amp;quot;
+    func dropg() {
+    	_g_ := getg()
+        // 把m当前执行的置为nil(m不在运行这个当前写协程，协程就挂起了)
+    	setMNoWB(&amp;amp;_g_.m.curg.m, nil)
+    	setGNoWB(&amp;amp;_g_.m.curg, nil)
+    }
+    &amp;quot;&amp;quot;&amp;quot;
+
+	if fn := _g_.m.waitunlockf; fn != nil {
+		ok := fn(gp, _g_.m.waitlock)
+		_g_.m.waitunlockf = nil
+		_g_.m.waitlock = nil
+		if !ok {
+			if trace.enabled {
+				traceGoUnpark(gp, 2)
+			}
+			casgstatus(gp, _Gwaiting, _Grunnable)
+			execute(gp, true) // Schedule it back, never returns.
+		}
+	}
+	schedule() // 寻找下一个G
+}
+//在G中由定时调用回调函数f 
+type timer struct {
+	// If this timer is on a heap, which P&#39;s heap it is on.
+	// puintptr rather than *p to match uintptr in the versions
+	// of this struct defined in other packages.
+	pp puintptr
+
+	// Timer wakes up at when, and then at when+period, ... (period &amp;gt; 0 only)
+	// each time calling f(arg, now) in the timer goroutine, so f must be
+	// a well-behaved function and not block.
+	//
+	// when must be positive on an active timer.
+	when   int64
+	period int64
+	f      func(interface{}, uintptr)
+	arg    interface{}
+	seq    uintptr
+
+	// What to set the when field to in timerModifiedXX status.
+	nextwhen int64
+
+	// The status field holds one of the values below.
+	status uint32
+}
+// Mark gp ready to run.
+// 将等待协程状态置为运行的状态
+func ready(gp *g, traceskip int, next bool) {
+	if trace.enabled {
+		traceGoUnpark(gp, traceskip)
+	}
+
+	status := readgstatus(gp)
+
+	// Mark runnable.
+	_g_ := getg()
+    //// 禁止当前m被抢占
+	mp := acquirem() // disable preemption because it can be holding p in a local var
+	if status&amp;amp;^_Gscan != _Gwaiting {
+		dumpgstatus(gp)
+		throw(&amp;quot;bad g-&amp;gt;status in ready&amp;quot;)
+	}
+
+	// status is Gwaiting or Gscanwaiting, make Grunnable and put on runq
+	casgstatus(gp, _Gwaiting, _Grunnable) // 把协程等待的转态置为可运行状态
+	runqput(_g_.m.p.ptr(), gp, next)  // 添加在运行队列中
+	wakep()// 如果没有可执行的M,就创建新的m
+	releasem(mp)  // 释放当前的m
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;如图所示  &lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 93; 
+			flex-basis: 224px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/4.png&#34; data-size=&#34;616x659&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/4.png&#34;
+			width=&#34;616&#34;
+			height=&#34;659&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/4_hu5613a8da5b016601d36fb944722fdf94_151142_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/4_hu5613a8da5b016601d36fb944722fdf94_151142_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;总结&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol&gt;
+&lt;li&gt;gopark()是让出函数，禁止当前m被抢占，判断当前的协程状态是否为运行状态。&lt;/li&gt;
+&lt;li&gt;dropg()让当前的m不在执行当前的G,修改当前g的状态为等待(协程挂起)，调用schedule() 寻找下一个可执行G&lt;/li&gt;
+&lt;li&gt;timers 等待的g中数据结构，定时调用回调函数f，将g置为了运行状态&lt;/li&gt;
+&lt;li&gt;ready()函数是将唤醒等待G,将G的状态更改为可运行状态，并添加在运行的队列中m，如果没有可执行的M,就创建新的m&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;goroutine-监控&#34;&gt;goroutine 监控&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;使用checkTimers()检查到时间运行的唤醒g&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;源码如下
+checkTimers(pp *p, now int64) (rnow, pollUntil int64, ran bool) {
+  	// If it&#39;s not yet time for the first timer, or the first adjusted
+  	// timer, then there is nothing to do.
+  	next := int64(atomic.Load64(&amp;amp;pp.timer0When))
+  	nextAdj := int64(atomic.Load64(&amp;amp;pp.timerModifiedEarliest))
+  	if next == 0 || (nextAdj != 0 &amp;amp;&amp;amp; nextAdj &amp;lt; next) {
+  		next = nextAdj
+  	}
+  
+  	if next == 0 {
+  		// No timers to run or adjust.
+  		return now, 0, false
+  	}
+  
+  	if now == 0 {
+  		now = nanotime()
+  	}
+  	if now &amp;lt; next {
+  		// Next timer is not ready to run, but keep going
+  		// if we would clear deleted timers.
+  		// This corresponds to the condition below where
+  		// we decide whether to call clearDeletedTimers.
+  		if pp != getg().m.p.ptr() || int(atomic.Load(&amp;amp;pp.deletedTimers)) &amp;lt;= int(atomic.Load(&amp;amp;pp.numTimers)/4) {
+  			return now, next, false
+  		}
+  	}
+  
+  	lock(&amp;amp;pp.timersLock)
+  
+  	if len(pp.timers) &amp;gt; 0 {
+  		adjusttimers(pp, now)
+  		for len(pp.timers) &amp;gt; 0 {
+  			// Note that runtimer may temporarily unlock
+  			// pp.timersLock.
+  			if tw := runtimer(pp, now); tw != 0 {
+  				if tw &amp;gt; 0 {
+  					pollUntil = tw
+  				}
+  				break
+  			}
+  			ran = true
+  		}
+  	}
+  
+  	// If this is the local P, and there are a lot of deleted timers,
+  	// clear them out. We only do this for the local P to reduce
+  	// lock contention on timersLock.
+  	if pp == getg().m.p.ptr() &amp;amp;&amp;amp; int(atomic.Load(&amp;amp;pp.deletedTimers)) &amp;gt; len(pp.timers)/4 {
+  		clearDeletedTimers(pp)
+  	}
+  
+  	unlock(&amp;amp;pp.timersLock)
+  
+  	return now, pollUntil, ran
+  }
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;协程的监控是由专门的监控协程程来运行，监控协程是由主协程创建而来
+，监控协程与gpm中的协程不一样，它不是由gpm进行调度，当然了也不需要P,
+监控timer，并按需调整g的休眠时间，如果没有可执行的M,就创建新的m执行被唤醒的G,
+确保被唤醒g被执行。
+如图  &lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 153; 
+			flex-basis: 368px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/5.png&#34; data-size=&#34;1256x819&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/5.png&#34;
+			width=&#34;1256&#34;
+			height=&#34;819&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/5_hu682cbf00a0aebc2341d65e28e3999df2_184463_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/5_hu682cbf00a0aebc2341d65e28e3999df2_184463_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;goroutine-抢占&#34;&gt;goroutine 抢占&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;对运行过长的g进行抢占，即当g运行时间超过运行阈值的g强制让出m
+运行时间是由P的结构syscalltick、schedtick、timer0When等记录。&lt;/li&gt;
+&lt;li&gt;通过栈增长时：当stackguard = stackPreempt,不执行栈增长，而是执行协程调度,
+这样就让协程让出栈。&lt;/li&gt;
+&lt;li&gt;这种抢占依赖栈增长，有缺陷。所以有asyncPreempt通过信号方式进行异步抢占&lt;br&gt;
+如图所示  &lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 135; 
+			flex-basis: 325px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/6.png&#34; data-size=&#34;1157x853&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/6.png&#34;
+			width=&#34;1157&#34;
+			height=&#34;853&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/6_huc14b31ec4abc9db0f402c5310d9f9d21_373269_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/6_huc14b31ec4abc9db0f402c5310d9f9d21_373269_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;goroutine-调度&#34;&gt;goroutine 调度&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;调用schedule()函数进行协程的调度&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;源码如下：
+func schedule() {
+	_g_ := getg() // 获得当前的G
+
+	if _g_.m.locks != 0 {
+		throw(&amp;quot;schedule: holding locks&amp;quot;)
+	}
+    // 判断当前的M和当前的G是否绑定
+	if _g_.m.lockedg != 0 {
+        // 如果当前的M绑定G,就阻塞m(休眠M)
+		stoplockedm()
+		execute(_g_.m.lockedg.ptr(), false) // Never returns.
+	}
+
+	// We should not schedule away from a g that is executing a cgo call,
+	// since the cgo call is using the m&#39;s g0 stack.
+	if _g_.m.incgo {
+		throw(&amp;quot;schedule: in cgo&amp;quot;)
+	}
+
+top:
+	pp := _g_.m.p.ptr()
+	pp.preempt = false
+    // 判断Gc是否在等待执行
+	if sched.gcwaiting != 0 {
+        //是在等待执行，先执行gc，执行完在执行后续操作
+		gcstopm() 
+		goto top
+	}
+	if pp.runSafePointFn != 0 {
+		runSafePointFn()
+	}
+
+	// Sanity check: if we are spinning, the run queue should be empty.
+	// Check this before calling checkTimers, as that might call
+	// goready to put a ready goroutine on the local run queue.
+	if _g_.m.spinning &amp;amp;&amp;amp; (pp.runnext != 0 || pp.runqhead != pp.runqtail) {
+		throw(&amp;quot;schedule: spinning with local work&amp;quot;)
+	}
+    //检查是否有要被执行的Timer
+	checkTimers(pp, 0)
+
+	var gp *g
+	var inheritTime bool
+
+	// Normal goroutines will check for need to wakeP in ready,
+	// but GCworkers and tracereaders will not, so the check must
+	// be done here instead.
+    // 普通的 goroutine 会检查是否需要在准备好时唤醒， 
+    // 但 GCworkers 和跟踪读取器不会，所以检查必须 
+    // 在这里完成。
+	tryWakeP := false
+	if trace.enabled || trace.shutdown {
+		gp = traceReader()
+		if gp != nil {
+			casgstatus(gp, _Gwaiting, _Grunnable)
+			traceGoUnpark(gp, 0)
+			tryWakeP = true
+		}
+	}
+	if gp == nil &amp;amp;&amp;amp; gcBlackenEnabled != 0 {
+		gp = gcController.findRunnableGCWorker(_g_.m.p.ptr())
+		tryWakeP = tryWakeP || gp != nil
+	}
+	if gp == nil {
+		// Check the global runnable queue once in a while to ensure fairness.
+		// Otherwise two goroutines can completely occupy the local runqueue
+		// by constantly respawning each other.
+        / 每隔一段时间检查一下全局可运行队列以确保公平。 
+        // 否则两个 goroutine 可以完全占用本地运行队列
+        // 通过不断相互重生。
+        // 有%61的概率把G从全局运行队列中搬移到本地可运行队列，保障本地可运行队列
+            有G运行，全局队列也能放在本都队列中
+		if _g_.m.p.ptr().schedtick%61 == 0 &amp;amp;&amp;amp; sched.runqsize &amp;gt; 0 {
+			lock(&amp;amp;sched.lock)
+			gp = globrunqget(_g_.m.p.ptr(), 1)
+			unlock(&amp;amp;sched.lock)
+		}
+	}
+	if gp == nil {
+        // 没有待运行的G 就现在本地可运行队列查找
+		gp, inheritTime = runqget(_g_.m.p.ptr())
+		// We can see gp != nil here even if the M is spinning,
+		// if checkTimers added a local goroutine via goready.
+	}
+	if gp == nil {
+        // 本地队列没有，就调用findrunnable()，直到有待执行的g才返回(先在本地
+            运行队列，全局队列、等待的io, 其他的P)
+		gp, inheritTime = findrunnable() // blocks until work is available
+	}
+
+	// This thread is going to run a goroutine and is not spinning anymore,
+	// so if it was marked as spinning we need to reset it now and potentially
+	// start a new spinning M.
+	if _g_.m.spinning {
+		resetspinning()
+	}
+
+	if sched.disable.user &amp;amp;&amp;amp; !schedEnabled(gp) {
+		// Scheduling of this goroutine is disabled. Put it on
+		// the list of pending runnable goroutines for when we
+		// re-enable user scheduling and look again.
+		lock(&amp;amp;sched.lock)
+		if schedEnabled(gp) {
+			// Something re-enabled scheduling while we
+			// were acquiring the lock.
+			unlock(&amp;amp;sched.lock)
+		} else {
+			sched.disable.runnable.pushBack(gp)
+			sched.disable.n++
+			unlock(&amp;amp;sched.lock)
+			goto top
+		}
+	}
+
+	// If about to schedule a not-normal goroutine (a GCworker or tracereader),
+	// wake a P if there is one.
+	if tryWakeP {
+		wakep()
+	}
+    // 判断获得的G有没有绑定的M,有就阻塞g, 再次进行调度
+	if gp.lockedm != 0 {
+		// Hands off own p to the locked m,
+		// then blocks waiting for a new p.
+		startlockedm(gp)
+		goto top
+	}
+    // 使用execute函数让m执行g
+	execute(gp, inheritTime)
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;如图所示  &lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 103; 
+			flex-basis: 248px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/7.png&#34; data-size=&#34;896x865&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/7.png&#34;
+			width=&#34;896&#34;
+			height=&#34;865&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/7_huebf4099418eefb5d5e40ab8835dd1ae1_193577_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/7_huebf4099418eefb5d5e40ab8835dd1ae1_193577_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;总结&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol&gt;
+&lt;li&gt;判断当前的M和当前的G是否绑定，如果当前的M绑定G,就阻塞m(休眠M)&lt;/li&gt;
+&lt;li&gt;判断Gc是否在等待执行，是在等待执行，先执行gc，执行完在执行后续操作&lt;/li&gt;
+&lt;li&gt;检查是否有要被执行的Timer&lt;/li&gt;
+&lt;li&gt;普通的 goroutine 会检查是否需要在准备好时唤醒，但 GCworkers 和跟踪读取器不会，所以检查必须&lt;/li&gt;
+&lt;li&gt;有%61的概率把G从全局运行队列中搬移到本地可运行队列，保障本地可运行队列有G运行，全局队列也能放在本都队列中&lt;/li&gt;
+&lt;li&gt;没有待运行的G就现在本地可运行队列查找，本地队列没有，就调用findrunnable()，直到有待执行的g才返回(先在本地
+运行队列，全局队列、等待的io, 其他的P中分配G)&lt;/li&gt;
+&lt;li&gt;判断获得的G有没有绑定的M,有就阻塞g, 再次进行调度&lt;/li&gt;
+&lt;li&gt;使用execute函数让m执行g,待运行g绑定m,调用gogo(&amp;amp;gp.sched)协程的现场恢复等&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h2 id=&#34;调度器的设计策略&#34;&gt;调度器的设计策略&lt;/h2&gt;
 &lt;ul&gt;
@@ -955,11 +1364,11 @@ func newproc1(fn *funcval, argp unsafe.Pointer, narg int32, callergp *g, callerp
 			flex-grow: 179; 
 			flex-basis: 431px&#34;
 	&gt;
-	&lt;a href=&#34;https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B/3.png&#34; data-size=&#34;970x540&#34;&gt;
-		&lt;img src=&#34;https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B/3.png&#34;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/3.png&#34; data-size=&#34;970x540&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/3.png&#34;
 			width=&#34;970&#34;
 			height=&#34;540&#34;
-			srcset=&#34;https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B/3_hu6b3ed4c0e6c5dd3549ade2aca3a75bc3_223170_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B/3_hu6b3ed4c0e6c5dd3549ade2aca3a75bc3_223170_1024x0_resize_box_3.png 1024w&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/3_hu6b3ed4c0e6c5dd3549ade2aca3a75bc3_223170_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/3_hu6b3ed4c0e6c5dd3549ade2aca3a75bc3_223170_1024x0_resize_box_3.png 1024w&#34;
 			loading=&#34;lazy&#34;
 			&gt;
 	&lt;/a&gt;
@@ -1231,12 +1640,12 @@ func newproc1(fn *funcval, argp unsafe.Pointer, narg int32, callergp *g, callerp
 </description>
         </item>
         <item>
-        <title>go 基础之map</title>
-        <link>https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap/</link>
+        <title>go 基础之map的深入理解</title>
+        <link>https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/</link>
         <pubDate>Mon, 20 Sep 2021 22:00:38 +0800</pubDate>
         
-        <guid>https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap/</guid>
-        <description>&lt;img src="https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap/3.png" alt="Featured image of post go 基础之map" /&gt;&lt;h1 id=&#34;goland-基础之map&#34;&gt;goland 基础之map&lt;/h1&gt;
+        <guid>https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/3.png" alt="Featured image of post go 基础之map的深入理解" /&gt;&lt;h1 id=&#34;goland-基础之map&#34;&gt;goland 基础之map&lt;/h1&gt;
 &lt;h2 id=&#34;map的内部结构&#34;&gt;map的内部结构&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;go map是使用的哈希表构建的&lt;/li&gt;
@@ -1282,11 +1691,11 @@ type bmap struct {
 			flex-grow: 142; 
 			flex-basis: 341px&#34;
 	&gt;
-	&lt;a href=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap/1.png&#34; data-size=&#34;631x444&#34;&gt;
-		&lt;img src=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap/1.png&#34;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/1.png&#34; data-size=&#34;631x444&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/1.png&#34;
 			width=&#34;631&#34;
 			height=&#34;444&#34;
-			srcset=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap/1_hu1600ca2579a18bcbdc1f1a6cd5b9810d_76803_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap/1_hu1600ca2579a18bcbdc1f1a6cd5b9810d_76803_1024x0_resize_box_3.png 1024w&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/1_hu1600ca2579a18bcbdc1f1a6cd5b9810d_76803_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/1_hu1600ca2579a18bcbdc1f1a6cd5b9810d_76803_1024x0_resize_box_3.png 1024w&#34;
 			loading=&#34;lazy&#34;
 			&gt;
 	&lt;/a&gt;
@@ -1373,11 +1782,11 @@ type bmap struct {
 			flex-grow: 184; 
 			flex-basis: 441px&#34;
 	&gt;
-	&lt;a href=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap/2.png&#34; data-size=&#34;1636x889&#34;&gt;
-		&lt;img src=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap/2.png&#34;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/2.png&#34; data-size=&#34;1636x889&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/2.png&#34;
 			width=&#34;1636&#34;
 			height=&#34;889&#34;
-			srcset=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap/2_hu425c8a15ea5dff908d9430989255e351_318909_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap/2_hu425c8a15ea5dff908d9430989255e351_318909_1024x0_resize_box_3.png 1024w&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/2_hu425c8a15ea5dff908d9430989255e351_318909_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/2_hu425c8a15ea5dff908d9430989255e351_318909_1024x0_resize_box_3.png 1024w&#34;
 			loading=&#34;lazy&#34;
 			&gt;
 	&lt;/a&gt;
@@ -1434,11 +1843,11 @@ type bmap struct {
 			flex-grow: 259; 
 			flex-basis: 623px&#34;
 	&gt;
-	&lt;a href=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap/3.png&#34; data-size=&#34;1503x579&#34;&gt;
-		&lt;img src=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap/3.png&#34;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/3.png&#34; data-size=&#34;1503x579&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/3.png&#34;
 			width=&#34;1503&#34;
 			height=&#34;579&#34;
-			srcset=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap/3_hu50c7ad8b87ebb1655f26b2166388bb8a_150234_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap/3_hu50c7ad8b87ebb1655f26b2166388bb8a_150234_1024x0_resize_box_3.png 1024w&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/3_hu50c7ad8b87ebb1655f26b2166388bb8a_150234_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8Bmap%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/3_hu50c7ad8b87ebb1655f26b2166388bb8a_150234_1024x0_resize_box_3.png 1024w&#34;
 			loading=&#34;lazy&#34;
 			&gt;
 	&lt;/a&gt;
@@ -1914,12 +2323,12 @@ $template RemoteLogs,&amp;quot;/var/log/%HOSTNAME%/%PROGRAMNAME%.log&amp;quot;&l
 </description>
         </item>
         <item>
-        <title>go 基础之切片</title>
-        <link>https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/</link>
+        <title>go 基础之切片的深入理解</title>
+        <link>https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/</link>
         <pubDate>Wed, 15 Sep 2021 22:00:38 +0800</pubDate>
         
-        <guid>https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/</guid>
-        <description>&lt;img src="https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s4.png" alt="Featured image of post go 基础之切片" /&gt;&lt;h2 id=&#34;切片的内部结构&#34;&gt;切片的内部结构&lt;/h2&gt;
+        <guid>https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s4.png" alt="Featured image of post go 基础之切片的深入理解" /&gt;&lt;h2 id=&#34;切片的内部结构&#34;&gt;切片的内部结构&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;切片的结构可分为：数组，数据（元素）的地址&amp;amp;data、也存元素个数len、可以存储多少元素cap&lt;/li&gt;
 &lt;li&gt;源码如下&lt;/li&gt;
@@ -1942,11 +2351,11 @@ type slice struct {
 			flex-grow: 447; 
 			flex-basis: 1075px&#34;
 	&gt;
-	&lt;a href=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s1.png&#34; data-size=&#34;327x73&#34;&gt;
-		&lt;img src=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s1.png&#34;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s1.png&#34; data-size=&#34;327x73&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s1.png&#34;
 			width=&#34;327&#34;
 			height=&#34;73&#34;
-			srcset=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s1_hufa230f30ea970ac155f1510029c77fa1_16064_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s1_hufa230f30ea970ac155f1510029c77fa1_16064_1024x0_resize_box_3.png 1024w&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s1_hufa230f30ea970ac155f1510029c77fa1_16064_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s1_hufa230f30ea970ac155f1510029c77fa1_16064_1024x0_resize_box_3.png 1024w&#34;
 			loading=&#34;lazy&#34;
 			alt=&#34;avatar&#34;&gt;
 	&lt;/a&gt;
@@ -1964,11 +2373,11 @@ type slice struct {
 			flex-grow: 425; 
 			flex-basis: 1020px&#34;
 	&gt;
-	&lt;a href=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s2.png&#34; data-size=&#34;357x84&#34;&gt;
-		&lt;img src=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s2.png&#34;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s2.png&#34; data-size=&#34;357x84&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s2.png&#34;
 			width=&#34;357&#34;
 			height=&#34;84&#34;
-			srcset=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s2_hu3ecbacb1008bd2eb98e4b57b029321b8_19806_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s2_hu3ecbacb1008bd2eb98e4b57b029321b8_19806_1024x0_resize_box_3.png 1024w&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s2_hu3ecbacb1008bd2eb98e4b57b029321b8_19806_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s2_hu3ecbacb1008bd2eb98e4b57b029321b8_19806_1024x0_resize_box_3.png 1024w&#34;
 			loading=&#34;lazy&#34;
 			alt=&#34;avatar&#34;&gt;
 	&lt;/a&gt;
@@ -2007,11 +2416,11 @@ type slice struct {
 			flex-grow: 318; 
 			flex-basis: 763px&#34;
 	&gt;
-	&lt;a href=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s3.png&#34; data-size=&#34;525x165&#34;&gt;
-		&lt;img src=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s3.png&#34;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s3.png&#34; data-size=&#34;525x165&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s3.png&#34;
 			width=&#34;525&#34;
 			height=&#34;165&#34;
-			srcset=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s3_hu288b58219022501a33ccafd08b91cbd7_40298_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s3_hu288b58219022501a33ccafd08b91cbd7_40298_1024x0_resize_box_3.png 1024w&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s3_hu288b58219022501a33ccafd08b91cbd7_40298_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s3_hu288b58219022501a33ccafd08b91cbd7_40298_1024x0_resize_box_3.png 1024w&#34;
 			loading=&#34;lazy&#34;
 			alt=&#34;avatar&#34;&gt;
 	&lt;/a&gt;
@@ -2030,11 +2439,11 @@ type slice struct {
 			flex-grow: 195; 
 			flex-basis: 468px&#34;
 	&gt;
-	&lt;a href=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s4.png&#34; data-size=&#34;531x272&#34;&gt;
-		&lt;img src=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s4.png&#34;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s4.png&#34; data-size=&#34;531x272&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s4.png&#34;
 			width=&#34;531&#34;
 			height=&#34;272&#34;
-			srcset=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s4_hu1fce009c184102799b4a69d72efc8ec2_68940_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87/s4_hu1fce009c184102799b4a69d72efc8ec2_68940_1024x0_resize_box_3.png 1024w&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s4_hu1fce009c184102799b4a69d72efc8ec2_68940_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/go-%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s4_hu1fce009c184102799b4a69d72efc8ec2_68940_1024x0_resize_box_3.png 1024w&#34;
 			loading=&#34;lazy&#34;
 			alt=&#34;avatar&#34;&gt;
 	&lt;/a&gt;
