@@ -580,7 +580,7 @@ func chanrecv(c *hchan, ep unsafe.Pointer, block bool) (selected, received bool)
 	
 &lt;/figure&gt;&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h3 id=&#34;channel-关闭&#34;&gt;channel 关闭&lt;/h3&gt;
+&lt;h2 id=&#34;channel-关闭&#34;&gt;channel 关闭&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;close(chan)&lt;/li&gt;
 &lt;/ul&gt;
