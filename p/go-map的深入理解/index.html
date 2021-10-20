@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='goland 基础之map map的内部结构  go map是使用的哈希表构建的 map的结构可分为：hmap的结构体和bmap(桶)，hmap结构体记录这map的基础信息(包括map存储个数， 桶的个数，hash种子，桶的数据，扩容时旧桶的数据以及迁移个数（map扩容不是一次性迁移完）) 源码如下    定义hmap的结构： type hmap struct { // Note: the format of the hmap is also encoded in cmd/compile/internal/gc/reflect.go. // Make sure this stays in sync with the compiler&#39;s definition. // map 存储元素的计数 count int // # live cells == size of map. Must be first (used by len() builtin) flags uint8 // map的状态标识，桶是否在增改，扩容或者缩容 //桶的个数/采用的与运算法计算桶的个数，桶的个数为2的整数次幂 B uint8 // log_2 of # of buckets (can hold up to loadFactor * 2^B items) //溢出的桶的数量的近似值 noverflow uint16 // approximate number of overflow buckets; see incrnoverflow for details hash0 uint32 // hash seed //指向桶数据的指针 buckets unsafe.'><title>go map的深入理解</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/go-map%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='go map的深入理解'>
+<meta property='og:description' content='goland 基础之map map的内部结构  go map是使用的哈希表构建的 map的结构可分为：hmap的结构体和bmap(桶)，hmap结构体记录这map的基础信息(包括map存储个数， 桶的个数，hash种子，桶的数据，扩容时旧桶的数据以及迁移个数（map扩容不是一次性迁移完）) 源码如下    定义hmap的结构： type hmap struct { // Note: the format of the hmap is also encoded in cmd/compile/internal/gc/reflect.go. // Make sure this stays in sync with the compiler&#39;s definition. // map 存储元素的计数 count int // # live cells == size of map. Must be first (used by len() builtin) flags uint8 // map的状态标识，桶是否在增改，扩容或者缩容 //桶的个数/采用的与运算法计算桶的个数，桶的个数为2的整数次幂 B uint8 // log_2 of # of buckets (can hold up to loadFactor * 2^B items) //溢出的桶的数量的近似值 noverflow uint16 // approximate number of overflow buckets; see incrnoverflow for details hash0 uint32 // hash seed //指向桶数据的指针 buckets unsafe.'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/go-map%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-09-20T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2021-09-20T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/go-map%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/3.png' />
+<meta name="twitter:title" content="go map的深入理解">
+<meta name="twitter:description" content="goland 基础之map map的内部结构  go map是使用的哈希表构建的 map的结构可分为：hmap的结构体和bmap(桶)，hmap结构体记录这map的基础信息(包括map存储个数， 桶的个数，hash种子，桶的数据，扩容时旧桶的数据以及迁移个数（map扩容不是一次性迁移完）) 源码如下    定义hmap的结构： type hmap struct { // Note: the format of the hmap is also encoded in cmd/compile/internal/gc/reflect.go. // Make sure this stays in sync with the compiler&#39;s definition. // map 存储元素的计数 count int // # live cells == size of map. Must be first (used by len() builtin) flags uint8 // map的状态标识，桶是否在增改，扩容或者缩容 //桶的个数/采用的与运算法计算桶的个数，桶的个数为2的整数次幂 B uint8 // log_2 of # of buckets (can hold up to loadFactor * 2^B items) //溢出的桶的数量的近似值 noverflow uint16 // approximate number of overflow buckets; see incrnoverflow for details hash0 uint32 // hash seed //指向桶数据的指针 buckets unsafe."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/go-map%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/3.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/go-map%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/">
+                <img src="/p/go-map%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/3_hu50c7ad8b87ebb1655f26b2166388bb8a_150234_800x0_resize_box_3.png"
+                        srcset="/p/go-map%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/3_hu50c7ad8b87ebb1655f26b2166388bb8a_150234_800x0_resize_box_3.png 800w, /p/go-map%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/3_hu50c7ad8b87ebb1655f26b2166388bb8a_150234_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="308" 
+                        loading="lazy"
+                        alt="Featured image of post go map的深入理解" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/language/" style="background-color: #2a9d8f; color: #fff;">
+                语言学习
+            </a>
+        
+            <a href="/categories/golang/" style="background-color: #2a9d8f; color: #fff;">
+                Golang
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/go-map%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/">go map的深入理解</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Sep 20, 2021</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 5 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h1 id="goland-基础之map">goland 基础之map</h1>
+<h2 id="map的内部结构">map的内部结构</h2>
+<ul>
+<li>go map是使用的哈希表构建的</li>
+<li>map的结构可分为：hmap的结构体和bmap(桶)，hmap结构体记录这map的基础信息(包括map存储个数，
+桶的个数，hash种子，桶的数据，扩容时旧桶的数据以及迁移个数（map扩容不是一次性迁移完）)</li>
+<li>源码如下</li>
+</ul>
+<blockquote>
+</blockquote>
+<pre tabindex="0"><code>定义hmap的结构：
+type hmap struct {
+	// Note: the format of the hmap is also encoded in cmd/compile/internal/gc/reflect.go.
+	// Make sure this stays in sync with the compiler's definition.
+    // map 存储元素的计数
+	count     int // # live cells == size of map.  Must be first (used by len() builtin)
+    flags     uint8 // map的状态标识，桶是否在增改，扩容或者缩容
+    //桶的个数/采用的与运算法计算桶的个数，桶的个数为2的整数次幂
+	B         uint8  // log_2 of # of buckets (can hold up to loadFactor * 2^B items)
+	//溢出的桶的数量的近似值
+    noverflow uint16 // approximate number of overflow buckets; see incrnoverflow for details
+	hash0     uint32 // hash seed
+    //指向桶数据的指针
+	buckets    unsafe.Pointer // array of 2^B Buckets. may be nil if count==0.
+	// 指向旧桶数据的指针
+    oldbuckets unsafe.Pointer // previous bucket array of half the size, non-nil only when growing
+	//扩容计数
+    nevacuate  uintptr        // progress counter for evacuation (buckets less than this have been evacuated)
+    // 保存溢出桶的链表和未使用的溢出桶数组的首地址
+	extra *mapextra // optional fields
+}
+// 桶的实现结构
+type bmap struct {
+	// 当前版本bucketCnt的值是8，一个桶最多存储8个key-value对
+	tophash [bucketCnt]uint8
+}
+
+</code></pre><ul>
+<li>bmap存储结构如图所示<br>
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 142; 
+			flex-basis: 341px"
+	>
+	<a href="/p/go-map%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/1.png" data-size="631x444">
+		<img src="/p/go-map%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/1.png"
+			width="631"
+			height="444"
+			srcset="/p/go-map%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/1_hu1600ca2579a18bcbdc1f1a6cd5b9810d_76803_480x0_resize_box_3.png 480w, /p/go-map%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/1_hu1600ca2579a18bcbdc1f1a6cd5b9810d_76803_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></li>
+<li>前8个是hash值，8个key和8个value、后面是溢出桶的指针</li>
+<li>溢出桶是减少map扩容次数，溢出桶的结构与bmap桶的结构一样的</li>
+<li>溢出桶的基础结构：</li>
+</ul>
+<blockquote>
+</blockquote>
+<pre tabindex="0"><code class="language-//" data-lang="//">  type mapextra struct {
+  	// If both key and elem do not contain pointers and are inline, then we mark bucket
+  	// type as containing no pointers. This avoids scanning such maps.
+  	// However, bmap.overflow is a pointer. In order to keep overflow buckets
+  	// alive, we store pointers to all overflow buckets in hmap.extra.overflow and hmap.extra.oldoverflow.
+  	// overflow and oldoverflow are only used if key and elem do not contain pointers.
+  	// overflow contains overflow buckets for hmap.buckets.
+  	// oldoverflow contains overflow buckets for hmap.oldbuckets.
+  	// The indirection allows to store a pointer to the slice in hiter.
+  	overflow    *[]*bmap  //记录已经被使用的溢出桶
+  	oldoverflow *[]*bmap  // 扩容阶段旧的溢出桶
+  
+  	// nextOverflow holds a pointer to a free overflow bucket.
+  	nextOverflow *bmap   //指向下一个空闲的溢出桶
+  }
+</code></pre><ul>
+<li>当桶的个数大于2的4次方时就会使用溢出桶源码如下</li>
+</ul>
+<pre tabindex="0"><code>func makeBucketArray(t *maptype, b uint8, dirtyalloc unsafe.Pointer) (buckets unsafe.Pointer, nextOverflow *bmap) {
+	// 桶的个数
+    base := bucketShift(b)
+	nbuckets := base
+	// For small b, overflow buckets are unlikely.
+	// Avoid the overhead of the calculation.
+	if b &gt;= 4 {
+        // 使用溢出桶
+		// Add on the estimated number of overflow buckets
+		// required to insert the median number of elements
+		// used with this value of b.
+		nbuckets += bucketShift(b - 4)//计算溢出桶的数量和不是溢出桶的数量的和
+		sz := t.bucket.size * nbuckets
+		up := roundupsize(sz)
+		if up != sz {
+			nbuckets = up / t.bucket.size //得出桶的数量
+		}
+	}
+
+	if dirtyalloc == nil {
+        // 没有被创建桶，申请创建桶的，返回桶的首地址
+		buckets = newarray(t.bucket, int(nbuckets))
+	} else {
+		// dirtyalloc was previously generated by
+		// the above newarray(t.bucket, int(nbuckets))
+		// but may not be empty.
+		buckets = dirtyalloc
+		size := t.bucket.size * nbuckets
+		if t.bucket.ptrdata != 0 {
+			memclrHasPointers(buckets, size)
+		} else {
+			memclrNoHeapPointers(buckets, size)
+		}
+	}
+
+	if base != nbuckets {
+		// We preallocated some overflow buckets.
+		// To keep the overhead of tracking these overflow buckets to a minimum,
+		// we use the convention that if a preallocated overflow bucket's overflow
+		// pointer is nil, then there are more available by bumping the pointer.
+		// We need a safe non-nil pointer for the last overflow bucket; just use buckets.
+		//空闲桶的地址
+        nextOverflow = (*bmap)(add(buckets, base*uintptr(t.bucketsize)))
+		last := (*bmap)(add(buckets, (nbuckets-1)*uintptr(t.bucketsize)))
+		last.setoverflow(t, (*bmap)(buckets))
+	}
+	return buckets, nextOverflow
+}
+</code></pre><ul>
+<li>如图所示<br>
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 184; 
+			flex-basis: 441px"
+	>
+	<a href="/p/go-map%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/2.png" data-size="1636x889">
+		<img src="/p/go-map%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/2.png"
+			width="1636"
+			height="889"
+			srcset="/p/go-map%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/2_hu425c8a15ea5dff908d9430989255e351_318909_480x0_resize_box_3.png 480w, /p/go-map%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/2_hu425c8a15ea5dff908d9430989255e351_318909_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></li>
+<li>使用map时需要make(map[type]type,len,cap)才能使用。</li>
+<li>make 源码如下：</li>
+</ul>
+<blockquote>
+</blockquote>
+<pre tabindex="0"><code>func makemap(t *maptype, hint int, h *hmap) *hmap {
+    // 判断是否超过内存的限制
+	mem, overflow := math.MulUintptr(uintptr(hint), t.bucket.size)
+	if overflow || mem &gt; maxAlloc {
+		hint = 0
+	}
+
+	// initialize Hmap
+	if h == nil {
+		h = new(hmap)
+	}
+	h.hash0 = fastrand()// 获取随机的hash值
+
+	// Find the size parameter B which will hold the requested # of elements.
+	// For hint &lt; 0 overLoadFactor returns false since hint &lt; bucketCnt.
+	B := uint8(0)
+	for overLoadFactor(hint, B) {
+		B++
+	}
+	h.B = B
+
+	// allocate initial hash table
+	// if B == 0, the buckets field is allocated lazily later (in mapassign)
+	// If hint is large zeroing this memory could take a while.
+	if h.B != 0 {
+		var nextOverflow *bmap
+        // 创建map的存储数据，返回的桶的数据的地址，下一个溢出桶的地址
+		h.buckets, nextOverflow = makeBucketArray(t, h.B, nil)
+		if nextOverflow != nil {
+			h.extra = new(mapextra)
+			h.extra.nextOverflow = nextOverflow
+		}
+	}
+
+	return h
+}
+</code></pre><ul>
+<li>
+<p>map的完整结构如图：
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 259; 
+			flex-basis: 623px"
+	>
+	<a href="/p/go-map%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/3.png" data-size="1503x579">
+		<img src="/p/go-map%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/3.png"
+			width="1503"
+			height="579"
+			srcset="/p/go-map%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/3_hu50c7ad8b87ebb1655f26b2166388bb8a_150234_480x0_resize_box_3.png 480w, /p/go-map%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/3_hu50c7ad8b87ebb1655f26b2166388bb8a_150234_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<h2 id="map扩容">map扩容</h2>
+<h3 id="扩容条件">扩容条件</h3>
+</li>
+</ul>
+<ol>
+<li>
+<p>当负载因子(loadFactorNum*(bucketShift(B)/loadFactorDen&gt;6.5  -&gt; 翻倍扩容</p>
+</li>
+<li>
+<p>当负载因子小于6.5，但是溢出桶的数量大于2的15次方  -&gt; 等量扩容</p>
+</li>
+<li>
+<p>源代码如下：</p>
+<blockquote>
+</blockquote>
+</li>
+</ol>
+<pre tabindex="0"><code>// overLoadFactor reports whether count items placed in 1&lt;&lt;B buckets is over loadFactor.
+// 负载因子大于6.5
+func overLoadFactor(count int, B uint8) bool {
+	return count &gt; bucketCnt &amp;&amp; uintptr(count) &gt; loadFactorNum*(bucketShift(B)/loadFactorDen)
+}
+// 溢出桶过多时
+func tooManyOverflowBuckets(noverflow uint16, B uint8) bool {
+	// If the threshold is too low, we do extraneous work.
+	// If the threshold is too high, maps that grow and shrink can hold on to lots of unused memory.
+	// &quot;too many&quot; means (approximately) as many overflow buckets as regular buckets.
+	// See incrnoverflow for more details.
+	if B &gt; 15 {
+		B = 15
+	}
+	// The compiler doesn't see here that B &lt; 16; mask B to generate shorter shift code.
+	return noverflow &gt;= uint16(1)&lt;&lt;(B&amp;15)
+}
+// 扩容源码
+
+func hashGrow(t *maptype, h *hmap) {
+	// If we've hit the load factor, get bigger.
+	// Otherwise, there are too many overflow buckets,
+	// so keep the same number of buckets and &quot;grow&quot; laterally.
+	bigger := uint8(1)
+	if !overLoadFactor(h.count+1, h.B) {
+        //等量扩容
+		bigger = 0
+		h.flags |= sameSizeGrow
+	}
+	oldbuckets := h.buckets
+	newbuckets, nextOverflow := makeBucketArray(t, h.B+bigger, nil)// 从新分配数据地址
+
+	flags := h.flags &amp;^ (iterator | oldIterator)
+	if h.flags&amp;iterator != 0 {
+        // 迭代的时候搬迁旧桶
+		flags |= oldIterator
+	}
+	// commit the grow (atomic wrt gc)
+	h.B += bigger  // 桶的个数
+	h.flags = flags
+	h.oldbuckets = oldbuckets
+	h.buckets = newbuckets
+	h.nevacuate = 0
+	h.noverflow = 0
+    // 溢出桶钻便为旧溢出桶
+	if h.extra != nil &amp;&amp; h.extra.overflow != nil {
+		// Promote current overflow buckets to the old generation.
+		if h.extra.oldoverflow != nil {
+			throw(&quot;oldoverflow is not nil&quot;)
+		}
+		h.extra.oldoverflow = h.extra.overflow
+		h.extra.overflow = nil
+	}
+	if nextOverflow != nil {
+		if h.extra == nil {
+			h.extra = new(mapextra)
+		}
+		h.extra.nextOverflow = nextOverflow
+	}
+
+	// the actual copying of the hash table data is done incrementally
+	// by growWork() and evacuate().
+}
+</code></pre><h2 id="参考文献">参考文献</h2>
+<p>1.<a class="link" href="https://www.zhihu.com/people/kylin-lab"  target="_blank" rel="noopener"
+    >https://www.zhihu.com/people/kylin-lab</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/go-channel%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/">
+        
+        
+            <div class="article-image">
+                <img src="/p/go-channel%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/3.9aa8b5ec7746bb6b90edf2e5d65d959d_huc32f323c0433538c753e80bb5a9a01bb_276268_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-mqi17HdGu2uQ7fLl1l2VnQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Go Channel的深入理解</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/">
+        
+        
+            <div class="article-image">
+                <img src="/p/go-goroutine%E4%B8%8Egmp%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/1.d2b7d89ef818d26153faa0457442b815_huda718813a1636432ee91da972c85e460_240629_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-0rfYnvgY0mFT&#43;qBFdEK4FQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">go goroutine与gmp模型的深入理解</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/go-%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/">
+        
+        
+            <div class="article-image">
+                <img src="/p/go-%E5%88%87%E7%89%87%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/s4.a231cc835b6359433d6a90044bfb9a81_hu1fce009c184102799b4a69d72efc8ec2_68940_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-ojHMg1tjWUM9apAES/uagQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">go 切片的深入理解</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/golang/">
+        
+        
+            <div class="article-image">
+                <img src="/p/golang/2.470859f0db80e15c860100d7f8e534f5_hu3607656af67f333528ae9e7b0ed06a62_30106_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="Golang" 
+                        data-hash="md5-RwhZ8NuA4VyGAQDX&#43;OU09Q==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">go error类型转json</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#map的内部结构">map的内部结构</a></li>
+    <li><a href="#map扩容">map扩容</a>
+      <ol>
+        <li><a href="#扩容条件">扩容条件</a></li>
+      </ol>
+    </li>
+    <li><a href="#参考文献">参考文献</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
