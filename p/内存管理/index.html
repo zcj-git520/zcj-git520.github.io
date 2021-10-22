@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='虚拟地址空间布局  程序通过编译成为一堆的机器指令写入可执行文件，程序在运行是会将可执行文件加载在计算机的内存中 在虚拟地址空间分布中处于代码段。 程序中的局部变量、函数的参数、函数的返回值等数据会保存在虚拟地址的栈中(栈是先进后出的数据结构) 栈空间的编译器分配和释放。 程序的全局变量和静态变量会保存在虚拟地址的数据段 动态分配内存的地址会保存在虚拟地址空间的堆上。堆空间是动态开辟的内存空间，需要主动开辟和释放。或者 调用GC释放   堆空间内存管理  堆内存空间不是编译器分配，而是有程序动态分配的内存空间。  手动垃圾回收  需要程序主动释放没有用的数据所在的堆空间。如：c&#43;&#43;中调用new()函数向计算机申请开辟内存空间后，使用delete或delete[]释放不需要的 堆内存空间。这一类是手动内存分配和释放。手动内存分配使用不恰当也会造成：内存泄露 悬挂指针的问题   过早释放会造成悬挂指针（野指针）：提前释放了动态的堆内存的空间，当程序访问这段地址时会报错。因为这段提前释放的内存空间被清空、 重新分配或者被操作系统回收。释放指针时将指针赋值为NULL，在访问时对指针进行判断是否为NULL 不释放内存会造成内存泄漏：堆内存需要手动释放，当程序运行结束不释放，这段内存就会被一直占用。如果 一直在分配不释放会一直占用计算机的内存，直到内存被占完。将new与delete配套使用，使用工具检测或者打印出堆信息  自动垃圾回收（GC）  在程序运行过程中自动释放没有用的数据所在的堆空间（垃圾回收).在虚拟内存空间中能从栈或者数据段的根节点追踪不到的数据为没用的数据 （内存垃圾），常用的算法：标记法, 计数法  标记法回收  标记法：将栈或者数据段作为根（root）进行追踪,将能追踪得的数据（堆空间）进行标记。没有被标记的数据 （堆空间）就是垃圾，将这部分垃圾进行回收。三色抽象：   垃圾回收开始时，将所有数据为白色 垃圾回收开始时，将所有的栈或者数据段的根节点设置为灰色 在根据根节点进行追踪，直到所有的数据节点追踪结束后将根节点置为黑色，在将根节点的下一节点作为根节点进行追踪 所有的数据节点都追踪完后，会剩下黑色和白色的数据节点。黑色表示有用的数据。白色为无用的数据。将白色的数据进行回收（堆空间的释放）    标记法实现简单，但是会造成内存的碎片化(内存块中是可使用小内存块，造成大内存块不能使用这块内存，这些小小内存块也不能使用) 因为内存碎片化的问题诞生了   标记整理法，就是标记法之后，将有用的数据堆内存空间移动在一起，释放更多连续的堆空间,但是这种做法带来 很大的开销，因为需要不断的扫描内存和移动内存 复制回收法。将堆内存分为from和To两个相同的堆内存空间。程序执行时，使用from的堆空间。垃圾回收时会扫描from 的堆内存空间，将有用的数据复制到To的堆空间上。垃圾回收结束时，将To堆空间设置为From堆空间。将原来的from 堆空间全部回收后置为Ton堆空间。但是复制回收法只会使用一般的堆内存空间，造成堆内存空间利用率不高  分代法回收：大部分对象都会在年轻时候死亡（弱分代假说）把新建的对象称之为新生代对象。经过特定次数的GC(垃圾回收)数据依然有用的对象称为 老年代对象。而大部分会在新生代对象就会垃圾回收了，在结合复制回收法使用   计数法回收  引用计数指的是对象被引用的次数，程序在运行过程中会更新引用次数。对象引用越多，计数越大，当计数为0时，回收该对象（堆内存空间）   '><title>内存管理</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='内存管理'>
+<meta property='og:description' content='虚拟地址空间布局  程序通过编译成为一堆的机器指令写入可执行文件，程序在运行是会将可执行文件加载在计算机的内存中 在虚拟地址空间分布中处于代码段。 程序中的局部变量、函数的参数、函数的返回值等数据会保存在虚拟地址的栈中(栈是先进后出的数据结构) 栈空间的编译器分配和释放。 程序的全局变量和静态变量会保存在虚拟地址的数据段 动态分配内存的地址会保存在虚拟地址空间的堆上。堆空间是动态开辟的内存空间，需要主动开辟和释放。或者 调用GC释放   堆空间内存管理  堆内存空间不是编译器分配，而是有程序动态分配的内存空间。  手动垃圾回收  需要程序主动释放没有用的数据所在的堆空间。如：c&#43;&#43;中调用new()函数向计算机申请开辟内存空间后，使用delete或delete[]释放不需要的 堆内存空间。这一类是手动内存分配和释放。手动内存分配使用不恰当也会造成：内存泄露 悬挂指针的问题   过早释放会造成悬挂指针（野指针）：提前释放了动态的堆内存的空间，当程序访问这段地址时会报错。因为这段提前释放的内存空间被清空、 重新分配或者被操作系统回收。释放指针时将指针赋值为NULL，在访问时对指针进行判断是否为NULL 不释放内存会造成内存泄漏：堆内存需要手动释放，当程序运行结束不释放，这段内存就会被一直占用。如果 一直在分配不释放会一直占用计算机的内存，直到内存被占完。将new与delete配套使用，使用工具检测或者打印出堆信息  自动垃圾回收（GC）  在程序运行过程中自动释放没有用的数据所在的堆空间（垃圾回收).在虚拟内存空间中能从栈或者数据段的根节点追踪不到的数据为没用的数据 （内存垃圾），常用的算法：标记法, 计数法  标记法回收  标记法：将栈或者数据段作为根（root）进行追踪,将能追踪得的数据（堆空间）进行标记。没有被标记的数据 （堆空间）就是垃圾，将这部分垃圾进行回收。三色抽象：   垃圾回收开始时，将所有数据为白色 垃圾回收开始时，将所有的栈或者数据段的根节点设置为灰色 在根据根节点进行追踪，直到所有的数据节点追踪结束后将根节点置为黑色，在将根节点的下一节点作为根节点进行追踪 所有的数据节点都追踪完后，会剩下黑色和白色的数据节点。黑色表示有用的数据。白色为无用的数据。将白色的数据进行回收（堆空间的释放）    标记法实现简单，但是会造成内存的碎片化(内存块中是可使用小内存块，造成大内存块不能使用这块内存，这些小小内存块也不能使用) 因为内存碎片化的问题诞生了   标记整理法，就是标记法之后，将有用的数据堆内存空间移动在一起，释放更多连续的堆空间,但是这种做法带来 很大的开销，因为需要不断的扫描内存和移动内存 复制回收法。将堆内存分为from和To两个相同的堆内存空间。程序执行时，使用from的堆空间。垃圾回收时会扫描from 的堆内存空间，将有用的数据复制到To的堆空间上。垃圾回收结束时，将To堆空间设置为From堆空间。将原来的from 堆空间全部回收后置为Ton堆空间。但是复制回收法只会使用一般的堆内存空间，造成堆内存空间利用率不高  分代法回收：大部分对象都会在年轻时候死亡（弱分代假说）把新建的对象称之为新生代对象。经过特定次数的GC(垃圾回收)数据依然有用的对象称为 老年代对象。而大部分会在新生代对象就会垃圾回收了，在结合复制回收法使用   计数法回收  引用计数指的是对象被引用的次数，程序在运行过程中会更新引用次数。对象引用越多，计数越大，当计数为0时，回收该对象（堆内存空间）   '>
+<meta property='og:url' content='https://zcj-git520.github.io/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-10-18T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2021-10-18T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/1.png' />
+<meta name="twitter:title" content="内存管理">
+<meta name="twitter:description" content="虚拟地址空间布局  程序通过编译成为一堆的机器指令写入可执行文件，程序在运行是会将可执行文件加载在计算机的内存中 在虚拟地址空间分布中处于代码段。 程序中的局部变量、函数的参数、函数的返回值等数据会保存在虚拟地址的栈中(栈是先进后出的数据结构) 栈空间的编译器分配和释放。 程序的全局变量和静态变量会保存在虚拟地址的数据段 动态分配内存的地址会保存在虚拟地址空间的堆上。堆空间是动态开辟的内存空间，需要主动开辟和释放。或者 调用GC释放   堆空间内存管理  堆内存空间不是编译器分配，而是有程序动态分配的内存空间。  手动垃圾回收  需要程序主动释放没有用的数据所在的堆空间。如：c&#43;&#43;中调用new()函数向计算机申请开辟内存空间后，使用delete或delete[]释放不需要的 堆内存空间。这一类是手动内存分配和释放。手动内存分配使用不恰当也会造成：内存泄露 悬挂指针的问题   过早释放会造成悬挂指针（野指针）：提前释放了动态的堆内存的空间，当程序访问这段地址时会报错。因为这段提前释放的内存空间被清空、 重新分配或者被操作系统回收。释放指针时将指针赋值为NULL，在访问时对指针进行判断是否为NULL 不释放内存会造成内存泄漏：堆内存需要手动释放，当程序运行结束不释放，这段内存就会被一直占用。如果 一直在分配不释放会一直占用计算机的内存，直到内存被占完。将new与delete配套使用，使用工具检测或者打印出堆信息  自动垃圾回收（GC）  在程序运行过程中自动释放没有用的数据所在的堆空间（垃圾回收).在虚拟内存空间中能从栈或者数据段的根节点追踪不到的数据为没用的数据 （内存垃圾），常用的算法：标记法, 计数法  标记法回收  标记法：将栈或者数据段作为根（root）进行追踪,将能追踪得的数据（堆空间）进行标记。没有被标记的数据 （堆空间）就是垃圾，将这部分垃圾进行回收。三色抽象：   垃圾回收开始时，将所有数据为白色 垃圾回收开始时，将所有的栈或者数据段的根节点设置为灰色 在根据根节点进行追踪，直到所有的数据节点追踪结束后将根节点置为黑色，在将根节点的下一节点作为根节点进行追踪 所有的数据节点都追踪完后，会剩下黑色和白色的数据节点。黑色表示有用的数据。白色为无用的数据。将白色的数据进行回收（堆空间的释放）    标记法实现简单，但是会造成内存的碎片化(内存块中是可使用小内存块，造成大内存块不能使用这块内存，这些小小内存块也不能使用) 因为内存碎片化的问题诞生了   标记整理法，就是标记法之后，将有用的数据堆内存空间移动在一起，释放更多连续的堆空间,但是这种做法带来 很大的开销，因为需要不断的扫描内存和移动内存 复制回收法。将堆内存分为from和To两个相同的堆内存空间。程序执行时，使用from的堆空间。垃圾回收时会扫描from 的堆内存空间，将有用的数据复制到To的堆空间上。垃圾回收结束时，将To堆空间设置为From堆空间。将原来的from 堆空间全部回收后置为Ton堆空间。但是复制回收法只会使用一般的堆内存空间，造成堆内存空间利用率不高  分代法回收：大部分对象都会在年轻时候死亡（弱分代假说）把新建的对象称之为新生代对象。经过特定次数的GC(垃圾回收)数据依然有用的对象称为 老年代对象。而大部分会在新生代对象就会垃圾回收了，在结合复制回收法使用   计数法回收  引用计数指的是对象被引用的次数，程序在运行过程中会更新引用次数。对象引用越多，计数越大，当计数为0时，回收该对象（堆内存空间）   "><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/1.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
+                <img src="/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/1_hu86f620222550b5f6f6b08ef9da75c8f9_105109_800x0_resize_box_3.png"
+                        srcset="/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/1_hu86f620222550b5f6f6b08ef9da75c8f9_105109_800x0_resize_box_3.png 800w, /p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/1_hu86f620222550b5f6f6b08ef9da75c8f9_105109_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="1163" 
+                        loading="lazy"
+                        alt="Featured image of post 内存管理" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/computer/" style="background-color: #2a9d8f; color: #fff;">
+                知识学习
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">内存管理</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Oct 18, 2021</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 1 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h2 id="虚拟地址空间布局">虚拟地址空间布局</h2>
+<ul>
+<li>程序通过编译成为一堆的机器指令写入可执行文件，程序在运行是会将可执行文件加载在计算机的内存中
+在虚拟地址空间分布中处于代码段。</li>
+<li>程序中的局部变量、函数的参数、函数的返回值等数据会保存在虚拟地址的栈中(栈是先进后出的数据结构)
+栈空间的编译器分配和释放。</li>
+<li>程序的全局变量和静态变量会保存在虚拟地址的数据段</li>
+<li>动态分配内存的地址会保存在虚拟地址空间的堆上。堆空间是动态开辟的内存空间，需要主动开辟和释放。或者
+调用GC释放  <figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 68; 
+			flex-basis: 165px"
+	>
+	<a href="/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/1.png" data-size="547x795">
+		<img src="/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/1.png"
+			width="547"
+			height="795"
+			srcset="/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/1_hu86f620222550b5f6f6b08ef9da75c8f9_105109_480x0_resize_box_3.png 480w, /p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/1_hu86f620222550b5f6f6b08ef9da75c8f9_105109_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></li>
+</ul>
+<h3 id="堆空间内存管理">堆空间内存管理</h3>
+<ul>
+<li>堆内存空间不是编译器分配，而是有程序动态分配的内存空间。</li>
+</ul>
+<h4 id="手动垃圾回收">手动垃圾回收</h4>
+<ul>
+<li>需要程序主动释放没有用的数据所在的堆空间。如：c++中调用new()函数向计算机申请开辟内存空间后，使用delete或delete[]释放不需要的
+堆内存空间。这一类是手动内存分配和释放。手动内存分配使用不恰当也会造成：内存泄露
+悬挂指针的问题</li>
+</ul>
+<ol>
+<li>过早释放会造成悬挂指针（野指针）：提前释放了动态的堆内存的空间，当程序访问这段地址时会报错。因为这段提前释放的内存空间被清空、
+重新分配或者被操作系统回收。释放指针时将指针赋值为NULL，在访问时对指针进行判断是否为NULL</li>
+<li>不释放内存会造成内存泄漏：堆内存需要手动释放，当程序运行结束不释放，这段内存就会被一直占用。如果
+一直在分配不释放会一直占用计算机的内存，直到内存被占完。将new与delete配套使用，使用工具检测或者打印出堆信息</li>
+</ol>
+<h3 id="自动垃圾回收gc">自动垃圾回收（GC）</h3>
+<ul>
+<li>在程序运行过程中自动释放没有用的数据所在的堆空间（垃圾回收).在虚拟内存空间中能从栈或者数据段的根节点追踪不到的数据为没用的数据
+（内存垃圾），常用的算法：标记法, 计数法</li>
+</ul>
+<h4 id="标记法回收">标记法回收</h4>
+<ul>
+<li>标记法：将栈或者数据段作为根（root）进行追踪,将能追踪得的数据（堆空间）进行标记。没有被标记的数据
+（堆空间）就是垃圾，将这部分垃圾进行回收。三色抽象：</li>
+</ul>
+<ol>
+<li>垃圾回收开始时，将所有数据为白色</li>
+<li>垃圾回收开始时，将所有的栈或者数据段的根节点设置为灰色</li>
+<li>在根据根节点进行追踪，直到所有的数据节点追踪结束后将根节点置为黑色，在将根节点的下一节点作为根节点进行追踪</li>
+<li>所有的数据节点都追踪完后，会剩下黑色和白色的数据节点。黑色表示有用的数据。白色为无用的数据。将白色的数据进行回收（堆空间的释放）
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 106; 
+			flex-basis: 256px"
+	>
+	<a href="/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/2.png" data-size="739x692">
+		<img src="/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/2.png"
+			width="739"
+			height="692"
+			srcset="/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/2_hue8f862e9d9f89ba7caf7892b05f14474_215690_480x0_resize_box_3.png 480w, /p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/2_hue8f862e9d9f89ba7caf7892b05f14474_215690_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></li>
+</ol>
+<ul>
+<li>标记法实现简单，但是会造成内存的碎片化(内存块中是可使用小内存块，造成大内存块不能使用这块内存，这些小小内存块也不能使用)</li>
+<li>因为内存碎片化的问题诞生了</li>
+</ul>
+<ol>
+<li>标记整理法，就是标记法之后，将有用的数据堆内存空间移动在一起，释放更多连续的堆空间,但是这种做法带来
+很大的开销，因为需要不断的扫描内存和移动内存</li>
+<li>复制回收法。将堆内存分为from和To两个相同的堆内存空间。程序执行时，使用from的堆空间。垃圾回收时会扫描from
+的堆内存空间，将有用的数据复制到To的堆空间上。垃圾回收结束时，将To堆空间设置为From堆空间。将原来的from
+堆空间全部回收后置为Ton堆空间。但是复制回收法只会使用一般的堆内存空间，造成堆内存空间利用率不高  <figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 190; 
+			flex-basis: 456px"
+	>
+	<a href="/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/3.png" data-size="746x392">
+		<img src="/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/3.png"
+			width="746"
+			height="392"
+			srcset="/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/3_hu871100705c5f0bb9545d50108b3adbcf_40782_480x0_resize_box_3.png 480w, /p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/3_hu871100705c5f0bb9545d50108b3adbcf_40782_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></li>
+<li>分代法回收：大部分对象都会在年轻时候死亡（弱分代假说）把新建的对象称之为新生代对象。经过特定次数的GC(垃圾回收)数据依然有用的对象称为
+老年代对象。而大部分会在新生代对象就会垃圾回收了，在结合复制回收法使用  <figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 165; 
+			flex-basis: 397px"
+	>
+	<a href="/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/4.png" data-size="1202x725">
+		<img src="/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/4.png"
+			width="1202"
+			height="725"
+			srcset="/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/4_hude966255b53ebc705801aec78916c5d7_175139_480x0_resize_box_3.png 480w, /p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/4_hude966255b53ebc705801aec78916c5d7_175139_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></li>
+</ol>
+<h4 id="计数法回收">计数法回收</h4>
+<ul>
+<li>引用计数指的是对象被引用的次数，程序在运行过程中会更新引用次数。对象引用越多，计数越大，当计数为0时，回收该对象（堆内存空间）  <figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 103; 
+			flex-basis: 248px"
+	>
+	<a href="/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/5.png" data-size="712x688">
+		<img src="/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/5.png"
+			width="712"
+			height="688"
+			srcset="/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/5_hu5f49777c171d0884056300bcd3c13161_71471_480x0_resize_box_3.png 480w, /p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/5_hu5f49777c171d0884056300bcd3c13161_71471_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/c/c-/">
+        
+        
+            <div class="article-image">
+                <img src="/p/c/c/10.8077ca6d9a0decc584ac5cd6212df5bf_hu5bb3a4baa791897c79c1df91e792ef0e_243913_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="c/c&#43;&#43;" 
+                        data-hash="md5-gHfKbZoN7MWErFzWIS31vw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">进程、线程、协程</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/">
+        
+        
+            <div class="article-image">
+                <img src="/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/8.5c16d9c46573ca56743e3b169be2a41e_hu442c80cfdca83249146ebd0d5822289f_88346_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-XBbZxGVzylZ0PjsWm&#43;KkHg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">syslog日志转发配置</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="">
+    <a href="/p/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E4%BB%BD%E5%8D%9A%E5%AE%A2/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">我的第一份博客</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#虚拟地址空间布局">虚拟地址空间布局</a>
+      <ol>
+        <li><a href="#堆空间内存管理">堆空间内存管理</a>
+          <ol>
+            <li><a href="#手动垃圾回收">手动垃圾回收</a></li>
+          </ol>
+        </li>
+        <li><a href="#自动垃圾回收gc">自动垃圾回收（GC）</a>
+          <ol>
+            <li><a href="#标记法回收">标记法回收</a></li>
+            <li><a href="#计数法回收">计数法回收</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
