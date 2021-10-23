@@ -12,7 +12,7 @@
         <pubDate>Mon, 18 Oct 2021 22:00:38 +0800</pubDate>
         
         <guid>https://zcj-git520.github.io/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/</guid>
-        <description>&lt;img src="https://zcj-git520.github.io/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/1.png" alt="Featured image of post 内存管理" /&gt;&lt;h2 id=&#34;虚拟地址空间布局&#34;&gt;虚拟地址空间布局&lt;/h2&gt;
+        <description>&lt;img src="https://zcj-git520.github.io/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/6.png" alt="Featured image of post 内存管理" /&gt;&lt;h2 id=&#34;虚拟地址空间布局&#34;&gt;虚拟地址空间布局&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;程序通过编译成为一堆的机器指令写入可执行文件，程序在运行是会将可执行文件加载在计算机的内存中
 在虚拟地址空间分布中处于代码段。&lt;/li&gt;
@@ -38,7 +38,7 @@
 	
 &lt;/figure&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3 id=&#34;堆空间内存管理&#34;&gt;堆空间内存管理&lt;/h3&gt;
+&lt;h3 id=&#34;堆内存管理&#34;&gt;堆内存管理&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;堆内存空间不是编译器分配，而是有程序动态分配的内存空间。&lt;/li&gt;
 &lt;/ul&gt;
@@ -134,7 +134,8 @@
 &lt;/ol&gt;
 &lt;h4 id=&#34;计数法回收&#34;&gt;计数法回收&lt;/h4&gt;
 &lt;ul&gt;
-&lt;li&gt;引用计数指的是对象被引用的次数，程序在运行过程中会更新引用次数。对象引用越多，计数越大，当计数为0时，回收该对象（堆内存空间）  &lt;figure 
+&lt;li&gt;引用计数指的是对象被引用的次数，程序在运行过程中会更新引用次数。对象引用越多，计数越大，当计数为0时，回收该对象（堆内存空间）
+引用计数法可以在运行中更新对象的计数，可以及时判断计数为 0的对象，然后对其及时回收， 但是频繁的更新引用计数也会带来资源消耗  &lt;figure 
 	
 		class=&#34;gallery-image&#34; 
 		style=&#34;
@@ -152,6 +153,52 @@
 	
 &lt;/figure&gt;&lt;/li&gt;
 &lt;/ul&gt;
+&lt;h4 id=&#34;垃圾回收模式&#34;&gt;垃圾回收模式&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;增量式的垃圾回收模式：SWT是用户承程序停下工作处理垃圾回收，但是为了提高cpu执行效率，会减少SWT的时间，经垃圾回收工作分多次进行（用户程序与垃圾回收交替执行）&lt;/li&gt;
+&lt;li&gt;三色不变式：在增量式垃圾回收模式在进行垃圾回收时，会造成用户程序对标色的数据进行更改，当在次执行垃圾回收时，可能会将有用的数据当作垃圾回收了，在标色法中，当黑色数据节点可以引用白色的数据节点，但是没有灰色节点能引用这个白色节点，白色数据节点就被当作垃圾被回收
+避免这样的发生，在垃圾回收时建立读写屏障。在三色中确保黑色的数据节点不引用白色的数据节点，就不会误判有用的数据当作垃圾回收了，这种叫做：强三色不变式
+如果当黑色的数据节点能引用白色数据节点，同时确保回收节点也能引用白色节点，也能避免有用的数据被当作垃圾回收，这叫：弱三色不变式  &lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 177; 
+			flex-basis: 425px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/6.png&#34; data-size=&#34;1302x734&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/6.png&#34;
+			width=&#34;1302&#34;
+			height=&#34;734&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/6_hu61bd622d583377d86db238f2ea3bdaa9_262966_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/6_hu61bd622d583377d86db238f2ea3bdaa9_262966_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;li&gt;并行垃圾回收：在多核下，使用多线程对垃圾回收，需要做好的负载均衡和规避数重复处理带来的问题，如在复制回收中，可能将同样的数据从from复制到to&lt;/li&gt;
+&lt;li&gt;并发垃圾回收：垃圾回收与用户程序并发执行，可能会造成垃圾回收与用户程序的资源竞争等问题等&lt;/li&gt;
+&lt;li&gt;主体并发回收：在时刻使用swt回收，在莫时刻又使用并发垃圾回收&lt;/li&gt;
+&lt;li&gt;主体并发增量式回收: 是融合了增量式的垃圾回收模式和主体并发回收模式  &lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 67; 
+			flex-basis: 161px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/7.png&#34; data-size=&#34;549x817&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/7.png&#34;
+			width=&#34;549&#34;
+			height=&#34;817&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/7_hu9a89830b3bbfb2c96296aa9cbf536ee0_141902_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/7_hu9a89830b3bbfb2c96296aa9cbf536ee0_141902_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;参考文献&#34;&gt;参考文献&lt;/h2&gt;
+&lt;p&gt;1.&lt;a class=&#34;link&#34; href=&#34;https://www.zhihu.com/people/kylin-lab&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://www.zhihu.com/people/kylin-lab&lt;/a&gt;&lt;/p&gt;
 </description>
         </item>
         <item>
