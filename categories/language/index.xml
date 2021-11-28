@@ -6,7 +6,55 @@
     <description>Recent content in 语言学习 on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Fri, 15 Oct 2021 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/language/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 30 Oct 2021 22:00:08 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/language/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Python安全指南</title>
+      <link>https://zcj-git520.github.io/p/python%E5%AE%89%E5%85%A8%E6%8C%87%E5%8D%97/</link>
+      <pubDate>Sat, 30 Oct 2021 22:00:08 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/python%E5%AE%89%E5%85%A8%E6%8C%87%E5%8D%97/</guid>
+      <description>文章来源 鹅厂(腾讯)代码安全指南
+通用 加密算法 【必须】避免使用不安全的对称加密算法  DES和3DES已经不再适用于现代应用程序，应改为使用AES。  程序日志 【建议】对每个重要行为都记录日志  确保重要行为都记录日志，且可靠保存6个月以上。  1.2.2 【建议】禁止将未经验证的用户输入直接记录日志  当日志条目包含未经净化的用户输入时会引发记录注入漏洞。恶意用户会插入伪造的日志数据，从而让系统管理员以为是系统行为。  1.2.3 【建议】避免在日志中保存敏感信息  不能在日志保存密码（包括明文密码和密文密码）、密钥和其它敏感信息  系统口令 【必须】禁止使用空口令、弱口令、已泄露口令 【必须】口令强度要求  口令强度须同时满足：
+ 密码长度大于14位 必须包含下列元素：大小写英文字母、数字、特殊字符 不得使用各系统、程序的默认初始密码 不能与最近6次使用过的密码重复 不得与其他外部系统使用相同的密码   【必须】口令存储安全  禁止明文存储口令 禁止使用弱密码学算法（如DES和3DES）加密存储口令 使用不可逆算法和随机salt对口令进行加密存储  【必须】禁止传递明文口令 【必须】禁止在不安全的信道中传输口令 配置&amp;amp;环境 Python版本选择 【建议】使用Python 3.6+的版本  新增的项目应使用 Python 3.6+   为什么要这么做？ 由于 Python 2 在 2020 年停止维护，相关组件的漏洞不能得到及时修复与维护
+ 第三方包安全 【必须】禁止使用不安全的组件 配置信息 【必须】密钥存储安全  在使用对称密码算法时，需要保护好加密密钥。当算法涉及敏感、业务数据时，可通过非对称算法协商加密密钥。其他较为不敏感的数据加密，可以通过变换算法等方式保护密钥。  【必须】禁止硬编码敏感配置  禁止在源码中硬编码AK/SK、IP、数据库账密等配置信息 应使用配置系统或KMS密钥管理系统。  后台 输入验证 【必须】按类型进行数据校验   所有程序外部输入的参数值，应进行数据校验。校验内容包括但不限于：数据长度、数据范围、数据类型与格式。校验不通过，应拒绝。</description>
+    </item>
+    
+    <item>
+      <title>c/c&#43;&#43;安全指南</title>
+      <link>https://zcj-git520.github.io/p/c/c-%E5%AE%89%E5%85%A8%E6%8C%87%E5%8D%97/</link>
+      <pubDate>Thu, 28 Oct 2021 22:00:08 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/c/c-%E5%AE%89%E5%85%A8%E6%8C%87%E5%8D%97/</guid>
+      <description>文章来源 鹅厂(腾讯)代码安全指南
+通用安全指南 C/C++使用错误 【必须】不得直接使用无长度限制的字符拷贝函数 不应直接使用legacy的字符串拷贝、输入函数，如strcpy、strcat、sprintf、wcscpy、mbscpy等，这些函数的特征是：可以输出一长串字符串，而不限制长度。如果环境允许，应当使用其_s安全版本替代，或者使用n版本函数（如：snprintf，vsnprintf）。
+若使用形如sscanf之类的函数时，在处理字符串输入时应当通过%10s这样的方式来严格限制字符串长度，同时确保字符串末尾有\0。如果环境允许，应当使用_s安全版本。
+但是注意，虽然MSVC 2015时默认引入结尾为0版本的snprintf（行为等同于C99定义的snprintf）。但更早期的版本中，MSVC的snprintf可能是_snprintf的宏。而_snprintf是不保证\0结尾的（见本节后半部分）。
+（MSVC） Beginning with the UCRT in Visual Studio 2015 and Windows 10, snprintf is no longer identical to _snprintf. The snprintf function behavior is now C99 standard compliant. 从Visual Studio 2015和Windows 10中的UCRT开始，snprintf不再与_snprintf相同。snprintf函数行为现在符合C99标准。 请参考：https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/snprintf-snprintf-snprintf-l-snwprintf-snwprintf-l?redirectedfrom=MSDN&amp;amp;view=vs-2019 因此，在使用n系列拷贝函数时，要确保正确计算缓冲区长度，同时，如果你不确定是否代码在各个编译器下都能确保末尾有0时，建议可以适当增加1字节输入缓冲区，并将其置为\0，以保证输出的字符串结尾一定有\0。
+// Good char buf[101] = {0}; snprintf(buf, sizeof(buf) - 1, &amp;#34;foobar ...&amp;#34;, ...); 一些需要注意的函数，例如strncpy和_snprintf是不安全的。 strncpy不应当被视为strcpy的n系列函数，它只是恰巧与其他n系列函数名字很像而已。strncpy在复制时，如果复制的长度超过n，不会在结尾补\0。
+同样，MSVC _snprintf系列函数在超过或等于n时也不会以0结尾。如果后续使用非0结尾的字符串，可能泄露相邻的内容或者导致程序崩溃。
+// Bad char a[4] = {0}; _snprintf(a, 4, &amp;#34;%s&amp;#34;, &amp;#34;AAAA&amp;#34;); foo = strlen(a); 上述代码在MSVC中执行后， a[4] == &amp;lsquo;A&amp;rsquo;，因此字符串未以0结尾。a的内容是&amp;quot;AAAA&amp;quot;，调用strlen(a)则会越界访问。因此，正确的操作举例如下：</description>
+    </item>
+    
+    <item>
+      <title>Go安全指南</title>
+      <link>https://zcj-git520.github.io/p/go%E5%AE%89%E5%85%A8%E6%8C%87%E5%8D%97/</link>
+      <pubDate>Sun, 24 Oct 2021 22:00:08 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/go%E5%AE%89%E5%85%A8%E6%8C%87%E5%8D%97/</guid>
+      <description>文章来源 鹅厂(腾讯)代码安全指南
+通用 内存管理 【必须】切片长度校验  在对slice进行操作时，必须判断长度是否合法，防止程序panic  // bad: 未判断data的长度，可导致 index out of range func decode(data []byte) bool { if data[0] == &#39;F&#39; &amp;amp;&amp;amp; data[1] == &#39;U&#39; &amp;amp;&amp;amp; data[2] == &#39;Z&#39; &amp;amp;&amp;amp; data[3] == &#39;Z&#39; &amp;amp;&amp;amp; data[4] == &#39;E&#39; &amp;amp;&amp;amp; data[5] == &#39;R&#39; { fmt.Println(&amp;quot;Bad&amp;quot;) return true } return false } // bad: slice bounds out of range func foo() { var slice = []int{0, 1, 2, 3, 4, 5, 6} fmt.</description>
+    </item>
+    
+    <item>
+      <title>Uber go 语言编码规范</title>
+      <link>https://zcj-git520.github.io/p/uber-go-%E8%AF%AD%E8%A8%80%E7%BC%96%E7%A0%81%E8%A7%84%E8%8C%83/</link>
+      <pubDate>Wed, 20 Oct 2021 22:00:08 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/uber-go-%E8%AF%AD%E8%A8%80%E7%BC%96%E7%A0%81%E8%A7%84%E8%8C%83/</guid>
+      <description>uber-go/guide 的中文翻译 English Uber go 语言编码规范 Uber 是一家美国硅谷的科技公司，也是 go 语言的早期 adopter。其开源了很多 golang 项目，诸如被 gopher 圈熟知的 zap、jaeger 等。2018 年年末 Uber 将内部的 go 风格规范 开源到 GitHub，经过一年的积累和更新，该规范已经初具规模，并受到广大 gopher 的关注。本文是该规范的中文版本。本版本会根据原版实时更新。
+目录  uber- go/guide 的中文翻译 English Uber go 语言编码规范 版本 目录 介绍 指导原则  指向 interface 的指针 Interface 合理性验证 接收器 (receiver) 与接口 零值 Mutex 是有效的 在边界处拷贝 Slices 和 Maps  接收 Slices 和 Maps 返回 slices 或 maps   使用 defer 释放资源 Channel 的 size 要么是 1，要么是无缓冲的 枚举从 1 开始 使用 time 处理时间  使用 time.</description>
+    </item>
+    
     <item>
       <title>Go Channel的深入理解</title>
       <link>https://zcj-git520.github.io/p/go-channel%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/</link>

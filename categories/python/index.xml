@@ -5,6 +5,19 @@
     <link>https://zcj-git520.github.io/categories/python/</link>
     <description>Recent content in Python on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>zh-cn</language><atom:link href="https://zcj-git520.github.io/categories/python/index.xml" rel="self" type="application/rss+xml" />
+    <language>zh-cn</language>
+    <lastBuildDate>Sat, 30 Oct 2021 22:00:08 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/python/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Python安全指南</title>
+      <link>https://zcj-git520.github.io/p/python%E5%AE%89%E5%85%A8%E6%8C%87%E5%8D%97/</link>
+      <pubDate>Sat, 30 Oct 2021 22:00:08 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/python%E5%AE%89%E5%85%A8%E6%8C%87%E5%8D%97/</guid>
+      <description>文章来源 鹅厂(腾讯)代码安全指南
+通用 加密算法 【必须】避免使用不安全的对称加密算法  DES和3DES已经不再适用于现代应用程序，应改为使用AES。  程序日志 【建议】对每个重要行为都记录日志  确保重要行为都记录日志，且可靠保存6个月以上。  1.2.2 【建议】禁止将未经验证的用户输入直接记录日志  当日志条目包含未经净化的用户输入时会引发记录注入漏洞。恶意用户会插入伪造的日志数据，从而让系统管理员以为是系统行为。  1.2.3 【建议】避免在日志中保存敏感信息  不能在日志保存密码（包括明文密码和密文密码）、密钥和其它敏感信息  系统口令 【必须】禁止使用空口令、弱口令、已泄露口令 【必须】口令强度要求  口令强度须同时满足：
+ 密码长度大于14位 必须包含下列元素：大小写英文字母、数字、特殊字符 不得使用各系统、程序的默认初始密码 不能与最近6次使用过的密码重复 不得与其他外部系统使用相同的密码   【必须】口令存储安全  禁止明文存储口令 禁止使用弱密码学算法（如DES和3DES）加密存储口令 使用不可逆算法和随机salt对口令进行加密存储  【必须】禁止传递明文口令 【必须】禁止在不安全的信道中传输口令 配置&amp;amp;环境 Python版本选择 【建议】使用Python 3.6+的版本  新增的项目应使用 Python 3.6+   为什么要这么做？ 由于 Python 2 在 2020 年停止维护，相关组件的漏洞不能得到及时修复与维护
+ 第三方包安全 【必须】禁止使用不安全的组件 配置信息 【必须】密钥存储安全  在使用对称密码算法时，需要保护好加密密钥。当算法涉及敏感、业务数据时，可通过非对称算法协商加密密钥。其他较为不敏感的数据加密，可以通过变换算法等方式保护密钥。  【必须】禁止硬编码敏感配置  禁止在源码中硬编码AK/SK、IP、数据库账密等配置信息 应使用配置系统或KMS密钥管理系统。  后台 输入验证 【必须】按类型进行数据校验   所有程序外部输入的参数值，应进行数据校验。校验内容包括但不限于：数据长度、数据范围、数据类型与格式。校验不通过，应拒绝。</description>
+    </item>
+    
   </channel>
 </rss>

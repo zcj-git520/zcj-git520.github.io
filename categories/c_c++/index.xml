@@ -1,10 +1,27 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>C/C&#43;&#43; on Chengji Zhao&#39;s blog</title>
+    <title>C_C&#43;&#43; on Chengji Zhao&#39;s blog</title>
     <link>https://zcj-git520.github.io/categories/c_c&#43;&#43;/</link>
-    <description>Recent content in C/C&#43;&#43; on Chengji Zhao&#39;s blog</description>
+    <description>Recent content in C_C&#43;&#43; on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>zh-cn</language><atom:link href="https://zcj-git520.github.io/categories/c_c++/index.xml" rel="self" type="application/rss+xml" />
+    <language>zh-cn</language>
+    <lastBuildDate>Thu, 28 Oct 2021 22:00:08 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/c_c++/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>c/c&#43;&#43;安全指南</title>
+      <link>https://zcj-git520.github.io/p/c/c-%E5%AE%89%E5%85%A8%E6%8C%87%E5%8D%97/</link>
+      <pubDate>Thu, 28 Oct 2021 22:00:08 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/c/c-%E5%AE%89%E5%85%A8%E6%8C%87%E5%8D%97/</guid>
+      <description>文章来源 鹅厂(腾讯)代码安全指南
+通用安全指南 C/C++使用错误 【必须】不得直接使用无长度限制的字符拷贝函数 不应直接使用legacy的字符串拷贝、输入函数，如strcpy、strcat、sprintf、wcscpy、mbscpy等，这些函数的特征是：可以输出一长串字符串，而不限制长度。如果环境允许，应当使用其_s安全版本替代，或者使用n版本函数（如：snprintf，vsnprintf）。
+若使用形如sscanf之类的函数时，在处理字符串输入时应当通过%10s这样的方式来严格限制字符串长度，同时确保字符串末尾有\0。如果环境允许，应当使用_s安全版本。
+但是注意，虽然MSVC 2015时默认引入结尾为0版本的snprintf（行为等同于C99定义的snprintf）。但更早期的版本中，MSVC的snprintf可能是_snprintf的宏。而_snprintf是不保证\0结尾的（见本节后半部分）。
+（MSVC） Beginning with the UCRT in Visual Studio 2015 and Windows 10, snprintf is no longer identical to _snprintf. The snprintf function behavior is now C99 standard compliant. 从Visual Studio 2015和Windows 10中的UCRT开始，snprintf不再与_snprintf相同。snprintf函数行为现在符合C99标准。 请参考：https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/snprintf-snprintf-snprintf-l-snwprintf-snwprintf-l?redirectedfrom=MSDN&amp;amp;view=vs-2019 因此，在使用n系列拷贝函数时，要确保正确计算缓冲区长度，同时，如果你不确定是否代码在各个编译器下都能确保末尾有0时，建议可以适当增加1字节输入缓冲区，并将其置为\0，以保证输出的字符串结尾一定有\0。
+// Good char buf[101] = {0}; snprintf(buf, sizeof(buf) - 1, &amp;#34;foobar ...&amp;#34;, ...); 一些需要注意的函数，例如strncpy和_snprintf是不安全的。 strncpy不应当被视为strcpy的n系列函数，它只是恰巧与其他n系列函数名字很像而已。strncpy在复制时，如果复制的长度超过n，不会在结尾补\0。
+同样，MSVC _snprintf系列函数在超过或等于n时也不会以0结尾。如果后续使用非0结尾的字符串，可能泄露相邻的内容或者导致程序崩溃。
+// Bad char a[4] = {0}; _snprintf(a, 4, &amp;#34;%s&amp;#34;, &amp;#34;AAAA&amp;#34;); foo = strlen(a); 上述代码在MSVC中执行后， a[4] == &amp;lsquo;A&amp;rsquo;，因此字符串未以0结尾。a的内容是&amp;quot;AAAA&amp;quot;，调用strlen(a)则会越界访问。因此，正确的操作举例如下：</description>
+    </item>
+    
   </channel>
 </rss>

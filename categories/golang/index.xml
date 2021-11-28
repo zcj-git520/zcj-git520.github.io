@@ -6,7 +6,27 @@
     <description>Recent content in Golang on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Fri, 15 Oct 2021 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/golang/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 24 Oct 2021 22:00:08 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/golang/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Go安全指南</title>
+      <link>https://zcj-git520.github.io/p/go%E5%AE%89%E5%85%A8%E6%8C%87%E5%8D%97/</link>
+      <pubDate>Sun, 24 Oct 2021 22:00:08 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/go%E5%AE%89%E5%85%A8%E6%8C%87%E5%8D%97/</guid>
+      <description>文章来源 鹅厂(腾讯)代码安全指南
+通用 内存管理 【必须】切片长度校验  在对slice进行操作时，必须判断长度是否合法，防止程序panic  // bad: 未判断data的长度，可导致 index out of range func decode(data []byte) bool { if data[0] == &#39;F&#39; &amp;amp;&amp;amp; data[1] == &#39;U&#39; &amp;amp;&amp;amp; data[2] == &#39;Z&#39; &amp;amp;&amp;amp; data[3] == &#39;Z&#39; &amp;amp;&amp;amp; data[4] == &#39;E&#39; &amp;amp;&amp;amp; data[5] == &#39;R&#39; { fmt.Println(&amp;quot;Bad&amp;quot;) return true } return false } // bad: slice bounds out of range func foo() { var slice = []int{0, 1, 2, 3, 4, 5, 6} fmt.</description>
+    </item>
+    
+    <item>
+      <title>Uber go 语言编码规范</title>
+      <link>https://zcj-git520.github.io/p/uber-go-%E8%AF%AD%E8%A8%80%E7%BC%96%E7%A0%81%E8%A7%84%E8%8C%83/</link>
+      <pubDate>Wed, 20 Oct 2021 22:00:08 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/uber-go-%E8%AF%AD%E8%A8%80%E7%BC%96%E7%A0%81%E8%A7%84%E8%8C%83/</guid>
+      <description>uber-go/guide 的中文翻译 English Uber go 语言编码规范 Uber 是一家美国硅谷的科技公司，也是 go 语言的早期 adopter。其开源了很多 golang 项目，诸如被 gopher 圈熟知的 zap、jaeger 等。2018 年年末 Uber 将内部的 go 风格规范 开源到 GitHub，经过一年的积累和更新，该规范已经初具规模，并受到广大 gopher 的关注。本文是该规范的中文版本。本版本会根据原版实时更新。
+目录  uber- go/guide 的中文翻译 English Uber go 语言编码规范 版本 目录 介绍 指导原则  指向 interface 的指针 Interface 合理性验证 接收器 (receiver) 与接口 零值 Mutex 是有效的 在边界处拷贝 Slices 和 Maps  接收 Slices 和 Maps 返回 slices 或 maps   使用 defer 释放资源 Channel 的 size 要么是 1，要么是无缓冲的 枚举从 1 开始 使用 time 处理时间  使用 time.</description>
+    </item>
+    
     <item>
       <title>Go Channel的深入理解</title>
       <link>https://zcj-git520.github.io/p/go-channel%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/</link>

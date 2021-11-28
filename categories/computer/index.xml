@@ -6,7 +6,19 @@
     <description>Recent content in 知识学习 on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Mon, 18 Oct 2021 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/computer/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 05 Nov 2021 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/computer/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Docker知识总览</title>
+      <link>https://zcj-git520.github.io/p/docker%E7%9F%A5%E8%AF%86%E6%80%BB%E8%A7%88/</link>
+      <pubDate>Fri, 05 Nov 2021 22:00:38 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/docker%E7%9F%A5%E8%AF%86%E6%80%BB%E8%A7%88/</guid>
+      <description>概念知识 Docker镜像 Docker镜像是由文件和元数据组成的。
+ 文件：语言环境、库、执行文件  由于 Docker 使用 Union FS，相同的层只需要保存一份即可，因此实际镜像硬盘占用空间很可能要比这个列表镜像大小的总和要小的多。   元数据：环境变量、端口映射、卷等 镜像信息：  RESPOSITORY：仓库名 TAG：标签 IMAGE ID：镜像ID CREATED：创建时间 SIZE：所占用的空间   虚悬镜像(dangling image)  RESPOSITROY及TAG都为 使用docker image prune 可以删除    容器 容器是从镜像中创建，继承了他们的文件系统，并使用他们的元数据来确定其启动配置。
+ 启动时，运行一个进程，不过可派生其他进程。 文件的变更通过写时复制存储在容器中，基础镜像不会受影响。  数据卷 数据卷 是一个可供一个或多个容器使用的特殊目录，它绕过 UFS，可以提供很多有用的特性：
+ 数据卷 可以在容器之间共享和重用 对 数据卷 的修改会立马生效 对 数据卷 的更新，不会影响镜像 数据卷 默认会一直存在，即使容器被删除 注意：数据卷 的使用，类似于 Linux 下对目录或文件进行 mount，镜像中的被指定为挂载点的目录中的文件会复制到数据卷中（仅数据卷为空时会复制）。 数据卷 是被设计用来持久化数据的，它的生命周期独立于容器，Docker 不会在容器被删除后自动删除 数据卷  Docker网络 当 Docker 启动时，会自动在主机上创建一个 docker0 虚拟网桥，实际上是 Linux 的一个 bridge，可以理解为一个软件交换机。它会在挂载到它的网口之间进行转发。</description>
+    </item>
+    
     <item>
       <title>内存管理</title>
       <link>https://zcj-git520.github.io/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/</link>
