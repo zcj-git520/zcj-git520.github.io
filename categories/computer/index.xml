@@ -6,7 +6,26 @@
     <description>Recent content in 知识学习 on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Fri, 05 Nov 2021 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/computer/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 15 Nov 2021 22:00:08 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/computer/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>PRC</title>
+      <link>https://zcj-git520.github.io/p/prc/</link>
+      <pubDate>Mon, 15 Nov 2021 22:00:08 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/prc/</guid>
+      <description>RPC  RPC(Remote Procedure Call Protocol)——远程过程调用协议，它是一种通过网络从远程计算机程序上请求服务， 而不需要了解底层网络技术的协议。RPC协议假定某些传输协议的存在，如TCP/IP或UDP，为通信程序之间携带信息数据。 RPC将原来的本地调用转变为调用远端的服务器上的方法，给系统的处理能力和吞吐量带来了近似于无限制提升的可能。 在OSI网络通信模型中，RPC跨域了传输层和应用层。RPC使得开发包括网络分布式多程序在内的应用程序更加容易 RPC采用客户机/服务器(client-server)模式,也是一种请求/响应(request-response)模式，可以通过TCP/UDP以及HTTP 协议进行传输  RPC 架构  CAll ID 映射：客户端通过ID传输给服务器，服务器通过ID调用相应的函数返回 序列化与烦序列化：客户端与服务器通过序列化与反序列化进行传参 一个完整的RPC架构里面包含了四个核心的组件，分别是Client，Client Stub，Server以及Server Stub，这个Stub可以理解为存根。   客户端(Client)，服务的调用方。 客户端存根(Client Stub)，存放服务端的地址消息，再将客户端的请求参数打包成网络消息，然后通过网络远程发送给服务方。 服务端(Server)，真正的服务提供者。 服务端存根(Server Stub)，接收客户端发送过来的消息，将消息解包，并调用本地的方法。  RPC调用过程  客户端（client）以本地调用方式（即以接口的方式）调用服务； 客户端存根（client stub）接收到调用后，负责将方法、参数等组装成能够进行网络传输的消息体（将消息体对象序列化为二进制）； 客户端通过sockets将消息发送到服务端； 服务端存根( server stub）收到消息后进行解码（将消息对象反序列化）； 服务端存根( server stub）根据解码结果调用本地的服务； 本地服务执行并将结果返回给服务端存根( server stub）； 服务端存根( server stub）将返回结果打包成消息（将结果消息对象序列化）； 服务端（server）通过sockets将消息发送到客户端； 客户端存根（client stub）接收到结果消息，并进行解码（将结果消息发序列化）； 客户端（client）得到最终结果。
+RPC的目标是要把2、3、4、7、8、9这些步骤都封装起来。   注意：无论是何种类型的数据，最终都需要转换成二进制流在网络上进行传输，数据的发送方需要将对象转换为二进制流，而数据的接收方则需要把二进制流再恢复为对象。   gPRC  gRPC 是一种现代开源高性能远程过程调用 (RPC) 框架，可以在任何环境中运行。它可以通过对负载平衡、跟踪、健康检查和身份验证的可插拔支持，有效地连接数据中心内和数据中心之间的服务。它还适用于分布式计算的最后一英里，将设备、移动应用程序和浏览器连接到后端服务。 gRPC 是基于HTTP2.0(多路复用,消除了线头阻塞)标准协议色设计的基于ProtoBuf序列化的高性能框架。 《gRPC 官方文档中文版》  Protocol Buffers  Protocol Buffers 是一种轻便高效的结构化数据存储格式，可以用于结构化数据序列化，很适合做数据存储或 RPC 数据交换格式。它可用于通讯协议、数据存储等领域的语言无关、平台无关、可扩展的序列化结构数据格式 序列化：将数据结构或对象转换成能被传输或者存储（如二进制格式）的过程。 反序列化：将在序列化过程中所生成的(格式)转换成数据结构或者对象的过程。  参考文献： RPC原理解析</description>
+    </item>
+    
+    <item>
+      <title>RestfulAPI</title>
+      <link>https://zcj-git520.github.io/p/restfulapi/</link>
+      <pubDate>Wed, 10 Nov 2021 22:00:08 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/restfulapi/</guid>
+      <description>Restful API  rest是Representational state Transfer 的缩写（表述性转态传递） api是应用程序接口 Restful API是一种软件结构风格，设计风格，让软件更加清晰、简洁、易维护。是一种流行的软件API 设计风格  Rest的指导风格  客户端-服务器：通过将用户接口问题与数据存储问题分开，简化服务器组件来提高跨平台放入用户接口的 可移植性性并提高可伸缩性 无转态：从客户端到服务器的每个请求都必须包含理解请求所需的所有信息，并且不能利用服务器上任何存储的上下文。因此，会话状态完全保留在客户端上。 可缓存：缓存约束要求将对请求的响应中的数据隐式或显式标记为可缓存或不可缓存。如果响应是可缓存的，则客户端缓存有权重用该响应数据以用于以后的等效请求。 统一接口：通过将通用性的软件工程原理应用于组件接口，简化了整个系统架构，提高了交互的可见性。为了获得统一的接口，需要多个架构约束来指导组件的行为。REST由四个接口约束定义：资源识别; 通过陈述来处理资源; 自我描述性的信息; 并且，超媒体作为应用程序状态的引擎 分层系统：分层系统风格允许通过约束组件行为来使体系结构由分层层组成，这样每个组件都不能“看到”超出与它们交互的直接层。 按需编码（可选）： REST允许通过以小程序或脚本的形式下载和执行代码来扩展客户端功能。这通过减少预先实现所需的功能数量来简化客户端  RestFul 架构  资源：网络的实体或者是具体的信息，使用URI(统一资源定位符)，URI是每一个资源的地址或者独一无二的是识别符 表现层： 对资源的外在表现，如：json、xml、txt、二进制等 转态转化：互联网是一种无转态的协议，所有的状态都是保存在服务器上，客户端通过 HTTP的操作方式(GET,POST,PUT,DELETE)等改变服务器的“状态变化”   RESTful API接口规范 接口风格  路径和变量均采用小驼峰式，例如deviceId 使用HTTP动词作为action操作URL资源，动词一律大写。  GET：读取\查询（Read） POST：新建（Create） PUT：更新（Update） PATCH：更新（Update），通常是部分更新 DELETE：删除（Delete） HEAD：获取资源的元数据。 OPTIONS：获取信息，关于资源的哪些属性是客户端可以改变的。 5种请求动作中，GET、PUT、PATCH、DELETE均是幂等的；只有POST是非幂等的。幂等操作的特点是其任意多次执行所产生的影响均与一次执行的影响相同。是非幂等是判断接口使用POST还是PUT的决定条件。幂等的理解见本文附录。   参数：  PATH（路径）：  版本号放入PATH，且在最前  尽量使用名词，不使用动词，把每个URL看成一个资源，名称都用复数 微服务名称不放入PATH中     Query参数：主要用在GET查询中，简单的PUT动作，也用Query参数 Headers参数：公共参数通过header传递，content-type、authorization认证必填，其他统一按调用链规范、速率限制规范填写。content-type应该固定为application/json。 Body：  统一使用json格式，所有返回都是json格式  POST所有参数通过JSON传递 GET请求不允许有body， 所有参数通过拼接在URL之后传递，所有的请求参数都要进行遵循RFC 3986的URL Encode。 DELETE删除单个资源时，资源标识通过path传递，批量删除时，通过在body中传递JSON。       返回结果  状态码：HTTP状态码标准用法，见后状态码规范 Body返回，只提供json返回格式 GET：返回资源对象，完整对象或通过Query参数可过滤 POST：返回新生成的资源对象，可能是ID或完整的资源对象 PUT：返回完整的资源对象 DELETE：返回一个空文档   过滤信息：查询及查询结果使用  pageNo：分页查询标识第几页 pageSize：分页查询标识每页多少条数据 begin：录像/截图开始时间，Unix时间戳，单位秒 end：录像/截图结束时间，Unix时间戳，单位秒 orderby：排序规则，desc或asc q：搜索关键字（uri encode之后的） totalCount：总记录数，分页查询，返回json携带 totalPages：总页数，分页查询，返回json携带，等于page时，表示当前是最后一页   微服务内部使用http协议，对外使用https协议  详细设计要求  输入参数要精简有效  不能把内部对象作为接口参数，通过DTO进行转换； required的字段尽可能少   CRUD的U(POST)要通过业务分析（领域建模）具体化操作，不要提供灵活但是支持不全面的接口 查询尽可能提供丰富的查询条件，可以返回尽可能详细的信息 同类资源尽可能统一接口 避免多级 URL，比如获取某个作者的某一类文章： GET /authors/12/categories/2 这种 URL 不利于扩展，语义也不明确，往往要想一会，才能明白含义。 更好的做法是，除了第一级，其他级别都用查询字符串表达。 GET /authors/12?</description>
+    </item>
+    
     <item>
       <title>Docker知识总览</title>
       <link>https://zcj-git520.github.io/p/docker%E7%9F%A5%E8%AF%86%E6%80%BB%E8%A7%88/</link>

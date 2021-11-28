@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='RPC  RPC(Remote Procedure Call Protocol)——远程过程调用协议，它是一种通过网络从远程计算机程序上请求服务， 而不需要了解底层网络技术的协议。RPC协议假定某些传输协议的存在，如TCP/IP或UDP，为通信程序之间携带信息数据。 RPC将原来的本地调用转变为调用远端的服务器上的方法，给系统的处理能力和吞吐量带来了近似于无限制提升的可能。 在OSI网络通信模型中，RPC跨域了传输层和应用层。RPC使得开发包括网络分布式多程序在内的应用程序更加容易 RPC采用客户机/服务器(client-server)模式,也是一种请求/响应(request-response)模式，可以通过TCP/UDP以及HTTP 协议进行传输  RPC 架构  CAll ID 映射：客户端通过ID传输给服务器，服务器通过ID调用相应的函数返回 序列化与烦序列化：客户端与服务器通过序列化与反序列化进行传参 一个完整的RPC架构里面包含了四个核心的组件，分别是Client，Client Stub，Server以及Server Stub，这个Stub可以理解为存根。   客户端(Client)，服务的调用方。 客户端存根(Client Stub)，存放服务端的地址消息，再将客户端的请求参数打包成网络消息，然后通过网络远程发送给服务方。 服务端(Server)，真正的服务提供者。 服务端存根(Server Stub)，接收客户端发送过来的消息，将消息解包，并调用本地的方法。  RPC调用过程  客户端（client）以本地调用方式（即以接口的方式）调用服务； 客户端存根（client stub）接收到调用后，负责将方法、参数等组装成能够进行网络传输的消息体（将消息体对象序列化为二进制）； 客户端通过sockets将消息发送到服务端； 服务端存根( server stub）收到消息后进行解码（将消息对象反序列化）； 服务端存根( server stub）根据解码结果调用本地的服务； 本地服务执行并将结果返回给服务端存根( server stub）； 服务端存根( server stub）将返回结果打包成消息（将结果消息对象序列化）； 服务端（server）通过sockets将消息发送到客户端； 客户端存根（client stub）接收到结果消息，并进行解码（将结果消息发序列化）； 客户端（client）得到最终结果。
+RPC的目标是要把2、3、4、7、8、9这些步骤都封装起来。   注意：无论是何种类型的数据，最终都需要转换成二进制流在网络上进行传输，数据的发送方需要将对象转换为二进制流，而数据的接收方则需要把二进制流再恢复为对象。   gPRC  gRPC 是一种现代开源高性能远程过程调用 (RPC) 框架，可以在任何环境中运行。它可以通过对负载平衡、跟踪、健康检查和身份验证的可插拔支持，有效地连接数据中心内和数据中心之间的服务。它还适用于分布式计算的最后一英里，将设备、移动应用程序和浏览器连接到后端服务。 gRPC 是基于HTTP2.0(多路复用,消除了线头阻塞)标准协议色设计的基于ProtoBuf序列化的高性能框架。 《gRPC 官方文档中文版》  Protocol Buffers  Protocol Buffers 是一种轻便高效的结构化数据存储格式，可以用于结构化数据序列化，很适合做数据存储或 RPC 数据交换格式。它可用于通讯协议、数据存储等领域的语言无关、平台无关、可扩展的序列化结构数据格式 序列化：将数据结构或对象转换成能被传输或者存储（如二进制格式）的过程。 反序列化：将在序列化过程中所生成的(格式)转换成数据结构或者对象的过程。  参考文献： RPC原理解析'><title>PRC</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/prc/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='PRC'>
+<meta property='og:description' content='RPC  RPC(Remote Procedure Call Protocol)——远程过程调用协议，它是一种通过网络从远程计算机程序上请求服务， 而不需要了解底层网络技术的协议。RPC协议假定某些传输协议的存在，如TCP/IP或UDP，为通信程序之间携带信息数据。 RPC将原来的本地调用转变为调用远端的服务器上的方法，给系统的处理能力和吞吐量带来了近似于无限制提升的可能。 在OSI网络通信模型中，RPC跨域了传输层和应用层。RPC使得开发包括网络分布式多程序在内的应用程序更加容易 RPC采用客户机/服务器(client-server)模式,也是一种请求/响应(request-response)模式，可以通过TCP/UDP以及HTTP 协议进行传输  RPC 架构  CAll ID 映射：客户端通过ID传输给服务器，服务器通过ID调用相应的函数返回 序列化与烦序列化：客户端与服务器通过序列化与反序列化进行传参 一个完整的RPC架构里面包含了四个核心的组件，分别是Client，Client Stub，Server以及Server Stub，这个Stub可以理解为存根。   客户端(Client)，服务的调用方。 客户端存根(Client Stub)，存放服务端的地址消息，再将客户端的请求参数打包成网络消息，然后通过网络远程发送给服务方。 服务端(Server)，真正的服务提供者。 服务端存根(Server Stub)，接收客户端发送过来的消息，将消息解包，并调用本地的方法。  RPC调用过程  客户端（client）以本地调用方式（即以接口的方式）调用服务； 客户端存根（client stub）接收到调用后，负责将方法、参数等组装成能够进行网络传输的消息体（将消息体对象序列化为二进制）； 客户端通过sockets将消息发送到服务端； 服务端存根( server stub）收到消息后进行解码（将消息对象反序列化）； 服务端存根( server stub）根据解码结果调用本地的服务； 本地服务执行并将结果返回给服务端存根( server stub）； 服务端存根( server stub）将返回结果打包成消息（将结果消息对象序列化）； 服务端（server）通过sockets将消息发送到客户端； 客户端存根（client stub）接收到结果消息，并进行解码（将结果消息发序列化）； 客户端（client）得到最终结果。
+RPC的目标是要把2、3、4、7、8、9这些步骤都封装起来。   注意：无论是何种类型的数据，最终都需要转换成二进制流在网络上进行传输，数据的发送方需要将对象转换为二进制流，而数据的接收方则需要把二进制流再恢复为对象。   gPRC  gRPC 是一种现代开源高性能远程过程调用 (RPC) 框架，可以在任何环境中运行。它可以通过对负载平衡、跟踪、健康检查和身份验证的可插拔支持，有效地连接数据中心内和数据中心之间的服务。它还适用于分布式计算的最后一英里，将设备、移动应用程序和浏览器连接到后端服务。 gRPC 是基于HTTP2.0(多路复用,消除了线头阻塞)标准协议色设计的基于ProtoBuf序列化的高性能框架。 《gRPC 官方文档中文版》  Protocol Buffers  Protocol Buffers 是一种轻便高效的结构化数据存储格式，可以用于结构化数据序列化，很适合做数据存储或 RPC 数据交换格式。它可用于通讯协议、数据存储等领域的语言无关、平台无关、可扩展的序列化结构数据格式 序列化：将数据结构或对象转换成能被传输或者存储（如二进制格式）的过程。 反序列化：将在序列化过程中所生成的(格式)转换成数据结构或者对象的过程。  参考文献： RPC原理解析'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/prc/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-11-15T22:00:08&#43;08:00'/><meta property='article:modified_time' content='2021-11-15T22:00:08&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/prc/1.jpg' />
+<meta name="twitter:title" content="PRC">
+<meta name="twitter:description" content="RPC  RPC(Remote Procedure Call Protocol)——远程过程调用协议，它是一种通过网络从远程计算机程序上请求服务， 而不需要了解底层网络技术的协议。RPC协议假定某些传输协议的存在，如TCP/IP或UDP，为通信程序之间携带信息数据。 RPC将原来的本地调用转变为调用远端的服务器上的方法，给系统的处理能力和吞吐量带来了近似于无限制提升的可能。 在OSI网络通信模型中，RPC跨域了传输层和应用层。RPC使得开发包括网络分布式多程序在内的应用程序更加容易 RPC采用客户机/服务器(client-server)模式,也是一种请求/响应(request-response)模式，可以通过TCP/UDP以及HTTP 协议进行传输  RPC 架构  CAll ID 映射：客户端通过ID传输给服务器，服务器通过ID调用相应的函数返回 序列化与烦序列化：客户端与服务器通过序列化与反序列化进行传参 一个完整的RPC架构里面包含了四个核心的组件，分别是Client，Client Stub，Server以及Server Stub，这个Stub可以理解为存根。   客户端(Client)，服务的调用方。 客户端存根(Client Stub)，存放服务端的地址消息，再将客户端的请求参数打包成网络消息，然后通过网络远程发送给服务方。 服务端(Server)，真正的服务提供者。 服务端存根(Server Stub)，接收客户端发送过来的消息，将消息解包，并调用本地的方法。  RPC调用过程  客户端（client）以本地调用方式（即以接口的方式）调用服务； 客户端存根（client stub）接收到调用后，负责将方法、参数等组装成能够进行网络传输的消息体（将消息体对象序列化为二进制）； 客户端通过sockets将消息发送到服务端； 服务端存根( server stub）收到消息后进行解码（将消息对象反序列化）； 服务端存根( server stub）根据解码结果调用本地的服务； 本地服务执行并将结果返回给服务端存根( server stub）； 服务端存根( server stub）将返回结果打包成消息（将结果消息对象序列化）； 服务端（server）通过sockets将消息发送到客户端； 客户端存根（client stub）接收到结果消息，并进行解码（将结果消息发序列化）； 客户端（client）得到最终结果。
+RPC的目标是要把2、3、4、7、8、9这些步骤都封装起来。   注意：无论是何种类型的数据，最终都需要转换成二进制流在网络上进行传输，数据的发送方需要将对象转换为二进制流，而数据的接收方则需要把二进制流再恢复为对象。   gPRC  gRPC 是一种现代开源高性能远程过程调用 (RPC) 框架，可以在任何环境中运行。它可以通过对负载平衡、跟踪、健康检查和身份验证的可插拔支持，有效地连接数据中心内和数据中心之间的服务。它还适用于分布式计算的最后一英里，将设备、移动应用程序和浏览器连接到后端服务。 gRPC 是基于HTTP2.0(多路复用,消除了线头阻塞)标准协议色设计的基于ProtoBuf序列化的高性能框架。 《gRPC 官方文档中文版》  Protocol Buffers  Protocol Buffers 是一种轻便高效的结构化数据存储格式，可以用于结构化数据序列化，很适合做数据存储或 RPC 数据交换格式。它可用于通讯协议、数据存储等领域的语言无关、平台无关、可扩展的序列化结构数据格式 序列化：将数据结构或对象转换成能被传输或者存储（如二进制格式）的过程。 反序列化：将在序列化过程中所生成的(格式)转换成数据结构或者对象的过程。  参考文献： RPC原理解析"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/prc/1.jpg' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/prc/">
+                <img src="/p/prc/1_hu92b5144e2fe44c426742bd76f38787bf_37611_800x0_resize_q75_box.jpg"
+                        srcset="/p/prc/1_hu92b5144e2fe44c426742bd76f38787bf_37611_800x0_resize_q75_box.jpg 800w, /p/prc/1_hu92b5144e2fe44c426742bd76f38787bf_37611_1600x0_resize_q75_box.jpg 1600w"
+                        width="800" 
+                        height="502" 
+                        loading="lazy"
+                        alt="Featured image of post PRC" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/computer/" style="background-color: #2a9d8f; color: #fff;">
+                知识学习
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/prc/">PRC</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Nov 15, 2021</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 1 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h2 id="rpc">RPC</h2>
+<ul>
+<li>RPC(Remote Procedure Call Protocol)——远程过程调用协议，它是一种通过网络从远程计算机程序上请求服务，
+而不需要了解底层网络技术的协议。RPC协议假定某些传输协议的存在，如TCP/IP或UDP，为通信程序之间携带信息数据。
+RPC将原来的本地调用转变为调用远端的服务器上的方法，给系统的处理能力和吞吐量带来了近似于无限制提升的可能。
+在OSI网络通信模型中，RPC跨域了传输层和应用层。RPC使得开发包括网络分布式多程序在内的应用程序更加容易</li>
+<li>RPC采用客户机/服务器(client-server)模式,也是一种请求/响应(request-response)模式，可以通过TCP/UDP以及HTTP
+协议进行传输</li>
+</ul>
+<h2 id="rpc-架构">RPC 架构</h2>
+<ul>
+<li>CAll ID 映射：客户端通过ID传输给服务器，服务器通过ID调用相应的函数返回</li>
+<li>序列化与烦序列化：客户端与服务器通过序列化与反序列化进行传参</li>
+<li>一个完整的RPC架构里面包含了四个核心的组件，分别是Client，Client Stub，Server以及Server Stub，这个Stub可以理解为存根。</li>
+</ul>
+<ol>
+<li>客户端(Client)，服务的调用方。</li>
+<li>客户端存根(Client Stub)，存放服务端的地址消息，再将客户端的请求参数打包成网络消息，然后通过网络远程发送给服务方。</li>
+<li>服务端(Server)，真正的服务提供者。</li>
+<li>服务端存根(Server Stub)，接收客户端发送过来的消息，将消息解包，并调用本地的方法。</li>
+</ol>
+<h3 id="rpc调用过程">RPC调用过程</h3>
+<ol>
+<li>客户端（client）以本地调用方式（即以接口的方式）调用服务；</li>
+<li>客户端存根（client stub）接收到调用后，负责将方法、参数等组装成能够进行网络传输的消息体（将消息体对象序列化为二进制）；</li>
+<li>客户端通过sockets将消息发送到服务端；</li>
+<li>服务端存根( server stub）收到消息后进行解码（将消息对象反序列化）；</li>
+<li>服务端存根( server stub）根据解码结果调用本地的服务；</li>
+<li>本地服务执行并将结果返回给服务端存根( server stub）；</li>
+<li>服务端存根( server stub）将返回结果打包成消息（将结果消息对象序列化）；</li>
+<li>服务端（server）通过sockets将消息发送到客户端；</li>
+<li>客户端存根（client stub）接收到结果消息，并进行解码（将结果消息发序列化）；</li>
+<li>客户端（client）得到最终结果。<br>
+RPC的目标是要把2、3、4、7、8、9这些步骤都封装起来。</li>
+</ol>
+<ul>
+<li>注意：无论是何种类型的数据，最终都需要转换成二进制流在网络上进行传输，数据的发送方需要将对象转换为二进制流，而数据的接收方则需要把二进制流再恢复为对象。
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 159; 
+			flex-basis: 382px"
+	>
+	<a href="/p/prc/1.jpg" data-size="500x314">
+		<img src="/p/prc/1.jpg"
+			width="500"
+			height="314"
+			srcset="/p/prc/1_hu92b5144e2fe44c426742bd76f38787bf_37611_480x0_resize_q75_box.jpg 480w, /p/prc/1_hu92b5144e2fe44c426742bd76f38787bf_37611_1024x0_resize_q75_box.jpg 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></li>
+</ul>
+<h2 id="gprc">gPRC</h2>
+<ul>
+<li>gRPC 是一种现代开源高性能远程过程调用 (RPC) 框架，可以在任何环境中运行。它可以通过对负载平衡、跟踪、健康检查和身份验证的可插拔支持，有效地连接数据中心内和数据中心之间的服务。它还适用于分布式计算的最后一英里，将设备、移动应用程序和浏览器连接到后端服务。</li>
+<li>gRPC 是基于HTTP2.0(多路复用,消除了线头阻塞)标准协议色设计的基于ProtoBuf序列化的高性能框架。
+<a class="link" href="http://doc.oschina.net/grpc"  target="_blank" rel="noopener"
+    >《gRPC 官方文档中文版》</a></li>
+</ul>
+<h3 id="protocol-buffers">Protocol Buffers</h3>
+<ul>
+<li>Protocol Buffers 是一种轻便高效的结构化数据存储格式，可以用于结构化数据序列化，很适合做数据存储或 RPC 数据交换格式。它可用于通讯协议、数据存储等领域的语言无关、平台无关、可扩展的序列化结构数据格式</li>
+<li>序列化：将数据结构或对象转换成能被传输或者存储（如二进制格式）的过程。</li>
+<li>反序列化：将在序列化过程中所生成的(格式)转换成数据结构或者对象的过程。</li>
+</ul>
+<h2 id="参考文献">参考文献：</h2>
+<p><a class="link" href="https://zhuanlan.zhihu.com/p/94983974"  target="_blank" rel="noopener"
+    >RPC原理解析</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/restfulapi/">
+        
+        
+            <div class="article-image">
+                <img src="/p/restfulapi/1.0a791479868a49d03bbd57bcc1a0a0cf_hu5d30570469f48ece7400dce081384b39_15097_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-CnkUeYaKSdA7vVe8waCgzw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">RestfulAPI</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/docker%E7%9F%A5%E8%AF%86%E6%80%BB%E8%A7%88/">
+        
+        
+            <div class="article-image">
+                <img src="/p/docker%E7%9F%A5%E8%AF%86%E6%80%BB%E8%A7%88/1.d82275f85a54a315831288d3528d7253_hub2f0788524e05f802191dca26df6a25d_10280_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-2CJ1&#43;FpUoxWDEojTUo1yUw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Docker知识总览</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/6.daac8e60fed9fac87b343545be0bf672_hu61bd622d583377d86db238f2ea3bdaa9_262966_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-2qyOYP7Z&#43;sh7NDVFvgv2cg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">内存管理</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/c/c-/">
+        
+        
+            <div class="article-image">
+                <img src="/p/c/c/10.8077ca6d9a0decc584ac5cd6212df5bf_hu5bb3a4baa791897c79c1df91e792ef0e_243913_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="c/c&#43;&#43;" 
+                        data-hash="md5-gHfKbZoN7MWErFzWIS31vw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">进程、线程、协程</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/">
+        
+        
+            <div class="article-image">
+                <img src="/p/syslog%E6%97%A5%E5%BF%97%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE/8.5c16d9c46573ca56743e3b169be2a41e_hu442c80cfdca83249146ebd0d5822289f_88346_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-XBbZxGVzylZ0PjsWm&#43;KkHg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">syslog日志转发配置</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#rpc">RPC</a></li>
+    <li><a href="#rpc-架构">RPC 架构</a>
+      <ol>
+        <li><a href="#rpc调用过程">RPC调用过程</a></li>
+      </ol>
+    </li>
+    <li><a href="#gprc">gPRC</a>
+      <ol>
+        <li><a href="#protocol-buffers">Protocol Buffers</a></li>
+      </ol>
+    </li>
+    <li><a href="#参考文献">参考文献：</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

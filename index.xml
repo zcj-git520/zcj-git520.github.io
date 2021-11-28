@@ -6,7 +6,270 @@
         <description>Recent content on Chengji Zhao&#39;s blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Fri, 05 Nov 2021 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Mon, 15 Nov 2021 22:00:08 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>PRC</title>
+        <link>https://zcj-git520.github.io/p/prc/</link>
+        <pubDate>Mon, 15 Nov 2021 22:00:08 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/prc/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/prc/1.jpg" alt="Featured image of post PRC" /&gt;&lt;h2 id=&#34;rpc&#34;&gt;RPC&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;RPC(Remote Procedure Call Protocol)——远程过程调用协议，它是一种通过网络从远程计算机程序上请求服务，
+而不需要了解底层网络技术的协议。RPC协议假定某些传输协议的存在，如TCP/IP或UDP，为通信程序之间携带信息数据。
+RPC将原来的本地调用转变为调用远端的服务器上的方法，给系统的处理能力和吞吐量带来了近似于无限制提升的可能。
+在OSI网络通信模型中，RPC跨域了传输层和应用层。RPC使得开发包括网络分布式多程序在内的应用程序更加容易&lt;/li&gt;
+&lt;li&gt;RPC采用客户机/服务器(client-server)模式,也是一种请求/响应(request-response)模式，可以通过TCP/UDP以及HTTP
+协议进行传输&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;rpc-架构&#34;&gt;RPC 架构&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;CAll ID 映射：客户端通过ID传输给服务器，服务器通过ID调用相应的函数返回&lt;/li&gt;
+&lt;li&gt;序列化与烦序列化：客户端与服务器通过序列化与反序列化进行传参&lt;/li&gt;
+&lt;li&gt;一个完整的RPC架构里面包含了四个核心的组件，分别是Client，Client Stub，Server以及Server Stub，这个Stub可以理解为存根。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol&gt;
+&lt;li&gt;客户端(Client)，服务的调用方。&lt;/li&gt;
+&lt;li&gt;客户端存根(Client Stub)，存放服务端的地址消息，再将客户端的请求参数打包成网络消息，然后通过网络远程发送给服务方。&lt;/li&gt;
+&lt;li&gt;服务端(Server)，真正的服务提供者。&lt;/li&gt;
+&lt;li&gt;服务端存根(Server Stub)，接收客户端发送过来的消息，将消息解包，并调用本地的方法。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;rpc调用过程&#34;&gt;RPC调用过程&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;客户端（client）以本地调用方式（即以接口的方式）调用服务；&lt;/li&gt;
+&lt;li&gt;客户端存根（client stub）接收到调用后，负责将方法、参数等组装成能够进行网络传输的消息体（将消息体对象序列化为二进制）；&lt;/li&gt;
+&lt;li&gt;客户端通过sockets将消息发送到服务端；&lt;/li&gt;
+&lt;li&gt;服务端存根( server stub）收到消息后进行解码（将消息对象反序列化）；&lt;/li&gt;
+&lt;li&gt;服务端存根( server stub）根据解码结果调用本地的服务；&lt;/li&gt;
+&lt;li&gt;本地服务执行并将结果返回给服务端存根( server stub）；&lt;/li&gt;
+&lt;li&gt;服务端存根( server stub）将返回结果打包成消息（将结果消息对象序列化）；&lt;/li&gt;
+&lt;li&gt;服务端（server）通过sockets将消息发送到客户端；&lt;/li&gt;
+&lt;li&gt;客户端存根（client stub）接收到结果消息，并进行解码（将结果消息发序列化）；&lt;/li&gt;
+&lt;li&gt;客户端（client）得到最终结果。&lt;br&gt;
+RPC的目标是要把2、3、4、7、8、9这些步骤都封装起来。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;注意：无论是何种类型的数据，最终都需要转换成二进制流在网络上进行传输，数据的发送方需要将对象转换为二进制流，而数据的接收方则需要把二进制流再恢复为对象。
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 159; 
+			flex-basis: 382px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/prc/1.jpg&#34; data-size=&#34;500x314&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/prc/1.jpg&#34;
+			width=&#34;500&#34;
+			height=&#34;314&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/prc/1_hu92b5144e2fe44c426742bd76f38787bf_37611_480x0_resize_q75_box.jpg 480w, https://zcj-git520.github.io/p/prc/1_hu92b5144e2fe44c426742bd76f38787bf_37611_1024x0_resize_q75_box.jpg 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;gprc&#34;&gt;gPRC&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;gRPC 是一种现代开源高性能远程过程调用 (RPC) 框架，可以在任何环境中运行。它可以通过对负载平衡、跟踪、健康检查和身份验证的可插拔支持，有效地连接数据中心内和数据中心之间的服务。它还适用于分布式计算的最后一英里，将设备、移动应用程序和浏览器连接到后端服务。&lt;/li&gt;
+&lt;li&gt;gRPC 是基于HTTP2.0(多路复用,消除了线头阻塞)标准协议色设计的基于ProtoBuf序列化的高性能框架。
+&lt;a class=&#34;link&#34; href=&#34;http://doc.oschina.net/grpc&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;《gRPC 官方文档中文版》&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;protocol-buffers&#34;&gt;Protocol Buffers&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Protocol Buffers 是一种轻便高效的结构化数据存储格式，可以用于结构化数据序列化，很适合做数据存储或 RPC 数据交换格式。它可用于通讯协议、数据存储等领域的语言无关、平台无关、可扩展的序列化结构数据格式&lt;/li&gt;
+&lt;li&gt;序列化：将数据结构或对象转换成能被传输或者存储（如二进制格式）的过程。&lt;/li&gt;
+&lt;li&gt;反序列化：将在序列化过程中所生成的(格式)转换成数据结构或者对象的过程。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;参考文献&#34;&gt;参考文献：&lt;/h2&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://zhuanlan.zhihu.com/p/94983974&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;RPC原理解析&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>RestfulAPI</title>
+        <link>https://zcj-git520.github.io/p/restfulapi/</link>
+        <pubDate>Wed, 10 Nov 2021 22:00:08 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/restfulapi/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/restfulapi/1.jpg" alt="Featured image of post RestfulAPI" /&gt;&lt;h2 id=&#34;restful-api&#34;&gt;Restful API&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;rest是Representational state Transfer 的缩写（表述性转态传递）&lt;/li&gt;
+&lt;li&gt;api是应用程序接口&lt;/li&gt;
+&lt;li&gt;Restful API是一种软件结构风格，设计风格，让软件更加清晰、简洁、易维护。是一种流行的软件API
+设计风格&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;rest的指导风格&#34;&gt;Rest的指导风格&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;客户端-服务器：通过将用户接口问题与数据存储问题分开，简化服务器组件来提高跨平台放入用户接口的
+可移植性性并提高可伸缩性&lt;/li&gt;
+&lt;li&gt;无转态：从客户端到服务器的每个请求都必须包含理解请求所需的所有信息，并且不能利用服务器上任何存储的上下文。因此，会话状态完全保留在客户端上。&lt;/li&gt;
+&lt;li&gt;可缓存：缓存约束要求将对请求的响应中的数据隐式或显式标记为可缓存或不可缓存。如果响应是可缓存的，则客户端缓存有权重用该响应数据以用于以后的等效请求。&lt;/li&gt;
+&lt;li&gt;统一接口：通过将通用性的软件工程原理应用于组件接口，简化了整个系统架构，提高了交互的可见性。为了获得统一的接口，需要多个架构约束来指导组件的行为。REST由四个接口约束定义：资源识别; 通过陈述来处理资源; 自我描述性的信息; 并且，超媒体作为应用程序状态的引擎&lt;/li&gt;
+&lt;li&gt;分层系统：分层系统风格允许通过约束组件行为来使体系结构由分层层组成，这样每个组件都不能“看到”超出与它们交互的直接层。&lt;/li&gt;
+&lt;li&gt;按需编码（可选）： REST允许通过以小程序或脚本的形式下载和执行代码来扩展客户端功能。这通过减少预先实现所需的功能数量来简化客户端&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;restful-架构&#34;&gt;RestFul 架构&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;资源：网络的实体或者是具体的信息，使用URI(统一资源定位符)，URI是每一个资源的地址或者独一无二的是识别符&lt;/li&gt;
+&lt;li&gt;表现层： 对资源的外在表现，如：json、xml、txt、二进制等&lt;/li&gt;
+&lt;li&gt;转态转化：互联网是一种无转态的协议，所有的状态都是保存在服务器上，客户端通过
+HTTP的操作方式(GET,POST,PUT,DELETE)等改变服务器的“状态变化”
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 186; 
+			flex-basis: 447px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/restfulapi/1.jpg&#34; data-size=&#34;412x221&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/restfulapi/1.jpg&#34;
+			width=&#34;412&#34;
+			height=&#34;221&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/restfulapi/1_hu5d30570469f48ece7400dce081384b39_15097_480x0_resize_q75_box.jpg 480w, https://zcj-git520.github.io/p/restfulapi/1_hu5d30570469f48ece7400dce081384b39_15097_1024x0_resize_q75_box.jpg 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;restful-api接口规范&#34;&gt;RESTful API接口规范&lt;/h2&gt;
+&lt;h3 id=&#34;接口风格&#34;&gt;接口风格&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;路径和变量均采用小驼峰式，例如deviceId&lt;/li&gt;
+&lt;li&gt;使用HTTP动词作为action操作URL资源，动词一律大写。
+&lt;ul&gt;
+&lt;li&gt;GET：读取\查询（Read）&lt;/li&gt;
+&lt;li&gt;POST：新建（Create）&lt;/li&gt;
+&lt;li&gt;PUT：更新（Update）&lt;/li&gt;
+&lt;li&gt;PATCH：更新（Update），通常是部分更新&lt;/li&gt;
+&lt;li&gt;DELETE：删除（Delete）&lt;/li&gt;
+&lt;li&gt;HEAD：获取资源的元数据。&lt;/li&gt;
+&lt;li&gt;OPTIONS：获取信息，关于资源的哪些属性是客户端可以改变的。&lt;/li&gt;
+&lt;li&gt;5种请求动作中，GET、PUT、PATCH、DELETE均是幂等的；只有POST是非幂等的。幂等操作的特点是其任意多次执行所产生的影响均与一次执行的影响相同。&lt;strong&gt;是非幂等是判断接口使用POST还是PUT的决定条件&lt;/strong&gt;。幂等的理解见本文附录。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;参数：
+&lt;ul&gt;
+&lt;li&gt;PATH（路径）：
+&lt;ul&gt;
+&lt;li&gt;版本号放入PATH，且在最前
+&lt;ul&gt;
+&lt;li&gt;尽量使用名词，不使用动词，把每个URL看成一个资源，名称都用复数&lt;/li&gt;
+&lt;li&gt;微服务名称不放入PATH中&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Query参数：主要用在GET查询中，简单的PUT动作，也用Query参数&lt;/li&gt;
+&lt;li&gt;Headers参数：公共参数通过header传递，content-type、authorization认证必填，其他统一按调用链规范、速率限制规范填写。content-type应该固定为&lt;code&gt;application/json&lt;/code&gt;。&lt;/li&gt;
+&lt;li&gt;Body：
+&lt;ul&gt;
+&lt;li&gt;统一使用json格式，所有返回都是json格式
+&lt;ul&gt;
+&lt;li&gt;POST所有参数通过JSON传递&lt;/li&gt;
+&lt;li&gt;GET请求不允许有body， 所有参数通过拼接在URL之后传递，&lt;strong&gt;所有的请求参数都要进行遵循&lt;a class=&#34;link&#34; href=&#34;https://link.zhihu.com/?target=https%3A//tools.ietf.org/html/rfc3986&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;RFC 3986&lt;/a&gt;的URL Encode&lt;/strong&gt;。&lt;/li&gt;
+&lt;li&gt;DELETE删除单个资源时，资源标识通过path传递，批量删除时，通过在body中传递JSON。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;返回结果
+&lt;ul&gt;
+&lt;li&gt;状态码：HTTP状态码标准用法，见后状态码规范&lt;/li&gt;
+&lt;li&gt;Body返回，只提供json返回格式&lt;/li&gt;
+&lt;li&gt;GET：返回资源对象，完整对象或通过Query参数可过滤&lt;/li&gt;
+&lt;li&gt;POST：返回新生成的资源对象，可能是ID或完整的资源对象&lt;/li&gt;
+&lt;li&gt;PUT：返回完整的资源对象&lt;/li&gt;
+&lt;li&gt;DELETE：返回一个空文档&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;过滤信息：查询及查询结果使用
+&lt;ul&gt;
+&lt;li&gt;pageNo：分页查询标识第几页&lt;/li&gt;
+&lt;li&gt;pageSize：分页查询标识每页多少条数据&lt;/li&gt;
+&lt;li&gt;begin：录像/截图开始时间，Unix时间戳，单位秒&lt;/li&gt;
+&lt;li&gt;end：录像/截图结束时间，Unix时间戳，单位秒&lt;/li&gt;
+&lt;li&gt;orderby：排序规则，desc或asc&lt;/li&gt;
+&lt;li&gt;q：搜索关键字（uri encode之后的）&lt;/li&gt;
+&lt;li&gt;totalCount：总记录数，分页查询，返回json携带&lt;/li&gt;
+&lt;li&gt;totalPages：总页数，分页查询，返回json携带，等于page时，表示当前是最后一页&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;微服务内部使用http协议，对外使用https协议&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;详细设计要求&#34;&gt;详细设计要求&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;输入参数要精简有效
+&lt;ul&gt;
+&lt;li&gt;不能把内部对象作为接口参数，通过DTO进行转换；&lt;/li&gt;
+&lt;li&gt;required的字段尽可能少&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;CRUD的U(POST)要通过业务分析（领域建模）具体化操作，不要提供灵活但是支持不全面的接口&lt;/li&gt;
+&lt;li&gt;查询尽可能提供丰富的查询条件，可以返回尽可能详细的信息&lt;/li&gt;
+&lt;li&gt;同类资源尽可能统一接口&lt;/li&gt;
+&lt;li&gt;避免多级 URL，比如获取某个作者的某一类文章：
+&lt;code&gt;GET /authors/12/categories/2&lt;/code&gt;
+这种 URL 不利于扩展，语义也不明确，往往要想一会，才能明白含义。
+更好的做法是，除了第一级，其他级别都用查询字符串表达。
+&lt;code&gt;GET /authors/12?categories=2&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;如何设计批量处理
+把URL设计为&lt;code&gt;PATCH /authors/batch&lt;/code&gt;，也就是具体的id传入batch表示批量，参数通过body传递，例如如下：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;{
+   {&amp;quot;method&amp;quot;:&amp;quot;DELETE&amp;quot;,&amp;quot;id&amp;quot;:&amp;quot;12&amp;quot;,&amp;quot;value&amp;quot;:&amp;quot;&amp;quot;}
+   {&amp;quot;method&amp;quot;:&amp;quot;PUT&amp;quot;,&amp;quot;id&amp;quot;:&amp;quot;23&amp;quot;,&amp;quot;value&amp;quot;:{&amp;quot;name&amp;quot;:&amp;quot;michael&amp;quot;,&amp;quot;group&amp;quot;:&amp;quot;fisrt&amp;quot;,...}}
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;在method中传递HTTP动词，主要是PUT\DELETE，GET通过查询条件本身就支持批量，POST是创建，几乎不需批量创建，而PUT\DELETE都是对某个id操作，同时修改或删除多个id就是批量操作；在id中明确具体的id，value则传递与操作单个id一致的数据。批量操作的返回body与传入body保持一致，只是value可能是error数据也可能是PUT的结果数据。通过这种设计，在实现时，batch操作可以复用单个id操作的处理过程。&lt;/p&gt;
+&lt;h3 id=&#34;状态码规范&#34;&gt;状态码规范&lt;/h3&gt;
+&lt;h4 id=&#34;正确&#34;&gt;正确&lt;/h4&gt;
+&lt;p&gt;接口正常访问情况下，服务器返回2××的HTTP状态码。
+&lt;code&gt;200 OK&lt;/code&gt; ：表示已在响应中发出、资源更改成功（GET、PUT）
+&lt;code&gt;201 Created&lt;/code&gt;：表示新资源被创建（POST）
+&lt;code&gt;204 No Content&lt;/code&gt; ：资源被删除（DELETE）&lt;/p&gt;
+&lt;h4 id=&#34;错误&#34;&gt;错误&lt;/h4&gt;
+&lt;p&gt;当用户访问接口出错时，服务器会返回给一个合适的4××或者5××的HTTP状态码；以及一个application/json格式的消息体，消息体中包含错误码code和错误说明message，json格式如下：&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;{
+    &amp;quot;code&amp;quot;:&amp;quot;内部错误代码可以是数字或Exeption字符串，例如20003, OAuthException&amp;quot;
+    &amp;quot;message&amp;quot;:&amp;quot;格式化的错误信息，英文，此message是对code的更细的错误描述，可以把一些状态变量格式化嵌入。&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;补充说明：以上错误返回全英文，若Web提示，由web客户端建立code的多语言字符串表，把错误码转化为对于的多语言字符串，展示多语言提示。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;发生错误时，绝对不要返回 200 状态码&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;4××错误( &lt;code&gt;400=&amp;lt;status code&amp;lt;500&lt;/code&gt; )为客户端的请求错误，需要根据具体的code做相应的提示和逻辑处理，message仅供开发时参考，不建议作为用户提示。&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;5××错误( &lt;code&gt;500=&amp;lt;status code&lt;/code&gt; )为服务器或程序出错，客户端只需要提示“服务异常，请稍后重试”即可，该类错误不在每个接口中列出。&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;400 Bad Request&lt;/code&gt; ：服务器不理解客户端的请求，未做任何处理。&lt;br&gt;
+&lt;code&gt;401 Unauthorized&lt;/code&gt; ：用户未提供身份验证凭据，或者没有通过身份验证。&lt;br&gt;
+&lt;code&gt;403 Forbidden&lt;/code&gt; ：用户通过了身份验证，但是不具有访问资源所需的权限。&lt;br&gt;
+&lt;code&gt;404 Not Found&lt;/code&gt; ：所请求的资源不存在，或不可用。&lt;br&gt;
+&lt;code&gt;405 Method Not Allowed&lt;/code&gt; ：用户已经通过身份验证，但是所用的 HTTP 方法不在他的权限之内。&lt;br&gt;
+&lt;code&gt;410 Gone&lt;/code&gt; ：所请求的资源已从这个地址转移，不再可用。&lt;br&gt;
+&lt;code&gt;415 Unsupported Media Type&lt;/code&gt; ：客户端要求的返回格式不支持。比如，API 只能返回 JSON 格式，但是客户端要求返回 XML 格式。&lt;br&gt;
+&lt;code&gt;422 Unprocessable Entity&lt;/code&gt;  ：客户端上传的附件无法处理，导致请求失败。&lt;br&gt;
+&lt;code&gt;429 Too Many Requests&lt;/code&gt; ：客户端的请求次数超过限额。&lt;br&gt;
+&lt;code&gt;500 Internal Server Error&lt;/code&gt; ：客户端请求有效，服务器处理时发生了意外。&lt;br&gt;
+&lt;code&gt;503 Service Unavailable&lt;/code&gt; ：服务器无法处理请求，一般用于网站或设备维护状态。&lt;/p&gt;
+&lt;h3 id=&#34;附录幂等性&#34;&gt;附录：幂等性&lt;/h3&gt;
+&lt;p&gt;幂等性：幂等性是分布式环境下常见的问题；幂等性指的是多次操作，结果是一致的。（多次操作数据库数据是一致的。）&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;GET方法用于获取资源，不应有副作用，所以是幂等的。&lt;/li&gt;
+&lt;li&gt;DELETE方法用于删除资源，有副作用，但它应该满足幂等性。&lt;/li&gt;
+&lt;li&gt;POST所对应的URI并非创建的资源本身，而是资源的接收者。比如： POST &lt;a class=&#34;link&#34; href=&#34;http://www.forum.com/articles&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;http://www.forum.com/articles&lt;/a&gt; 的语义是在 &lt;a class=&#34;link&#34; href=&#34;http://www.forum.com/articles&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;http://www.forum.com/articles&lt;/a&gt; 下创建一篇帖子，HTTP响应中应包含帖子的创建状态以及帖子的URI。两次相同的POST请求会在服务器端创建两份资源，它们具有不同的URI；所以，POST方法不具备幂等性。&lt;/li&gt;
+&lt;li&gt;PUT所对应的URI是要创建或更新的资源本身。比如： PUT &lt;a class=&#34;link&#34; href=&#34;http://www.forum/articles/4231&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;http://www.forum/articles/4231&lt;/a&gt; 的语义是创建或更新ID为4231的帖子。对同一URI进行多次PUT的副作用和一次PUT是相同的；因此，PUT方法具有幂等性。&lt;/li&gt;
+&lt;li&gt;如何把非幂等的POST操作设计为幂等的，可以参加下面的帖子的示例：
+&lt;a class=&#34;link&#34; href=&#34;https://www.cnblogs.com/weidagang2046/archive/2011/06/04/idempotence.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://www.cnblogs.com/weidagang2046/archive/2011/06/04/idempotence.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        <item>
         <title>Docker知识总览</title>
         <link>https://zcj-git520.github.io/p/docker%E7%9F%A5%E8%AF%86%E6%80%BB%E8%A7%88/</link>
         <pubDate>Fri, 05 Nov 2021 22:00:38 +0800</pubDate>
@@ -651,7 +914,9 @@ RUN apk --no-cache add ca-certificates
 WORKDIR /root/
 COPY --from=builder /go/src/github.com/alexellis/href-counter/app .
 CMD [&amp;quot;./app&amp;quot;]  
-&lt;/code&gt;&lt;/pre&gt;</description>
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;docker-实战与练习&#34;&gt;Docker 实战与练习&lt;/h2&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;./Docker.pdf&#34; &gt;Docker 实战与练习&lt;/a&gt;&lt;/p&gt;
+</description>
         </item>
         <item>
         <title>Python安全指南</title>
