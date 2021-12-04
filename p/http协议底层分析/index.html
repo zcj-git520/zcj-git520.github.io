@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='HTTP  HTTP是(Hyper Text Transfer Protocol)超文本传输协议, 基于tcp的应用层传输协议（请求-响应）协议 影响HTTP网络请求的主要因素带宽和延迟  延迟的种类:  浏览器阻塞(超过浏览器连接数限制的后续请求都会被阻塞) DNS查询 (将域名解析造成的延迟，可以通过缓存DNS进行解决) 建立链接 (因HTTP是基于TCP的应用层协议，在建立连接时需要进行)  HTTP1.0 http1.0存在的问题：  短连接：规定客户端与服务器只保持短暂连接，客户端每次请求都需要建立连接，服务器完成请求后 断开连接，服务器不跟踪客户端，不保存客户端的请求记录。 没有host头域：每台服务器都绑定一个唯一的IP地址，请求消息中的URL并没有传递主机名（hostname） 不允许短点续传  HTTP1.1 根据http1.0暴露的问题，http1.1增加优化方案  缓存处理：http1.1增加更多的缓存控制策略 带宽优化及网络连接的使用：http1.1中请求头引入了range头域和支持断点续传的功能 Host头处理：http1.1的请求消息和相应消息虚拟主机技术的发展，在一台物理服务器上可以存在多个虚拟主机(Multi-homed Web Servers),并且它们共享一个IP地址,HTTP1.1的请求消息和响应消息都应支持Host头域，且请求消息中如果没有Host头域会报告一个错误（400 Bad Request） 长连接： 支持长连接和流水线处理，默认开始是长连接：keep-alive  http1.1 也带来新的问题：HTTP 队头阻塞(head of line blocking)  因http1.1支持了长连接和使用了管道机制，客户端与服务器建立一次连接，客户端不用等待服务器响应就能发送下一个请求，支持了并行发送多个请求， 但服务器必须按照请求的顺序来相应请求，也就是通过串行响应请求，这就造成了HTTP的队头阻塞。  解决Http 队头阻塞方法  并发连接：一个域名允许分配多个长连接，增加处理请求任务 域名分片：将一个域名分解为多个域名，在进行并发连接  HTTP2.0  HTTP2.0主要是基于SPDY协议。实现了低延时高吞吐量  SPDY协议  是基于TCP协议的应用层协议，其目标是通过头部压缩、多路复用、优先级等作用缩短网页放入加载时间和 优化http的性能，其核心是尽量减少TCP连接数  HTTP 2.0的特性 头部压缩 头部存在大量的信息，而且每次在发送都会降低http的性能，在用HPACK算法对头部进行压缩： 1.在客户端和服务器维持一个头部表来跟踪和存储客户端发来的键值对 2.客户端在请求的时候便只需要发送在表里的索引位置即可 3.HPACK 不仅仅通过索引键值对来降低数据量，同时还会将字符串进行霍夫曼编码来压缩字符串大小'><title>http协议底层分析</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='http协议底层分析'>
+<meta property='og:description' content='HTTP  HTTP是(Hyper Text Transfer Protocol)超文本传输协议, 基于tcp的应用层传输协议（请求-响应）协议 影响HTTP网络请求的主要因素带宽和延迟  延迟的种类:  浏览器阻塞(超过浏览器连接数限制的后续请求都会被阻塞) DNS查询 (将域名解析造成的延迟，可以通过缓存DNS进行解决) 建立链接 (因HTTP是基于TCP的应用层协议，在建立连接时需要进行)  HTTP1.0 http1.0存在的问题：  短连接：规定客户端与服务器只保持短暂连接，客户端每次请求都需要建立连接，服务器完成请求后 断开连接，服务器不跟踪客户端，不保存客户端的请求记录。 没有host头域：每台服务器都绑定一个唯一的IP地址，请求消息中的URL并没有传递主机名（hostname） 不允许短点续传  HTTP1.1 根据http1.0暴露的问题，http1.1增加优化方案  缓存处理：http1.1增加更多的缓存控制策略 带宽优化及网络连接的使用：http1.1中请求头引入了range头域和支持断点续传的功能 Host头处理：http1.1的请求消息和相应消息虚拟主机技术的发展，在一台物理服务器上可以存在多个虚拟主机(Multi-homed Web Servers),并且它们共享一个IP地址,HTTP1.1的请求消息和响应消息都应支持Host头域，且请求消息中如果没有Host头域会报告一个错误（400 Bad Request） 长连接： 支持长连接和流水线处理，默认开始是长连接：keep-alive  http1.1 也带来新的问题：HTTP 队头阻塞(head of line blocking)  因http1.1支持了长连接和使用了管道机制，客户端与服务器建立一次连接，客户端不用等待服务器响应就能发送下一个请求，支持了并行发送多个请求， 但服务器必须按照请求的顺序来相应请求，也就是通过串行响应请求，这就造成了HTTP的队头阻塞。  解决Http 队头阻塞方法  并发连接：一个域名允许分配多个长连接，增加处理请求任务 域名分片：将一个域名分解为多个域名，在进行并发连接  HTTP2.0  HTTP2.0主要是基于SPDY协议。实现了低延时高吞吐量  SPDY协议  是基于TCP协议的应用层协议，其目标是通过头部压缩、多路复用、优先级等作用缩短网页放入加载时间和 优化http的性能，其核心是尽量减少TCP连接数  HTTP 2.0的特性 头部压缩 头部存在大量的信息，而且每次在发送都会降低http的性能，在用HPACK算法对头部进行压缩： 1.在客户端和服务器维持一个头部表来跟踪和存储客户端发来的键值对 2.客户端在请求的时候便只需要发送在表里的索引位置即可 3.HPACK 不仅仅通过索引键值对来降低数据量，同时还会将字符串进行霍夫曼编码来压缩字符串大小'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-11-18T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2021-11-18T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/1.jpg' />
+<meta name="twitter:title" content="http协议底层分析">
+<meta name="twitter:description" content="HTTP  HTTP是(Hyper Text Transfer Protocol)超文本传输协议, 基于tcp的应用层传输协议（请求-响应）协议 影响HTTP网络请求的主要因素带宽和延迟  延迟的种类:  浏览器阻塞(超过浏览器连接数限制的后续请求都会被阻塞) DNS查询 (将域名解析造成的延迟，可以通过缓存DNS进行解决) 建立链接 (因HTTP是基于TCP的应用层协议，在建立连接时需要进行)  HTTP1.0 http1.0存在的问题：  短连接：规定客户端与服务器只保持短暂连接，客户端每次请求都需要建立连接，服务器完成请求后 断开连接，服务器不跟踪客户端，不保存客户端的请求记录。 没有host头域：每台服务器都绑定一个唯一的IP地址，请求消息中的URL并没有传递主机名（hostname） 不允许短点续传  HTTP1.1 根据http1.0暴露的问题，http1.1增加优化方案  缓存处理：http1.1增加更多的缓存控制策略 带宽优化及网络连接的使用：http1.1中请求头引入了range头域和支持断点续传的功能 Host头处理：http1.1的请求消息和相应消息虚拟主机技术的发展，在一台物理服务器上可以存在多个虚拟主机(Multi-homed Web Servers),并且它们共享一个IP地址,HTTP1.1的请求消息和响应消息都应支持Host头域，且请求消息中如果没有Host头域会报告一个错误（400 Bad Request） 长连接： 支持长连接和流水线处理，默认开始是长连接：keep-alive  http1.1 也带来新的问题：HTTP 队头阻塞(head of line blocking)  因http1.1支持了长连接和使用了管道机制，客户端与服务器建立一次连接，客户端不用等待服务器响应就能发送下一个请求，支持了并行发送多个请求， 但服务器必须按照请求的顺序来相应请求，也就是通过串行响应请求，这就造成了HTTP的队头阻塞。  解决Http 队头阻塞方法  并发连接：一个域名允许分配多个长连接，增加处理请求任务 域名分片：将一个域名分解为多个域名，在进行并发连接  HTTP2.0  HTTP2.0主要是基于SPDY协议。实现了低延时高吞吐量  SPDY协议  是基于TCP协议的应用层协议，其目标是通过头部压缩、多路复用、优先级等作用缩短网页放入加载时间和 优化http的性能，其核心是尽量减少TCP连接数  HTTP 2.0的特性 头部压缩 头部存在大量的信息，而且每次在发送都会降低http的性能，在用HPACK算法对头部进行压缩： 1.在客户端和服务器维持一个头部表来跟踪和存储客户端发来的键值对 2.客户端在请求的时候便只需要发送在表里的索引位置即可 3.HPACK 不仅仅通过索引键值对来降低数据量，同时还会将字符串进行霍夫曼编码来压缩字符串大小"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/1.jpg' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/">
+                <img src="/p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/1_hu7de10a5ba4c09963d2757d75c9451326_29719_800x0_resize_q75_box.jpg"
+                        srcset="/p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/1_hu7de10a5ba4c09963d2757d75c9451326_29719_800x0_resize_q75_box.jpg 800w, /p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/1_hu7de10a5ba4c09963d2757d75c9451326_29719_1600x0_resize_q75_box.jpg 1600w"
+                        width="800" 
+                        height="262" 
+                        loading="lazy"
+                        alt="Featured image of post http协议底层分析" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/computer/" style="background-color: #2a9d8f; color: #fff;">
+                知识学习
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/">http协议底层分析</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Nov 18, 2021</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 1 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h2 id="http">HTTP</h2>
+<ul>
+<li>HTTP是(Hyper Text Transfer Protocol)超文本传输协议, 基于tcp的应用层传输协议（请求-响应）协议</li>
+<li>影响HTTP网络请求的主要因素带宽和延迟</li>
+</ul>
+<h3 id="延迟的种类">延迟的种类:</h3>
+<ol>
+<li>浏览器阻塞(超过浏览器连接数限制的后续请求都会被阻塞)</li>
+<li>DNS查询 (将域名解析造成的延迟，可以通过缓存DNS进行解决)</li>
+<li>建立链接 (因HTTP是基于TCP的应用层协议，在建立连接时需要进行)</li>
+</ol>
+<h2 id="http10">HTTP1.0</h2>
+<h3 id="http10存在的问题">http1.0存在的问题：</h3>
+<ol>
+<li>短连接：规定客户端与服务器只保持短暂连接，客户端每次请求都需要建立连接，服务器完成请求后
+断开连接，服务器不跟踪客户端，不保存客户端的请求记录。</li>
+<li>没有host头域：每台服务器都绑定一个唯一的IP地址，请求消息中的URL并没有传递主机名（hostname）</li>
+<li>不允许短点续传</li>
+</ol>
+<h2 id="http11">HTTP1.1</h2>
+<h3 id="根据http10暴露的问题http11增加优化方案">根据http1.0暴露的问题，http1.1增加优化方案</h3>
+<ol>
+<li>缓存处理：http1.1增加更多的缓存控制策略</li>
+<li>带宽优化及网络连接的使用：http1.1中请求头引入了range头域和支持断点续传的功能</li>
+<li>Host头处理：http1.1的请求消息和相应消息虚拟主机技术的发展，在一台物理服务器上可以存在多个虚拟主机(Multi-homed Web Servers),并且它们共享一个IP地址,HTTP1.1的请求消息和响应消息都应支持Host头域，且请求消息中如果没有Host头域会报告一个错误（400 Bad Request）</li>
+<li>长连接： 支持长连接和流水线处理，默认开始是长连接：keep-alive</li>
+</ol>
+<h3 id="http11-也带来新的问题http-队头阻塞head-of-line-blocking">http1.1 也带来新的问题：HTTP 队头阻塞(head of line blocking)</h3>
+<ul>
+<li>因http1.1支持了长连接和使用了管道机制，客户端与服务器建立一次连接，客户端不用等待服务器响应就能发送下一个请求，支持了并行发送多个请求，
+但服务器必须按照请求的顺序来相应请求，也就是通过串行响应请求，这就造成了HTTP的队头阻塞。</li>
+</ul>
+<h3 id="解决http-队头阻塞方法">解决Http 队头阻塞方法</h3>
+<ol>
+<li>并发连接：一个域名允许分配多个长连接，增加处理请求任务</li>
+<li>域名分片：将一个域名分解为多个域名，在进行并发连接</li>
+</ol>
+<h2 id="http20">HTTP2.0</h2>
+<ul>
+<li>HTTP2.0主要是基于SPDY协议。实现了低延时高吞吐量</li>
+</ul>
+<h3 id="spdy协议">SPDY协议</h3>
+<ul>
+<li>是基于TCP协议的应用层协议，其目标是通过头部压缩、多路复用、优先级等作用缩短网页放入加载时间和
+优化http的性能，其核心是尽量减少TCP连接数</li>
+</ul>
+<h3 id="http-20的特性">HTTP 2.0的特性</h3>
+<h3 id="头部压缩">头部压缩</h3>
+<p>头部存在大量的信息，而且每次在发送都会降低http的性能，在用HPACK算法对头部进行压缩：
+1.在客户端和服务器维持一个头部表来跟踪和存储客户端发来的键值对
+2.客户端在请求的时候便只需要发送在表里的索引位置即可
+3.HPACK 不仅仅通过索引键值对来降低数据量，同时还会将字符串进行霍夫曼编码来压缩字符串大小
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 305; 
+			flex-basis: 733px"
+	>
+	<a href="/p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/1.jpg" data-size="792x259">
+		<img src="/p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/1.jpg"
+			width="792"
+			height="259"
+			srcset="/p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/1_hu7de10a5ba4c09963d2757d75c9451326_29719_480x0_resize_q75_box.jpg 480w, /p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/1_hu7de10a5ba4c09963d2757d75c9451326_29719_1024x0_resize_q75_box.jpg 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<h3 id="多路复用">多路复用</h3>
+<ul>
+<li>基于二进制分帧，在共享的Tcp连接的基础上同时发送请求和响应。http的消息被分解成独立的帧层，交错发出
+通过流标识符和首部将他们重新组装起来，避免了队头阻塞和提高了传输的性能
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 371; 
+			flex-basis: 890px"
+	>
+	<a href="/p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/2.jpg" data-size="720x194">
+		<img src="/p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/2.jpg"
+			width="720"
+			height="194"
+			srcset="/p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/2_hu26c551d112db882bece071ac063555bc_17388_480x0_resize_q75_box.jpg 480w, /p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/2_hu26c551d112db882bece071ac063555bc_17388_1024x0_resize_q75_box.jpg 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></li>
+</ul>
+<h4 id="二进制分帧">二进制分帧</h4>
+<ol>
+<li>经http报文格式转换成二进制格式，全部的io串。将原来的header的报文分成二进制帧沉在的头部字段，
+body被拆分成二进制帧存放在请求体数据段。服务器接收的不是http报文，而是二进制帧。</li>
+<li>帧(frame)包含部分：类型Type, 长度Length, 标记Flags, 流标识Stream和frame payload有效载荷。</li>
+<li>消息(message)：一个完整的请求或者响应，比如请求、响应等，由一个或多个 Frame 组成。</li>
+<li>流是连接中的一个虚拟信道，可以承载双向消息传输。每个流有唯一整数标识符。为了防止两端流ID冲突，客户端发起的流具有奇数ID，服务器端发起的流具有偶数ID。</li>
+<li>流标识是描述二进制frame的格式，使得每个frame能够基于http2发送，与流标识联系的是一个流，每个流是一个逻辑联系，一个独立的双向的frame存在于客户端和服务器端之间的http2连接中。一个http2连接上可包含多个并发打开的流，这个并发流的数量能够由客户端设置。</li>
+</ol>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 190; 
+			flex-basis: 456px"
+	>
+	<a href="/p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/3.jpg" data-size="624x328">
+		<img src="/p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/3.jpg"
+			width="624"
+			height="328"
+			srcset="/p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/3_hua465648554d7afaa965ef67ab7bc541e_26894_480x0_resize_q75_box.jpg 480w, /p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/3_hua465648554d7afaa965ef67ab7bc541e_26894_1024x0_resize_q75_box.jpg 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<h4 id="二进制分帧的特性">二进制分帧的特性</h4>
+<ol>
+<li>并发性：同时可发多个帧</li>
+<li>自增性：流的id不可重用，按顺序递增，到阈值后置零</li>
+<li>双向性：客户端与服务端都可到流，互不干扰，都可收发</li>
+<li>可设优先级：设置帧的优先级，服务器优先处理</li>
+</ol>
+<h3 id="服务器推送">服务器推送</h3>
+<ol>
+<li>服务器不在是完全被动的接收和响应请求，也能创建新的资源(流)发送给客户端。</li>
+<li>服务器可以对一个客户端请求发送多个响应，服务器向客户端推送资源无需客户端明确地请求。
+并且，服务端推送能把客户端所需要的资源伴随着index.html一起发送到客户端，省去了客户端重复请求的步骤。</li>
+<li>当服务端需要主动推送某个资源时，便会发送一个 Frame Type 为 PUSH_PROMISE 的 Frame，里面带了 PUSH 需要新建的 Stream ID。
+意思是告诉客户端：接下来我要用这个 ID 向你发送东西，客户端准备好接着。客户端解析 Frame 时，发现它是一个 PUSH_PROMISE 类型，
+便会准备接收服务端要推送的流。</li>
+</ol>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 235; 
+			flex-basis: 564px"
+	>
+	<a href="/p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/4jpg.jpg" data-size="494x210">
+		<img src="/p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/4jpg.jpg"
+			width="494"
+			height="210"
+			srcset="/p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/4jpg_huc6e2de94992377f280c901e7e640fbf3_19870_480x0_resize_q75_box.jpg 480w, /p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/4jpg_huc6e2de94992377f280c901e7e640fbf3_19870_1024x0_resize_q75_box.jpg 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<h3 id="请求优先级">请求优先级</h3>
+<ol>
+<li>通过设置帧的优先级，优化帧的传输顺序</li>
+<li>把http消息分为很多独立帧之后，就可以通过优化这些帧的交错和传输顺序进一步优化性能。每个流都可以带有一个31比特的优先值：0 表示最高优先级；2的31次方-1 表示最低优先级。</li>
+<li>服务器可以根据流的优先级，控制资源分配（CPU、内存、带宽），而在响应数据准备好之后，优先将最高优先级的帧发送给客户端。高优先级的流都应该优先发送，但又不会绝对的。绝对地准守，可能又会引入首队阻塞的问题：高优先级的请求慢导致阻塞其他资源交付。
+4.分配处理资源和客户端与服务器间的带宽，不同优先级的混合也是必须的。客户端会指定哪个流是最重要的，有一些依赖参数，这样一个流可以依赖另外一个流。优先级别可以在运行时动态改变，当用户滚动页面时，可以告诉浏览器哪个图像是最重要的，你也可以在一组流中进行优先筛选，能够突然抓住重点流。</li>
+</ol>
+<h4 id="优先级等级">优先级等级：</h4>
+<ol>
+<li>优先级最高：主要的html</li>
+<li>优先级高：CSS文件</li>
+<li>优先级中：js文件</li>
+<li>优先级低：图片</li>
+</ol>
+<h2 id="参考文献">参考文献：</h2>
+<p><a class="link" href="https://zhuanlan.zhihu.com/p/89471776"  target="_blank" rel="noopener"
+    >深入理解http2.0协议，看这篇就够了！</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/prc/">
+        
+        
+            <div class="article-image">
+                <img src="/p/prc/1.4b5ad1e48eb4278053f02c3df79aed9f_hu92b5144e2fe44c426742bd76f38787bf_37611_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-S1rR5I60J4BT8Cw995rtnw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">PRC</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/restfulapi/">
+        
+        
+            <div class="article-image">
+                <img src="/p/restfulapi/1.0a791479868a49d03bbd57bcc1a0a0cf_hu5d30570469f48ece7400dce081384b39_15097_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-CnkUeYaKSdA7vVe8waCgzw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">RestfulAPI</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/docker%E7%9F%A5%E8%AF%86%E6%80%BB%E8%A7%88/">
+        
+        
+            <div class="article-image">
+                <img src="/p/docker%E7%9F%A5%E8%AF%86%E6%80%BB%E8%A7%88/1.d82275f85a54a315831288d3528d7253_hub2f0788524e05f802191dca26df6a25d_10280_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-2CJ1&#43;FpUoxWDEojTUo1yUw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Docker知识总览</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/6.daac8e60fed9fac87b343545be0bf672_hu61bd622d583377d86db238f2ea3bdaa9_262966_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-2qyOYP7Z&#43;sh7NDVFvgv2cg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">内存管理</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/c/c-/">
+        
+        
+            <div class="article-image">
+                <img src="/p/c/c/10.8077ca6d9a0decc584ac5cd6212df5bf_hu5bb3a4baa791897c79c1df91e792ef0e_243913_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="c/c&#43;&#43;" 
+                        data-hash="md5-gHfKbZoN7MWErFzWIS31vw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">进程、线程、协程</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#http">HTTP</a>
+      <ol>
+        <li><a href="#延迟的种类">延迟的种类:</a></li>
+      </ol>
+    </li>
+    <li><a href="#http10">HTTP1.0</a>
+      <ol>
+        <li><a href="#http10存在的问题">http1.0存在的问题：</a></li>
+      </ol>
+    </li>
+    <li><a href="#http11">HTTP1.1</a>
+      <ol>
+        <li><a href="#根据http10暴露的问题http11增加优化方案">根据http1.0暴露的问题，http1.1增加优化方案</a></li>
+        <li><a href="#http11-也带来新的问题http-队头阻塞head-of-line-blocking">http1.1 也带来新的问题：HTTP 队头阻塞(head of line blocking)</a></li>
+        <li><a href="#解决http-队头阻塞方法">解决Http 队头阻塞方法</a></li>
+      </ol>
+    </li>
+    <li><a href="#http20">HTTP2.0</a>
+      <ol>
+        <li><a href="#spdy协议">SPDY协议</a></li>
+        <li><a href="#http-20的特性">HTTP 2.0的特性</a></li>
+        <li><a href="#头部压缩">头部压缩</a></li>
+        <li><a href="#多路复用">多路复用</a>
+          <ol>
+            <li><a href="#二进制分帧">二进制分帧</a></li>
+            <li><a href="#二进制分帧的特性">二进制分帧的特性</a></li>
+          </ol>
+        </li>
+        <li><a href="#服务器推送">服务器推送</a></li>
+        <li><a href="#请求优先级">请求优先级</a>
+          <ol>
+            <li><a href="#优先级等级">优先级等级：</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#参考文献">参考文献：</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

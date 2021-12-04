@@ -6,11 +6,20 @@
     <description>Recent content in 知识学习 on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Mon, 15 Nov 2021 22:00:08 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/computer/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 18 Nov 2021 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/computer/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>http协议底层分析</title>
+      <link>https://zcj-git520.github.io/p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/</link>
+      <pubDate>Thu, 18 Nov 2021 22:00:38 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/</guid>
+      <description>HTTP  HTTP是(Hyper Text Transfer Protocol)超文本传输协议, 基于tcp的应用层传输协议（请求-响应）协议 影响HTTP网络请求的主要因素带宽和延迟  延迟的种类:  浏览器阻塞(超过浏览器连接数限制的后续请求都会被阻塞) DNS查询 (将域名解析造成的延迟，可以通过缓存DNS进行解决) 建立链接 (因HTTP是基于TCP的应用层协议，在建立连接时需要进行)  HTTP1.0 http1.0存在的问题：  短连接：规定客户端与服务器只保持短暂连接，客户端每次请求都需要建立连接，服务器完成请求后 断开连接，服务器不跟踪客户端，不保存客户端的请求记录。 没有host头域：每台服务器都绑定一个唯一的IP地址，请求消息中的URL并没有传递主机名（hostname） 不允许短点续传  HTTP1.1 根据http1.0暴露的问题，http1.1增加优化方案  缓存处理：http1.1增加更多的缓存控制策略 带宽优化及网络连接的使用：http1.1中请求头引入了range头域和支持断点续传的功能 Host头处理：http1.1的请求消息和相应消息虚拟主机技术的发展，在一台物理服务器上可以存在多个虚拟主机(Multi-homed Web Servers),并且它们共享一个IP地址,HTTP1.1的请求消息和响应消息都应支持Host头域，且请求消息中如果没有Host头域会报告一个错误（400 Bad Request） 长连接： 支持长连接和流水线处理，默认开始是长连接：keep-alive  http1.1 也带来新的问题：HTTP 队头阻塞(head of line blocking)  因http1.1支持了长连接和使用了管道机制，客户端与服务器建立一次连接，客户端不用等待服务器响应就能发送下一个请求，支持了并行发送多个请求， 但服务器必须按照请求的顺序来相应请求，也就是通过串行响应请求，这就造成了HTTP的队头阻塞。  解决Http 队头阻塞方法  并发连接：一个域名允许分配多个长连接，增加处理请求任务 域名分片：将一个域名分解为多个域名，在进行并发连接  HTTP2.0  HTTP2.0主要是基于SPDY协议。实现了低延时高吞吐量  SPDY协议  是基于TCP协议的应用层协议，其目标是通过头部压缩、多路复用、优先级等作用缩短网页放入加载时间和 优化http的性能，其核心是尽量减少TCP连接数  HTTP 2.0的特性 头部压缩 头部存在大量的信息，而且每次在发送都会降低http的性能，在用HPACK算法对头部进行压缩： 1.在客户端和服务器维持一个头部表来跟踪和存储客户端发来的键值对 2.客户端在请求的时候便只需要发送在表里的索引位置即可 3.HPACK 不仅仅通过索引键值对来降低数据量，同时还会将字符串进行霍夫曼编码来压缩字符串大小</description>
+    </item>
+    
     <item>
       <title>PRC</title>
       <link>https://zcj-git520.github.io/p/prc/</link>
-      <pubDate>Mon, 15 Nov 2021 22:00:08 +0800</pubDate>
+      <pubDate>Mon, 15 Nov 2021 22:00:38 +0800</pubDate>
       
       <guid>https://zcj-git520.github.io/p/prc/</guid>
       <description>RPC  RPC(Remote Procedure Call Protocol)——远程过程调用协议，它是一种通过网络从远程计算机程序上请求服务， 而不需要了解底层网络技术的协议。RPC协议假定某些传输协议的存在，如TCP/IP或UDP，为通信程序之间携带信息数据。 RPC将原来的本地调用转变为调用远端的服务器上的方法，给系统的处理能力和吞吐量带来了近似于无限制提升的可能。 在OSI网络通信模型中，RPC跨域了传输层和应用层。RPC使得开发包括网络分布式多程序在内的应用程序更加容易 RPC采用客户机/服务器(client-server)模式,也是一种请求/响应(request-response)模式，可以通过TCP/UDP以及HTTP 协议进行传输  RPC 架构  CAll ID 映射：客户端通过ID传输给服务器，服务器通过ID调用相应的函数返回 序列化与烦序列化：客户端与服务器通过序列化与反序列化进行传参 一个完整的RPC架构里面包含了四个核心的组件，分别是Client，Client Stub，Server以及Server Stub，这个Stub可以理解为存根。   客户端(Client)，服务的调用方。 客户端存根(Client Stub)，存放服务端的地址消息，再将客户端的请求参数打包成网络消息，然后通过网络远程发送给服务方。 服务端(Server)，真正的服务提供者。 服务端存根(Server Stub)，接收客户端发送过来的消息，将消息解包，并调用本地的方法。  RPC调用过程  客户端（client）以本地调用方式（即以接口的方式）调用服务； 客户端存根（client stub）接收到调用后，负责将方法、参数等组装成能够进行网络传输的消息体（将消息体对象序列化为二进制）； 客户端通过sockets将消息发送到服务端； 服务端存根( server stub）收到消息后进行解码（将消息对象反序列化）； 服务端存根( server stub）根据解码结果调用本地的服务； 本地服务执行并将结果返回给服务端存根( server stub）； 服务端存根( server stub）将返回结果打包成消息（将结果消息对象序列化）； 服务端（server）通过sockets将消息发送到客户端； 客户端存根（client stub）接收到结果消息，并进行解码（将结果消息发序列化）； 客户端（client）得到最终结果。
