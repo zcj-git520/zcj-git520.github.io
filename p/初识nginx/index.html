@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Nginx  nginx 是轻量级高并发web服务器，是基于Rest架构风格。通过http协议提供各种网络服务
+其高并发是基于事件驱动架构，io多路复用的epoll,使得可以轻松支持百万计的icp连接。
+轻量级主要体现在：采用插件化开发，cup亲和，将cpu与nginx工作进程绑定，减少cpu切换带来的消耗  代理  代理是客户端与服务器之间的一层服务器，将客户端的请求转发给服务器，然后服务器的响应转发给客户端  正向代理  客户端向代理服务器转发请求和指定目标服务器，代理服务器向目标服务器发送请求，并将结果返回给客户端。 对客户端是透明的，即客户端知道访问的是目标服务器，对目标服务器来说是非透明的，并不知道访问服务器是 客户端还是代理服务器  反向代理  客户端向代理服务器发送请求，代理服务器将请求转发给内部的网络服务器(目标服务器)，在将结果返回给客户端。对于客户端 是非透明的，即客户端不清楚是访问是那一台目标服务器。对于目标服务器是透明的，即目标服务器知道访问的是 代理服务器 nginx反向代理的配置如下：  server { listen 80; server_name www.123.com; location / { proxy_pass http://127.0.0.1:8080; index index.html index.htm index.jsp; } } 我们监听80端口，访问域名为www.123.com，不加端口号时默认为80端口，故访问该域名时会跳转到127.0.0.1:8080路径上
+负载均衡  当请求过大时，将请求分发给各个服务器。负载均衡的分配策略为：weight(权重)轮询，fair(智能调整调度) nginx轮询配置(所有请求都按照时间顺序分配到不同的服务上)  upstream dalaoyang-server { server localhost:10001; server localhost:10002; }  nginx权重配置(权重轮询：代理服务器接收到请求，按照设定的权重，请求分配到不同的后端服务器，如果发现后端服务器宕机时， 代理服务器会将其剔除出队列)  upstream dalaoyang-server { server localhost:10001 weight=1; server localhost:10002 weight=2; }  nginx iphash 配置(每个请求都根据访问ip的hash结果分配)  upstream dalaoyang-server { ip_hash; server localhost:10001 weight=1; server localhost:10002 weight=2; }  最少连接(将请求分配到连接数最少的服务上)  upstream dalaoyang-server { least_conn; server localhost:10001 weight=1; server localhost:10002 weight=2; }  far 智能调整调度算法：动态根据后端服务器的请求处理到响应时间进行均衡分配。即响应时间短，处理效率高的服务器 分配到请求的概率高。响应时间长，效率低的服务器分配到请求的概率低。 far 配置文件如下：  upstream dalaoyang-server { server localhost:10001 weight=1; server localhost:10002 weight=2; fair; } 流量控制  限流实际就是限制流入请求的数量：有令牌桶算法、漏桶算法和限制并发连接数限制'><title>初识Nginx</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/%E5%88%9D%E8%AF%86nginx/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='初识Nginx'>
+<meta property='og:description' content='Nginx  nginx 是轻量级高并发web服务器，是基于Rest架构风格。通过http协议提供各种网络服务
+其高并发是基于事件驱动架构，io多路复用的epoll,使得可以轻松支持百万计的icp连接。
+轻量级主要体现在：采用插件化开发，cup亲和，将cpu与nginx工作进程绑定，减少cpu切换带来的消耗  代理  代理是客户端与服务器之间的一层服务器，将客户端的请求转发给服务器，然后服务器的响应转发给客户端  正向代理  客户端向代理服务器转发请求和指定目标服务器，代理服务器向目标服务器发送请求，并将结果返回给客户端。 对客户端是透明的，即客户端知道访问的是目标服务器，对目标服务器来说是非透明的，并不知道访问服务器是 客户端还是代理服务器  反向代理  客户端向代理服务器发送请求，代理服务器将请求转发给内部的网络服务器(目标服务器)，在将结果返回给客户端。对于客户端 是非透明的，即客户端不清楚是访问是那一台目标服务器。对于目标服务器是透明的，即目标服务器知道访问的是 代理服务器 nginx反向代理的配置如下：  server { listen 80; server_name www.123.com; location / { proxy_pass http://127.0.0.1:8080; index index.html index.htm index.jsp; } } 我们监听80端口，访问域名为www.123.com，不加端口号时默认为80端口，故访问该域名时会跳转到127.0.0.1:8080路径上
+负载均衡  当请求过大时，将请求分发给各个服务器。负载均衡的分配策略为：weight(权重)轮询，fair(智能调整调度) nginx轮询配置(所有请求都按照时间顺序分配到不同的服务上)  upstream dalaoyang-server { server localhost:10001; server localhost:10002; }  nginx权重配置(权重轮询：代理服务器接收到请求，按照设定的权重，请求分配到不同的后端服务器，如果发现后端服务器宕机时， 代理服务器会将其剔除出队列)  upstream dalaoyang-server { server localhost:10001 weight=1; server localhost:10002 weight=2; }  nginx iphash 配置(每个请求都根据访问ip的hash结果分配)  upstream dalaoyang-server { ip_hash; server localhost:10001 weight=1; server localhost:10002 weight=2; }  最少连接(将请求分配到连接数最少的服务上)  upstream dalaoyang-server { least_conn; server localhost:10001 weight=1; server localhost:10002 weight=2; }  far 智能调整调度算法：动态根据后端服务器的请求处理到响应时间进行均衡分配。即响应时间短，处理效率高的服务器 分配到请求的概率高。响应时间长，效率低的服务器分配到请求的概率低。 far 配置文件如下：  upstream dalaoyang-server { server localhost:10001 weight=1; server localhost:10002 weight=2; fair; } 流量控制  限流实际就是限制流入请求的数量：有令牌桶算法、漏桶算法和限制并发连接数限制'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/%E5%88%9D%E8%AF%86nginx/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-11-24T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2021-11-24T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/%E5%88%9D%E8%AF%86nginx/1.jpg' />
+<meta name="twitter:title" content="初识Nginx">
+<meta name="twitter:description" content="Nginx  nginx 是轻量级高并发web服务器，是基于Rest架构风格。通过http协议提供各种网络服务
+其高并发是基于事件驱动架构，io多路复用的epoll,使得可以轻松支持百万计的icp连接。
+轻量级主要体现在：采用插件化开发，cup亲和，将cpu与nginx工作进程绑定，减少cpu切换带来的消耗  代理  代理是客户端与服务器之间的一层服务器，将客户端的请求转发给服务器，然后服务器的响应转发给客户端  正向代理  客户端向代理服务器转发请求和指定目标服务器，代理服务器向目标服务器发送请求，并将结果返回给客户端。 对客户端是透明的，即客户端知道访问的是目标服务器，对目标服务器来说是非透明的，并不知道访问服务器是 客户端还是代理服务器  反向代理  客户端向代理服务器发送请求，代理服务器将请求转发给内部的网络服务器(目标服务器)，在将结果返回给客户端。对于客户端 是非透明的，即客户端不清楚是访问是那一台目标服务器。对于目标服务器是透明的，即目标服务器知道访问的是 代理服务器 nginx反向代理的配置如下：  server { listen 80; server_name www.123.com; location / { proxy_pass http://127.0.0.1:8080; index index.html index.htm index.jsp; } } 我们监听80端口，访问域名为www.123.com，不加端口号时默认为80端口，故访问该域名时会跳转到127.0.0.1:8080路径上
+负载均衡  当请求过大时，将请求分发给各个服务器。负载均衡的分配策略为：weight(权重)轮询，fair(智能调整调度) nginx轮询配置(所有请求都按照时间顺序分配到不同的服务上)  upstream dalaoyang-server { server localhost:10001; server localhost:10002; }  nginx权重配置(权重轮询：代理服务器接收到请求，按照设定的权重，请求分配到不同的后端服务器，如果发现后端服务器宕机时， 代理服务器会将其剔除出队列)  upstream dalaoyang-server { server localhost:10001 weight=1; server localhost:10002 weight=2; }  nginx iphash 配置(每个请求都根据访问ip的hash结果分配)  upstream dalaoyang-server { ip_hash; server localhost:10001 weight=1; server localhost:10002 weight=2; }  最少连接(将请求分配到连接数最少的服务上)  upstream dalaoyang-server { least_conn; server localhost:10001 weight=1; server localhost:10002 weight=2; }  far 智能调整调度算法：动态根据后端服务器的请求处理到响应时间进行均衡分配。即响应时间短，处理效率高的服务器 分配到请求的概率高。响应时间长，效率低的服务器分配到请求的概率低。 far 配置文件如下：  upstream dalaoyang-server { server localhost:10001 weight=1; server localhost:10002 weight=2; fair; } 流量控制  限流实际就是限制流入请求的数量：有令牌桶算法、漏桶算法和限制并发连接数限制"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/%E5%88%9D%E8%AF%86nginx/1.jpg' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/%E5%88%9D%E8%AF%86nginx/">
+                <img src="/p/%E5%88%9D%E8%AF%86nginx/1_hu3f3721f37acfbb79e3bc6e8d69d34816_28729_800x0_resize_q75_box.jpg"
+                        srcset="/p/%E5%88%9D%E8%AF%86nginx/1_hu3f3721f37acfbb79e3bc6e8d69d34816_28729_800x0_resize_q75_box.jpg 800w, /p/%E5%88%9D%E8%AF%86nginx/1_hu3f3721f37acfbb79e3bc6e8d69d34816_28729_1600x0_resize_q75_box.jpg 1600w"
+                        width="800" 
+                        height="596" 
+                        loading="lazy"
+                        alt="Featured image of post 初识Nginx" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/computer/" style="background-color: #2a9d8f; color: #fff;">
+                知识学习
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/%E5%88%9D%E8%AF%86nginx/">初识Nginx</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Nov 24, 2021</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 1 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h2 id="nginx">Nginx</h2>
+<ul>
+<li>nginx 是轻量级高并发web服务器，是基于Rest架构风格。通过http协议提供各种网络服务<br>
+其高并发是基于事件驱动架构，io多路复用的epoll,使得可以轻松支持百万计的icp连接。<br>
+轻量级主要体现在：采用插件化开发，cup亲和，将cpu与nginx工作进程绑定，减少cpu切换带来的消耗</li>
+</ul>
+<h2 id="代理">代理</h2>
+<ul>
+<li>代理是客户端与服务器之间的一层服务器，将客户端的请求转发给服务器，然后服务器的响应转发给客户端</li>
+</ul>
+<h3 id="正向代理">正向代理</h3>
+<ul>
+<li>客户端向代理服务器转发请求和指定目标服务器，代理服务器向目标服务器发送请求，并将结果返回给客户端。
+对客户端是透明的，即客户端知道访问的是目标服务器，对目标服务器来说是非透明的，并不知道访问服务器是
+客户端还是代理服务器</li>
+</ul>
+<h3 id="反向代理">反向代理</h3>
+<ul>
+<li>客户端向代理服务器发送请求，代理服务器将请求转发给内部的网络服务器(目标服务器)，在将结果返回给客户端。对于客户端
+是非透明的，即客户端不清楚是访问是那一台目标服务器。对于目标服务器是透明的，即目标服务器知道访问的是
+代理服务器</li>
+<li>nginx反向代理的配置如下：</li>
+</ul>
+<pre tabindex="0"><code>server {
+         listen       80;
+         server_name  www.123.com;
+ 
+         location / {
+             proxy_pass http://127.0.0.1:8080;
+             index  index.html index.htm index.jsp;
+         }
+     }
+</code></pre><p>我们监听80端口，访问域名为www.123.com，不加端口号时默认为80端口，故访问该域名时会跳转到127.0.0.1:8080路径上</p>
+<h2 id="负载均衡">负载均衡</h2>
+<ul>
+<li>当请求过大时，将请求分发给各个服务器。负载均衡的分配策略为：weight(权重)轮询，fair(智能调整调度)</li>
+<li>nginx轮询配置(所有请求都按照时间顺序分配到不同的服务上)</li>
+</ul>
+<pre tabindex="0"><code>upstream  dalaoyang-server {
+       server    localhost:10001;
+       server    localhost:10002;
+}  
+</code></pre><ul>
+<li>nginx权重配置(权重轮询：代理服务器接收到请求，按照设定的权重，请求分配到不同的后端服务器，如果发现后端服务器宕机时，
+代理服务器会将其剔除出队列)</li>
+</ul>
+<pre tabindex="0"><code>upstream  dalaoyang-server {
+       server    localhost:10001 weight=1;
+       server    localhost:10002 weight=2;
+}
+</code></pre><ul>
+<li>nginx iphash 配置(每个请求都根据访问ip的hash结果分配)</li>
+</ul>
+<pre tabindex="0"><code>upstream  dalaoyang-server {
+       ip_hash; 
+       server    localhost:10001 weight=1;
+       server    localhost:10002 weight=2;
+}
+</code></pre><ul>
+<li>最少连接(将请求分配到连接数最少的服务上)</li>
+</ul>
+<pre tabindex="0"><code>upstream  dalaoyang-server {
+       least_conn;
+       server    localhost:10001 weight=1;
+       server    localhost:10002 weight=2;
+}
+</code></pre><ul>
+<li>far 智能调整调度算法：动态根据后端服务器的请求处理到响应时间进行均衡分配。即响应时间短，处理效率高的服务器
+分配到请求的概率高。响应时间长，效率低的服务器分配到请求的概率低。</li>
+<li>far 配置文件如下：</li>
+</ul>
+<pre tabindex="0"><code>upstream  dalaoyang-server {
+       server    localhost:10001 weight=1;
+       server    localhost:10002 weight=2;
+       fair;  
+}
+</code></pre><h3 id="流量控制">流量控制</h3>
+<ul>
+<li>限流实际就是限制流入请求的数量：有令牌桶算法、漏桶算法和限制并发连接数限制<br>
+令牌桶算法:存在一个大小固定的令牌桶，会以恒定的速率源源不断产生令牌。如果令牌消耗速率小于生产令牌的速度，
+令牌就会一直产生直至装满整个令牌桶。如果请求获取令牌失败则请求会被禁止访问<br>
+漏桶算法:突发流量会进入到一个漏桶，漏桶会按照我们定义的速率依次处理请求，如果水流过大也就是突发流量过大就会直接溢出，
+则多余的请求会被拒绝。所以漏桶算法能控制数据的传输速率。算法的核心是：缓存请求、匀速处理、多余的请求直接丢弃。</li>
+</ul>
+<h3 id="统一鉴权">统一鉴权</h3>
+<ul>
+<li>客户端请求时，将Token放入在请求头head中。服务器解析Token,对访问者都进行鉴权，最后进入权力访问</li>
+</ul>
+<h3 id="主流的网关">主流的网关</h3>
+<ul>
+<li>Hong：是基于nginx+lua开源的网关</li>
+<li>Traefik是http反向代理和负载均衡器，支持动态配置和较好的伸缩性</li>
+<li>kubernetes是基于Envog Proxy构建的原生k8s网关</li>
+</ul>
+<h2 id="参考文献">参考文献：</h2>
+<p><a class="link" href="https://www.cnblogs.com/ysocean/p/9392908.html"  target="_blank" rel="noopener"
+    >Nginx（三）nginx 反向代理 </a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/%E5%88%9D%E6%8E%A2jwtjson-web-token/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E5%88%9D%E6%8E%A2jwtjson-web-token/1.de0e4c4810819d7f705fa299c4faa37e_hu679d1d76db059750024901bffb37cf39_65265_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-3g5MSBCBnX9wX6KZxPqjfg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">初探jwt(json web Token)</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/">
+        
+        
+            <div class="article-image">
+                <img src="/p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/1.c14bf07455898e0545d3c7849d1e4c83_hu7de10a5ba4c09963d2757d75c9451326_29719_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-wUvwdFWJjgVF08eEnR5Mgw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">http协议底层分析</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/prc/">
+        
+        
+            <div class="article-image">
+                <img src="/p/prc/1.4b5ad1e48eb4278053f02c3df79aed9f_hu92b5144e2fe44c426742bd76f38787bf_37611_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-S1rR5I60J4BT8Cw995rtnw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">PRC</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/restfulapi/">
+        
+        
+            <div class="article-image">
+                <img src="/p/restfulapi/1.0a791479868a49d03bbd57bcc1a0a0cf_hu5d30570469f48ece7400dce081384b39_15097_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-CnkUeYaKSdA7vVe8waCgzw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">RestfulAPI</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/docker%E7%9F%A5%E8%AF%86%E6%80%BB%E8%A7%88/">
+        
+        
+            <div class="article-image">
+                <img src="/p/docker%E7%9F%A5%E8%AF%86%E6%80%BB%E8%A7%88/1.d82275f85a54a315831288d3528d7253_hub2f0788524e05f802191dca26df6a25d_10280_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-2CJ1&#43;FpUoxWDEojTUo1yUw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Docker知识总览</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#nginx">Nginx</a></li>
+    <li><a href="#代理">代理</a>
+      <ol>
+        <li><a href="#正向代理">正向代理</a></li>
+        <li><a href="#反向代理">反向代理</a></li>
+      </ol>
+    </li>
+    <li><a href="#负载均衡">负载均衡</a>
+      <ol>
+        <li><a href="#流量控制">流量控制</a></li>
+        <li><a href="#统一鉴权">统一鉴权</a></li>
+        <li><a href="#主流的网关">主流的网关</a></li>
+      </ol>
+    </li>
+    <li><a href="#参考文献">参考文献：</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

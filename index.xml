@@ -6,7 +6,212 @@
         <description>Recent content on Chengji Zhao&#39;s blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Thu, 18 Nov 2021 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Tue, 30 Nov 2021 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>初探jwt(json web Token)</title>
+        <link>https://zcj-git520.github.io/p/%E5%88%9D%E6%8E%A2jwtjson-web-token/</link>
+        <pubDate>Tue, 30 Nov 2021 22:00:38 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/%E5%88%9D%E6%8E%A2jwtjson-web-token/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/%E5%88%9D%E6%8E%A2jwtjson-web-token/1.png" alt="Featured image of post 初探jwt(json web Token)" /&gt;&lt;h2 id=&#34;jwt&#34;&gt;jwt&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;jwt 它定义了一种紧凑的、自包含的方式，用于作为JSON对象在各方之间安全地传输信息，是最流行的跨域认证的解决方案&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;传统跨域认证&#34;&gt;传统跨域认证&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;客服端向服务器发送用用户名和密码，服务器验证通过后，把当前对话的session里保存
+相关数据，并写在客户端的cookie, 向客户端返回一个session id。客户端再次通过cookie,
+经session id 传回服务器，服务器通过session id得知访问客户端的身份。&lt;/li&gt;
+&lt;li&gt;存在的问题：扩展性不佳，服务器集群或者跨域的服务导向架构，就需要共享session共享数据
+解决方案：1. 将session 数据保存在数据库中或者其他的持久层，服务器访问持久层的session数据    2. 服务器不保存session数据，所有的数据保存在客户端，每次请求都发回服务器&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;jwt的原理&#34;&gt;jwt的原理&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;服务器认证以后，生成一个json对象，返回给客户端之后，客户端与服务器靠这个json对象认证，会会
+加上签名来防止客户端修该json 对象&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;jwt的数据结构&#34;&gt;jwt的数据结构&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;jwt的数据结构为：Header(头部)、payload(负载)、signature(签名)&lt;br&gt;
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 190; 
+			flex-basis: 457px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/%E5%88%9D%E6%8E%A2jwtjson-web-token/1.png&#34; data-size=&#34;1185x621&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/%E5%88%9D%E6%8E%A2jwtjson-web-token/1.png&#34;
+			width=&#34;1185&#34;
+			height=&#34;621&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/%E5%88%9D%E6%8E%A2jwtjson-web-token/1_hu679d1d76db059750024901bffb37cf39_65265_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/%E5%88%9D%E6%8E%A2jwtjson-web-token/1_hu679d1d76db059750024901bffb37cf39_65265_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;header头部&#34;&gt;Header(头部)&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Header部分是一个json对象，描述jwt的元素据。声明类型，这里是jwt声明加密的算法 通常直接使用 HMAC SHA256，结构如下：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;{
+  &#39;typ&#39;: &#39;JWT&#39;,
+  &#39;alg&#39;: &#39;HS256&#39;
+} 
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;payload负载&#34;&gt;payload(负载)&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;payload 也是一个json对象，用来存放实际需要的传递的数据，iss：发行人，exp：到期时间，sub：主题，aud：用户，
+nbf：在此之前不可用，iat：发布时间，jti：JWT ID用于标识该JWT&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;{
+  &amp;quot;sub&amp;quot;: &amp;quot;1234567890&amp;quot;,
+  &amp;quot;name&amp;quot;: &amp;quot;John Doe&amp;quot;,
+  &amp;quot;admin&amp;quot;: true
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;signature签名&#34;&gt;signature(签名)&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;是对前两部分进行签名，防止篡改。在服务器上指明一个密钥，在根据header中指定的算法，
+按照格式产生签名，header (base64后的)、payload (base64后的)、secret。其格式如下：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;// javascript
+var encodedString = base64UrlEncode(header) + &#39;.&#39; + base64UrlEncode(payload);
+
+var signature = HMACSHA256(encodedString, &#39;secret&#39;); // TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;jwt的特点&#34;&gt;jwt的特点&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;jwt默认不加密，但是可以对原生的Token加密或者使用https加密传输&lt;/li&gt;
+&lt;li&gt;jwt在不加密的情况下，不能加秘密数据写入jwt&lt;/li&gt;
+&lt;li&gt;jwt不仅可以使用与认证，也能用于信息的交换&lt;/li&gt;
+&lt;li&gt;jwt不能在使用过程中清除莫一个token和更改该token的权限，一旦签发一直到到期都是有效的，应该jwt
+的有效期&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;认证&#34;&gt;认证&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;认证就是根据声明者所持有的识别信息，确认声明者的身份&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;授权&#34;&gt;授权&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;一般是指获取用户的委派的权限&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;鉴权&#34;&gt;鉴权&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;指对一个声明者所声明的身份的权限的真实性进行鉴别和确认的过程&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;权限控制&#34;&gt;权限控制&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;是指可执行和操作的组合配置的权限列表，然后根据执行者的权限，若其操作在权限范围内，则允许执行，否则禁止&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;参考文献&#34;&gt;参考文献：&lt;/h2&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.jianshu.com/p/576dbf44b2ae&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;什么是 JWT &amp;ndash; JSON WEB TOKEN&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>初识Nginx</title>
+        <link>https://zcj-git520.github.io/p/%E5%88%9D%E8%AF%86nginx/</link>
+        <pubDate>Wed, 24 Nov 2021 22:00:38 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/%E5%88%9D%E8%AF%86nginx/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/%E5%88%9D%E8%AF%86nginx/1.jpg" alt="Featured image of post 初识Nginx" /&gt;&lt;h2 id=&#34;nginx&#34;&gt;Nginx&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;nginx 是轻量级高并发web服务器，是基于Rest架构风格。通过http协议提供各种网络服务&lt;br&gt;
+其高并发是基于事件驱动架构，io多路复用的epoll,使得可以轻松支持百万计的icp连接。&lt;br&gt;
+轻量级主要体现在：采用插件化开发，cup亲和，将cpu与nginx工作进程绑定，减少cpu切换带来的消耗&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;代理&#34;&gt;代理&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;代理是客户端与服务器之间的一层服务器，将客户端的请求转发给服务器，然后服务器的响应转发给客户端&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;正向代理&#34;&gt;正向代理&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;客户端向代理服务器转发请求和指定目标服务器，代理服务器向目标服务器发送请求，并将结果返回给客户端。
+对客户端是透明的，即客户端知道访问的是目标服务器，对目标服务器来说是非透明的，并不知道访问服务器是
+客户端还是代理服务器&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;反向代理&#34;&gt;反向代理&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;客户端向代理服务器发送请求，代理服务器将请求转发给内部的网络服务器(目标服务器)，在将结果返回给客户端。对于客户端
+是非透明的，即客户端不清楚是访问是那一台目标服务器。对于目标服务器是透明的，即目标服务器知道访问的是
+代理服务器&lt;/li&gt;
+&lt;li&gt;nginx反向代理的配置如下：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;server {
+         listen       80;
+         server_name  www.123.com;
+ 
+         location / {
+             proxy_pass http://127.0.0.1:8080;
+             index  index.html index.htm index.jsp;
+         }
+     }
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;我们监听80端口，访问域名为www.123.com，不加端口号时默认为80端口，故访问该域名时会跳转到127.0.0.1:8080路径上&lt;/p&gt;
+&lt;h2 id=&#34;负载均衡&#34;&gt;负载均衡&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;当请求过大时，将请求分发给各个服务器。负载均衡的分配策略为：weight(权重)轮询，fair(智能调整调度)&lt;/li&gt;
+&lt;li&gt;nginx轮询配置(所有请求都按照时间顺序分配到不同的服务上)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;upstream  dalaoyang-server {
+       server    localhost:10001;
+       server    localhost:10002;
+}  
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;nginx权重配置(权重轮询：代理服务器接收到请求，按照设定的权重，请求分配到不同的后端服务器，如果发现后端服务器宕机时，
+代理服务器会将其剔除出队列)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;upstream  dalaoyang-server {
+       server    localhost:10001 weight=1;
+       server    localhost:10002 weight=2;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;nginx iphash 配置(每个请求都根据访问ip的hash结果分配)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;upstream  dalaoyang-server {
+       ip_hash; 
+       server    localhost:10001 weight=1;
+       server    localhost:10002 weight=2;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;最少连接(将请求分配到连接数最少的服务上)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;upstream  dalaoyang-server {
+       least_conn;
+       server    localhost:10001 weight=1;
+       server    localhost:10002 weight=2;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;far 智能调整调度算法：动态根据后端服务器的请求处理到响应时间进行均衡分配。即响应时间短，处理效率高的服务器
+分配到请求的概率高。响应时间长，效率低的服务器分配到请求的概率低。&lt;/li&gt;
+&lt;li&gt;far 配置文件如下：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;upstream  dalaoyang-server {
+       server    localhost:10001 weight=1;
+       server    localhost:10002 weight=2;
+       fair;  
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;流量控制&#34;&gt;流量控制&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;限流实际就是限制流入请求的数量：有令牌桶算法、漏桶算法和限制并发连接数限制&lt;br&gt;
+令牌桶算法:存在一个大小固定的令牌桶，会以恒定的速率源源不断产生令牌。如果令牌消耗速率小于生产令牌的速度，
+令牌就会一直产生直至装满整个令牌桶。如果请求获取令牌失败则请求会被禁止访问&lt;br&gt;
+漏桶算法:突发流量会进入到一个漏桶，漏桶会按照我们定义的速率依次处理请求，如果水流过大也就是突发流量过大就会直接溢出，
+则多余的请求会被拒绝。所以漏桶算法能控制数据的传输速率。算法的核心是：缓存请求、匀速处理、多余的请求直接丢弃。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;统一鉴权&#34;&gt;统一鉴权&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;客户端请求时，将Token放入在请求头head中。服务器解析Token,对访问者都进行鉴权，最后进入权力访问&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;主流的网关&#34;&gt;主流的网关&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Hong：是基于nginx+lua开源的网关&lt;/li&gt;
+&lt;li&gt;Traefik是http反向代理和负载均衡器，支持动态配置和较好的伸缩性&lt;/li&gt;
+&lt;li&gt;kubernetes是基于Envog Proxy构建的原生k8s网关&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;参考文献&#34;&gt;参考文献：&lt;/h2&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.cnblogs.com/ysocean/p/9392908.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Nginx（三）nginx 反向代理 &lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>http协议底层分析</title>
         <link>https://zcj-git520.github.io/p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/</link>
         <pubDate>Thu, 18 Nov 2021 22:00:38 +0800</pubDate>
@@ -177,8 +382,6 @@ body被拆分成二进制帧存放在请求体数据段。服务器接收的不�
 &lt;li&gt;优先级低：图片&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h2 id=&#34;参考文献&#34;&gt;参考文献：&lt;/h2&gt;
-&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://zhuanlan.zhihu.com/p/89471776&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;深入理解http2.0协议，看这篇就够了！&lt;/a&gt;&lt;/p&gt;
 </description>
         </item>
         <item>
