@@ -6,7 +6,17 @@
     <description>Recent content in 知识学习 on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Tue, 30 Nov 2021 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/computer/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 05 Dec 2021 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/computer/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>初识redis(数据结构分析)</title>
+      <link>https://zcj-git520.github.io/p/%E5%88%9D%E8%AF%86redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/</link>
+      <pubDate>Sun, 05 Dec 2021 22:00:38 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/%E5%88%9D%E8%AF%86redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/</guid>
+      <description>redis  redis 是一个开源（BSD许可）的，数据结构为key-value的存储系统。它可以用作分布式数据库、缓存 和消息队列（消息中间件）。数据保存在内存中，存取速度快，并发能力强。 redis 支持多种数据结构，如字符串、map(哈希)、列表、集合、有序集合等数据类型。数据都是原子操作， 数据都缓存在内存中，会定期将数据更新到磁盘或者修改操作写入追加记录。再次基础上实现了主从（master-slave）  redis 数据结构 字符串(string)类型  字符串类型是redis最基础的数据结构，可以存储简单的字符串也可存储复杂的xml、json、二进制数据（如图像、音频） value内部以保存整数的int和保存字符的sds组成的数据存储结构。sds内部结构为：  struct sdshdr { int len; // 记录着buf中也使用的字符串数量 int free; // 记录着buf中未使用的字符串数量 char buh[]; // 字符串数组，用于保存字符串 } 
+字符串类型特性  分配冗余空间：采用预先分配冗余空间的方式来减少内存的频繁分配 自动扩容： 当字符串所占空间小于1MB时，redis会按照字符串（len + addLen）*2倍数存储空间增加， 当字符串的存储空间超过所占空间的1MB时，每次自会增加1MB的存储空间扩容，最大扩容为512MB的存储空间 二进制的安全性，兼容c语言函数库中字符串以\0结束。  字符串常用的场景  缓存功能： 基于redis作为缓存再配合其他的数据库最为存储层，利用redis的数据存储在内存和支持高并发的特点，可以大大加快 系统的读写速度以及降低后端数据库的压力。（单值缓存、对象缓存、分布式锁等） 计数器： 使用redis作为系统的实时计数器，可以加快计数和查询功能。 共享用户的session：利用redis将用户的session集中管理，这种模式确保redis的高可用。每次用户的session的更新和获取快速完成  列表(list)  list类型的value对象内部采用的quicklist(快速列表)或者ziplist(压缩列表)承载。当list的元素和单个元素较小时采用ziplist实现来减少内存的 占用否则采用quicklist结构进行存储。 ziplist所有内容都存放在来连续的内存中。zipbytes表示ziplist的总长度， zltail表示指向最末的元素，zllen表示元素个数， entryX表示元素自身内容， zlend是ziplist的定界符 ziplist的内部结构为：  typedef struct ziplist{ /*ziplist分配的内存大小*/ uint32_t bytes; /*达到尾部的偏移量*/ uint32_t tail_offset; /*存储元素实体个数*/ uint16_t length; /*存储内容实体元素*/ unsigned char* content[]; /*尾部标识*/ unsigned char end; }ziplist; /*元素实体所有信息, 仅仅是描述使用, 内存中并非如此存储*/ typedef struct zlentry { /*前一个元素长度需要空间和前一个元素长度*/ unsigned int prevrawlensize, prevrawlen; /*元素长度需要空间和元素长度*/ unsigned int lensize, len; /*头部长度即prevrawlensize + lensize*/ unsigned int headersize; /*元素内容编码*/ unsigned char encoding; /*元素实际内容*/ unsigned char *p; }zlentry;</description>
+    </item>
+    
     <item>
       <title>初探jwt(json web Token)</title>
       <link>https://zcj-git520.github.io/p/%E5%88%9D%E6%8E%A2jwtjson-web-token/</link>
