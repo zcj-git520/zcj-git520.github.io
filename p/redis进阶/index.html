@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='redis的网络协议  redis是基于tcp/ip协议，即客户端与服务器保持双工连接，通过序列化的协议(resp协议)进行数据的交互，在Redis中，协议数据分为不同的类型， 每种类型的数据均以CRLF（\r\n）结束，通过数据的首字符区分类型  redis服务器是一个事件驱动系统主要分为：文件事件(io事件)和时间事件 文件驱动：socket的读取事件(io事件)是由；连接(三次握手)、请求、响应(数据返回)、断开连接(四次挥手)组成，redis是采用单线程 和epoll(io多路复用)的机制处理相关的文件事件。 时间事件：可分为定时事件(程序在指定时间后执行相关的操作)和周期事件(程序每隔一段时间运行相关的操作)  redis客户端与服务器交互模式 串行的请求/交互模式  客户端与服务器建立长连接，通过心跳检测(ping-pong)ack应答，即客户端发送请求，服务器在进行响应。 在单连接下。大部分时间都是处于网络等待上(客户端在发送请求命令，并监听socket返回，通常以阻塞模式等待服务器端的响应)，这种模式下 的性能较低   管道技术(pipeline)双工的请求/响应模式  将一批命令进行打包，然后发送给服务器，服务器获取数据后按顺序打包返回，即批量请求，批量响应。以次来减少网络等待的延时，提高性能   原子化的批量请求/响应(事务)模式  客户端将请求的命令发送发到服务器，服务器经这些请求暂存在服务器的请求队列中，这过程也称为：请求入队列。服务器在从请求队列中 拿去所有的请求执行，然后再将数据返回给客户端，这过程称为执行阶段。 服务器在执行过程中不会在接收其他客户端发送的请求。所有的操作都是原子操作，即请求都执行或都不执行。 事务的步骤为：开始事务-&amp;gt;请求入队列-&amp;gt;执行请求   发布/订阅(pub/sub)模式  发布者(pub)发送消息，订阅者(sub)接收消息，发布者和订阅者通过(通道)channel关联，所有的channel都是由一个map维护，map的key是 channel的名字，value是所有的订阅者的指针链表。客户端可以订阅任意的数量的频道，也可以进行发布。 发布者和订阅者都是客户端，服务器只是进行数据的中转。即发布者着向服务端发起请求，服务端将请求的数据推送给订阅者。   redis的持久化机制  redis的持久化机制主要是有：RDB(快照)和AOF(日志)两种持久化的方式。持久的化的作用在于：故障恢复和数据恢复  RDB(快照)持久化机制  快照是redis默认的持久化方案，在指定时间间隔内生成数据集的时间点，即在指定的时间段内将内存的数据写入磁盘，在磁盘 上生成一个rdb的备份文件。在redis重启时加载rdb文件进行数据的恢复。 快照的持久化提供自动备份：需要修改配置文件redis.conf。也提供save和bysave(后台子进程)进行主动备份  RDB(快照)的工作流程：  主进程会单独创建子进程，将主进程的数据库的数据复制到子进程。 子进程将数据写入到临时文件中进行持久化，在经临时文件替换之前的rdb文件,子进程退出，释放内存中的数据 主进程不进行持久化，即不进行任何的io操作，确保redis的极高的性能  RDB(快照)的优缺点 优点  单一的紧凑文件保存了莫一段时间的数据集，比较适合做数据的备份尤其的冷备份 在对数据完整性不敏感下，适合大规模的数据的恢复，因直接从磁盘获取数据，恢复数据快 由子进程进行持久化，主进程不进行持久化，即不进行任何的io操作，确保redis的极高的性能  缺点  不能保障数据的完整性，若redis出现宕机，就不会出现最近的数据未持久化，导致数据的丢失。 当持久化的数据量较大时，会导致持久化的子进程就会很耗时，即使主线程在不参与持久化也可能导致服务器在毫秒级内不能响应 客户端的请求，若数据巨大时且cpu的性能不佳时，会出现秒级不能响应客户端的请求。  AOF(日志)持久化  通过将每个写操作记录到日志中且以追加文件不修改文件的模式，重启时更具根据日志文件从头到未执行一遍即恢复数据。，因AOF采用的是经操作记录以追加模式下写入日志文件中，会导致AOF文件越来越大。AOF引入了重写机制。 AOF引入了重写机制：当文件AOF是上次重写大小的一倍且文件大于64MB时就创建一个子进程遍历服务器的键值对，转换成一系列 Redis 的操作 指令，序列化到一个新的AOF日志文件中，再替换旧的AOF日志文件。可以修改配置文件设定持久化策略。  AOF 提供了三种持久化策略：  no: 无 fsync，由系统保证数据刷新到磁盘，速度最快，但很不安全（通常不使用）； always: 每次 fsync，每一个修改内存的 Redis 指令都会执行一次 fsync，速度很慢（通常不使用）； everysec: 每秒进行一次 fsync，有可能丢失一秒的 fsync 的数据。通常选择 everysec 策略，兼顾安全性和效率。  AOF(日志)的优缺点 优点  可以采用everysec的持久化策略，能确保数据的完整性  缺点  AOF的日志文件通常是比rdb文件大 在数据的恢复时，需要遍历日志文件，将日志文件的数据操作命令在执行一遍，导致数据恢复相对于快照(rdb)较慢，尤其在大数据下。  redis 缓存中的状况于解决方案 缓存雪崩  数据未加载到内存或者同一时间发生大规模的key失效，从而导致所有的请求都直接在查数据库。导致数据库和cpu负载过高，甚至宕机  解决方案  加锁计数，限制并发的数量，避免出现并发出现大量的请求访问到数据库，降低服务器的吞吐量 设置热点key永不失效，均匀过期，避免出现大面积的key同时失效 设置缓存服务器的主备  缓存穿透  指客户端请求的数据在缓存和数据库中均没有，导致客户端在每次请求都需要去数据库查询。若在并发时，也会导致数据库和cpu的负载过高， 导致数据库的宕机  解决方案  若查询数据库不存在，直接在缓存中保存一个默认的值，并设置较短的过期时间，下次请求直接从缓存中返回。 使用布隆过滤器，阻挡无效的请求。  缓存并发  在并发情况下，一个缓存失效，在高并发下访问数据库，缓存更新，也会导致数据的压力变大。  解决方案  对缓存加锁，若key不存在，就加锁，当查询数据库的数据写入缓存在解锁  缓存预热  在系统运行前，将数据加载到缓存中  解决方案  数据量不大，直接加载 数据量大时，设置定时的脚本进行缓存的刷新 数据量巨大时，优先保障热点数据提前加载到缓存中  缓存降级  指缓存失效或者缓存服务器宕机时，不去访问数据库，直接返回默认值或访问内存数据  分布锁  使用setnx加锁，并设置超时时间，过了超时时间就解锁，并删除锁  参考文献 Redis 客户端服务端交互1 客户端/服务端协议'><title>redis进阶</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/redis%E8%BF%9B%E9%98%B6/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='redis进阶'>
+<meta property='og:description' content='redis的网络协议  redis是基于tcp/ip协议，即客户端与服务器保持双工连接，通过序列化的协议(resp协议)进行数据的交互，在Redis中，协议数据分为不同的类型， 每种类型的数据均以CRLF（\r\n）结束，通过数据的首字符区分类型  redis服务器是一个事件驱动系统主要分为：文件事件(io事件)和时间事件 文件驱动：socket的读取事件(io事件)是由；连接(三次握手)、请求、响应(数据返回)、断开连接(四次挥手)组成，redis是采用单线程 和epoll(io多路复用)的机制处理相关的文件事件。 时间事件：可分为定时事件(程序在指定时间后执行相关的操作)和周期事件(程序每隔一段时间运行相关的操作)  redis客户端与服务器交互模式 串行的请求/交互模式  客户端与服务器建立长连接，通过心跳检测(ping-pong)ack应答，即客户端发送请求，服务器在进行响应。 在单连接下。大部分时间都是处于网络等待上(客户端在发送请求命令，并监听socket返回，通常以阻塞模式等待服务器端的响应)，这种模式下 的性能较低   管道技术(pipeline)双工的请求/响应模式  将一批命令进行打包，然后发送给服务器，服务器获取数据后按顺序打包返回，即批量请求，批量响应。以次来减少网络等待的延时，提高性能   原子化的批量请求/响应(事务)模式  客户端将请求的命令发送发到服务器，服务器经这些请求暂存在服务器的请求队列中，这过程也称为：请求入队列。服务器在从请求队列中 拿去所有的请求执行，然后再将数据返回给客户端，这过程称为执行阶段。 服务器在执行过程中不会在接收其他客户端发送的请求。所有的操作都是原子操作，即请求都执行或都不执行。 事务的步骤为：开始事务-&amp;gt;请求入队列-&amp;gt;执行请求   发布/订阅(pub/sub)模式  发布者(pub)发送消息，订阅者(sub)接收消息，发布者和订阅者通过(通道)channel关联，所有的channel都是由一个map维护，map的key是 channel的名字，value是所有的订阅者的指针链表。客户端可以订阅任意的数量的频道，也可以进行发布。 发布者和订阅者都是客户端，服务器只是进行数据的中转。即发布者着向服务端发起请求，服务端将请求的数据推送给订阅者。   redis的持久化机制  redis的持久化机制主要是有：RDB(快照)和AOF(日志)两种持久化的方式。持久的化的作用在于：故障恢复和数据恢复  RDB(快照)持久化机制  快照是redis默认的持久化方案，在指定时间间隔内生成数据集的时间点，即在指定的时间段内将内存的数据写入磁盘，在磁盘 上生成一个rdb的备份文件。在redis重启时加载rdb文件进行数据的恢复。 快照的持久化提供自动备份：需要修改配置文件redis.conf。也提供save和bysave(后台子进程)进行主动备份  RDB(快照)的工作流程：  主进程会单独创建子进程，将主进程的数据库的数据复制到子进程。 子进程将数据写入到临时文件中进行持久化，在经临时文件替换之前的rdb文件,子进程退出，释放内存中的数据 主进程不进行持久化，即不进行任何的io操作，确保redis的极高的性能  RDB(快照)的优缺点 优点  单一的紧凑文件保存了莫一段时间的数据集，比较适合做数据的备份尤其的冷备份 在对数据完整性不敏感下，适合大规模的数据的恢复，因直接从磁盘获取数据，恢复数据快 由子进程进行持久化，主进程不进行持久化，即不进行任何的io操作，确保redis的极高的性能  缺点  不能保障数据的完整性，若redis出现宕机，就不会出现最近的数据未持久化，导致数据的丢失。 当持久化的数据量较大时，会导致持久化的子进程就会很耗时，即使主线程在不参与持久化也可能导致服务器在毫秒级内不能响应 客户端的请求，若数据巨大时且cpu的性能不佳时，会出现秒级不能响应客户端的请求。  AOF(日志)持久化  通过将每个写操作记录到日志中且以追加文件不修改文件的模式，重启时更具根据日志文件从头到未执行一遍即恢复数据。，因AOF采用的是经操作记录以追加模式下写入日志文件中，会导致AOF文件越来越大。AOF引入了重写机制。 AOF引入了重写机制：当文件AOF是上次重写大小的一倍且文件大于64MB时就创建一个子进程遍历服务器的键值对，转换成一系列 Redis 的操作 指令，序列化到一个新的AOF日志文件中，再替换旧的AOF日志文件。可以修改配置文件设定持久化策略。  AOF 提供了三种持久化策略：  no: 无 fsync，由系统保证数据刷新到磁盘，速度最快，但很不安全（通常不使用）； always: 每次 fsync，每一个修改内存的 Redis 指令都会执行一次 fsync，速度很慢（通常不使用）； everysec: 每秒进行一次 fsync，有可能丢失一秒的 fsync 的数据。通常选择 everysec 策略，兼顾安全性和效率。  AOF(日志)的优缺点 优点  可以采用everysec的持久化策略，能确保数据的完整性  缺点  AOF的日志文件通常是比rdb文件大 在数据的恢复时，需要遍历日志文件，将日志文件的数据操作命令在执行一遍，导致数据恢复相对于快照(rdb)较慢，尤其在大数据下。  redis 缓存中的状况于解决方案 缓存雪崩  数据未加载到内存或者同一时间发生大规模的key失效，从而导致所有的请求都直接在查数据库。导致数据库和cpu负载过高，甚至宕机  解决方案  加锁计数，限制并发的数量，避免出现并发出现大量的请求访问到数据库，降低服务器的吞吐量 设置热点key永不失效，均匀过期，避免出现大面积的key同时失效 设置缓存服务器的主备  缓存穿透  指客户端请求的数据在缓存和数据库中均没有，导致客户端在每次请求都需要去数据库查询。若在并发时，也会导致数据库和cpu的负载过高， 导致数据库的宕机  解决方案  若查询数据库不存在，直接在缓存中保存一个默认的值，并设置较短的过期时间，下次请求直接从缓存中返回。 使用布隆过滤器，阻挡无效的请求。  缓存并发  在并发情况下，一个缓存失效，在高并发下访问数据库，缓存更新，也会导致数据的压力变大。  解决方案  对缓存加锁，若key不存在，就加锁，当查询数据库的数据写入缓存在解锁  缓存预热  在系统运行前，将数据加载到缓存中  解决方案  数据量不大，直接加载 数据量大时，设置定时的脚本进行缓存的刷新 数据量巨大时，优先保障热点数据提前加载到缓存中  缓存降级  指缓存失效或者缓存服务器宕机时，不去访问数据库，直接返回默认值或访问内存数据  分布锁  使用setnx加锁，并设置超时时间，过了超时时间就解锁，并删除锁  参考文献 Redis 客户端服务端交互1 客户端/服务端协议'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/redis%E8%BF%9B%E9%98%B6/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-12-08T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2021-12-08T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/redis%E8%BF%9B%E9%98%B6/5.png' />
+<meta name="twitter:title" content="redis进阶">
+<meta name="twitter:description" content="redis的网络协议  redis是基于tcp/ip协议，即客户端与服务器保持双工连接，通过序列化的协议(resp协议)进行数据的交互，在Redis中，协议数据分为不同的类型， 每种类型的数据均以CRLF（\r\n）结束，通过数据的首字符区分类型  redis服务器是一个事件驱动系统主要分为：文件事件(io事件)和时间事件 文件驱动：socket的读取事件(io事件)是由；连接(三次握手)、请求、响应(数据返回)、断开连接(四次挥手)组成，redis是采用单线程 和epoll(io多路复用)的机制处理相关的文件事件。 时间事件：可分为定时事件(程序在指定时间后执行相关的操作)和周期事件(程序每隔一段时间运行相关的操作)  redis客户端与服务器交互模式 串行的请求/交互模式  客户端与服务器建立长连接，通过心跳检测(ping-pong)ack应答，即客户端发送请求，服务器在进行响应。 在单连接下。大部分时间都是处于网络等待上(客户端在发送请求命令，并监听socket返回，通常以阻塞模式等待服务器端的响应)，这种模式下 的性能较低   管道技术(pipeline)双工的请求/响应模式  将一批命令进行打包，然后发送给服务器，服务器获取数据后按顺序打包返回，即批量请求，批量响应。以次来减少网络等待的延时，提高性能   原子化的批量请求/响应(事务)模式  客户端将请求的命令发送发到服务器，服务器经这些请求暂存在服务器的请求队列中，这过程也称为：请求入队列。服务器在从请求队列中 拿去所有的请求执行，然后再将数据返回给客户端，这过程称为执行阶段。 服务器在执行过程中不会在接收其他客户端发送的请求。所有的操作都是原子操作，即请求都执行或都不执行。 事务的步骤为：开始事务-&amp;gt;请求入队列-&amp;gt;执行请求   发布/订阅(pub/sub)模式  发布者(pub)发送消息，订阅者(sub)接收消息，发布者和订阅者通过(通道)channel关联，所有的channel都是由一个map维护，map的key是 channel的名字，value是所有的订阅者的指针链表。客户端可以订阅任意的数量的频道，也可以进行发布。 发布者和订阅者都是客户端，服务器只是进行数据的中转。即发布者着向服务端发起请求，服务端将请求的数据推送给订阅者。   redis的持久化机制  redis的持久化机制主要是有：RDB(快照)和AOF(日志)两种持久化的方式。持久的化的作用在于：故障恢复和数据恢复  RDB(快照)持久化机制  快照是redis默认的持久化方案，在指定时间间隔内生成数据集的时间点，即在指定的时间段内将内存的数据写入磁盘，在磁盘 上生成一个rdb的备份文件。在redis重启时加载rdb文件进行数据的恢复。 快照的持久化提供自动备份：需要修改配置文件redis.conf。也提供save和bysave(后台子进程)进行主动备份  RDB(快照)的工作流程：  主进程会单独创建子进程，将主进程的数据库的数据复制到子进程。 子进程将数据写入到临时文件中进行持久化，在经临时文件替换之前的rdb文件,子进程退出，释放内存中的数据 主进程不进行持久化，即不进行任何的io操作，确保redis的极高的性能  RDB(快照)的优缺点 优点  单一的紧凑文件保存了莫一段时间的数据集，比较适合做数据的备份尤其的冷备份 在对数据完整性不敏感下，适合大规模的数据的恢复，因直接从磁盘获取数据，恢复数据快 由子进程进行持久化，主进程不进行持久化，即不进行任何的io操作，确保redis的极高的性能  缺点  不能保障数据的完整性，若redis出现宕机，就不会出现最近的数据未持久化，导致数据的丢失。 当持久化的数据量较大时，会导致持久化的子进程就会很耗时，即使主线程在不参与持久化也可能导致服务器在毫秒级内不能响应 客户端的请求，若数据巨大时且cpu的性能不佳时，会出现秒级不能响应客户端的请求。  AOF(日志)持久化  通过将每个写操作记录到日志中且以追加文件不修改文件的模式，重启时更具根据日志文件从头到未执行一遍即恢复数据。，因AOF采用的是经操作记录以追加模式下写入日志文件中，会导致AOF文件越来越大。AOF引入了重写机制。 AOF引入了重写机制：当文件AOF是上次重写大小的一倍且文件大于64MB时就创建一个子进程遍历服务器的键值对，转换成一系列 Redis 的操作 指令，序列化到一个新的AOF日志文件中，再替换旧的AOF日志文件。可以修改配置文件设定持久化策略。  AOF 提供了三种持久化策略：  no: 无 fsync，由系统保证数据刷新到磁盘，速度最快，但很不安全（通常不使用）； always: 每次 fsync，每一个修改内存的 Redis 指令都会执行一次 fsync，速度很慢（通常不使用）； everysec: 每秒进行一次 fsync，有可能丢失一秒的 fsync 的数据。通常选择 everysec 策略，兼顾安全性和效率。  AOF(日志)的优缺点 优点  可以采用everysec的持久化策略，能确保数据的完整性  缺点  AOF的日志文件通常是比rdb文件大 在数据的恢复时，需要遍历日志文件，将日志文件的数据操作命令在执行一遍，导致数据恢复相对于快照(rdb)较慢，尤其在大数据下。  redis 缓存中的状况于解决方案 缓存雪崩  数据未加载到内存或者同一时间发生大规模的key失效，从而导致所有的请求都直接在查数据库。导致数据库和cpu负载过高，甚至宕机  解决方案  加锁计数，限制并发的数量，避免出现并发出现大量的请求访问到数据库，降低服务器的吞吐量 设置热点key永不失效，均匀过期，避免出现大面积的key同时失效 设置缓存服务器的主备  缓存穿透  指客户端请求的数据在缓存和数据库中均没有，导致客户端在每次请求都需要去数据库查询。若在并发时，也会导致数据库和cpu的负载过高， 导致数据库的宕机  解决方案  若查询数据库不存在，直接在缓存中保存一个默认的值，并设置较短的过期时间，下次请求直接从缓存中返回。 使用布隆过滤器，阻挡无效的请求。  缓存并发  在并发情况下，一个缓存失效，在高并发下访问数据库，缓存更新，也会导致数据的压力变大。  解决方案  对缓存加锁，若key不存在，就加锁，当查询数据库的数据写入缓存在解锁  缓存预热  在系统运行前，将数据加载到缓存中  解决方案  数据量不大，直接加载 数据量大时，设置定时的脚本进行缓存的刷新 数据量巨大时，优先保障热点数据提前加载到缓存中  缓存降级  指缓存失效或者缓存服务器宕机时，不去访问数据库，直接返回默认值或访问内存数据  分布锁  使用setnx加锁，并设置超时时间，过了超时时间就解锁，并删除锁  参考文献 Redis 客户端服务端交互1 客户端/服务端协议"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/redis%E8%BF%9B%E9%98%B6/5.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/redis%E8%BF%9B%E9%98%B6/">
+                <img src="/p/redis%E8%BF%9B%E9%98%B6/5_hu55d28ed2616667077617555b48a30f7c_17120_800x0_resize_box_3.png"
+                        srcset="/p/redis%E8%BF%9B%E9%98%B6/5_hu55d28ed2616667077617555b48a30f7c_17120_800x0_resize_box_3.png 800w, /p/redis%E8%BF%9B%E9%98%B6/5_hu55d28ed2616667077617555b48a30f7c_17120_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="574" 
+                        loading="lazy"
+                        alt="Featured image of post redis进阶" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/computer/" style="background-color: #2a9d8f; color: #fff;">
+                知识学习
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/redis%E8%BF%9B%E9%98%B6/">redis进阶</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Dec 08, 2021</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 1 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h2 id="redis的网络协议">redis的网络协议</h2>
+<ul>
+<li>redis是基于tcp/ip协议，即客户端与服务器保持双工连接，通过序列化的协议(resp协议)进行数据的交互，在Redis中，协议数据分为不同的类型，
+每种类型的数据均以CRLF（\r\n）结束，通过数据的首字符区分类型
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 142; 
+			flex-basis: 343px"
+	>
+	<a href="/p/redis%E8%BF%9B%E9%98%B6/1.png" data-size="449x314">
+		<img src="/p/redis%E8%BF%9B%E9%98%B6/1.png"
+			width="449"
+			height="314"
+			srcset="/p/redis%E8%BF%9B%E9%98%B6/1_hu6689e274a0996608cb8ab14cd419ea9e_23725_480x0_resize_box_3.png 480w, /p/redis%E8%BF%9B%E9%98%B6/1_hu6689e274a0996608cb8ab14cd419ea9e_23725_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></li>
+<li>redis服务器是一个事件驱动系统主要分为：文件事件(io事件)和时间事件</li>
+<li>文件驱动：socket的读取事件(io事件)是由；连接(三次握手)、请求、响应(数据返回)、断开连接(四次挥手)组成，redis是采用单线程
+和epoll(io多路复用)的机制处理相关的文件事件。</li>
+<li>时间事件：可分为定时事件(程序在指定时间后执行相关的操作)和周期事件(程序每隔一段时间运行相关的操作)</li>
+</ul>
+<h2 id="redis客户端与服务器交互模式">redis客户端与服务器交互模式</h2>
+<h3 id="串行的请求交互模式">串行的请求/交互模式</h3>
+<ul>
+<li>客户端与服务器建立长连接，通过心跳检测(ping-pong)ack应答，即客户端发送请求，服务器在进行响应。</li>
+<li>在单连接下。大部分时间都是处于网络等待上(客户端在发送请求命令，并监听socket返回，通常以阻塞模式等待服务器端的响应)，这种模式下
+的性能较低
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 132; 
+			flex-basis: 317px"
+	>
+	<a href="/p/redis%E8%BF%9B%E9%98%B6/2.png" data-size="459x347">
+		<img src="/p/redis%E8%BF%9B%E9%98%B6/2.png"
+			width="459"
+			height="347"
+			srcset="/p/redis%E8%BF%9B%E9%98%B6/2_hud8100cb78349642cfc277c6a21e59924_8613_480x0_resize_box_3.png 480w, /p/redis%E8%BF%9B%E9%98%B6/2_hud8100cb78349642cfc277c6a21e59924_8613_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></li>
+</ul>
+<h3 id="管道技术pipeline双工的请求响应模式">管道技术(pipeline)双工的请求/响应模式</h3>
+<ul>
+<li>将一批命令进行打包，然后发送给服务器，服务器获取数据后按顺序打包返回，即批量请求，批量响应。以次来减少网络等待的延时，提高性能
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 70; 
+			flex-basis: 168px"
+	>
+	<a href="/p/redis%E8%BF%9B%E9%98%B6/3.png" data-size="459x654">
+		<img src="/p/redis%E8%BF%9B%E9%98%B6/3.png"
+			width="459"
+			height="654"
+			srcset="/p/redis%E8%BF%9B%E9%98%B6/3_hu66e812f3a220eb5db0a394f5a9aa9cc3_20538_480x0_resize_box_3.png 480w, /p/redis%E8%BF%9B%E9%98%B6/3_hu66e812f3a220eb5db0a394f5a9aa9cc3_20538_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></li>
+</ul>
+<h3 id="原子化的批量请求响应事务模式">原子化的批量请求/响应(事务)模式</h3>
+<ul>
+<li>客户端将请求的命令发送发到服务器，服务器经这些请求暂存在服务器的请求队列中，这过程也称为：请求入队列。服务器在从请求队列中
+拿去所有的请求执行，然后再将数据返回给客户端，这过程称为执行阶段。</li>
+<li>服务器在执行过程中不会在接收其他客户端发送的请求。所有的操作都是原子操作，即请求都执行或都不执行。</li>
+<li>事务的步骤为：开始事务-&gt;请求入队列-&gt;执行请求
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 132; 
+			flex-basis: 317px"
+	>
+	<a href="/p/redis%E8%BF%9B%E9%98%B6/4.png" data-size="459x347">
+		<img src="/p/redis%E8%BF%9B%E9%98%B6/4.png"
+			width="459"
+			height="347"
+			srcset="/p/redis%E8%BF%9B%E9%98%B6/4_huf01a29421262a303fde2c9249c01cc9c_12313_480x0_resize_box_3.png 480w, /p/redis%E8%BF%9B%E9%98%B6/4_huf01a29421262a303fde2c9249c01cc9c_12313_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></li>
+</ul>
+<h3 id="发布订阅pubsub模式">发布/订阅(pub/sub)模式</h3>
+<ul>
+<li>发布者(pub)发送消息，订阅者(sub)接收消息，发布者和订阅者通过(通道)channel关联，所有的channel都是由一个map维护，map的key是
+channel的名字，value是所有的订阅者的指针链表。客户端可以订阅任意的数量的频道，也可以进行发布。</li>
+<li>发布者和订阅者都是客户端，服务器只是进行数据的中转。即发布者着向服务端发起请求，服务端将请求的数据推送给订阅者。
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 139; 
+			flex-basis: 334px"
+	>
+	<a href="/p/redis%E8%BF%9B%E9%98%B6/5.png" data-size="537x385">
+		<img src="/p/redis%E8%BF%9B%E9%98%B6/5.png"
+			width="537"
+			height="385"
+			srcset="/p/redis%E8%BF%9B%E9%98%B6/5_hu55d28ed2616667077617555b48a30f7c_17120_480x0_resize_box_3.png 480w, /p/redis%E8%BF%9B%E9%98%B6/5_hu55d28ed2616667077617555b48a30f7c_17120_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></li>
+</ul>
+<h2 id="redis的持久化机制">redis的持久化机制</h2>
+<ul>
+<li>redis的持久化机制主要是有：RDB(快照)和AOF(日志)两种持久化的方式。持久的化的作用在于：故障恢复和数据恢复</li>
+</ul>
+<h3 id="rdb快照持久化机制">RDB(快照)持久化机制</h3>
+<ul>
+<li>快照是redis默认的持久化方案，在指定时间间隔内生成数据集的时间点，即在指定的时间段内将内存的数据写入磁盘，在磁盘
+上生成一个rdb的备份文件。在redis重启时加载rdb文件进行数据的恢复。</li>
+<li>快照的持久化提供自动备份：需要修改配置文件redis.conf。也提供save和bysave(后台子进程)进行主动备份</li>
+</ul>
+<h4 id="rdb快照的工作流程">RDB(快照)的工作流程：</h4>
+<ol>
+<li>主进程会单独创建子进程，将主进程的数据库的数据复制到子进程。</li>
+<li>子进程将数据写入到临时文件中进行持久化，在经临时文件替换之前的rdb文件,子进程退出，释放内存中的数据</li>
+<li>主进程不进行持久化，即不进行任何的io操作，确保redis的极高的性能</li>
+</ol>
+<h4 id="rdb快照的优缺点">RDB(快照)的优缺点</h4>
+<h5 id="优点">优点</h5>
+<ol>
+<li>单一的紧凑文件保存了莫一段时间的数据集，比较适合做数据的备份尤其的冷备份</li>
+<li>在对数据完整性不敏感下，适合大规模的数据的恢复，因直接从磁盘获取数据，恢复数据快</li>
+<li>由子进程进行持久化，主进程不进行持久化，即不进行任何的io操作，确保redis的极高的性能</li>
+</ol>
+<h5 id="缺点">缺点</h5>
+<ol>
+<li>不能保障数据的完整性，若redis出现宕机，就不会出现最近的数据未持久化，导致数据的丢失。</li>
+<li>当持久化的数据量较大时，会导致持久化的子进程就会很耗时，即使主线程在不参与持久化也可能导致服务器在毫秒级内不能响应
+客户端的请求，若数据巨大时且cpu的性能不佳时，会出现秒级不能响应客户端的请求。</li>
+</ol>
+<h3 id="aof日志持久化">AOF(日志)持久化</h3>
+<ul>
+<li>通过将每个写操作记录到日志中且以追加文件不修改文件的模式，重启时更具根据日志文件从头到未执行一遍即恢复数据。，因AOF采用的是经操作记录以追加模式下写入日志文件中，会导致AOF文件越来越大。AOF引入了重写机制。</li>
+<li>AOF引入了重写机制：当文件AOF是上次重写大小的一倍且文件大于64MB时就创建一个子进程遍历服务器的键值对，转换成一系列 Redis 的操作
+指令，序列化到一个新的AOF日志文件中，再替换旧的AOF日志文件。可以修改配置文件设定持久化策略。</li>
+</ul>
+<h4 id="aof-提供了三种持久化策略">AOF 提供了三种持久化策略：</h4>
+<ol>
+<li>no: 无 fsync，由系统保证数据刷新到磁盘，速度最快，但很不安全（通常不使用）；</li>
+<li>always: 每次 fsync，每一个修改内存的 Redis 指令都会执行一次 fsync，速度很慢（通常不使用）；</li>
+<li>everysec: 每秒进行一次 fsync，有可能丢失一秒的 fsync 的数据。通常选择 everysec 策略，兼顾安全性和效率。</li>
+</ol>
+<h4 id="aof日志的优缺点">AOF(日志)的优缺点</h4>
+<h5 id="优点-1">优点</h5>
+<ul>
+<li>可以采用everysec的持久化策略，能确保数据的完整性</li>
+</ul>
+<h5 id="缺点-1">缺点</h5>
+<ol>
+<li>AOF的日志文件通常是比rdb文件大</li>
+<li>在数据的恢复时，需要遍历日志文件，将日志文件的数据操作命令在执行一遍，导致数据恢复相对于快照(rdb)较慢，尤其在大数据下。</li>
+</ol>
+<h2 id="redis-缓存中的状况于解决方案">redis 缓存中的状况于解决方案</h2>
+<h3 id="缓存雪崩">缓存雪崩</h3>
+<ul>
+<li>数据未加载到内存或者同一时间发生大规模的key失效，从而导致所有的请求都直接在查数据库。导致数据库和cpu负载过高，甚至宕机</li>
+</ul>
+<h4 id="解决方案">解决方案</h4>
+<ol>
+<li>加锁计数，限制并发的数量，避免出现并发出现大量的请求访问到数据库，降低服务器的吞吐量</li>
+<li>设置热点key永不失效，均匀过期，避免出现大面积的key同时失效</li>
+<li>设置缓存服务器的主备</li>
+</ol>
+<h3 id="缓存穿透">缓存穿透</h3>
+<ul>
+<li>指客户端请求的数据在缓存和数据库中均没有，导致客户端在每次请求都需要去数据库查询。若在并发时，也会导致数据库和cpu的负载过高，
+导致数据库的宕机</li>
+</ul>
+<h4 id="解决方案-1">解决方案</h4>
+<ol>
+<li>若查询数据库不存在，直接在缓存中保存一个默认的值，并设置较短的过期时间，下次请求直接从缓存中返回。</li>
+<li>使用布隆过滤器，阻挡无效的请求。</li>
+</ol>
+<h3 id="缓存并发">缓存并发</h3>
+<ul>
+<li>在并发情况下，一个缓存失效，在高并发下访问数据库，缓存更新，也会导致数据的压力变大。</li>
+</ul>
+<h4 id="解决方案-2">解决方案</h4>
+<ul>
+<li>对缓存加锁，若key不存在，就加锁，当查询数据库的数据写入缓存在解锁</li>
+</ul>
+<h3 id="缓存预热">缓存预热</h3>
+<ul>
+<li>在系统运行前，将数据加载到缓存中</li>
+</ul>
+<h4 id="解决方案-3">解决方案</h4>
+<ol>
+<li>数据量不大，直接加载</li>
+<li>数据量大时，设置定时的脚本进行缓存的刷新</li>
+<li>数据量巨大时，优先保障热点数据提前加载到缓存中</li>
+</ol>
+<h3 id="缓存降级">缓存降级</h3>
+<ul>
+<li>指缓存失效或者缓存服务器宕机时，不去访问数据库，直接返回默认值或访问内存数据</li>
+</ul>
+<h3 id="分布锁">分布锁</h3>
+<ul>
+<li>使用setnx加锁，并设置超时时间，过了超时时间就解锁，并删除锁</li>
+</ul>
+<h2 id="参考文献">参考文献</h2>
+<p><a class="link" href="https://cloud.tencent.com/developer/article/1193256"  target="_blank" rel="noopener"
+    >Redis 客户端服务端交互1 客户端/服务端协议</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/%E5%88%9D%E8%AF%86redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E5%88%9D%E8%AF%86redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/2.9bb3cd584ad07f8d432d6d108a1fb3bb_hu2e0e0d83f63ca97b7bb5a7ad9fe95b5f_87192_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-m7PNWErQf41DLW0Qih&#43;zuw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">初识redis(数据结构分析)</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E5%88%9D%E6%8E%A2jwtjson-web-token/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E5%88%9D%E6%8E%A2jwtjson-web-token/1.de0e4c4810819d7f705fa299c4faa37e_hu679d1d76db059750024901bffb37cf39_65265_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-3g5MSBCBnX9wX6KZxPqjfg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">初探jwt(json web Token)</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E5%88%9D%E8%AF%86nginx/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E5%88%9D%E8%AF%86nginx/1.e0ee1366801ae624e9ad6c21c8729608_hu3f3721f37acfbb79e3bc6e8d69d34816_28729_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-4O4TZoAa5iTprWwhyHKWCA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">初识Nginx</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/">
+        
+        
+            <div class="article-image">
+                <img src="/p/http%E5%8D%8F%E8%AE%AE%E5%BA%95%E5%B1%82%E5%88%86%E6%9E%90/1.c14bf07455898e0545d3c7849d1e4c83_hu7de10a5ba4c09963d2757d75c9451326_29719_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-wUvwdFWJjgVF08eEnR5Mgw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">http协议底层分析</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/prc/">
+        
+        
+            <div class="article-image">
+                <img src="/p/prc/1.4b5ad1e48eb4278053f02c3df79aed9f_hu92b5144e2fe44c426742bd76f38787bf_37611_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-S1rR5I60J4BT8Cw995rtnw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">PRC</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#redis的网络协议">redis的网络协议</a></li>
+    <li><a href="#redis客户端与服务器交互模式">redis客户端与服务器交互模式</a>
+      <ol>
+        <li><a href="#串行的请求交互模式">串行的请求/交互模式</a></li>
+        <li><a href="#管道技术pipeline双工的请求响应模式">管道技术(pipeline)双工的请求/响应模式</a></li>
+        <li><a href="#原子化的批量请求响应事务模式">原子化的批量请求/响应(事务)模式</a></li>
+        <li><a href="#发布订阅pubsub模式">发布/订阅(pub/sub)模式</a></li>
+      </ol>
+    </li>
+    <li><a href="#redis的持久化机制">redis的持久化机制</a>
+      <ol>
+        <li><a href="#rdb快照持久化机制">RDB(快照)持久化机制</a>
+          <ol>
+            <li><a href="#rdb快照的工作流程">RDB(快照)的工作流程：</a></li>
+            <li><a href="#rdb快照的优缺点">RDB(快照)的优缺点</a></li>
+          </ol>
+        </li>
+        <li><a href="#aof日志持久化">AOF(日志)持久化</a>
+          <ol>
+            <li><a href="#aof-提供了三种持久化策略">AOF 提供了三种持久化策略：</a></li>
+            <li><a href="#aof日志的优缺点">AOF(日志)的优缺点</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#redis-缓存中的状况于解决方案">redis 缓存中的状况于解决方案</a>
+      <ol>
+        <li><a href="#缓存雪崩">缓存雪崩</a>
+          <ol>
+            <li><a href="#解决方案">解决方案</a></li>
+          </ol>
+        </li>
+        <li><a href="#缓存穿透">缓存穿透</a>
+          <ol>
+            <li><a href="#解决方案-1">解决方案</a></li>
+          </ol>
+        </li>
+        <li><a href="#缓存并发">缓存并发</a>
+          <ol>
+            <li><a href="#解决方案-2">解决方案</a></li>
+          </ol>
+        </li>
+        <li><a href="#缓存预热">缓存预热</a>
+          <ol>
+            <li><a href="#解决方案-3">解决方案</a></li>
+          </ol>
+        </li>
+        <li><a href="#缓存降级">缓存降级</a></li>
+        <li><a href="#分布锁">分布锁</a></li>
+      </ol>
+    </li>
+    <li><a href="#参考文献">参考文献</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

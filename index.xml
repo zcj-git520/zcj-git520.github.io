@@ -6,7 +6,234 @@
         <description>Recent content on Chengji Zhao&#39;s blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Sun, 05 Dec 2021 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Wed, 08 Dec 2021 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>redis进阶</title>
+        <link>https://zcj-git520.github.io/p/redis%E8%BF%9B%E9%98%B6/</link>
+        <pubDate>Wed, 08 Dec 2021 22:00:38 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/redis%E8%BF%9B%E9%98%B6/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/redis%E8%BF%9B%E9%98%B6/5.png" alt="Featured image of post redis进阶" /&gt;&lt;h2 id=&#34;redis的网络协议&#34;&gt;redis的网络协议&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;redis是基于tcp/ip协议，即客户端与服务器保持双工连接，通过序列化的协议(resp协议)进行数据的交互，在Redis中，协议数据分为不同的类型，
+每种类型的数据均以CRLF（\r\n）结束，通过数据的首字符区分类型
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 142; 
+			flex-basis: 343px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/redis%E8%BF%9B%E9%98%B6/1.png&#34; data-size=&#34;449x314&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/redis%E8%BF%9B%E9%98%B6/1.png&#34;
+			width=&#34;449&#34;
+			height=&#34;314&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/redis%E8%BF%9B%E9%98%B6/1_hu6689e274a0996608cb8ab14cd419ea9e_23725_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/redis%E8%BF%9B%E9%98%B6/1_hu6689e274a0996608cb8ab14cd419ea9e_23725_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;li&gt;redis服务器是一个事件驱动系统主要分为：文件事件(io事件)和时间事件&lt;/li&gt;
+&lt;li&gt;文件驱动：socket的读取事件(io事件)是由；连接(三次握手)、请求、响应(数据返回)、断开连接(四次挥手)组成，redis是采用单线程
+和epoll(io多路复用)的机制处理相关的文件事件。&lt;/li&gt;
+&lt;li&gt;时间事件：可分为定时事件(程序在指定时间后执行相关的操作)和周期事件(程序每隔一段时间运行相关的操作)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;redis客户端与服务器交互模式&#34;&gt;redis客户端与服务器交互模式&lt;/h2&gt;
+&lt;h3 id=&#34;串行的请求交互模式&#34;&gt;串行的请求/交互模式&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;客户端与服务器建立长连接，通过心跳检测(ping-pong)ack应答，即客户端发送请求，服务器在进行响应。&lt;/li&gt;
+&lt;li&gt;在单连接下。大部分时间都是处于网络等待上(客户端在发送请求命令，并监听socket返回，通常以阻塞模式等待服务器端的响应)，这种模式下
+的性能较低
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 132; 
+			flex-basis: 317px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/redis%E8%BF%9B%E9%98%B6/2.png&#34; data-size=&#34;459x347&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/redis%E8%BF%9B%E9%98%B6/2.png&#34;
+			width=&#34;459&#34;
+			height=&#34;347&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/redis%E8%BF%9B%E9%98%B6/2_hud8100cb78349642cfc277c6a21e59924_8613_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/redis%E8%BF%9B%E9%98%B6/2_hud8100cb78349642cfc277c6a21e59924_8613_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;管道技术pipeline双工的请求响应模式&#34;&gt;管道技术(pipeline)双工的请求/响应模式&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;将一批命令进行打包，然后发送给服务器，服务器获取数据后按顺序打包返回，即批量请求，批量响应。以次来减少网络等待的延时，提高性能
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 70; 
+			flex-basis: 168px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/redis%E8%BF%9B%E9%98%B6/3.png&#34; data-size=&#34;459x654&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/redis%E8%BF%9B%E9%98%B6/3.png&#34;
+			width=&#34;459&#34;
+			height=&#34;654&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/redis%E8%BF%9B%E9%98%B6/3_hu66e812f3a220eb5db0a394f5a9aa9cc3_20538_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/redis%E8%BF%9B%E9%98%B6/3_hu66e812f3a220eb5db0a394f5a9aa9cc3_20538_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;原子化的批量请求响应事务模式&#34;&gt;原子化的批量请求/响应(事务)模式&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;客户端将请求的命令发送发到服务器，服务器经这些请求暂存在服务器的请求队列中，这过程也称为：请求入队列。服务器在从请求队列中
+拿去所有的请求执行，然后再将数据返回给客户端，这过程称为执行阶段。&lt;/li&gt;
+&lt;li&gt;服务器在执行过程中不会在接收其他客户端发送的请求。所有的操作都是原子操作，即请求都执行或都不执行。&lt;/li&gt;
+&lt;li&gt;事务的步骤为：开始事务-&amp;gt;请求入队列-&amp;gt;执行请求
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 132; 
+			flex-basis: 317px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/redis%E8%BF%9B%E9%98%B6/4.png&#34; data-size=&#34;459x347&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/redis%E8%BF%9B%E9%98%B6/4.png&#34;
+			width=&#34;459&#34;
+			height=&#34;347&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/redis%E8%BF%9B%E9%98%B6/4_huf01a29421262a303fde2c9249c01cc9c_12313_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/redis%E8%BF%9B%E9%98%B6/4_huf01a29421262a303fde2c9249c01cc9c_12313_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;发布订阅pubsub模式&#34;&gt;发布/订阅(pub/sub)模式&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;发布者(pub)发送消息，订阅者(sub)接收消息，发布者和订阅者通过(通道)channel关联，所有的channel都是由一个map维护，map的key是
+channel的名字，value是所有的订阅者的指针链表。客户端可以订阅任意的数量的频道，也可以进行发布。&lt;/li&gt;
+&lt;li&gt;发布者和订阅者都是客户端，服务器只是进行数据的中转。即发布者着向服务端发起请求，服务端将请求的数据推送给订阅者。
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 139; 
+			flex-basis: 334px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/redis%E8%BF%9B%E9%98%B6/5.png&#34; data-size=&#34;537x385&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/redis%E8%BF%9B%E9%98%B6/5.png&#34;
+			width=&#34;537&#34;
+			height=&#34;385&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/redis%E8%BF%9B%E9%98%B6/5_hu55d28ed2616667077617555b48a30f7c_17120_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/redis%E8%BF%9B%E9%98%B6/5_hu55d28ed2616667077617555b48a30f7c_17120_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;redis的持久化机制&#34;&gt;redis的持久化机制&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;redis的持久化机制主要是有：RDB(快照)和AOF(日志)两种持久化的方式。持久的化的作用在于：故障恢复和数据恢复&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;rdb快照持久化机制&#34;&gt;RDB(快照)持久化机制&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;快照是redis默认的持久化方案，在指定时间间隔内生成数据集的时间点，即在指定的时间段内将内存的数据写入磁盘，在磁盘
+上生成一个rdb的备份文件。在redis重启时加载rdb文件进行数据的恢复。&lt;/li&gt;
+&lt;li&gt;快照的持久化提供自动备份：需要修改配置文件redis.conf。也提供save和bysave(后台子进程)进行主动备份&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;rdb快照的工作流程&#34;&gt;RDB(快照)的工作流程：&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;主进程会单独创建子进程，将主进程的数据库的数据复制到子进程。&lt;/li&gt;
+&lt;li&gt;子进程将数据写入到临时文件中进行持久化，在经临时文件替换之前的rdb文件,子进程退出，释放内存中的数据&lt;/li&gt;
+&lt;li&gt;主进程不进行持久化，即不进行任何的io操作，确保redis的极高的性能&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;rdb快照的优缺点&#34;&gt;RDB(快照)的优缺点&lt;/h4&gt;
+&lt;h5 id=&#34;优点&#34;&gt;优点&lt;/h5&gt;
+&lt;ol&gt;
+&lt;li&gt;单一的紧凑文件保存了莫一段时间的数据集，比较适合做数据的备份尤其的冷备份&lt;/li&gt;
+&lt;li&gt;在对数据完整性不敏感下，适合大规模的数据的恢复，因直接从磁盘获取数据，恢复数据快&lt;/li&gt;
+&lt;li&gt;由子进程进行持久化，主进程不进行持久化，即不进行任何的io操作，确保redis的极高的性能&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h5 id=&#34;缺点&#34;&gt;缺点&lt;/h5&gt;
+&lt;ol&gt;
+&lt;li&gt;不能保障数据的完整性，若redis出现宕机，就不会出现最近的数据未持久化，导致数据的丢失。&lt;/li&gt;
+&lt;li&gt;当持久化的数据量较大时，会导致持久化的子进程就会很耗时，即使主线程在不参与持久化也可能导致服务器在毫秒级内不能响应
+客户端的请求，若数据巨大时且cpu的性能不佳时，会出现秒级不能响应客户端的请求。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;aof日志持久化&#34;&gt;AOF(日志)持久化&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;通过将每个写操作记录到日志中且以追加文件不修改文件的模式，重启时更具根据日志文件从头到未执行一遍即恢复数据。，因AOF采用的是经操作记录以追加模式下写入日志文件中，会导致AOF文件越来越大。AOF引入了重写机制。&lt;/li&gt;
+&lt;li&gt;AOF引入了重写机制：当文件AOF是上次重写大小的一倍且文件大于64MB时就创建一个子进程遍历服务器的键值对，转换成一系列 Redis 的操作
+指令，序列化到一个新的AOF日志文件中，再替换旧的AOF日志文件。可以修改配置文件设定持久化策略。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;aof-提供了三种持久化策略&#34;&gt;AOF 提供了三种持久化策略：&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;no: 无 fsync，由系统保证数据刷新到磁盘，速度最快，但很不安全（通常不使用）；&lt;/li&gt;
+&lt;li&gt;always: 每次 fsync，每一个修改内存的 Redis 指令都会执行一次 fsync，速度很慢（通常不使用）；&lt;/li&gt;
+&lt;li&gt;everysec: 每秒进行一次 fsync，有可能丢失一秒的 fsync 的数据。通常选择 everysec 策略，兼顾安全性和效率。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;aof日志的优缺点&#34;&gt;AOF(日志)的优缺点&lt;/h4&gt;
+&lt;h5 id=&#34;优点-1&#34;&gt;优点&lt;/h5&gt;
+&lt;ul&gt;
+&lt;li&gt;可以采用everysec的持久化策略，能确保数据的完整性&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id=&#34;缺点-1&#34;&gt;缺点&lt;/h5&gt;
+&lt;ol&gt;
+&lt;li&gt;AOF的日志文件通常是比rdb文件大&lt;/li&gt;
+&lt;li&gt;在数据的恢复时，需要遍历日志文件，将日志文件的数据操作命令在执行一遍，导致数据恢复相对于快照(rdb)较慢，尤其在大数据下。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;redis-缓存中的状况于解决方案&#34;&gt;redis 缓存中的状况于解决方案&lt;/h2&gt;
+&lt;h3 id=&#34;缓存雪崩&#34;&gt;缓存雪崩&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;数据未加载到内存或者同一时间发生大规模的key失效，从而导致所有的请求都直接在查数据库。导致数据库和cpu负载过高，甚至宕机&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;解决方案&#34;&gt;解决方案&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;加锁计数，限制并发的数量，避免出现并发出现大量的请求访问到数据库，降低服务器的吞吐量&lt;/li&gt;
+&lt;li&gt;设置热点key永不失效，均匀过期，避免出现大面积的key同时失效&lt;/li&gt;
+&lt;li&gt;设置缓存服务器的主备&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;缓存穿透&#34;&gt;缓存穿透&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;指客户端请求的数据在缓存和数据库中均没有，导致客户端在每次请求都需要去数据库查询。若在并发时，也会导致数据库和cpu的负载过高，
+导致数据库的宕机&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;解决方案-1&#34;&gt;解决方案&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;若查询数据库不存在，直接在缓存中保存一个默认的值，并设置较短的过期时间，下次请求直接从缓存中返回。&lt;/li&gt;
+&lt;li&gt;使用布隆过滤器，阻挡无效的请求。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;缓存并发&#34;&gt;缓存并发&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;在并发情况下，一个缓存失效，在高并发下访问数据库，缓存更新，也会导致数据的压力变大。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;解决方案-2&#34;&gt;解决方案&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;对缓存加锁，若key不存在，就加锁，当查询数据库的数据写入缓存在解锁&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;缓存预热&#34;&gt;缓存预热&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;在系统运行前，将数据加载到缓存中&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;解决方案-3&#34;&gt;解决方案&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;数据量不大，直接加载&lt;/li&gt;
+&lt;li&gt;数据量大时，设置定时的脚本进行缓存的刷新&lt;/li&gt;
+&lt;li&gt;数据量巨大时，优先保障热点数据提前加载到缓存中&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;缓存降级&#34;&gt;缓存降级&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;指缓存失效或者缓存服务器宕机时，不去访问数据库，直接返回默认值或访问内存数据&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;分布锁&#34;&gt;分布锁&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;使用setnx加锁，并设置超时时间，过了超时时间就解锁，并删除锁&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;参考文献&#34;&gt;参考文献&lt;/h2&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://cloud.tencent.com/developer/article/1193256&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Redis 客户端服务端交互1 客户端/服务端协议&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>初识redis(数据结构分析)</title>
         <link>https://zcj-git520.github.io/p/%E5%88%9D%E8%AF%86redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/</link>
         <pubDate>Sun, 05 Dec 2021 22:00:38 +0800</pubDate>
@@ -268,6 +495,51 @@ quicklist;
      //字典
      dict *dice;
 } zset
+
+/* ZSETs use a specialized version of Skiplists */
+/*
+ * 跳跃表节点
+ */
+typedef struct zskiplistNode {
+
+    // 成员对象
+    robj *obj;
+
+    // 分值
+    double score;
+
+    // 后退指针
+    struct zskiplistNode *backward;
+
+    // 层
+    struct zskiplistLevel {
+
+        // 前进指针
+        struct zskiplistNode *forward;
+
+        // 跨度
+        unsigned int span;
+
+    } level[];
+
+} zskiplistNode;
+
+/*
+ * 跳跃表
+ */
+typedef struct zskiplist {
+
+    // 表头节点和表尾节点
+    struct zskiplistNode *header, *tail;
+
+    // 表中节点的数量
+    unsigned long length;
+
+    // 表中层数最大的节点的层数
+    int level;
+
+} zskiplist;
+
 
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;figure 
 	

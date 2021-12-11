@@ -389,6 +389,51 @@ quicklist;
      dict *dice;
 } zset
 
+/* ZSETs use a specialized version of Skiplists */
+/*
+ * 跳跃表节点
+ */
+typedef struct zskiplistNode {
+
+    // 成员对象
+    robj *obj;
+
+    // 分值
+    double score;
+
+    // 后退指针
+    struct zskiplistNode *backward;
+
+    // 层
+    struct zskiplistLevel {
+
+        // 前进指针
+        struct zskiplistNode *forward;
+
+        // 跨度
+        unsigned int span;
+
+    } level[];
+
+} zskiplistNode;
+
+/*
+ * 跳跃表
+ */
+typedef struct zskiplist {
+
+    // 表头节点和表尾节点
+    struct zskiplistNode *header, *tail;
+
+    // 表中节点的数量
+    unsigned long length;
+
+    // 表中层数最大的节点的层数
+    int level;
+
+} zskiplist;
+
+
 </code></pre><p><figure 
 	
 		class="gallery-image" 
@@ -450,6 +495,28 @@ quicklist;
         <h2 class="section-title">相关文章</h2>
         <div class="related-contents">
             <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/redis%E8%BF%9B%E9%98%B6/">
+        
+        
+            <div class="article-image">
+                <img src="/p/redis%E8%BF%9B%E9%98%B6/5.bf8a8aa3d41d8a55feee69541f3e55f6_hu55d28ed2616667077617555b48a30f7c_17120_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-v4qKo9QdilX&#43;7mlUHz5V9g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">redis进阶</h2>
+        </div>
+    </a>
+</article>
                 
                     
 <article class="has-image">
@@ -535,28 +602,6 @@ quicklist;
 
         <div class="article-details">
             <h2 class="article-title">PRC</h2>
-        </div>
-    </a>
-</article>
-                
-                    
-<article class="has-image">
-    <a href="/p/restfulapi/">
-        
-        
-            <div class="article-image">
-                <img src="/p/restfulapi/1.0a791479868a49d03bbd57bcc1a0a0cf_hu5d30570469f48ece7400dce081384b39_15097_250x150_fill_q75_box_smart1.jpg" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy" 
-                        data-key="" 
-                        data-hash="md5-CnkUeYaKSdA7vVe8waCgzw==">
-                
-            </div>
-        
-
-        <div class="article-details">
-            <h2 class="article-title">RestfulAPI</h2>
         </div>
     </a>
 </article>
