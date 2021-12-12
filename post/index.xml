@@ -6,7 +6,16 @@
     <description>Recent content in Posts on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Wed, 08 Dec 2021 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 12 Dec 2021 12:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>io多路复用</title>
+      <link>https://zcj-git520.github.io/p/io%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/</link>
+      <pubDate>Sun, 12 Dec 2021 12:00:38 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/io%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/</guid>
+      <description>常见的IO类型 同步阻塞IO  用户线程通过调用系统命令发起io操作，由用户态复制到内核态空间，内核态一直在等待， 直到获取到数据时，将接收到的数据拷贝到用户态空间，用户线程在获取数据。整个过程用户线程 处于阻塞的状态，直到有数据为止。  同步非阻塞IO  在同步阻塞io的基础上，用户线程发起io操作后，就立刻返回。由于是非阻塞的方式，就存在返回时 没有数据，就需要不断的轮询发起io请求，直到接收到数据为止。  IO多路复用  io多路复用是一种同步的io模型。实现在内核态中一个线程监视多个io(文件句柄)，一旦某个io就绪后， 就通知用户线程进行相关的操作。没有io就绪时就阻塞用户线程，将交出cpu。多路是指网络连接，复用是指 用一个线程。  信号驱动IO  用户线程发起一个io操作后，会向内核注册一个信号处理函数，然后返回，当内核中有数据时，就会发送一个 信号给用户线程，用户态的线程在调用io请求，获取到数据。  异步IO  用户线程发起io操作后就返回。由内核态的线程处理，当内核线程获取到数据后，主动将数据拷贝到用户态， 并告知用户线程io操作也完成。   io多路复用的三种实现方式 select  select是采用数组的存储的结构存储io(fd文件句柄)，默认的最大的fd为32位系统1024，64位系统是2048(可设置),用户线程将fd集合拷贝到 内核态并开始监控，当有fd就绪或者过了设置超时时间，就将fd集合中所有未就绪的fd清空(将bitmap置为0)，将就id集合返回到用户态， 用户态的线程通过轮询返回的fd集合找到就绪的fd,进行相关的io操作获取数据。再一次监控时，需要将之前清空的fd 添加到fd集合中进行新一轮的监控。  #include &amp;lt;sys/select.h&amp;gt; #include &amp;lt;sys/time.h&amp;gt; #define FD_SETSIZE 1024 #define NFDBITS (8 * sizeof(unsigned long)) #define __FDSET_LONGS (FD_SETSIZE/NFDBITS) // 数据结构 (bitmap) typedef struct { unsigned long fds_bits[__FDSET_LONGS]; } fd_set; // API int select( int max_fd, // 最大的文件文件描述符fd fd_set *readset, // 读文件描述符集合 fd_set *writeset, // 写文件描述符集合 fd_set *exceptset, // 异常的文件描述符集合 struct timeval *timeout // 超时时间 ) // 返回值就绪描述符的数目 FD_ZERO(int fd, fd_set* fds) // 清空集合 FD_SET(int fd, fd_set* fds) // 将给定的描述符加入集合 FD_ISSET(int fd, fd_set* fds) // 判断指定描述符是否在集合中 FD_CLR(int fd, fd_set* fds) // 将给定的描述符从文件中删除 //select使用示例 int main() { /* * 这里进行一些初始化的设置， * 包括socket建立，地址的设置等, */ fd_set read_fs, write_fs; struct timeval timeout; int max = 0; // 用于记录最大的fd，在轮询中时刻更新即可 // 初始化比特位 FD_ZERO(&amp;amp;read_fs); FD_ZERO(&amp;amp;write_fs); int nfds = 0; // 记录就绪的事件，可以减少遍历的次数 while (1) { // 阻塞获取 // 每次需要把fd从用户态拷贝到内核态 nfds = select(max + 1, &amp;amp;read_fd, &amp;amp;write_fd, NULL, &amp;amp;timeout); // 每次需要遍历所有fd，判断有无读写事件发生 for (int i = 0; i &amp;lt;= max &amp;amp;&amp;amp; nfds; ++i) { if (i == listenfd) { --nfds; // 这里处理accept事件 FD_SET(i, &amp;amp;read_fd);//将客户端socket加入到集合中 } if (FD_ISSET(i, &amp;amp;read_fd)) { --nfds; // 这里处理read事件 } if (FD_ISSET(i, &amp;amp;write_fd)) { --nfds; // 这里处理write事件 } } }</description>
+    </item>
+    
     <item>
       <title>redis进阶</title>
       <link>https://zcj-git520.github.io/p/redis%E8%BF%9B%E9%98%B6/</link>
