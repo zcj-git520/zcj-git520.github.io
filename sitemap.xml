@@ -2,16 +2,31 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://zcj-git520.github.io/categories/bug/</loc>
+    <lastmod>2021-12-16T22:00:08+08:00</lastmod>
+  </url><url>
     <loc>https://zcj-git520.github.io/categories/</loc>
-    <lastmod>2021-12-12T12:00:38+08:00</lastmod>
+    <lastmod>2021-12-16T22:00:08+08:00</lastmod>
   </url><url>
     <loc>https://zcj-git520.github.io/</loc>
-    <lastmod>2021-12-12T12:00:38+08:00</lastmod>
+    <lastmod>2021-12-16T22:00:08+08:00</lastmod>
   </url><url>
-    <loc>https://zcj-git520.github.io/p/io%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/</loc>
-    <lastmod>2021-12-12T12:00:38+08:00</lastmod>
+    <loc>https://zcj-git520.github.io/categories/golang/</loc>
+    <lastmod>2021-12-16T22:00:08+08:00</lastmod>
   </url><url>
     <loc>https://zcj-git520.github.io/post/</loc>
+    <lastmod>2021-12-16T22:00:08+08:00</lastmod>
+  </url><url>
+    <loc>https://zcj-git520.github.io/categories/language/</loc>
+    <lastmod>2021-12-16T22:00:08+08:00</lastmod>
+  </url><url>
+    <loc>https://zcj-git520.github.io/p/%E8%B6%85%E6%97%B6%E9%87%8D%E8%AF%95%E6%9C%BA%E5%88%B6-host_try/</loc>
+    <lastmod>2021-12-16T22:00:08+08:00</lastmod>
+  </url><url>
+    <loc>https://zcj-git520.github.io/p/timertask-%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%8C%85/</loc>
+    <lastmod>2021-12-15T22:00:08+08:00</lastmod>
+  </url><url>
+    <loc>https://zcj-git520.github.io/p/io%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/</loc>
     <lastmod>2021-12-12T12:00:38+08:00</lastmod>
   </url><url>
     <loc>https://zcj-git520.github.io/categories/computer/</loc>
@@ -47,17 +62,11 @@
     <loc>https://zcj-git520.github.io/p/python%E5%AE%89%E5%85%A8%E6%8C%87%E5%8D%97/</loc>
     <lastmod>2021-10-30T22:00:08+08:00</lastmod>
   </url><url>
-    <loc>https://zcj-git520.github.io/categories/language/</loc>
-    <lastmod>2021-10-30T22:00:08+08:00</lastmod>
-  </url><url>
     <loc>https://zcj-git520.github.io/p/c/c-%E5%AE%89%E5%85%A8%E6%8C%87%E5%8D%97/</loc>
     <lastmod>2021-10-28T22:00:08+08:00</lastmod>
   </url><url>
     <loc>https://zcj-git520.github.io/categories/c_c&#43;&#43;/</loc>
     <lastmod>2021-10-28T22:00:08+08:00</lastmod>
-  </url><url>
-    <loc>https://zcj-git520.github.io/categories/golang/</loc>
-    <lastmod>2021-10-24T22:00:08+08:00</lastmod>
   </url><url>
     <loc>https://zcj-git520.github.io/p/go%E5%AE%89%E5%85%A8%E6%8C%87%E5%8D%97/</loc>
     <lastmod>2021-10-24T22:00:08+08:00</lastmod>
@@ -70,9 +79,6 @@
   </url><url>
     <loc>https://zcj-git520.github.io/p/go-channel%E7%9A%84%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3/</loc>
     <lastmod>2021-10-15T22:00:38+08:00</lastmod>
-  </url><url>
-    <loc>https://zcj-git520.github.io/categories/bug/</loc>
-    <lastmod>2021-10-09T22:00:38+08:00</lastmod>
   </url><url>
     <loc>https://zcj-git520.github.io/p/golang/</loc>
     <lastmod>2021-10-09T22:00:38+08:00</lastmod>

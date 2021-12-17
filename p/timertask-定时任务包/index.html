@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='timerTask 定时任务：可以定时执行单个或者对个任务：
+ 定时定时任务 停止定时任务 重置定时时间，并执行定时任务 定时开启定时任务 定时结束定时任务  timerTask结构 type timerConfig struct {timing time.Duration // 定时时间startTiming time.Duration // 定时开启定时任务时间stopTiming time.Duration // 定时停止定时任务时间running bool // 定时器运行的状态,运作中为true/没有运行为falsetasks []func() // 定时任务stopChan chan struct{} // 停止定时器日任务runningMu sync.MutexWaiter sync.WaitGroup}定时任务的开始和结束 函数原型：NewTimerTask(d time.Duration, tasks []func(), opts ... Option) *timerConfig参数为：统一的定时任务时间,定时任务集, 可选参数【定时开启定时任务时间(SetTimerStart(d time.Duration)), 定时停止定时任务时间(SetTimerStop(d time.Duration))】Start()开始定时任务, Stop()结束定时任务 使用
+t1 := 1 * time.Secondtasks := []func(){printTest1, printTest2, printTest3, printTest4, printTest5}timer := NewTimerTask(t1, tasks)timer.'><title>timerTask 定时任务包</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/timertask-%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%8C%85/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='timerTask 定时任务包'>
+<meta property='og:description' content='timerTask 定时任务：可以定时执行单个或者对个任务：
+ 定时定时任务 停止定时任务 重置定时时间，并执行定时任务 定时开启定时任务 定时结束定时任务  timerTask结构 type timerConfig struct {timing time.Duration // 定时时间startTiming time.Duration // 定时开启定时任务时间stopTiming time.Duration // 定时停止定时任务时间running bool // 定时器运行的状态,运作中为true/没有运行为falsetasks []func() // 定时任务stopChan chan struct{} // 停止定时器日任务runningMu sync.MutexWaiter sync.WaitGroup}定时任务的开始和结束 函数原型：NewTimerTask(d time.Duration, tasks []func(), opts ... Option) *timerConfig参数为：统一的定时任务时间,定时任务集, 可选参数【定时开启定时任务时间(SetTimerStart(d time.Duration)), 定时停止定时任务时间(SetTimerStop(d time.Duration))】Start()开始定时任务, Stop()结束定时任务 使用
+t1 := 1 * time.Secondtasks := []func(){printTest1, printTest2, printTest3, printTest4, printTest5}timer := NewTimerTask(t1, tasks)timer.'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/timertask-%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%8C%85/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-12-15T22:00:08&#43;08:00'/><meta property='article:modified_time' content='2021-12-15T22:00:08&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/timertask-%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%8C%85/1.png' />
+<meta name="twitter:title" content="timerTask 定时任务包">
+<meta name="twitter:description" content="timerTask 定时任务：可以定时执行单个或者对个任务：
+ 定时定时任务 停止定时任务 重置定时时间，并执行定时任务 定时开启定时任务 定时结束定时任务  timerTask结构 type timerConfig struct {timing time.Duration // 定时时间startTiming time.Duration // 定时开启定时任务时间stopTiming time.Duration // 定时停止定时任务时间running bool // 定时器运行的状态,运作中为true/没有运行为falsetasks []func() // 定时任务stopChan chan struct{} // 停止定时器日任务runningMu sync.MutexWaiter sync.WaitGroup}定时任务的开始和结束 函数原型：NewTimerTask(d time.Duration, tasks []func(), opts ... Option) *timerConfig参数为：统一的定时任务时间,定时任务集, 可选参数【定时开启定时任务时间(SetTimerStart(d time.Duration)), 定时停止定时任务时间(SetTimerStop(d time.Duration))】Start()开始定时任务, Stop()结束定时任务 使用
+t1 := 1 * time.Secondtasks := []func(){printTest1, printTest2, printTest3, printTest4, printTest5}timer := NewTimerTask(t1, tasks)timer."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/timertask-%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%8C%85/1.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/timertask-%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%8C%85/">
+                <img src="/p/timertask-%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%8C%85/1_hu8e77554b4f75574526b9eba572e1dcc7_37690_800x0_resize_box_3.png"
+                        srcset="/p/timertask-%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%8C%85/1_hu8e77554b4f75574526b9eba572e1dcc7_37690_800x0_resize_box_3.png 800w, /p/timertask-%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%8C%85/1_hu8e77554b4f75574526b9eba572e1dcc7_37690_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="507" 
+                        loading="lazy"
+                        alt="Featured image of post timerTask 定时任务包" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/language/" style="background-color: #2a9d8f; color: #fff;">
+                语言学习
+            </a>
+        
+            <a href="/categories/golang/" style="background-color: #2a9d8f; color: #fff;">
+                Golang
+            </a>
+        
+            <a href="/categories/bug/" style="background-color: #2a9d8f; color: #fff;">
+                Bug修复
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/timertask-%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%8C%85/">timerTask 定时任务包</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Dec 15, 2021</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 1 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h2 id="timertask">timerTask</h2>
+<p>定时任务：可以定时执行单个或者对个任务：</p>
+<ol>
+<li>定时定时任务</li>
+<li>停止定时任务</li>
+<li>重置定时时间，并执行定时任务</li>
+<li>定时开启定时任务</li>
+<li>定时结束定时任务</li>
+</ol>
+<h2 id="timertask结构">timerTask结构</h2>
+<pre tabindex="0"><code>type timerConfig struct {
+	timing       time.Duration      // 定时时间
+	startTiming  time.Duration      // 定时开启定时任务时间
+	stopTiming   time.Duration      // 定时停止定时任务时间
+	running   	 bool               // 定时器运行的状态,运作中为true/没有运行为false
+	tasks        []func()           // 定时任务
+	stopChan     chan struct{}      // 停止定时器日任务
+	runningMu    sync.Mutex
+	Waiter       sync.WaitGroup
+}
+</code></pre><h2 id="定时任务的开始和结束">定时任务的开始和结束</h2>
+<pre tabindex="0"><code>函数原型：NewTimerTask(d time.Duration, tasks []func(), opts ... Option) *timerConfig
+参数为：统一的定时任务时间,定时任务集, 可选参数【定时开启定时任务时间(SetTimerStart(d time.Duration)), 定时停止定时任务时间(SetTimerStop(d time.Duration))】
+Start()开始定时任务, Stop()结束定时任务 
+
+</code></pre><p>使用</p>
+<pre tabindex="0"><code>t1 := 1 * time.Second
+	tasks := []func(){printTest1, printTest2, printTest3, printTest4, printTest5}
+	timer := NewTimerTask(t1, tasks)
+	timer.Waiter.Add(2)
+	timer.start()
+	go func() {
+		select {
+		case &lt;-time.After(5*time.Second):
+			timer.stop()
+			timer.Waiter.Done()
+			return
+		}
+
+	}()
+	timer.Waiter.Wait()
+</code></pre><h2 id="重置定时时间任务">重置定时时间任务</h2>
+<pre tabindex="0"><code>函数原型：Reset(d time.Duration) // 重置定时的时间
+</code></pre><p>使用：</p>
+<pre tabindex="0"><code>	t1 := 1 * time.Second
+	tasks := []func(){printTest1, printTest2, printTest3, printTest4, printTest5}
+	timer := NewTimerTask(t1, tasks)
+	timer.Waiter.Add(3)
+	timer.start()
+	go func() {
+		select {
+		case &lt;-time.After(10*time.Second):
+			timer.stop()
+			timer.Waiter.Done()
+			return
+		}
+
+	}()
+	go func() {
+		select {
+		case &lt;-time.After(5*time.Second):
+			timer.Reset(2*time.Second)
+			timer.Waiter.Done()
+			return
+		}
+
+	}()
+	timer.Waiter.Wait()
+</code></pre><h2 id="定时开始定时任务">定时开始定时任务</h2>
+<pre tabindex="0"><code>函数原型：TimerStart() ,需要在初始化时,设定定时开始定时任务的时间
+</code></pre><p>使用：</p>
+<pre tabindex="0"><code>	t1 := 1 * time.Second
+	ts := time.Now()
+	tasks := []func(){printTest1, printTest2, printTest3, printTest4, printTest5}
+	timer := NewTimerTask(t1, tasks, SetTimerStart(3*time.Second))
+	timer.TimerStart()
+	t.Logf(&quot;定时时间为：%v&quot;, time.Now().Sub(ts))
+	timer.Waiter.Add(2)
+	timer.start()
+	go func() {
+		select {
+		case &lt;-time.After(5*time.Second):
+			timer.stop()
+			timer.Waiter.Done()
+			return
+		}
+
+	}()
+	timer.Waiter.Wait()
+</code></pre><h2 id="定时结束定时任务">定时结束定时任务</h2>
+<pre tabindex="0"><code>函数原型：TimerStop(),设定定时结束定时任务的时间
+</code></pre><ul>
+<li>使用：</li>
+</ul>
+<pre tabindex="0"><code>t1 := 1 * time.Second
+	tasks := []func(){printTest1, printTest2, printTest3, printTest4, printTest5}
+	timer := NewTimerTask(t1, tasks, SetTimerStop(3*time.Second))
+	timer.Waiter.Add(1)
+	timer.start()
+	time.Sleep(1*time.Second)
+	ts := time.Now()
+	timer.TimerStop()
+	t.Logf(&quot;定时时间为：%v&quot;, time.Now().Sub(ts))
+	timer.Waiter.Wait()
+</code></pre><h2 id="源码">源码</h2>
+<ul>
+<li><a class="link" href="https://github.com/zcj-git520/timerTask"  target="_blank" rel="noopener"
+    >我的github</a></li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/%E8%B6%85%E6%97%B6%E9%87%8D%E8%AF%95%E6%9C%BA%E5%88%B6-host_try/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E8%B6%85%E6%97%B6%E9%87%8D%E8%AF%95%E6%9C%BA%E5%88%B6-host_try/1.1931b402306b88ed6a8349fa8f6192cf_huc278944164dd3ada59be56854851c305_117502_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-GTG0AjBriO1qg0n6j2GSzw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">超时重试机制-host_try</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/go%E5%AE%89%E5%85%A8%E6%8C%87%E5%8D%97/">
+        
+        
+            <div class="article-image">
+                <img src="/p/go%E5%AE%89%E5%85%A8%E6%8C%87%E5%8D%97/1.8dd79ab0693d3ec84cafb85d5cdb343b_hu7c5d570e6f1bb8cc35e9c2f13acb3eec_11753_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-jdeasGk9PshMr7hdXNs0Ow==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Go安全指南</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/uber-go-%E8%AF%AD%E8%A8%80%E7%BC%96%E7%A0%81%E8%A7%84%E8%8C%83/">
+        
+        
+            <div class="article-image">
+                <img src="/p/uber-go-%E8%AF%AD%E8%A8%80%E7%BC%96%E7%A0%81%E8%A7%84%E8%8C%83/1.8dd79ab0693d3ec84cafb85d5cdb343b_hu7c5d570e6f1bb8cc35e9c2f13acb3eec_11753_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-jdeasGk9PshMr7hdXNs0Ow==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Uber go 语言编码规范</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/python%E5%AE%89%E5%85%A8%E6%8C%87%E5%8D%97/">
+        
+        
+            <div class="article-image">
+                <img src="/p/python%E5%AE%89%E5%85%A8%E6%8C%87%E5%8D%97/1.ba8662769f8422bd34f485697fedbde1_hu88cf376361c4b459010ac189c2b354f8_10188_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-uoZidp&#43;EIr009IVpf&#43;294Q==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Python安全指南</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/c/c-%E5%AE%89%E5%85%A8%E6%8C%87%E5%8D%97/">
+        
+        
+            <div class="article-image">
+                <img src="/p/c/c-%E5%AE%89%E5%85%A8%E6%8C%87%E5%8D%97/1.8a9c37704d9a62457afff477ab59d921_hub729bb727716490d1309dfd2d43fb84b_10267_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-ipw3cE2aYkV6//R3q1nZIQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">c/c&#43;&#43;安全指南</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#timertask">timerTask</a></li>
+    <li><a href="#timertask结构">timerTask结构</a></li>
+    <li><a href="#定时任务的开始和结束">定时任务的开始和结束</a></li>
+    <li><a href="#重置定时时间任务">重置定时时间任务</a></li>
+    <li><a href="#定时开始定时任务">定时开始定时任务</a></li>
+    <li><a href="#定时结束定时任务">定时结束定时任务</a></li>
+    <li><a href="#源码">源码</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
