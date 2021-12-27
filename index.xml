@@ -6,7 +6,350 @@
         <description>Recent content on Chengji Zhao&#39;s blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Sat, 25 Dec 2021 22:00:08 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Mon, 27 Dec 2021 22:00:08 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>数据结构-单向链表c&#43;&#43;语言实现</title>
+        <link>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E5%90%91%E9%93%BE%E8%A1%A8c-%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/</link>
+        <pubDate>Mon, 27 Dec 2021 22:00:08 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E5%90%91%E9%93%BE%E8%A1%A8c-%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E5%90%91%E9%93%BE%E8%A1%A8c-%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/1.jpg" alt="Featured image of post 数据结构-单向链表c&#43;&#43;语言实现" /&gt;&lt;h2 id=&#34;单向链表&#34;&gt;单向链表&lt;/h2&gt;
+&lt;h3 id=&#34;数据结构的定义&#34;&gt;数据结构的定义&lt;/h3&gt;
+&lt;h4 id=&#34;数据节点的类的定义&#34;&gt;数据节点的类的定义&lt;/h4&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;class SinglyLinkedNode
+{
+public:
+   SinglyLinkedNode(){
+       next = 0;
+   };
+    // 创建新的node
+   SinglyLinkedNode(int data)
+   {
+       this-&amp;gt;data = data;
+       next = 0;
+   };
+   ~SinglyLinkedNode(){};
+   int data;             // 链表的数据
+   SinglyLinkedNode *next;  // 指向下一个节点
+};
+&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&#34;链表的数据结构类的定义&#34;&gt;链表的数据结构(类的定义)&lt;/h4&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;class SinglyList
+{
+private:
+    /* data */
+    SinglyLinkedNode *head;   // 头节点
+    SinglyLinkedNode *tail;   // 尾节点
+    int len;                  // 链表长度
+
+public:
+    SinglyList(){
+        head = 0;
+        tail = 0;
+        len = 0;
+    };
+    ~SinglyList();
+    // 链表的长度+1
+    void setlen(int len)
+    {
+        this-&amp;gt;len += len;
+    }; 
+    // 返回链表的长度
+    int getlen()
+    {
+        return len;
+    };
+    // 链表是否为空
+    bool ismpty()
+    {
+        return head == 0;
+    }
+    // 插入到链表的头部
+    void inseartToHead(int data);  
+    // 插入到链表的尾部
+    void inseartTotail(int data); 
+    // 插入到链表的index
+    void inseartToindex(int index, int data); 
+    // 删除链表的头部元素
+    void deleteToHead();
+    // 删除链表的尾部元素
+    void deleteToTail();
+    // 删除链表的index元素
+    void deleteToIndex(int index);
+    // 查询链表的所有值
+    void queryAll();
+    // 返回index的值
+    int queryIndex(int index);
+    // 判断value是否存在
+    bool queryValue(int data);
+};
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;数据的插入&#34;&gt;数据的插入&lt;/h3&gt;
+&lt;h4 id=&#34;插入到链表的尾部&#34;&gt;插入到链表的尾部&lt;/h4&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;void SinglyList::inseartTotail(int data)
+{
+    // 定义node
+    SinglyLinkedNode *new_node;
+    new_node = new SinglyLinkedNode(data);
+    // 链表为空
+    if (ismpty())
+    {
+        head = tail = new_node; // 头尾节点都指向新创节点
+        setlen(addOne);              // 节点数+1
+        return;
+    }
+    tail-&amp;gt;next = new_node;
+    tail = tail-&amp;gt;next;
+    setlen(addOne);
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&#34;插入到链表的头部&#34;&gt;插入到链表的头部&lt;/h4&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;void SinglyList::inseartToHead(int data)
+{
+    SinglyLinkedNode *node;
+    node = new SinglyLinkedNode(data);
+    if (ismpty()){
+        head = tail = node;
+        setlen(addOne);
+        return ;
+    }
+    node-&amp;gt;next = head;
+    head = node;
+    setlen(addOne);
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&#34;插入到链表的index&#34;&gt;插入到链表的index&lt;/h4&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;void SinglyList::inseartToindex(int index, int data)
+{
+    int len;
+    len = getlen()-1;
+     // 如果链表为空, 或者插入到末尾,或者index &amp;lt;0 采用尾插法添加到链表中
+    if (ismpty() || index ==len || index &amp;lt; 0)
+    {
+        inseartTotail(data);
+        return;
+    }
+    if(index == 0){
+        inseartToHead(data);
+        return;
+    }
+    SinglyLinkedNode *node;
+    node = new SinglyLinkedNode(data);
+    int __index = 1;
+    for (node = head; node != tail; node = node-&amp;gt;next)
+    {
+        if (__index == index)
+        {
+            SinglyLinkedNode *new_node;
+            new_node = new SinglyLinkedNode(data);
+            new_node -&amp;gt;next = node-&amp;gt;next;
+            node-&amp;gt;next = new_node;
+            setlen(addOne);
+            return;
+        }
+        __index ++;
+    }
+}
+
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;数据的删除&#34;&gt;数据的删除&lt;/h3&gt;
+&lt;h4 id=&#34;删除链表的头部元素&#34;&gt;删除链表的头部元素&lt;/h4&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;void SinglyList::deleteToHead()
+{
+    // 链表为空
+    if(ismpty())
+    {
+        return;
+    }
+    SinglyLinkedNode *tmp = head;
+    // 链表只存在一个值
+    if(head == tail)
+    {
+        head = tail = 0;
+    }
+    else
+    {
+        head = head-&amp;gt;next;
+    }
+    delete tmp; // 释放资源
+    setlen(ReductOne);
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&#34;删除链表的尾部元素&#34;&gt;删除链表的尾部元素&lt;/h4&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;void SinglyList::deleteToTail()
+{
+    // 链表为空
+    if(ismpty())
+    {
+        return;
+    }
+    // 链表只存在一个值
+    if(head == tail)
+    {
+        delete head;
+        setlen(ReductOne);
+        head = tail = 0;
+        return;
+    }
+    SinglyLinkedNode *tmp = head;
+    while (tmp-&amp;gt;next != tail)
+    {
+        tmp  = tmp-&amp;gt;next;
+    }
+    delete tail;
+    tail = tmp;
+    tail-&amp;gt;next = 0;
+    setlen(ReductOne);
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&#34;删除链表的index元素&#34;&gt;删除链表的index元素&lt;/h4&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;void SinglyList::deleteToIndex(int index)
+{
+    // 链表为空
+    if(ismpty())
+    {
+        return;
+    }
+    // 链表只存在一个值
+    if(head == tail)
+    {
+        delete head;
+        setlen(ReductOne);
+        head = tail = 0;
+        return;
+    }
+    int len = getlen();
+    if (index &amp;gt;= len-1 || index &amp;lt; 0)
+    {
+        deleteToTail();
+        return;
+    }
+    if (index == 0)
+    {
+        deleteToHead();
+        return;
+    }
+
+    SinglyLinkedNode *node = head;
+    SinglyLinkedNode *tmp = head-&amp;gt;next;
+    int __index = 1;
+    while (__index != index)
+    {
+        node = node-&amp;gt;next;
+        tmp = tmp-&amp;gt;next;
+        __index ++;
+    }
+    node-&amp;gt;next = tmp-&amp;gt;next;
+    delete tmp;
+    setlen(ReductOne);
+}
+
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;数据的查询&#34;&gt;数据的查询&lt;/h3&gt;
+&lt;h4 id=&#34;查询链表的所有值&#34;&gt;查询链表的所有值&lt;/h4&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;void SinglyList::queryAll()
+{
+    if (ismpty()){
+        cout &amp;lt;&amp;lt; &amp;quot;The list length is empty&amp;quot; &amp;lt;&amp;lt; endl;
+        return;
+    }
+    int i = 1;
+    cout &amp;lt;&amp;lt; &amp;quot;The length of the list is zero:&amp;quot; &amp;lt;&amp;lt; getlen() &amp;lt;&amp;lt; endl;
+    SinglyLinkedNode *node;
+    for(node = head; node != tail-&amp;gt;next; node = node-&amp;gt;next){
+        cout &amp;lt;&amp;lt; &amp;quot;node num is:&amp;quot; &amp;lt;&amp;lt; i &amp;lt;&amp;lt; &amp;quot;  data:&amp;quot; &amp;lt;&amp;lt; node-&amp;gt;data &amp;lt;&amp;lt; endl;
+        i++;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&#34;返回index的值&#34;&gt;返回index的值&lt;/h4&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;int SinglyList::queryIndex(int index)
+{
+    int len = getlen();
+    // 链表为空, 索引不存在
+    if(ismpty() || index &amp;gt; len -1 || index &amp;lt; 0)
+    {
+        return -1;
+    }
+   if (index == 0)
+   {
+       return head -&amp;gt;data;
+   }
+   if (index == len -1)
+   {
+       return tail -&amp;gt;data;
+   }
+   int __index = 1;
+   for (SinglyLinkedNode *node = head-&amp;gt;next; node != tail; node = node-&amp;gt;next)
+   {
+       if (index == __index)
+       {
+           return node-&amp;gt;data;
+
+       }
+        __index ++; 
+   }
+   return -1;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&#34;判断value是否存在&#34;&gt;判断value是否存在&lt;/h4&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;bool SinglyList::queryValue(int value)
+{
+    // 链表为空
+    if(ismpty())
+    {
+        return false;
+    }
+    // 链表只存在一个值
+    if(head == tail)
+    {
+        if (head-&amp;gt;data == value){
+            return true;
+        }
+        return false;
+    }
+
+    for(SinglyLinkedNode *node = head; node != tail-&amp;gt;next; node = node-&amp;gt;next)
+    {
+        if(node-&amp;gt;data == value)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;测试&#34;&gt;测试&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;int main()
+{
+    SinglyList newList;
+    newList.inseartTotail(1);
+    newList.inseartTotail(2);
+    newList.inseartTotail(3);
+    newList.inseartToHead(0);
+    newList.inseartToHead(-11);
+    newList.inseartToHead(-12);
+    newList.inseartToHead(-13);
+    newList.inseartToindex(6,5);
+    newList.inseartToindex(-7,51);
+    newList.queryAll();
+    cout &amp;lt;&amp;lt; &amp;quot;************************************************&amp;quot;&amp;lt;&amp;lt; endl;
+    newList.deleteToHead();
+    newList.queryAll();
+    cout &amp;lt;&amp;lt; &amp;quot;************************************************&amp;quot;&amp;lt;&amp;lt; endl;
+    newList.deleteToTail();
+    newList.queryAll();
+    cout &amp;lt;&amp;lt; &amp;quot;************************************************&amp;quot;&amp;lt;&amp;lt; endl;
+    newList.deleteToTail();
+    newList.queryAll();
+    cout &amp;lt;&amp;lt; &amp;quot;************************************************&amp;quot;&amp;lt;&amp;lt; endl;
+    newList.deleteToIndex(3);
+    newList.queryAll();
+    cout &amp;lt;&amp;lt; &amp;quot;************************************************&amp;quot;&amp;lt;&amp;lt; endl;
+    cout &amp;lt;&amp;lt; newList.queryIndex(5) &amp;lt;&amp;lt; endl;
+     cout &amp;lt;&amp;lt; &amp;quot;************************************************&amp;quot;&amp;lt;&amp;lt; endl;
+    cout &amp;lt;&amp;lt; newList.queryValue(21) &amp;lt;&amp;lt; endl;
+    system(&amp;quot;pause&amp;quot;);
+    return 0;
+}
+
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;源码&#34;&gt;源码&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/zcj-git520/DataStructuresAlgorithmsForC/tree/master/linked_list/singly_linked_list&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;我的github:https://github.com/zcj-git520/DataStructuresAlgorithmsForC/tree/master/linked_list/singly_linked_list&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        <item>
         <title>数据结构-单向链表go语言实现</title>
         <link>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E5%90%91%E9%93%BE%E8%A1%A8go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/</link>
         <pubDate>Sat, 25 Dec 2021 22:00:08 +0800</pubDate>
