@@ -6,7 +6,1474 @@
         <description>Recent content on Chengji Zhao&#39;s blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Mon, 27 Dec 2021 22:00:08 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Fri, 31 Dec 2021 22:00:08 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>数据结构-栈(基于单项链表)&amp;&amp;队列(基于双向链表)go实现</title>
+        <link>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E6%A0%88%E5%9F%BA%E4%BA%8E%E5%8D%95%E9%A1%B9%E9%93%BE%E8%A1%A8%E9%98%9F%E5%88%97%E5%9F%BA%E4%BA%8E%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E5%AE%9E%E7%8E%B0/</link>
+        <pubDate>Fri, 31 Dec 2021 22:00:08 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E6%A0%88%E5%9F%BA%E4%BA%8E%E5%8D%95%E9%A1%B9%E9%93%BE%E8%A1%A8%E9%98%9F%E5%88%97%E5%9F%BA%E4%BA%8E%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E5%AE%9E%E7%8E%B0/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E6%A0%88%E5%9F%BA%E4%BA%8E%E5%8D%95%E9%A1%B9%E9%93%BE%E8%A1%A8%E9%98%9F%E5%88%97%E5%9F%BA%E4%BA%8E%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E5%AE%9E%E7%8E%B0/1.jpg" alt="Featured image of post 数据结构-栈(基于单项链表)&amp;&amp;队列(基于双向链表)go实现" /&gt;&lt;h2 id=&#34;栈&#34;&gt;栈&lt;/h2&gt;
+&lt;p&gt;基于单向链表实现&lt;/p&gt;
+&lt;h3 id=&#34;数据结构定义&#34;&gt;数据结构定义&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;type stackData struct {
+	list *Singly_linked_list.LinkedList
+}
+
+// 获得栈的长度
+func (s *stackData)Len() int{
+	return s.list.Len()
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;数据操作&#34;&gt;数据操作&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;// 将数据插入栈顶
+func (s *stackData)Push(data interface{}) {
+	s.list.AddToHead(data)
+}
+
+// 将数据从栈顶取出，并删除数据
+func (s *stackData)Pop()interface{}{
+	data := s.list.QuireIndex(0)
+	// 栈不为空, 删除栈顶数据
+	if data != nil{
+		s.list.DeleteToHead()
+	}
+	return data
+}
+
+// 将数据取出，不删除数据
+func (s *stackData)GetTopValue()interface{}{
+	return s.list.QuireIndex(0)
+}
+
+// 展示栈
+func (s *stackData)ShowStack() {
+	s.list.QuireAll()
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;创建栈&#34;&gt;创建栈&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;func NewStackData()*stackData{
+	return  &amp;amp;stackData{list:Singly_linked_list.NewLinkedList()}
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;队列&#34;&gt;队列&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;基于双向链表实现&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;数据结构定义-1&#34;&gt;数据结构定义&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;type queueData struct {
+	list *double_linked_list.DoubleList
+}
+
+// 获得队列的大小
+func (q *queueData)Len() int{
+	return q.list.Len()
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;数据的操作&#34;&gt;数据的操作&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;// 将数据队尾
+func (q *queueData)EnQueue(data interface{}) {
+	q.list.AddToTail(data)
+}
+
+// 将数据从队首取出，并删除数据
+func (q *queueData)DeQueue()interface{}{
+	data := q.list.QuireIndex(0)
+	// 栈不为空, 删除栈顶数据
+	if data != nil{
+		q.list.DeleteToHead()
+	}
+	return data
+}
+
+// 将数据取出，不删除数据
+func (q *queueData)GetTopQueueValue()interface{}{
+	return q.list.QuireIndex(0)
+}
+
+// 展示队列
+func (q *queueData)ShowQueue() {
+	q.list.QuireAll()
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;创建队列&#34;&gt;创建队列&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;func NewQueueData()*queueData{
+	return  &amp;amp;queueData{list:double_linked_list.NewDoubleLinkedList()}
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;源码&#34;&gt;源码&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/zcj-git520/DataStructuresAlgorithmsForGo/tree/master/stack_queue/queue&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;我的github:https:https://github.com/zcj-git520/DataStructuresAlgorithmsForGo/tree/master/stack_queue/queue&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/zcj-git520/DataStructuresAlgorithmsForGo/tree/master/stack_queue/stack&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;我的github:https:https://github.com/zcj-git520/DataStructuresAlgorithmsForGo/tree/master/stack_queue/stack&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        <item>
+        <title>数据结构-栈(基于单项链表)&amp;&amp;队列(基于双向链表)c&#43;&#43;实现</title>
+        <link>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E6%A0%88%E5%9F%BA%E4%BA%8E%E5%8D%95%E9%A1%B9%E9%93%BE%E8%A1%A8%E9%98%9F%E5%88%97%E5%9F%BA%E4%BA%8E%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8c-%E5%AE%9E%E7%8E%B0/</link>
+        <pubDate>Fri, 31 Dec 2021 21:00:08 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E6%A0%88%E5%9F%BA%E4%BA%8E%E5%8D%95%E9%A1%B9%E9%93%BE%E8%A1%A8%E9%98%9F%E5%88%97%E5%9F%BA%E4%BA%8E%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8c-%E5%AE%9E%E7%8E%B0/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E6%A0%88%E5%9F%BA%E4%BA%8E%E5%8D%95%E9%A1%B9%E9%93%BE%E8%A1%A8%E9%98%9F%E5%88%97%E5%9F%BA%E4%BA%8E%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8c-%E5%AE%9E%E7%8E%B0/1.jpg" alt="Featured image of post 数据结构-栈(基于单项链表)&amp;&amp;队列(基于双向链表)c&#43;&#43;实现" /&gt;&lt;h2 id=&#34;栈&#34;&gt;栈&lt;/h2&gt;
+&lt;p&gt;基于单向链表实现&lt;/p&gt;
+&lt;h3 id=&#34;数据结构定义&#34;&gt;数据结构定义&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;
+template&amp;lt;class T&amp;gt;
+class Stack
+{
+private:
+    SinglyList&amp;lt;T&amp;gt; list;  // 存储数据的链表
+public:
+    Stack(/* args */){};
+    ~Stack();
+    // 获得栈的长度
+    int len()
+    {
+        return list.getlen();
+    }
+    // 清空栈
+    void clear();
+    // 判断栈是否为空s
+    bool isEmpty();
+    // 将数据放入栈顶
+    void push(T data);
+    // 获取栈顶数据，并删除数据
+    bool pop(T *info);
+    // 获取栈顶数据但不删除数据
+    bool getTopValue(T *info);
+    // 显示所有栈的数据
+    void showStack();
+};
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;数据操作&#34;&gt;数据操作&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;
+template&amp;lt;class T&amp;gt;
+void Stack&amp;lt;T&amp;gt; ::clear()
+{
+    list.clear();
+}
+
+template&amp;lt;class T&amp;gt;
+void Stack&amp;lt;T&amp;gt; ::push(T data)
+{
+    list.inseartToHead(data);
+}
+
+template&amp;lt;class T&amp;gt;
+bool Stack&amp;lt;T&amp;gt; ::pop(T *info)
+{
+    // 判断栈顶是否有值
+    if(getTopValue(info))
+    {
+        list.deleteToHead();  // 删除栈顶值
+        return true;
+    }
+    return false;
+}
+
+template&amp;lt;class T&amp;gt;
+bool Stack&amp;lt;T&amp;gt; ::getTopValue(T *info)
+{
+     // 判断栈顶是否有值
+    if(list.queryIndex(0, info))
+    {
+        return true;
+    }
+    return false;
+}
+
+template&amp;lt;class T&amp;gt;
+void Stack&amp;lt;T&amp;gt; ::showStack()
+{
+    list.queryAll();
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;测试&#34;&gt;测试&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;int main()
+{
+    Stack&amp;lt;int&amp;gt; s;
+    s.push(0);
+    s.push(1);
+    s.push(2);
+    s.push(3);
+    s.push(4);
+    s.showStack();
+    cout &amp;lt;&amp;lt; &amp;quot;********************************&amp;quot; &amp;lt;&amp;lt; endl;
+    int info = -1;
+     if(s.getTopValue(&amp;amp;info))
+    {
+        cout &amp;lt;&amp;lt; &amp;quot;top value is: &amp;quot; &amp;lt;&amp;lt;info &amp;lt;&amp;lt; endl;
+    }
+    if(s.getTopValue(&amp;amp;info))
+    {
+        cout &amp;lt;&amp;lt; &amp;quot;top value is: &amp;quot; &amp;lt;&amp;lt;info &amp;lt;&amp;lt; endl;
+    }
+    if(s.getTopValue(&amp;amp;info))
+    {
+        cout &amp;lt;&amp;lt; &amp;quot;top value is: &amp;quot; &amp;lt;&amp;lt;info &amp;lt;&amp;lt; endl;
+    }
+    cout &amp;lt;&amp;lt; &amp;quot;********************************&amp;quot; &amp;lt;&amp;lt; endl;
+    s.showStack();
+    cout &amp;lt;&amp;lt; &amp;quot;********************************&amp;quot; &amp;lt;&amp;lt; endl;
+    if(s.pop(&amp;amp;info))
+    {
+        cout &amp;lt;&amp;lt; &amp;quot;top value is: &amp;quot; &amp;lt;&amp;lt;info &amp;lt;&amp;lt; endl;
+    }
+    if(s.pop(&amp;amp;info))
+    {
+        cout &amp;lt;&amp;lt; &amp;quot;top value is: &amp;quot; &amp;lt;&amp;lt;info &amp;lt;&amp;lt; endl;
+    }
+    if(s.pop(&amp;amp;info))
+    {
+        cout &amp;lt;&amp;lt; &amp;quot;top value is: &amp;quot; &amp;lt;&amp;lt;info &amp;lt;&amp;lt; endl;
+    }
+    if(s.pop(&amp;amp;info))
+    {
+        cout &amp;lt;&amp;lt; &amp;quot;top value is: &amp;quot; &amp;lt;&amp;lt;info &amp;lt;&amp;lt; endl;
+    }
+    cout &amp;lt;&amp;lt; &amp;quot;********************************&amp;quot; &amp;lt;&amp;lt; endl;
+    s.showStack();
+    cout &amp;lt;&amp;lt; &amp;quot;********************************&amp;quot; &amp;lt;&amp;lt; endl;
+    system(&amp;quot;pause&amp;quot;);
+    return 0;
+}
+
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;队列&#34;&gt;队列&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;基于双向链表实现&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;数据结构定义-1&#34;&gt;数据结构定义&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;
+template&amp;lt;class T&amp;gt;
+class Queue
+{
+private:
+    TwoWayList&amp;lt;T&amp;gt; list;  // 定义的双向链表
+public:
+    Queue(/* args */){};
+    ~Queue();
+     // 获得队列的长度
+    int len()
+    {
+        return list.getlen();
+    }
+    // 清空队列
+    void clear();
+    // 判断栈是否为空s
+    bool isEmpty();
+    // 将数据存入队列尾中
+    void enQueue(T data);
+    // 获取获得队列数据，并删除数据
+    bool deQueue(T *info);
+    // 获取获得队列数据，但不删除数据
+    bool getQueueValue(T *info);
+    // 显示所有队列的数据
+    void showQueue();
+};
+
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;数据的操作&#34;&gt;数据的操作&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;
+template&amp;lt;class T&amp;gt;
+void Queue&amp;lt;T&amp;gt; ::clear()
+{
+    list.clear();
+}
+
+template&amp;lt;class T&amp;gt;
+bool Queue&amp;lt;T&amp;gt; ::isEmpty()
+{
+    return list.isEmpty();
+}
+
+template&amp;lt;class T&amp;gt;
+void Queue&amp;lt;T&amp;gt; ::enQueue(T data)
+{
+    list.inseartTotail(data);
+}
+
+template&amp;lt;class T&amp;gt;
+bool Queue&amp;lt;T&amp;gt; ::getQueueValue(T *info)
+{
+    if(list.queryIndex(0, info))
+    {
+        return true;
+    }
+    return false;
+}
+
+template&amp;lt;class T&amp;gt;
+bool Queue&amp;lt;T&amp;gt; ::deQueue(T *info)
+{
+    if(list.queryIndex(0, info))
+    {
+        list.deleteToHead();
+        return true;
+    }
+    return false;
+}
+
+template&amp;lt;class T&amp;gt;
+void Queue&amp;lt;T&amp;gt; ::showQueue()
+{
+    list.queryAll();
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;测试-1&#34;&gt;测试&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;int main()
+{
+    Queue&amp;lt;int&amp;gt; q;
+    q.enQueue(0);
+    q.enQueue(1);
+    q.enQueue(2);
+    q.enQueue(3);
+    q.enQueue(4);
+    q.enQueue(5);
+    q.showQueue();
+    cout &amp;lt;&amp;lt; &amp;quot;**************************************&amp;quot;&amp;lt;&amp;lt; endl;
+    int info = -1;
+    if(q.getQueueValue(&amp;amp;info))
+    {
+        cout &amp;lt;&amp;lt; &amp;quot;queue top value is: &amp;quot; &amp;lt;&amp;lt;info &amp;lt;&amp;lt; endl;
+    }
+    if(q.getQueueValue(&amp;amp;info))
+    {
+        cout &amp;lt;&amp;lt; &amp;quot;queue top value is: &amp;quot; &amp;lt;&amp;lt;info &amp;lt;&amp;lt; endl;
+    }
+    if(q.getQueueValue(&amp;amp;info))
+    {
+        cout &amp;lt;&amp;lt; &amp;quot;queue top value is: &amp;quot; &amp;lt;&amp;lt;info &amp;lt;&amp;lt; endl;
+    }
+    q.showQueue();
+    cout &amp;lt;&amp;lt; &amp;quot;**************************************&amp;quot;&amp;lt;&amp;lt; endl;
+    if(q.deQueue(&amp;amp;info))
+    {
+        cout &amp;lt;&amp;lt; &amp;quot;queue top value is: &amp;quot; &amp;lt;&amp;lt;info &amp;lt;&amp;lt; endl;
+    }
+    q.showQueue();
+    cout &amp;lt;&amp;lt; &amp;quot;**************************************&amp;quot;&amp;lt;&amp;lt; endl;
+    if(q.deQueue(&amp;amp;info))
+    {
+        cout &amp;lt;&amp;lt; &amp;quot;queue top value is: &amp;quot; &amp;lt;&amp;lt;info &amp;lt;&amp;lt; endl;
+    }
+    q.showQueue();
+    cout &amp;lt;&amp;lt; &amp;quot;**************************************&amp;quot;&amp;lt;&amp;lt; endl;
+    if(q.deQueue(&amp;amp;info))
+    {
+        cout &amp;lt;&amp;lt; &amp;quot;queue top value is: &amp;quot; &amp;lt;&amp;lt;info &amp;lt;&amp;lt; endl;
+    }
+    q.showQueue();
+    cout &amp;lt;&amp;lt; &amp;quot;**************************************&amp;quot;&amp;lt;&amp;lt; endl;
+    q.clear();
+    q.showQueue();
+    system(&amp;quot;pause&amp;quot;);
+    return 0;
+}
+
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;源码&#34;&gt;源码&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/zcj-git520/DataStructuresAlgorithmsForC/tree/master/stack_queue/queue&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;我的github:https:https://github.com/zcj-git520/DataStructuresAlgorithmsForC/tree/master/stack_queue/queue&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/zcj-git520/DataStructuresAlgorithmsForC/tree/master/stack_queue/stack&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;我的github:https:https://github.com/zcj-git520/DataStructuresAlgorithmsForGo/tree/master/stack_queue/stackhttps://github.com/zcj-git520/DataStructuresAlgorithmsForC/tree/master/stack_queue/stack&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        <item>
+        <title>数据结构-双向链表&amp;&amp;循环双向链表go语言实现</title>
+        <link>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/</link>
+        <pubDate>Thu, 30 Dec 2021 22:00:08 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/1.jpg" alt="Featured image of post 数据结构-双向链表&amp;&amp;循环双向链表go语言实现" /&gt;&lt;h2 id=&#34;双向链表&#34;&gt;双向链表&lt;/h2&gt;
+&lt;h3 id=&#34;数据结构的定义&#34;&gt;数据结构的定义&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;// 双向链表的节点定义
+type doubleLinkedNode struct {
+	info  interface{}       // 存储的数据
+	prev *doubleLinkedNode  // 指向先驱节点
+	next *doubleLinkedNode  // 指向后驱几点
+}
+
+// 双向链表定义
+type DoubleList struct {
+	Head *doubleLinkedNode   // 头节点
+	Tail *doubleLinkedNode   // 尾节点
+	len  int                 // 链表长度
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;创建节点&#34;&gt;创建节点&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;func createNode(data interface{}) *doubleLinkedNode {
+	return &amp;amp;doubleLinkedNode{
+		info: data,
+		prev: nil,
+		next: nil,
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;链表的长度&#34;&gt;链表的长度&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;// 链表的长度
+func(d *DoubleList)Len() int{
+	return d.len
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;数据的插入&#34;&gt;数据的插入&lt;/h3&gt;
+&lt;h4 id=&#34;单个节点的插入&#34;&gt;单个节点的插入&lt;/h4&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;// 链表的尾插法
+func (d *DoubleList)AddToTail(info interface{}) *DoubleList {
+	newNode := createNode(info)  // 创建新节点
+	// 链表为空, 头尾节点都指向该节点
+	if d.Head == nil{
+		d.Head = newNode
+		d.Tail = newNode
+	}else{
+		d.Tail.next = newNode
+		newNode.prev = d.Tail
+		d.Tail = d.Tail.next
+	}
+	// 链表长度+1
+	d.len++
+	return d
+}
+
+// 链表的头插法
+func (d *DoubleList)AddToHead(info interface{}) *DoubleList  {
+	newNode := createNode(info)  // 创建节点
+	// 链表为空
+	if d.Head == nil{
+		d.Head = newNode
+		d.Tail = newNode
+	}else{
+		newNode.next = d.Head    // 新节点的后驱指向头节点
+		d.Head.prev = newNode    // 头节点的前驱指向新节点
+		d.Head = newNode         // 将新节点设置尾头节点
+	}
+	// 链表长度+1
+	d.len++
+	return  d
+}
+
+// 链表的index
+// 通过index=&amp;gt;插入链表新的节点
+// index为正数 为从左-&amp;gt;右 // 0表示第一个节点
+// index为负数 为从右-&amp;gt;左 // -1表示第一个节点
+func (d *DoubleList)AddToIndex(index int, info interface{}) *DoubleList {
+	// 当链表为空时，采用了尾插入法插入数据
+	if d.Head == nil{
+		return d.AddToTail(info)
+	}
+	// 当index大于链表的值时，默认将数据插入到链表的后面
+	if int(math.Abs(float64(index))) &amp;gt; d.len-1{
+		return d.AddToTail(info)
+	}
+	// 插入链表的头部
+	if index == 0{
+		return d.AddToHead(info)
+	}
+	// 插入到链表的末尾
+	if index == -1{
+		return d.AddToTail(info)
+	}
+	// 当index 为负数时，从右到左插入
+	if index &amp;lt; 0{
+		index += d.len +1
+	}
+	__index := 1  // 内部的index值
+	// 从第二个值开始插入
+	for node := d.Head; node != d.Tail; node = node.next{
+		if index == __index{
+			newNode := createNode(info)
+			node.next.prev = newNode   // 节点的后驱节点的先驱指向新节点
+			newNode.prev = node        // 新节点的前驱指向节点
+			newNode.next = node.next   // 新节点的后驱指向节点的后驱
+			node.next = newNode           // 节点的后驱指向新节点
+			// 链表的节点数加1
+			d.len ++
+			return d
+		}
+		__index ++
+	}
+	return d
+}
+
+&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&#34;链表的合并&#34;&gt;链表的合并&lt;/h4&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;// 将新的链表插入头部
+func (d *DoubleList)AddListToHead(list *DoubleList)*DoubleList{
+	// 两个链表都为空时
+	if d.Head == nil &amp;amp;&amp;amp; list.Head == nil{
+		return d
+	}
+	// 合并表为空
+	if d.Head != nil &amp;amp;&amp;amp; list.Head == nil{
+		return d
+	}
+	// 主表为空
+	if d.Head == nil &amp;amp;&amp;amp; list.Head != nil{
+		return list
+	}
+	// 合并表的尾指针指向主表的头
+	list.Tail.next = d.Head
+	d.Head.prev = list.Tail
+	list.Tail = d.Tail
+	// 表节点数合并
+	list.len += d.len
+	return list
+}
+
+// 将新的链表插入到尾部
+func (d *DoubleList)AddListToTail(list *DoubleList)*DoubleList{
+	// 两个链表都为空时
+	if d.Head == nil &amp;amp;&amp;amp; list.Head == nil{
+		return d
+	}
+	// 合并表为空
+	if d.Head != nil &amp;amp;&amp;amp; list.Head == nil{
+		return d
+	}
+	// 主表为空
+	if d.Head == nil &amp;amp;&amp;amp; list.Head != nil{
+		return list
+	}
+	// 将新表插入到主表之后
+	d.Tail.next = list.Head
+	list.Head.prev = d.Tail
+	d.Tail = list.Tail
+	d.len += list.len
+	return d
+}
+
+// 经新的表插入到index
+func (d *DoubleList)AddListToIndex(index int, list *DoubleList) *DoubleList {
+	// 两个链表都为空时
+	if d.Head == nil &amp;amp;&amp;amp; list.Head == nil{
+		return d
+	}
+	// 合并表为空
+	if d.Head != nil &amp;amp;&amp;amp; list.Head == nil{
+		return d
+	}
+	// 主表为空
+	if d.Head == nil &amp;amp;&amp;amp; list.Head != nil{
+		return list
+	}
+	if int(math.Abs(float64(index))) &amp;gt; d.len{
+		fmt.Println(&amp;quot;错误的index&amp;quot;)
+		return d
+	}
+	if index == 0{
+		return d.AddListToHead(list)
+	}
+	if  index == -1{
+		return d.AddListToTail(list)
+	}
+	if index &amp;lt; 0{
+		index += d.len
+	}
+	__index := 1
+	for node := d.Head; node != d.Tail; node = node.next{
+		if index == __index{
+			node.next.prev = list.Tail
+			list.Tail.next = node.next
+			node.next = list.Head
+			list.Head.prev = node
+			d.len += list.len  // 链表的数值相加
+			return d
+		}
+		__index ++
+	}
+	return d
+}
+
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;数据的删除&#34;&gt;数据的删除&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;// 链表头删除法
+func (d *DoubleList)DeleteToHead()*DoubleList{
+	// 链表为空
+	if d.Head == nil{
+		return d
+	}
+	// 链表中只有一个数
+	if d.Head == d.Tail{
+		d.Head = nil
+		d.Tail = nil
+		d.len  = 0
+		return d
+	}
+	d.Head = d.Head.next
+	d.Head.prev = nil
+	// node数减一
+	d.len --
+	return d
+}
+
+// 链表尾删除法
+func (d *DoubleList)DeleteToTail()*DoubleList{
+	// 链表为空
+	if d.Tail == nil{
+		return d
+	}
+	// 链表中只有一个数
+	if d.Head == d.Tail{
+		d.Head = nil
+		d.Tail = nil
+		d.len = 0
+		return d
+	}
+	d.Tail = d.Tail.prev
+	d.Tail.next = nil
+	// node数减一
+	d.len --
+	return d
+}
+
+// 通过值=&amp;gt;删除链表的节点(第一个)
+func (d *DoubleList)DeleteToAValue(value interface{})*DoubleList{
+	// 链表为空
+	if d.Head == nil{
+		fmt.Println(&amp;quot;链表为空&amp;quot;)
+		return d
+	}
+	// value == head.info
+	// 就采用头删法
+	if value == d.Head.info{
+		return  d.DeleteToHead()
+	}
+	if value == d.Tail.info{
+		return  d.DeleteToTail()
+	}
+	// 中间采用轮询查找value, 从第二个开始轮询到倒数第二个结束
+	for node := d.Head.next; node != d.Tail; node = node.next{
+		if node.info == value{
+			//  删除node
+			node.next.prev = node.prev
+			node.prev.next = node.next
+			d.len --
+			return d
+		}
+	}
+	fmt.Println(&amp;quot;链表中：值不存在&amp;quot;)
+	return d
+}
+
+// 通过值=&amp;gt;删除链表的节点(所有)
+func (d *DoubleList)DeleteToValue(value interface{})*DoubleList{
+	// 链表为空
+	if d.Head == nil{
+		fmt.Println(&amp;quot;链表为空&amp;quot;)
+		return d
+	}
+	node := d.Head         // 当前的node
+	for {
+		// 当下一个节点是尾节点时，就判断首位和末尾是为需要删除的node
+		if node == d.Tail {
+			if d.Head.info == value{
+				d.DeleteToHead()
+			}
+			if d.Tail.info == value{
+				d.DeleteToTail()
+			}
+			return d
+		}
+		if node.info == value{
+			// 删除node， 非头节点
+			if node.prev != nil{
+				node.next.prev = node.prev
+				node.prev.next = node.next
+				d.len --
+			}else{
+				// 头节点
+				d.DeleteToHead()
+			}
+		}
+		node = node.next
+
+	}
+}
+
+// 通过index=&amp;gt;删除链表的节点
+// index为正数 为从左-&amp;gt;右 // 0表示第一个节点
+// index为负数 为从右-&amp;gt;左 // -1表示第一个节点
+func (d *DoubleList)DeleteToIndex(index int)*DoubleList{
+	// 链表为空
+	if d.Head == nil{
+		fmt.Println(&amp;quot;链表为空&amp;quot;)
+		return d
+	}
+	// index 超过链表数
+	if int(math.Abs(float64(index))) &amp;gt; d.len-1{
+		fmt.Println(&amp;quot;错误的index&amp;quot;)
+		return d
+	}
+	// 删除第一个node
+	if index == 0{
+		return d.DeleteToHead()
+	}
+	if index &amp;lt; 0{
+		index += d.len
+	}
+	if index == d.len -1{
+		return d.DeleteToTail()
+	}
+	_index := 1
+	node := d.Head.next
+	for {
+		if index == _index{
+			node.next.prev = node.prev
+			node.prev.next = node.next
+			d.len --
+			return d
+		}
+		node = node.next
+		_index ++
+	}
+}
+
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;数据的查询&#34;&gt;数据的查询&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;// 遍历链表
+func (d *DoubleList) QuireAll() {
+	if d.Head == nil{
+		fmt.Println(&amp;quot;链表数据为空&amp;quot;)
+		return
+	}
+	node := d.Head
+	for {
+		if node == nil{
+			return
+		}
+		fmt.Println(node.info)
+		if node == d.Tail{
+			return
+		}
+		node = node.next
+	}
+}
+
+// 判断valve是否存在
+func (d *DoubleList)QuireValue(value interface{}) bool{
+	// 表为空
+	if d.Head == nil{
+		return false
+	}
+	// 表中只存在一个值
+	if d.Head == d.Tail{
+		if d.Head.info == value{
+			return true
+		}
+		return false
+	}
+	// 遍历查值
+	for node := d.Head; node != d.Tail.next; node = node.next{
+		if node.info == value{
+			return true
+		}
+	}
+	return false
+}
+
+// 根据索引返回值
+func (d *DoubleList)QuireIndex(index int) interface{} {
+	// 链表为空
+	if d.Head == nil{
+		return nil
+	}
+	if int(math.Abs(float64(index))) &amp;gt; d.len -1 {
+		fmt.Println(&amp;quot;索引值错误&amp;quot;)
+		return nil
+	}
+	if index == 0{
+		return d.Head.info
+	}
+	if index == d.len -1 || index == -1{
+		return d.Tail.info
+	}
+	if index &amp;lt; 0{
+		index += d.len
+	}
+	__index := 1
+	for node := d.Head.next; node != d.Tail; node = node.next{
+		if __index == index{
+			return node.info
+		}
+		__index ++
+	}
+	//fmt.Println(&amp;quot;未能找到！！！！&amp;quot;)
+	return nil
+}
+
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;结构的入口&#34;&gt;结构的入口&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;func NewDoubleLinkedList()*DoubleList{
+	// 创建的链表头尾节点都为空
+	return &amp;amp;DoubleList{
+		Head: nil,
+		Tail: nil,
+		len: 0,
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;循环双向链表&#34;&gt;循环双向链表&lt;/h2&gt;
+&lt;h3 id=&#34;数据结构的定义-1&#34;&gt;数据结构的定义&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;// 节点的定义
+type circleDoubleNode struct {
+	info  interface{}  // 数据结构的定义
+	prev  *circleDoubleNode  // 前驱指针
+	next  *circleDoubleNode  // 后驱指针
+}
+
+// 双向循环链表的定义
+type circleDoubleList struct {
+	currentNode *circleDoubleNode  // 指向链表的指针
+	len  int    // 链表的长度
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;创建节点-1&#34;&gt;创建节点&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;func createNode(data interface{}) *circleDoubleNode{
+	return &amp;amp;circleDoubleNode{
+		info: data,
+		prev: nil,
+		next: nil,
+	}
+}
+// 得到链表的长度
+func (c *circleDoubleList)GetLen()int{
+	return c.len
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;节点的插入&#34;&gt;节点的插入&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;func (c *circleDoubleList)InsertNode(data interface{}) {
+	newNode := createNode(data)
+	// 如果链表为空
+	if c.currentNode == nil{
+		c.currentNode = newNode  // 新创建的节点为当前节点
+		// 节点的前驱与后驱都指向自己
+		c.currentNode.next = c.currentNode
+		c.currentNode.prev = c.currentNode
+	}else{
+		// 节点的插入
+		c.currentNode.next.prev = newNode
+		newNode.prev = c.currentNode
+		newNode.next = c.currentNode.next
+		c.currentNode.next = newNode
+		c.currentNode = newNode
+	}
+	// 链表长度 +1
+	c.len ++
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;当前节点的删除&#34;&gt;当前节点的删除&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;func (c *circleDoubleList)DeleteNode() bool{
+	// 链表为空
+	if c.currentNode == nil{
+		return false
+	}
+	// 当链表值存在一个元素时
+	if c.len == 1{
+		c.currentNode = nil
+		c.len --
+		return true
+	}
+	// 当链表只存在两个元素时
+	if c.len == 2{
+		c.currentNode = c.currentNode.next
+		c.len --
+		return true
+	}
+	// 当前节点的后驱节点的前驱指针指向当前节点的的前驱节点
+	c.currentNode.next.prev = c.currentNode.prev
+	// 当前节点的前驱节点的后驱指针指向当前节点的后驱节点
+	c.currentNode.prev.next = c.currentNode.next
+	// 设置当前节点的后驱节点为当前节点
+	c.currentNode = c.currentNode.next
+	c.len --
+	return true
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;遍历说有节点&#34;&gt;遍历说有节点&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;func (c *circleDoubleList)QuireAll(){
+	if c.currentNode == nil{
+		fmt.Println(&amp;quot;circle double linked list is empty&amp;quot;)
+		return
+	}
+	//__index := 1
+	//for node := c.currentNode.next; node != c.currentNode; node = node.next{
+	//	fmt.Printf(&amp;quot;index is %d, node value is %v&amp;quot;, __index, node.info)
+	//	__index ++
+	//}
+	fmt.Printf(&amp;quot;circle double linked list len is %d \n&amp;quot;, c.len)
+	node := c.currentNode.next
+	for i := 1; i &amp;lt; c.len; i++{
+		fmt.Printf(&amp;quot;index is %d, node value is %v \n&amp;quot;, i, node.info)
+		node = node.next
+	}
+	fmt.Printf(&amp;quot;index is %d, node value is %v \n&amp;quot;, c.len, c.currentNode.info)
+}
+
+// 判断值是否存在
+func (c *circleDoubleList)QuireValue(data interface{}) bool{
+	if c.currentNode == nil{
+		return false
+	}
+	node := c.currentNode
+	for i := 1; i &amp;lt;= c.len; i++{
+		if node.info == data{
+			return true
+		}
+		node = node.next
+	}
+	return  false
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;链表实例化&#34;&gt;链表实例化&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;func NewCircleDoubleList()*circleDoubleList{
+	return &amp;amp;circleDoubleList{
+		currentNode: nil,
+		len:         0,
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;源码&#34;&gt;源码&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/zcj-git520/DataStructuresAlgorithmsForGo/tree/master/Linked_list/double_linked_list&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;我的github:https://github.com/zcj-git520/DataStructuresAlgorithmsForGo/tree/master/Linked_list/double_linked_list&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/zcj-git520/DataStructuresAlgorithmsForGo/tree/master/Linked_list/circle_double_linked_list&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;我的github:https://github.com/zcj-git520/DataStructuresAlgorithmsForGo/tree/master/Linked_list/circle_double_linked_list&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        <item>
+        <title>数据结构-双向链表&amp;&amp;循环双向链表 c&#43;&#43;实现</title>
+        <link>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8-c-%E5%AE%9E%E7%8E%B0/</link>
+        <pubDate>Thu, 30 Dec 2021 21:00:08 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8-c-%E5%AE%9E%E7%8E%B0/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8-c-%E5%AE%9E%E7%8E%B0/1.jpg" alt="Featured image of post 数据结构-双向链表&amp;&amp;循环双向链表 c&#43;&#43;实现" /&gt;&lt;h2 id=&#34;双向链表&#34;&gt;双向链表&lt;/h2&gt;
+&lt;h3 id=&#34;数据结构的定义&#34;&gt;数据结构的定义&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;template&amp;lt;class T&amp;gt;
+class TwoWayLinkedNode
+{
+public:
+    TwoWayLinkedNode(/* args */){}; 
+    TwoWayLinkedNode(T data)
+    {
+        this-&amp;gt;data = data;
+        this-&amp;gt;prev = 0;
+        this-&amp;gt;next = 0;
+    }
+    ~TwoWayLinkedNode(){};
+    T data;       // 数据
+    TwoWayLinkedNode *next;  // 指向后继节点
+    TwoWayLinkedNode *prev;   // 指向前驱
+};
+
+template&amp;lt;class T&amp;gt;
+class TwoWayList
+{
+private:
+    /* data */
+    TwoWayLinkedNode&amp;lt;T&amp;gt; *head;   // 头节点
+    TwoWayLinkedNode&amp;lt;T&amp;gt; *tail;   // 尾节点
+    int  len;                    // 链表长度
+public:
+    TwoWayList()
+    {
+        head = 0;
+        tail = 0;
+        len = 0;
+    };
+    ~TwoWayList();
+     // 链表的长度+1
+    void setlen(int len)
+    {
+        this-&amp;gt;len += len;
+    }; 
+    // 返回链表的长度
+    int getlen()
+    {
+        return len;
+    };
+    // 清空链表
+    void clear();
+    // 链表是否为空
+    bool isEmpty()
+    {
+        return head == 0;
+    }
+    // 插入到链表的头部
+    void inseartToHead(T data);  
+    // 插入到链表的尾部
+    void inseartTotail(T data); 
+    // 插入到链表的index
+    void inseartToindex(int index, T data); 
+    // 删除链表的头部元素
+    void deleteToHead();
+    // 删除链表的尾部元素
+    void deleteToTail();
+    // 删除链表的index元素
+    void deleteToIndex(int index);
+    // 查询链表的所有值
+    void queryAll();
+    // 返回index的值
+    bool queryIndex(int index, T *data);
+    // 判断value是否存在
+    bool queryValue(T data);
+};
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;数据的操作&#34;&gt;数据的操作&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;
+template&amp;lt;class T&amp;gt;
+void TwoWayList&amp;lt;T&amp;gt; ::inseartToHead(T data)
+{
+   TwoWayLinkedNode&amp;lt;T&amp;gt; *new_Node = new TwoWayLinkedNode&amp;lt;T&amp;gt;(data); 
+   // 链表为空
+   if (isEmpty())
+   {
+      head = tail = new_Node;
+   }
+   else
+   {
+      new_Node-&amp;gt;next = head;   // 新节点的后驱指向头节点
+      head-&amp;gt;prev = new_Node;   // 头节点的前驱指向新节点
+      head = new_Node;         // 将新节点设置新的头节点
+   }
+   setlen(addOne);
+}
+
+template&amp;lt;class T&amp;gt;
+void TwoWayList&amp;lt;T&amp;gt; ::inseartTotail(T data)
+{
+   TwoWayLinkedNode&amp;lt;T&amp;gt; *new_Node = new TwoWayLinkedNode&amp;lt;T&amp;gt;(data);
+   if(isEmpty())
+   {
+      head = tail = new_Node;
+   }
+   else
+   {
+      tail-&amp;gt;next = new_Node;  // 尾节点的next指向新节点
+      new_Node-&amp;gt;prev = tail;  // 新节点的前驱指向尾节点
+      tail = new_Node;        // 将新节点设置为新的尾节点
+   }
+   setlen(addOne);
+}
+
+template&amp;lt;class T&amp;gt;
+void TwoWayList&amp;lt;T&amp;gt; ::inseartToindex(int index, T data)
+{
+   int len = getlen();
+   if(index == 0)
+   {
+      inseartToHead(data);
+      return;
+   }
+   // 链表为空，当index 小于0 或者大于等于链表数，采用尾插法
+   if (isEmpty() || index &amp;lt; 0 || index &amp;gt;= len)
+   {
+      inseartTotail(data);
+      return;
+   }
+   TwoWayLinkedNode&amp;lt;T&amp;gt; *node = head;
+   int __index = 1;
+   while (__index != index)
+   {
+      node = node-&amp;gt;next;
+      __index ++;
+   }
+   TwoWayLinkedNode&amp;lt;T&amp;gt; *new_node = new TwoWayLinkedNode&amp;lt;T&amp;gt;(data);
+   node-&amp;gt;next-&amp;gt;prev = new_node;   // node节点的后继节点的先驱要指向新节点
+   new_node-&amp;gt;prev = node;         // 新节点的先驱要指向node
+   new_node-&amp;gt;next = node-&amp;gt;next;   // 新节点的后继要指向node的后继
+   node-&amp;gt;next = new_node;         // node的后继要指向新节点
+   setlen(addOne);
+}
+
+template&amp;lt;class T&amp;gt;
+void TwoWayList&amp;lt;T&amp;gt; ::clear()
+{
+   while (!isEmpty())
+   {
+      TwoWayLinkedNode&amp;lt;T&amp;gt; *node = head-&amp;gt;next;
+      delete head;
+      head = node;
+   }
+   
+}
+
+template&amp;lt;class T&amp;gt;
+void TwoWayList&amp;lt;T&amp;gt; ::deleteToHead()
+{
+   // 链表为空就返回
+   if(isEmpty())
+   {
+      return;
+   }
+   // 链表只存在一个节点
+   if(head == tail)
+   {
+      delete head;
+      head = tail = 0;
+   }
+   else{
+       head = head-&amp;gt;next;                // 将下一节点设置头节点
+      delete head-&amp;gt;prev;                // 释放新的头节点的前驱节点
+      head-&amp;gt;prev = 0;                   // 头节点的先驱设置nil
+   }
+   setlen(ReductOne);
+}
+
+template&amp;lt;class T&amp;gt;
+void TwoWayList&amp;lt;T&amp;gt; ::deleteToTail()
+{
+    // 链表为空就返回
+   if(isEmpty())
+   {
+      return;
+   }
+   // 链表只存在一个节点
+   if(head == tail)
+   {
+      delete head;
+      head = tail = 0;
+   }
+   else{
+      tail = tail-&amp;gt;prev;                // 尾节点的先驱节点重新设置为新的尾节点
+      delete tail-&amp;gt;next;                // 释放新的尾节点的后驱
+      tail-&amp;gt;next = 0;                   // 新的尾节点的后驱指向尾nil
+   }
+   setlen(ReductOne);
+   
+}
+
+template&amp;lt;class T&amp;gt;
+void TwoWayList&amp;lt;T&amp;gt; ::deleteToIndex(int index)
+{
+   len = getlen();
+   // 链表为空,就返回
+   if(isEmpty())
+   {
+      return;
+   }
+   // index &amp;gt;= len || index &amp;lt; 0 采用删除末尾值
+   if (index &amp;gt;= len || index &amp;lt; 0)
+   {
+      deleteToTail();
+      return;
+   }
+   if(index == 0)
+   {
+      deleteToHead();
+      return;
+   }
+   if (index == len - 1)
+   {
+      deleteToTail();
+      return;
+   }
+   int __index = 1;
+   TwoWayLinkedNode&amp;lt;T&amp;gt; *node = head-&amp;gt;next;
+   while (__index != index)
+   {
+      node = node-&amp;gt;next;
+      __index ++;
+   }
+   node-&amp;gt;prev-&amp;gt;next = node-&amp;gt;next;  // node节点的先驱节点的后驱指向node的后驱
+   node-&amp;gt;next-&amp;gt;prev = node-&amp;gt;prev;  // node节点的后驱节点的先驱指向node的先驱
+   delete node;  // 释放node
+   setlen(ReductOne);
+}
+
+template&amp;lt;class T&amp;gt;
+void TwoWayList&amp;lt;T&amp;gt; ::queryAll()
+{
+   if (isEmpty())
+   {
+        cout &amp;lt;&amp;lt; &amp;quot;The list length is empty&amp;quot; &amp;lt;&amp;lt; endl;
+        return;
+    }
+
+   cout &amp;lt;&amp;lt; &amp;quot;The length of the two way list is zero:&amp;quot; &amp;lt;&amp;lt; getlen() &amp;lt;&amp;lt; endl;
+   int __index = 1;
+   TwoWayLinkedNode&amp;lt;T&amp;gt; *node = head;
+   while (node != tail-&amp;gt;next)
+   {
+      cout &amp;lt;&amp;lt; &amp;quot;node num is:&amp;quot; &amp;lt;&amp;lt; __index &amp;lt;&amp;lt; &amp;quot;  data:&amp;quot; &amp;lt;&amp;lt; node-&amp;gt;data &amp;lt;&amp;lt; endl;
+      node = node-&amp;gt;next;
+      __index++; 
+   }
+   
+}
+
+template&amp;lt;class T&amp;gt;
+bool TwoWayList&amp;lt;T&amp;gt; ::queryIndex(int index, T *data)
+{
+   len = getlen();
+   // 链表为空,index &amp;gt;= len || index &amp;lt; 0  就返回
+   if(isEmpty() || index &amp;gt;= len || index &amp;lt; 0)
+   {
+      return false;
+   }
+   int __index = 0;
+   for(TwoWayLinkedNode&amp;lt;T&amp;gt; *node = head; node != tail-&amp;gt;next; node = node-&amp;gt;next)
+   {
+      if (__index == index)
+      {
+         *data = node-&amp;gt;data;
+         return true;
+      }
+      __index++;
+
+   }
+   return false;
+
+}
+
+template&amp;lt;class T&amp;gt;
+bool TwoWayList&amp;lt;T&amp;gt; ::queryValue(T data)
+{
+    if(isEmpty())
+   {
+      return false;
+   }
+   for(TwoWayLinkedNode&amp;lt;T&amp;gt; *node = head; node != tail-&amp;gt;next; node = node-&amp;gt;next)
+   {
+      if (node-&amp;gt;data == data)
+      {
+         return true;
+      }
+   }
+   return false;
+   
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;测试&#34;&gt;测试&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;int main()
+{
+   TwoWayList&amp;lt;int&amp;gt; newList;
+   newList.inseartToHead(3);
+   newList.inseartToHead(2);
+   newList.inseartToHead(1);
+   newList.inseartToHead(-11);
+   newList.inseartTotail(4);
+   newList.inseartTotail(5);
+   newList.inseartTotail(6);
+   newList.inseartTotail(7);
+   newList.inseartTotail(8);
+   newList.queryAll();
+   cout &amp;lt;&amp;lt; &amp;quot;****************************************************&amp;quot;&amp;lt;&amp;lt; endl;
+   newList.inseartToindex(2, 11);
+   newList.inseartToindex(0, 2);
+   newList.inseartToindex(1, 3);
+   newList.queryAll();
+   cout &amp;lt;&amp;lt; &amp;quot;****************************************************&amp;quot;&amp;lt;&amp;lt; endl;
+   newList.deleteToHead();
+   newList.deleteToHead();
+   newList.deleteToHead();
+   newList.queryAll();
+   // newList.clear();
+   cout &amp;lt;&amp;lt; &amp;quot;****************************************************&amp;quot;&amp;lt;&amp;lt; endl;
+   newList.deleteToTail();
+   newList.deleteToTail();
+   newList.deleteToTail();
+   newList.deleteToTail();
+   newList.queryAll();
+   cout &amp;lt;&amp;lt; &amp;quot;****************************************************&amp;quot;&amp;lt;&amp;lt; endl;
+   newList.deleteToIndex(4);
+   newList.queryAll();
+   cout &amp;lt;&amp;lt; &amp;quot;****************************************************&amp;quot;&amp;lt;&amp;lt; endl;
+   int index = 1;
+   int info;
+   if(newList.queryIndex(index, &amp;amp;info))
+   {
+      cout &amp;lt;&amp;lt; &amp;quot;exits index: &amp;quot; &amp;lt;&amp;lt; index &amp;lt;&amp;lt; &amp;quot; =&amp;gt; value is &amp;quot; &amp;lt;&amp;lt; info&amp;lt;&amp;lt;  endl;
+   }
+   else
+   {
+      cout &amp;lt;&amp;lt;&amp;quot; no exits index:&amp;quot; &amp;lt;&amp;lt; index &amp;lt;&amp;lt; endl;
+   }
+   cout &amp;lt;&amp;lt; &amp;quot;****************************************************&amp;quot;&amp;lt;&amp;lt; endl;
+   newList.queryAll();
+   cout &amp;lt;&amp;lt; newList.queryValue(1)&amp;lt;&amp;lt; endl;
+   system(&amp;quot;pause&amp;quot;);
+   return 0;
+}
+
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;循环双向链表&#34;&gt;循环双向链表&lt;/h2&gt;
+&lt;h3 id=&#34;数据结构的定义-1&#34;&gt;数据结构的定义&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;// 循环双向链表节点
+template&amp;lt;class T&amp;gt;
+class CircularDoubleLinkedNode
+{
+public:
+    CircularDoubleLinkedNode()
+    {
+        prev = next = 0;
+    }
+    CircularDoubleLinkedNode(T data)
+    {
+        info = data;
+        prev = next = 0;
+    }
+    ~CircularDoubleLinkedNode(){};
+    T info;     // 数据
+    CircularDoubleLinkedNode *prev;   // 先驱节点
+    CircularDoubleLinkedNode *next;   // 后继节点
+};
+
+template&amp;lt;class T&amp;gt;
+class CircularDoubleList
+{
+private:
+    CircularDoubleLinkedNode&amp;lt;T&amp;gt; *current_node;  // 指向当前节点
+    int len;    // 链表的长度
+public:
+    CircularDoubleList()
+    {
+        current_node = 0;
+        len = 0;
+    }
+    ~CircularDoubleList();
+    void addLen()
+    {
+        len++;
+    }
+    void reduceLen()
+    {
+        len--;
+    }
+    int getLen()
+    {
+        return len;
+    }
+    bool isEmpty()
+    {
+        return current_node == 0;
+    }
+    void inseartNode(T data);
+    bool deleteNode();
+    void queryAll();
+    // 判断value是否存在
+    bool queryValue(T data);
+};
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;数据的操作-1&#34;&gt;数据的操作&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;
+template&amp;lt;class T&amp;gt;
+void CircularDoubleList&amp;lt;T&amp;gt; ::inseartNode(T data)
+{
+    CircularDoubleLinkedNode&amp;lt;T&amp;gt; *new_node = new CircularDoubleLinkedNode&amp;lt;T&amp;gt;(data);
+    // 如果链表为空
+    if(isEmpty())
+    {
+        // 当前节点为新的节点
+        current_node = new_node;
+        current_node-&amp;gt;next = current_node; // 后驱指向自己
+        current_node-&amp;gt;prev = current_node; // 前驱也指向自己
+    }
+    else
+    {
+        /*与双向链表中的插入到链表中是一样的*/
+       current_node-&amp;gt;next-&amp;gt;prev = new_node;
+       new_node-&amp;gt;prev = current_node;
+       new_node-&amp;gt;next = current_node-&amp;gt;next;
+       current_node-&amp;gt;next = new_node;
+       current_node = new_node;
+    }
+    addLen();
+}
+
+template&amp;lt;class T&amp;gt;
+bool CircularDoubleList&amp;lt;T&amp;gt; ::deleteNode()
+{
+    // 链表为空
+    if(isEmpty())
+    {
+        return false;
+    }
+    int len = getLen();
+    // 链表中只有一个元素
+    if(len == 1)
+    {
+        delete current_node;
+        current_node = 0;
+        reduceLen();
+        return true;
+    }
+    // 链表中只有两个元素
+    if (len == 2)
+    {
+        CircularDoubleLinkedNode&amp;lt;T&amp;gt; *node = current_node;
+        current_node = current_node-&amp;gt;next;
+        current_node-&amp;gt;next = current_node;
+        current_node-&amp;gt;prev = current_node;
+        delete node;
+        reduceLen();
+        return true;
+    }
+    // 链表元素达到3个及3个以上
+    CircularDoubleLinkedNode&amp;lt;T&amp;gt; *node = current_node;
+    current_node-&amp;gt;prev-&amp;gt;next = current_node-&amp;gt;next;
+    current_node-&amp;gt;next-&amp;gt;prev = current_node-&amp;gt;prev;
+    current_node = current_node-&amp;gt;next;
+    delete node;
+    reduceLen();
+    return true;
+}
+
+template&amp;lt;class T&amp;gt;
+void CircularDoubleList&amp;lt;T&amp;gt; ::queryAll()
+{
+    if(isEmpty())
+    {
+        cout &amp;lt;&amp;lt; &amp;quot;circular double list is empty&amp;quot; &amp;lt;&amp;lt;  endl;
+        return;
+    }
+
+    cout &amp;lt;&amp;lt; &amp;quot;circular double list len is:&amp;quot; &amp;lt;&amp;lt; getLen() &amp;lt;&amp;lt; endl;
+    int __index = 1;
+    for (CircularDoubleLinkedNode&amp;lt;T&amp;gt; *node = current_node-&amp;gt;next; node != current_node; node = node-&amp;gt;next)
+    {
+        cout &amp;lt;&amp;lt; &amp;quot;index:&amp;quot; &amp;lt;&amp;lt; __index &amp;lt;&amp;lt; &amp;quot;  data is: &amp;quot; &amp;lt;&amp;lt; node-&amp;gt;info &amp;lt;&amp;lt; endl;
+        __index++;
+    }
+    cout &amp;lt;&amp;lt; &amp;quot;index:&amp;quot; &amp;lt;&amp;lt; __index &amp;lt;&amp;lt; &amp;quot;  data is: &amp;quot; &amp;lt;&amp;lt; current_node-&amp;gt;info &amp;lt;&amp;lt; endl;
+}
+
+template&amp;lt;class T&amp;gt;
+bool CircularDoubleList&amp;lt;T&amp;gt; ::queryValue(T data)
+{
+    // 判断链表为空
+    if(isEmpty())
+    {
+        return false;
+    }
+    // 当前节点的值== data
+    if(current_node-&amp;gt;info == data)
+    {
+        return true;
+    }
+    // 循环遍历当节点的value== data then retuen ture
+    for(CircularDoubleLinkedNode&amp;lt;T&amp;gt; *node = current_node-&amp;gt;next; node != current_node; node = node-&amp;gt;next)
+    {
+        if(node-&amp;gt;info == data)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;测试-1&#34;&gt;测试&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;int main()
+{
+    CircularDoubleList&amp;lt;int&amp;gt; cirList;
+    cirList.inseartNode(0);
+    cirList.inseartNode(1);
+    cirList.inseartNode(2);
+    cirList.inseartNode(3);
+    cirList.queryAll();
+    cout &amp;lt;&amp;lt; &amp;quot;*****************************************************&amp;quot; &amp;lt;&amp;lt; endl;
+    cirList.deleteNode();
+    cirList.deleteNode();
+    // cirList.deleteNode();
+    // cirList.deleteNode();
+    cirList.queryAll();
+    cout &amp;lt;&amp;lt; &amp;quot;******************************************************&amp;quot; &amp;lt;&amp;lt;endl;
+    int data = 11;
+    if(cirList.queryValue(data))
+    {
+        cout &amp;lt;&amp;lt; data &amp;lt;&amp;lt; &amp;quot;  is exists&amp;quot; &amp;lt;&amp;lt; endl;
+    }
+    else
+    {
+        cout &amp;lt;&amp;lt; data &amp;lt;&amp;lt; &amp;quot;  is not exists&amp;quot; &amp;lt;&amp;lt; endl;
+    }
+   system(&amp;quot;pause&amp;quot;);
+   return 0;
+}
+
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;源码&#34;&gt;源码&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/zcj-git520/DataStructuresAlgorithmsForC/tree/master/linked_list/two_way_linked_list&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;我的github:https://github.com/zcj-git520/DataStructuresAlgorithmsForC/tree/master/linked_list/two_way_linked_list&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/zcj-git520/DataStructuresAlgorithmsForC/tree/master/linked_list/circular_double_linked_list&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;我的github:https://github.com/zcj-git520/DataStructuresAlgorithmsForC/tree/master/linked_list/circular_double_linked_list&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        <item>
         <title>数据结构-单向链表c&#43;&#43;语言实现</title>
         <link>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E5%90%91%E9%93%BE%E8%A1%A8c-%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/</link>
         <pubDate>Mon, 27 Dec 2021 22:00:08 +0800</pubDate>

@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='双向链表 数据结构的定义 template&amp;lt;class T&amp;gt;class TwoWayLinkedNode{public:TwoWayLinkedNode(/* args */){}; TwoWayLinkedNode(T data){this-&amp;gt;data = data;this-&amp;gt;prev = 0;this-&amp;gt;next = 0;}~TwoWayLinkedNode(){};T data; // 数据TwoWayLinkedNode *next; // 指向后继节点TwoWayLinkedNode *prev; // 指向前驱};template&amp;lt;class T&amp;gt;class TwoWayList{private:/* data */TwoWayLinkedNode&amp;lt;T&amp;gt; *head; // 头节点TwoWayLinkedNode&amp;lt;T&amp;gt; *tail; // 尾节点int len; // 链表长度public:TwoWayList(){head = 0;tail = 0;len = 0;};~TwoWayList();// 链表的长度&#43;1void setlen(int len){this-&amp;gt;len &#43;= len;}; // 返回链表的长度int getlen(){return len;};// 清空链表void clear();// 链表是否为空bool isEmpty(){return head == 0;}// 插入到链表的头部void inseartToHead(T data); // 插入到链表的尾部void inseartTotail(T data); // 插入到链表的indexvoid inseartToindex(int index, T data); // 删除链表的头部元素void deleteToHead();// 删除链表的尾部元素void deleteToTail();// 删除链表的index元素void deleteToIndex(int index);// 查询链表的所有值void queryAll();// 返回index的值bool queryIndex(int index, T *data);// 判断value是否存在bool queryValue(T data);};数据的操作 template&amp;lt;class T&amp;gt;void TwoWayList&amp;lt;T&amp;gt; ::inseartToHead(T data){TwoWayLinkedNode&amp;lt;T&amp;gt; *new_Node = new TwoWayLinkedNode&amp;lt;T&amp;gt;(data); // 链表为空if (isEmpty()){head = tail = new_Node;}else{new_Node-&amp;gt;next = head; // 新节点的后驱指向头节点head-&amp;gt;prev = new_Node; // 头节点的前驱指向新节点head = new_Node; // 将新节点设置新的头节点}setlen(addOne);}template&amp;lt;class T&amp;gt;void TwoWayList&amp;lt;T&amp;gt; ::inseartTotail(T data){TwoWayLinkedNode&amp;lt;T&amp;gt; *new_Node = new TwoWayLinkedNode&amp;lt;T&amp;gt;(data);if(isEmpty()){head = tail = new_Node;}else{tail-&amp;gt;next = new_Node; // 尾节点的next指向新节点new_Node-&amp;gt;prev = tail; // 新节点的前驱指向尾节点tail = new_Node; // 将新节点设置为新的尾节点}setlen(addOne);}template&amp;lt;class T&amp;gt;void TwoWayList&amp;lt;T&amp;gt; ::inseartToindex(int index, T data){int len = getlen();if(index == 0){inseartToHead(data);return;}// 链表为空，当index 小于0 或者大于等于链表数，采用尾插法if (isEmpty() || index &amp;lt; 0 || index &amp;gt;= len){inseartTotail(data);return;}TwoWayLinkedNode&amp;lt;T&amp;gt; *node = head;int __index = 1;while (__index !'><title>数据结构-双向链表&amp;&amp;循环双向链表 c&#43;&#43;实现</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8-c-%E5%AE%9E%E7%8E%B0/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='数据结构-双向链表&amp;&amp;循环双向链表 c&#43;&#43;实现'>
+<meta property='og:description' content='双向链表 数据结构的定义 template&amp;lt;class T&amp;gt;class TwoWayLinkedNode{public:TwoWayLinkedNode(/* args */){}; TwoWayLinkedNode(T data){this-&amp;gt;data = data;this-&amp;gt;prev = 0;this-&amp;gt;next = 0;}~TwoWayLinkedNode(){};T data; // 数据TwoWayLinkedNode *next; // 指向后继节点TwoWayLinkedNode *prev; // 指向前驱};template&amp;lt;class T&amp;gt;class TwoWayList{private:/* data */TwoWayLinkedNode&amp;lt;T&amp;gt; *head; // 头节点TwoWayLinkedNode&amp;lt;T&amp;gt; *tail; // 尾节点int len; // 链表长度public:TwoWayList(){head = 0;tail = 0;len = 0;};~TwoWayList();// 链表的长度&#43;1void setlen(int len){this-&amp;gt;len &#43;= len;}; // 返回链表的长度int getlen(){return len;};// 清空链表void clear();// 链表是否为空bool isEmpty(){return head == 0;}// 插入到链表的头部void inseartToHead(T data); // 插入到链表的尾部void inseartTotail(T data); // 插入到链表的indexvoid inseartToindex(int index, T data); // 删除链表的头部元素void deleteToHead();// 删除链表的尾部元素void deleteToTail();// 删除链表的index元素void deleteToIndex(int index);// 查询链表的所有值void queryAll();// 返回index的值bool queryIndex(int index, T *data);// 判断value是否存在bool queryValue(T data);};数据的操作 template&amp;lt;class T&amp;gt;void TwoWayList&amp;lt;T&amp;gt; ::inseartToHead(T data){TwoWayLinkedNode&amp;lt;T&amp;gt; *new_Node = new TwoWayLinkedNode&amp;lt;T&amp;gt;(data); // 链表为空if (isEmpty()){head = tail = new_Node;}else{new_Node-&amp;gt;next = head; // 新节点的后驱指向头节点head-&amp;gt;prev = new_Node; // 头节点的前驱指向新节点head = new_Node; // 将新节点设置新的头节点}setlen(addOne);}template&amp;lt;class T&amp;gt;void TwoWayList&amp;lt;T&amp;gt; ::inseartTotail(T data){TwoWayLinkedNode&amp;lt;T&amp;gt; *new_Node = new TwoWayLinkedNode&amp;lt;T&amp;gt;(data);if(isEmpty()){head = tail = new_Node;}else{tail-&amp;gt;next = new_Node; // 尾节点的next指向新节点new_Node-&amp;gt;prev = tail; // 新节点的前驱指向尾节点tail = new_Node; // 将新节点设置为新的尾节点}setlen(addOne);}template&amp;lt;class T&amp;gt;void TwoWayList&amp;lt;T&amp;gt; ::inseartToindex(int index, T data){int len = getlen();if(index == 0){inseartToHead(data);return;}// 链表为空，当index 小于0 或者大于等于链表数，采用尾插法if (isEmpty() || index &amp;lt; 0 || index &amp;gt;= len){inseartTotail(data);return;}TwoWayLinkedNode&amp;lt;T&amp;gt; *node = head;int __index = 1;while (__index !'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8-c-%E5%AE%9E%E7%8E%B0/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-12-30T21:00:08&#43;08:00'/><meta property='article:modified_time' content='2021-12-30T21:00:08&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8-c-%E5%AE%9E%E7%8E%B0/1.jpg' />
+<meta name="twitter:title" content="数据结构-双向链表&amp;&amp;循环双向链表 c&#43;&#43;实现">
+<meta name="twitter:description" content="双向链表 数据结构的定义 template&amp;lt;class T&amp;gt;class TwoWayLinkedNode{public:TwoWayLinkedNode(/* args */){}; TwoWayLinkedNode(T data){this-&amp;gt;data = data;this-&amp;gt;prev = 0;this-&amp;gt;next = 0;}~TwoWayLinkedNode(){};T data; // 数据TwoWayLinkedNode *next; // 指向后继节点TwoWayLinkedNode *prev; // 指向前驱};template&amp;lt;class T&amp;gt;class TwoWayList{private:/* data */TwoWayLinkedNode&amp;lt;T&amp;gt; *head; // 头节点TwoWayLinkedNode&amp;lt;T&amp;gt; *tail; // 尾节点int len; // 链表长度public:TwoWayList(){head = 0;tail = 0;len = 0;};~TwoWayList();// 链表的长度&#43;1void setlen(int len){this-&amp;gt;len &#43;= len;}; // 返回链表的长度int getlen(){return len;};// 清空链表void clear();// 链表是否为空bool isEmpty(){return head == 0;}// 插入到链表的头部void inseartToHead(T data); // 插入到链表的尾部void inseartTotail(T data); // 插入到链表的indexvoid inseartToindex(int index, T data); // 删除链表的头部元素void deleteToHead();// 删除链表的尾部元素void deleteToTail();// 删除链表的index元素void deleteToIndex(int index);// 查询链表的所有值void queryAll();// 返回index的值bool queryIndex(int index, T *data);// 判断value是否存在bool queryValue(T data);};数据的操作 template&amp;lt;class T&amp;gt;void TwoWayList&amp;lt;T&amp;gt; ::inseartToHead(T data){TwoWayLinkedNode&amp;lt;T&amp;gt; *new_Node = new TwoWayLinkedNode&amp;lt;T&amp;gt;(data); // 链表为空if (isEmpty()){head = tail = new_Node;}else{new_Node-&amp;gt;next = head; // 新节点的后驱指向头节点head-&amp;gt;prev = new_Node; // 头节点的前驱指向新节点head = new_Node; // 将新节点设置新的头节点}setlen(addOne);}template&amp;lt;class T&amp;gt;void TwoWayList&amp;lt;T&amp;gt; ::inseartTotail(T data){TwoWayLinkedNode&amp;lt;T&amp;gt; *new_Node = new TwoWayLinkedNode&amp;lt;T&amp;gt;(data);if(isEmpty()){head = tail = new_Node;}else{tail-&amp;gt;next = new_Node; // 尾节点的next指向新节点new_Node-&amp;gt;prev = tail; // 新节点的前驱指向尾节点tail = new_Node; // 将新节点设置为新的尾节点}setlen(addOne);}template&amp;lt;class T&amp;gt;void TwoWayList&amp;lt;T&amp;gt; ::inseartToindex(int index, T data){int len = getlen();if(index == 0){inseartToHead(data);return;}// 链表为空，当index 小于0 或者大于等于链表数，采用尾插法if (isEmpty() || index &amp;lt; 0 || index &amp;gt;= len){inseartTotail(data);return;}TwoWayLinkedNode&amp;lt;T&amp;gt; *node = head;int __index = 1;while (__index !"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8-c-%E5%AE%9E%E7%8E%B0/1.jpg' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8-c-%E5%AE%9E%E7%8E%B0/">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8-c-%E5%AE%9E%E7%8E%B0/1_huc216cf6486350636a2e6728955e7fc78_62516_800x0_resize_q75_box.jpg"
+                        srcset="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8-c-%E5%AE%9E%E7%8E%B0/1_huc216cf6486350636a2e6728955e7fc78_62516_800x0_resize_q75_box.jpg 800w, /p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8-c-%E5%AE%9E%E7%8E%B0/1_huc216cf6486350636a2e6728955e7fc78_62516_1600x0_resize_q75_box.jpg 1600w"
+                        width="800" 
+                        height="217" 
+                        loading="lazy"
+                        alt="Featured image of post 数据结构-双向链表&amp;&amp;循环双向链表 c&#43;&#43;实现" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/language/" style="background-color: #2a9d8f; color: #fff;">
+                语言学习
+            </a>
+        
+            <a href="/categories/c_c&#43;&#43;/" style="background-color: #2a9d8f; color: #fff;">
+                C_C&#43;&#43;
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8-c-%E5%AE%9E%E7%8E%B0/">数据结构-双向链表&amp;&amp;循环双向链表 c&#43;&#43;实现</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Dec 30, 2021</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 6 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h2 id="双向链表">双向链表</h2>
+<h3 id="数据结构的定义">数据结构的定义</h3>
+<pre tabindex="0"><code>template&lt;class T&gt;
+class TwoWayLinkedNode
+{
+public:
+    TwoWayLinkedNode(/* args */){}; 
+    TwoWayLinkedNode(T data)
+    {
+        this-&gt;data = data;
+        this-&gt;prev = 0;
+        this-&gt;next = 0;
+    }
+    ~TwoWayLinkedNode(){};
+    T data;       // 数据
+    TwoWayLinkedNode *next;  // 指向后继节点
+    TwoWayLinkedNode *prev;   // 指向前驱
+};
+
+template&lt;class T&gt;
+class TwoWayList
+{
+private:
+    /* data */
+    TwoWayLinkedNode&lt;T&gt; *head;   // 头节点
+    TwoWayLinkedNode&lt;T&gt; *tail;   // 尾节点
+    int  len;                    // 链表长度
+public:
+    TwoWayList()
+    {
+        head = 0;
+        tail = 0;
+        len = 0;
+    };
+    ~TwoWayList();
+     // 链表的长度+1
+    void setlen(int len)
+    {
+        this-&gt;len += len;
+    }; 
+    // 返回链表的长度
+    int getlen()
+    {
+        return len;
+    };
+    // 清空链表
+    void clear();
+    // 链表是否为空
+    bool isEmpty()
+    {
+        return head == 0;
+    }
+    // 插入到链表的头部
+    void inseartToHead(T data);  
+    // 插入到链表的尾部
+    void inseartTotail(T data); 
+    // 插入到链表的index
+    void inseartToindex(int index, T data); 
+    // 删除链表的头部元素
+    void deleteToHead();
+    // 删除链表的尾部元素
+    void deleteToTail();
+    // 删除链表的index元素
+    void deleteToIndex(int index);
+    // 查询链表的所有值
+    void queryAll();
+    // 返回index的值
+    bool queryIndex(int index, T *data);
+    // 判断value是否存在
+    bool queryValue(T data);
+};
+</code></pre><h3 id="数据的操作">数据的操作</h3>
+<pre tabindex="0"><code>
+template&lt;class T&gt;
+void TwoWayList&lt;T&gt; ::inseartToHead(T data)
+{
+   TwoWayLinkedNode&lt;T&gt; *new_Node = new TwoWayLinkedNode&lt;T&gt;(data); 
+   // 链表为空
+   if (isEmpty())
+   {
+      head = tail = new_Node;
+   }
+   else
+   {
+      new_Node-&gt;next = head;   // 新节点的后驱指向头节点
+      head-&gt;prev = new_Node;   // 头节点的前驱指向新节点
+      head = new_Node;         // 将新节点设置新的头节点
+   }
+   setlen(addOne);
+}
+
+template&lt;class T&gt;
+void TwoWayList&lt;T&gt; ::inseartTotail(T data)
+{
+   TwoWayLinkedNode&lt;T&gt; *new_Node = new TwoWayLinkedNode&lt;T&gt;(data);
+   if(isEmpty())
+   {
+      head = tail = new_Node;
+   }
+   else
+   {
+      tail-&gt;next = new_Node;  // 尾节点的next指向新节点
+      new_Node-&gt;prev = tail;  // 新节点的前驱指向尾节点
+      tail = new_Node;        // 将新节点设置为新的尾节点
+   }
+   setlen(addOne);
+}
+
+template&lt;class T&gt;
+void TwoWayList&lt;T&gt; ::inseartToindex(int index, T data)
+{
+   int len = getlen();
+   if(index == 0)
+   {
+      inseartToHead(data);
+      return;
+   }
+   // 链表为空，当index 小于0 或者大于等于链表数，采用尾插法
+   if (isEmpty() || index &lt; 0 || index &gt;= len)
+   {
+      inseartTotail(data);
+      return;
+   }
+   TwoWayLinkedNode&lt;T&gt; *node = head;
+   int __index = 1;
+   while (__index != index)
+   {
+      node = node-&gt;next;
+      __index ++;
+   }
+   TwoWayLinkedNode&lt;T&gt; *new_node = new TwoWayLinkedNode&lt;T&gt;(data);
+   node-&gt;next-&gt;prev = new_node;   // node节点的后继节点的先驱要指向新节点
+   new_node-&gt;prev = node;         // 新节点的先驱要指向node
+   new_node-&gt;next = node-&gt;next;   // 新节点的后继要指向node的后继
+   node-&gt;next = new_node;         // node的后继要指向新节点
+   setlen(addOne);
+}
+
+template&lt;class T&gt;
+void TwoWayList&lt;T&gt; ::clear()
+{
+   while (!isEmpty())
+   {
+      TwoWayLinkedNode&lt;T&gt; *node = head-&gt;next;
+      delete head;
+      head = node;
+   }
+   
+}
+
+template&lt;class T&gt;
+void TwoWayList&lt;T&gt; ::deleteToHead()
+{
+   // 链表为空就返回
+   if(isEmpty())
+   {
+      return;
+   }
+   // 链表只存在一个节点
+   if(head == tail)
+   {
+      delete head;
+      head = tail = 0;
+   }
+   else{
+       head = head-&gt;next;                // 将下一节点设置头节点
+      delete head-&gt;prev;                // 释放新的头节点的前驱节点
+      head-&gt;prev = 0;                   // 头节点的先驱设置nil
+   }
+   setlen(ReductOne);
+}
+
+template&lt;class T&gt;
+void TwoWayList&lt;T&gt; ::deleteToTail()
+{
+    // 链表为空就返回
+   if(isEmpty())
+   {
+      return;
+   }
+   // 链表只存在一个节点
+   if(head == tail)
+   {
+      delete head;
+      head = tail = 0;
+   }
+   else{
+      tail = tail-&gt;prev;                // 尾节点的先驱节点重新设置为新的尾节点
+      delete tail-&gt;next;                // 释放新的尾节点的后驱
+      tail-&gt;next = 0;                   // 新的尾节点的后驱指向尾nil
+   }
+   setlen(ReductOne);
+   
+}
+
+template&lt;class T&gt;
+void TwoWayList&lt;T&gt; ::deleteToIndex(int index)
+{
+   len = getlen();
+   // 链表为空,就返回
+   if(isEmpty())
+   {
+      return;
+   }
+   // index &gt;= len || index &lt; 0 采用删除末尾值
+   if (index &gt;= len || index &lt; 0)
+   {
+      deleteToTail();
+      return;
+   }
+   if(index == 0)
+   {
+      deleteToHead();
+      return;
+   }
+   if (index == len - 1)
+   {
+      deleteToTail();
+      return;
+   }
+   int __index = 1;
+   TwoWayLinkedNode&lt;T&gt; *node = head-&gt;next;
+   while (__index != index)
+   {
+      node = node-&gt;next;
+      __index ++;
+   }
+   node-&gt;prev-&gt;next = node-&gt;next;  // node节点的先驱节点的后驱指向node的后驱
+   node-&gt;next-&gt;prev = node-&gt;prev;  // node节点的后驱节点的先驱指向node的先驱
+   delete node;  // 释放node
+   setlen(ReductOne);
+}
+
+template&lt;class T&gt;
+void TwoWayList&lt;T&gt; ::queryAll()
+{
+   if (isEmpty())
+   {
+        cout &lt;&lt; &quot;The list length is empty&quot; &lt;&lt; endl;
+        return;
+    }
+
+   cout &lt;&lt; &quot;The length of the two way list is zero:&quot; &lt;&lt; getlen() &lt;&lt; endl;
+   int __index = 1;
+   TwoWayLinkedNode&lt;T&gt; *node = head;
+   while (node != tail-&gt;next)
+   {
+      cout &lt;&lt; &quot;node num is:&quot; &lt;&lt; __index &lt;&lt; &quot;  data:&quot; &lt;&lt; node-&gt;data &lt;&lt; endl;
+      node = node-&gt;next;
+      __index++; 
+   }
+   
+}
+
+template&lt;class T&gt;
+bool TwoWayList&lt;T&gt; ::queryIndex(int index, T *data)
+{
+   len = getlen();
+   // 链表为空,index &gt;= len || index &lt; 0  就返回
+   if(isEmpty() || index &gt;= len || index &lt; 0)
+   {
+      return false;
+   }
+   int __index = 0;
+   for(TwoWayLinkedNode&lt;T&gt; *node = head; node != tail-&gt;next; node = node-&gt;next)
+   {
+      if (__index == index)
+      {
+         *data = node-&gt;data;
+         return true;
+      }
+      __index++;
+
+   }
+   return false;
+
+}
+
+template&lt;class T&gt;
+bool TwoWayList&lt;T&gt; ::queryValue(T data)
+{
+    if(isEmpty())
+   {
+      return false;
+   }
+   for(TwoWayLinkedNode&lt;T&gt; *node = head; node != tail-&gt;next; node = node-&gt;next)
+   {
+      if (node-&gt;data == data)
+      {
+         return true;
+      }
+   }
+   return false;
+   
+}
+</code></pre><h3 id="测试">测试</h3>
+<pre tabindex="0"><code>int main()
+{
+   TwoWayList&lt;int&gt; newList;
+   newList.inseartToHead(3);
+   newList.inseartToHead(2);
+   newList.inseartToHead(1);
+   newList.inseartToHead(-11);
+   newList.inseartTotail(4);
+   newList.inseartTotail(5);
+   newList.inseartTotail(6);
+   newList.inseartTotail(7);
+   newList.inseartTotail(8);
+   newList.queryAll();
+   cout &lt;&lt; &quot;****************************************************&quot;&lt;&lt; endl;
+   newList.inseartToindex(2, 11);
+   newList.inseartToindex(0, 2);
+   newList.inseartToindex(1, 3);
+   newList.queryAll();
+   cout &lt;&lt; &quot;****************************************************&quot;&lt;&lt; endl;
+   newList.deleteToHead();
+   newList.deleteToHead();
+   newList.deleteToHead();
+   newList.queryAll();
+   // newList.clear();
+   cout &lt;&lt; &quot;****************************************************&quot;&lt;&lt; endl;
+   newList.deleteToTail();
+   newList.deleteToTail();
+   newList.deleteToTail();
+   newList.deleteToTail();
+   newList.queryAll();
+   cout &lt;&lt; &quot;****************************************************&quot;&lt;&lt; endl;
+   newList.deleteToIndex(4);
+   newList.queryAll();
+   cout &lt;&lt; &quot;****************************************************&quot;&lt;&lt; endl;
+   int index = 1;
+   int info;
+   if(newList.queryIndex(index, &amp;info))
+   {
+      cout &lt;&lt; &quot;exits index: &quot; &lt;&lt; index &lt;&lt; &quot; =&gt; value is &quot; &lt;&lt; info&lt;&lt;  endl;
+   }
+   else
+   {
+      cout &lt;&lt;&quot; no exits index:&quot; &lt;&lt; index &lt;&lt; endl;
+   }
+   cout &lt;&lt; &quot;****************************************************&quot;&lt;&lt; endl;
+   newList.queryAll();
+   cout &lt;&lt; newList.queryValue(1)&lt;&lt; endl;
+   system(&quot;pause&quot;);
+   return 0;
+}
+
+</code></pre><h2 id="循环双向链表">循环双向链表</h2>
+<h3 id="数据结构的定义-1">数据结构的定义</h3>
+<pre tabindex="0"><code>// 循环双向链表节点
+template&lt;class T&gt;
+class CircularDoubleLinkedNode
+{
+public:
+    CircularDoubleLinkedNode()
+    {
+        prev = next = 0;
+    }
+    CircularDoubleLinkedNode(T data)
+    {
+        info = data;
+        prev = next = 0;
+    }
+    ~CircularDoubleLinkedNode(){};
+    T info;     // 数据
+    CircularDoubleLinkedNode *prev;   // 先驱节点
+    CircularDoubleLinkedNode *next;   // 后继节点
+};
+
+template&lt;class T&gt;
+class CircularDoubleList
+{
+private:
+    CircularDoubleLinkedNode&lt;T&gt; *current_node;  // 指向当前节点
+    int len;    // 链表的长度
+public:
+    CircularDoubleList()
+    {
+        current_node = 0;
+        len = 0;
+    }
+    ~CircularDoubleList();
+    void addLen()
+    {
+        len++;
+    }
+    void reduceLen()
+    {
+        len--;
+    }
+    int getLen()
+    {
+        return len;
+    }
+    bool isEmpty()
+    {
+        return current_node == 0;
+    }
+    void inseartNode(T data);
+    bool deleteNode();
+    void queryAll();
+    // 判断value是否存在
+    bool queryValue(T data);
+};
+</code></pre><h3 id="数据的操作-1">数据的操作</h3>
+<pre tabindex="0"><code>
+template&lt;class T&gt;
+void CircularDoubleList&lt;T&gt; ::inseartNode(T data)
+{
+    CircularDoubleLinkedNode&lt;T&gt; *new_node = new CircularDoubleLinkedNode&lt;T&gt;(data);
+    // 如果链表为空
+    if(isEmpty())
+    {
+        // 当前节点为新的节点
+        current_node = new_node;
+        current_node-&gt;next = current_node; // 后驱指向自己
+        current_node-&gt;prev = current_node; // 前驱也指向自己
+    }
+    else
+    {
+        /*与双向链表中的插入到链表中是一样的*/
+       current_node-&gt;next-&gt;prev = new_node;
+       new_node-&gt;prev = current_node;
+       new_node-&gt;next = current_node-&gt;next;
+       current_node-&gt;next = new_node;
+       current_node = new_node;
+    }
+    addLen();
+}
+
+template&lt;class T&gt;
+bool CircularDoubleList&lt;T&gt; ::deleteNode()
+{
+    // 链表为空
+    if(isEmpty())
+    {
+        return false;
+    }
+    int len = getLen();
+    // 链表中只有一个元素
+    if(len == 1)
+    {
+        delete current_node;
+        current_node = 0;
+        reduceLen();
+        return true;
+    }
+    // 链表中只有两个元素
+    if (len == 2)
+    {
+        CircularDoubleLinkedNode&lt;T&gt; *node = current_node;
+        current_node = current_node-&gt;next;
+        current_node-&gt;next = current_node;
+        current_node-&gt;prev = current_node;
+        delete node;
+        reduceLen();
+        return true;
+    }
+    // 链表元素达到3个及3个以上
+    CircularDoubleLinkedNode&lt;T&gt; *node = current_node;
+    current_node-&gt;prev-&gt;next = current_node-&gt;next;
+    current_node-&gt;next-&gt;prev = current_node-&gt;prev;
+    current_node = current_node-&gt;next;
+    delete node;
+    reduceLen();
+    return true;
+}
+
+template&lt;class T&gt;
+void CircularDoubleList&lt;T&gt; ::queryAll()
+{
+    if(isEmpty())
+    {
+        cout &lt;&lt; &quot;circular double list is empty&quot; &lt;&lt;  endl;
+        return;
+    }
+
+    cout &lt;&lt; &quot;circular double list len is:&quot; &lt;&lt; getLen() &lt;&lt; endl;
+    int __index = 1;
+    for (CircularDoubleLinkedNode&lt;T&gt; *node = current_node-&gt;next; node != current_node; node = node-&gt;next)
+    {
+        cout &lt;&lt; &quot;index:&quot; &lt;&lt; __index &lt;&lt; &quot;  data is: &quot; &lt;&lt; node-&gt;info &lt;&lt; endl;
+        __index++;
+    }
+    cout &lt;&lt; &quot;index:&quot; &lt;&lt; __index &lt;&lt; &quot;  data is: &quot; &lt;&lt; current_node-&gt;info &lt;&lt; endl;
+}
+
+template&lt;class T&gt;
+bool CircularDoubleList&lt;T&gt; ::queryValue(T data)
+{
+    // 判断链表为空
+    if(isEmpty())
+    {
+        return false;
+    }
+    // 当前节点的值== data
+    if(current_node-&gt;info == data)
+    {
+        return true;
+    }
+    // 循环遍历当节点的value== data then retuen ture
+    for(CircularDoubleLinkedNode&lt;T&gt; *node = current_node-&gt;next; node != current_node; node = node-&gt;next)
+    {
+        if(node-&gt;info == data)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+</code></pre><h3 id="测试-1">测试</h3>
+<pre tabindex="0"><code>int main()
+{
+    CircularDoubleList&lt;int&gt; cirList;
+    cirList.inseartNode(0);
+    cirList.inseartNode(1);
+    cirList.inseartNode(2);
+    cirList.inseartNode(3);
+    cirList.queryAll();
+    cout &lt;&lt; &quot;*****************************************************&quot; &lt;&lt; endl;
+    cirList.deleteNode();
+    cirList.deleteNode();
+    // cirList.deleteNode();
+    // cirList.deleteNode();
+    cirList.queryAll();
+    cout &lt;&lt; &quot;******************************************************&quot; &lt;&lt;endl;
+    int data = 11;
+    if(cirList.queryValue(data))
+    {
+        cout &lt;&lt; data &lt;&lt; &quot;  is exists&quot; &lt;&lt; endl;
+    }
+    else
+    {
+        cout &lt;&lt; data &lt;&lt; &quot;  is not exists&quot; &lt;&lt; endl;
+    }
+   system(&quot;pause&quot;);
+   return 0;
+}
+
+</code></pre><h2 id="源码">源码</h2>
+<ul>
+<li><a class="link" href="https://github.com/zcj-git520/DataStructuresAlgorithmsForC/tree/master/linked_list/two_way_linked_list"  target="_blank" rel="noopener"
+    >我的github:https://github.com/zcj-git520/DataStructuresAlgorithmsForC/tree/master/linked_list/two_way_linked_list</a></li>
+<li><a class="link" href="https://github.com/zcj-git520/DataStructuresAlgorithmsForC/tree/master/linked_list/circular_double_linked_list"  target="_blank" rel="noopener"
+    >我的github:https://github.com/zcj-git520/DataStructuresAlgorithmsForC/tree/master/linked_list/circular_double_linked_list</a></li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E6%A0%88%E5%9F%BA%E4%BA%8E%E5%8D%95%E9%A1%B9%E9%93%BE%E8%A1%A8%E9%98%9F%E5%88%97%E5%9F%BA%E4%BA%8E%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8c-%E5%AE%9E%E7%8E%B0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E6%A0%88%E5%9F%BA%E4%BA%8E%E5%8D%95%E9%A1%B9%E9%93%BE%E8%A1%A8%E9%98%9F%E5%88%97%E5%9F%BA%E4%BA%8E%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8c-%E5%AE%9E%E7%8E%B0/1.d90a4e817af655a738f16cd6b901b471_hucc057a99640c389677e7decbd4886594_40524_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-2QpOgXr2Vac48WzWuQG0cQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">数据结构-栈(基于单项链表)&amp;&amp;队列(基于双向链表)c&#43;&#43;实现</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E5%90%91%E9%93%BE%E8%A1%A8c-%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E5%90%91%E9%93%BE%E8%A1%A8c-%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/1.d4063513636ac24a26f405f7f6147e2d_huda65db0749ea5cfbe7a2aa726c042ca1_14970_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-1AY1E2Nqwkom9AX39hR&#43;LQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">数据结构-单向链表c&#43;&#43;语言实现</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/c/c-%E5%AE%89%E5%85%A8%E6%8C%87%E5%8D%97/">
+        
+        
+            <div class="article-image">
+                <img src="/p/c/c-%E5%AE%89%E5%85%A8%E6%8C%87%E5%8D%97/1.8a9c37704d9a62457afff477ab59d921_hub729bb727716490d1309dfd2d43fb84b_10267_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-ipw3cE2aYkV6//R3q1nZIQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">c/c&#43;&#43;安全指南</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E6%A0%88%E5%9F%BA%E4%BA%8E%E5%8D%95%E9%A1%B9%E9%93%BE%E8%A1%A8%E9%98%9F%E5%88%97%E5%9F%BA%E4%BA%8E%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E5%AE%9E%E7%8E%B0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E6%A0%88%E5%9F%BA%E4%BA%8E%E5%8D%95%E9%A1%B9%E9%93%BE%E8%A1%A8%E9%98%9F%E5%88%97%E5%9F%BA%E4%BA%8E%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E5%AE%9E%E7%8E%B0/1.d90a4e817af655a738f16cd6b901b471_hucc057a99640c389677e7decbd4886594_40524_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-2QpOgXr2Vac48WzWuQG0cQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">数据结构-栈(基于单项链表)&amp;&amp;队列(基于双向链表)go实现</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/1.8698f35cbd072100d008bc5611dc9311_huc216cf6486350636a2e6728955e7fc78_62516_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-hpjzXL0HIQDQCLxWEdyTEQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">数据结构-双向链表&amp;&amp;循环双向链表go语言实现</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#双向链表">双向链表</a>
+      <ol>
+        <li><a href="#数据结构的定义">数据结构的定义</a></li>
+        <li><a href="#数据的操作">数据的操作</a></li>
+        <li><a href="#测试">测试</a></li>
+      </ol>
+    </li>
+    <li><a href="#循环双向链表">循环双向链表</a>
+      <ol>
+        <li><a href="#数据结构的定义-1">数据结构的定义</a></li>
+        <li><a href="#数据的操作-1">数据的操作</a></li>
+        <li><a href="#测试-1">测试</a></li>
+      </ol>
+    </li>
+    <li><a href="#源码">源码</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

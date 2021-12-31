@@ -6,7 +6,26 @@
     <description>Recent content in Golang on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 25 Dec 2021 22:00:08 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/golang/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 31 Dec 2021 22:00:08 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/golang/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>数据结构-栈(基于单项链表)&amp;&amp;队列(基于双向链表)go实现</title>
+      <link>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E6%A0%88%E5%9F%BA%E4%BA%8E%E5%8D%95%E9%A1%B9%E9%93%BE%E8%A1%A8%E9%98%9F%E5%88%97%E5%9F%BA%E4%BA%8E%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E5%AE%9E%E7%8E%B0/</link>
+      <pubDate>Fri, 31 Dec 2021 22:00:08 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E6%A0%88%E5%9F%BA%E4%BA%8E%E5%8D%95%E9%A1%B9%E9%93%BE%E8%A1%A8%E9%98%9F%E5%88%97%E5%9F%BA%E4%BA%8E%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E5%AE%9E%E7%8E%B0/</guid>
+      <description>栈 基于单向链表实现
+数据结构定义 type stackData struct {list *Singly_linked_list.LinkedList}// 获得栈的长度func (s *stackData)Len() int{return s.list.Len()}数据操作 // 将数据插入栈顶func (s *stackData)Push(data interface{}) {s.list.AddToHead(data)}// 将数据从栈顶取出，并删除数据func (s *stackData)Pop()interface{}{data := s.list.QuireIndex(0)// 栈不为空, 删除栈顶数据if data != nil{s.list.DeleteToHead()}return data}// 将数据取出，不删除数据func (s *stackData)GetTopValue()interface{}{return s.list.QuireIndex(0)}// 展示栈func (s *stackData)ShowStack() {s.list.QuireAll()}创建栈 func NewStackData()*stackData{return &amp;amp;stackData{list:Singly_linked_list.NewLinkedList()}}队列  基于双向链表实现  数据结构定义 type queueData struct {list *double_linked_list.</description>
+    </item>
+    
+    <item>
+      <title>数据结构-双向链表&amp;&amp;循环双向链表go语言实现</title>
+      <link>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/</link>
+      <pubDate>Thu, 30 Dec 2021 22:00:08 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/</guid>
+      <description>双向链表 数据结构的定义 // 双向链表的节点定义type doubleLinkedNode struct {info interface{} // 存储的数据prev *doubleLinkedNode // 指向先驱节点next *doubleLinkedNode // 指向后驱几点}// 双向链表定义type DoubleList struct {Head *doubleLinkedNode // 头节点Tail *doubleLinkedNode // 尾节点len int // 链表长度}创建节点 func createNode(data interface{}) *doubleLinkedNode {return &amp;amp;doubleLinkedNode{info: data,prev: nil,next: nil,}}链表的长度 // 链表的长度func(d *DoubleList)Len() int{return d.len}数据的插入 单个节点的插入 // 链表的尾插法func (d *DoubleList)AddToTail(info interface{}) *DoubleList {newNode := createNode(info) // 创建新节点// 链表为空, 头尾节点都指向该节点if d.</description>
+    </item>
+    
     <item>
       <title>数据结构-单向链表go语言实现</title>
       <link>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E5%90%91%E9%93%BE%E8%A1%A8go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/</link>

@@ -6,7 +6,26 @@
     <description>Recent content in C_C&#43;&#43; on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Mon, 27 Dec 2021 22:00:08 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/c_c++/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 31 Dec 2021 21:00:08 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/c_c++/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>数据结构-栈(基于单项链表)&amp;&amp;队列(基于双向链表)c&#43;&#43;实现</title>
+      <link>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E6%A0%88%E5%9F%BA%E4%BA%8E%E5%8D%95%E9%A1%B9%E9%93%BE%E8%A1%A8%E9%98%9F%E5%88%97%E5%9F%BA%E4%BA%8E%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8c-%E5%AE%9E%E7%8E%B0/</link>
+      <pubDate>Fri, 31 Dec 2021 21:00:08 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E6%A0%88%E5%9F%BA%E4%BA%8E%E5%8D%95%E9%A1%B9%E9%93%BE%E8%A1%A8%E9%98%9F%E5%88%97%E5%9F%BA%E4%BA%8E%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8c-%E5%AE%9E%E7%8E%B0/</guid>
+      <description>栈 基于单向链表实现
+数据结构定义 template&amp;lt;class T&amp;gt;class Stack{private:SinglyList&amp;lt;T&amp;gt; list; // 存储数据的链表public:Stack(/* args */){};~Stack();// 获得栈的长度int len(){return list.getlen();}// 清空栈void clear();// 判断栈是否为空sbool isEmpty();// 将数据放入栈顶void push(T data);// 获取栈顶数据，并删除数据bool pop(T *info);// 获取栈顶数据但不删除数据bool getTopValue(T *info);// 显示所有栈的数据void showStack();};数据操作 template&amp;lt;class T&amp;gt;void Stack&amp;lt;T&amp;gt; ::clear(){list.clear();}template&amp;lt;class T&amp;gt;void Stack&amp;lt;T&amp;gt; ::push(T data){list.</description>
+    </item>
+    
+    <item>
+      <title>数据结构-双向链表&amp;&amp;循环双向链表 c&#43;&#43;实现</title>
+      <link>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8-c-%E5%AE%9E%E7%8E%B0/</link>
+      <pubDate>Thu, 30 Dec 2021 21:00:08 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8-c-%E5%AE%9E%E7%8E%B0/</guid>
+      <description>双向链表 数据结构的定义 template&amp;lt;class T&amp;gt;class TwoWayLinkedNode{public:TwoWayLinkedNode(/* args */){}; TwoWayLinkedNode(T data){this-&amp;gt;data = data;this-&amp;gt;prev = 0;this-&amp;gt;next = 0;}~TwoWayLinkedNode(){};T data; // 数据TwoWayLinkedNode *next; // 指向后继节点TwoWayLinkedNode *prev; // 指向前驱};template&amp;lt;class T&amp;gt;class TwoWayList{private:/* data */TwoWayLinkedNode&amp;lt;T&amp;gt; *head; // 头节点TwoWayLinkedNode&amp;lt;T&amp;gt; *tail; // 尾节点int len; // 链表长度public:TwoWayList(){head = 0;tail = 0;len = 0;};~TwoWayList();// 链表的长度+1void setlen(int len){this-&amp;gt;len += len;}; // 返回链表的长度int getlen(){return len;};// 清空链表void clear();// 链表是否为空bool isEmpty(){return head == 0;}// 插入到链表的头部void inseartToHead(T data); // 插入到链表的尾部void inseartTotail(T data); // 插入到链表的indexvoid inseartToindex(int index, T data); // 删除链表的头部元素void deleteToHead();// 删除链表的尾部元素void deleteToTail();// 删除链表的index元素void deleteToIndex(int index);// 查询链表的所有值void queryAll();// 返回index的值bool queryIndex(int index, T *data);// 判断value是否存在bool queryValue(T data);};数据的操作 template&amp;lt;class T&amp;gt;void TwoWayList&amp;lt;T&amp;gt; ::inseartToHead(T data){TwoWayLinkedNode&amp;lt;T&amp;gt; *new_Node = new TwoWayLinkedNode&amp;lt;T&amp;gt;(data); // 链表为空if (isEmpty()){head = tail = new_Node;}else{new_Node-&amp;gt;next = head; // 新节点的后驱指向头节点head-&amp;gt;prev = new_Node; // 头节点的前驱指向新节点head = new_Node; // 将新节点设置新的头节点}setlen(addOne);}template&amp;lt;class T&amp;gt;void TwoWayList&amp;lt;T&amp;gt; ::inseartTotail(T data){TwoWayLinkedNode&amp;lt;T&amp;gt; *new_Node = new TwoWayLinkedNode&amp;lt;T&amp;gt;(data);if(isEmpty()){head = tail = new_Node;}else{tail-&amp;gt;next = new_Node; // 尾节点的next指向新节点new_Node-&amp;gt;prev = tail; // 新节点的前驱指向尾节点tail = new_Node; // 将新节点设置为新的尾节点}setlen(addOne);}template&amp;lt;class T&amp;gt;void TwoWayList&amp;lt;T&amp;gt; ::inseartToindex(int index, T data){int len = getlen();if(index == 0){inseartToHead(data);return;}// 链表为空，当index 小于0 或者大于等于链表数，采用尾插法if (isEmpty() || index &amp;lt; 0 || index &amp;gt;= len){inseartTotail(data);return;}TwoWayLinkedNode&amp;lt;T&amp;gt; *node = head;int __index = 1;while (__index !</description>
+    </item>
+    
     <item>
       <title>数据结构-单向链表c&#43;&#43;语言实现</title>
       <link>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E5%90%91%E9%93%BE%E8%A1%A8c-%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/</link>

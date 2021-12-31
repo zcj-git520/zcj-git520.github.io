@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='双向链表 数据结构的定义 // 双向链表的节点定义type doubleLinkedNode struct {info interface{} // 存储的数据prev *doubleLinkedNode // 指向先驱节点next *doubleLinkedNode // 指向后驱几点}// 双向链表定义type DoubleList struct {Head *doubleLinkedNode // 头节点Tail *doubleLinkedNode // 尾节点len int // 链表长度}创建节点 func createNode(data interface{}) *doubleLinkedNode {return &amp;amp;doubleLinkedNode{info: data,prev: nil,next: nil,}}链表的长度 // 链表的长度func(d *DoubleList)Len() int{return d.len}数据的插入 单个节点的插入 // 链表的尾插法func (d *DoubleList)AddToTail(info interface{}) *DoubleList {newNode := createNode(info) // 创建新节点// 链表为空, 头尾节点都指向该节点if d.'><title>数据结构-双向链表&amp;&amp;循环双向链表go语言实现</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='数据结构-双向链表&amp;&amp;循环双向链表go语言实现'>
+<meta property='og:description' content='双向链表 数据结构的定义 // 双向链表的节点定义type doubleLinkedNode struct {info interface{} // 存储的数据prev *doubleLinkedNode // 指向先驱节点next *doubleLinkedNode // 指向后驱几点}// 双向链表定义type DoubleList struct {Head *doubleLinkedNode // 头节点Tail *doubleLinkedNode // 尾节点len int // 链表长度}创建节点 func createNode(data interface{}) *doubleLinkedNode {return &amp;amp;doubleLinkedNode{info: data,prev: nil,next: nil,}}链表的长度 // 链表的长度func(d *DoubleList)Len() int{return d.len}数据的插入 单个节点的插入 // 链表的尾插法func (d *DoubleList)AddToTail(info interface{}) *DoubleList {newNode := createNode(info) // 创建新节点// 链表为空, 头尾节点都指向该节点if d.'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-12-30T22:00:08&#43;08:00'/><meta property='article:modified_time' content='2021-12-30T22:00:08&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/1.jpg' />
+<meta name="twitter:title" content="数据结构-双向链表&amp;&amp;循环双向链表go语言实现">
+<meta name="twitter:description" content="双向链表 数据结构的定义 // 双向链表的节点定义type doubleLinkedNode struct {info interface{} // 存储的数据prev *doubleLinkedNode // 指向先驱节点next *doubleLinkedNode // 指向后驱几点}// 双向链表定义type DoubleList struct {Head *doubleLinkedNode // 头节点Tail *doubleLinkedNode // 尾节点len int // 链表长度}创建节点 func createNode(data interface{}) *doubleLinkedNode {return &amp;amp;doubleLinkedNode{info: data,prev: nil,next: nil,}}链表的长度 // 链表的长度func(d *DoubleList)Len() int{return d.len}数据的插入 单个节点的插入 // 链表的尾插法func (d *DoubleList)AddToTail(info interface{}) *DoubleList {newNode := createNode(info) // 创建新节点// 链表为空, 头尾节点都指向该节点if d."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/1.jpg' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/1_huc216cf6486350636a2e6728955e7fc78_62516_800x0_resize_q75_box.jpg"
+                        srcset="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/1_huc216cf6486350636a2e6728955e7fc78_62516_800x0_resize_q75_box.jpg 800w, /p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/1_huc216cf6486350636a2e6728955e7fc78_62516_1600x0_resize_q75_box.jpg 1600w"
+                        width="800" 
+                        height="217" 
+                        loading="lazy"
+                        alt="Featured image of post 数据结构-双向链表&amp;&amp;循环双向链表go语言实现" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/language/" style="background-color: #2a9d8f; color: #fff;">
+                语言学习
+            </a>
+        
+            <a href="/categories/golang/" style="background-color: #2a9d8f; color: #fff;">
+                Golang
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/">数据结构-双向链表&amp;&amp;循环双向链表go语言实现</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Dec 30, 2021</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 7 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h2 id="双向链表">双向链表</h2>
+<h3 id="数据结构的定义">数据结构的定义</h3>
+<pre tabindex="0"><code>// 双向链表的节点定义
+type doubleLinkedNode struct {
+	info  interface{}       // 存储的数据
+	prev *doubleLinkedNode  // 指向先驱节点
+	next *doubleLinkedNode  // 指向后驱几点
+}
+
+// 双向链表定义
+type DoubleList struct {
+	Head *doubleLinkedNode   // 头节点
+	Tail *doubleLinkedNode   // 尾节点
+	len  int                 // 链表长度
+}
+</code></pre><h3 id="创建节点">创建节点</h3>
+<pre tabindex="0"><code>func createNode(data interface{}) *doubleLinkedNode {
+	return &amp;doubleLinkedNode{
+		info: data,
+		prev: nil,
+		next: nil,
+	}
+}
+</code></pre><h3 id="链表的长度">链表的长度</h3>
+<pre tabindex="0"><code>// 链表的长度
+func(d *DoubleList)Len() int{
+	return d.len
+}
+</code></pre><h3 id="数据的插入">数据的插入</h3>
+<h4 id="单个节点的插入">单个节点的插入</h4>
+<pre tabindex="0"><code>// 链表的尾插法
+func (d *DoubleList)AddToTail(info interface{}) *DoubleList {
+	newNode := createNode(info)  // 创建新节点
+	// 链表为空, 头尾节点都指向该节点
+	if d.Head == nil{
+		d.Head = newNode
+		d.Tail = newNode
+	}else{
+		d.Tail.next = newNode
+		newNode.prev = d.Tail
+		d.Tail = d.Tail.next
+	}
+	// 链表长度+1
+	d.len++
+	return d
+}
+
+// 链表的头插法
+func (d *DoubleList)AddToHead(info interface{}) *DoubleList  {
+	newNode := createNode(info)  // 创建节点
+	// 链表为空
+	if d.Head == nil{
+		d.Head = newNode
+		d.Tail = newNode
+	}else{
+		newNode.next = d.Head    // 新节点的后驱指向头节点
+		d.Head.prev = newNode    // 头节点的前驱指向新节点
+		d.Head = newNode         // 将新节点设置尾头节点
+	}
+	// 链表长度+1
+	d.len++
+	return  d
+}
+
+// 链表的index
+// 通过index=&gt;插入链表新的节点
+// index为正数 为从左-&gt;右 // 0表示第一个节点
+// index为负数 为从右-&gt;左 // -1表示第一个节点
+func (d *DoubleList)AddToIndex(index int, info interface{}) *DoubleList {
+	// 当链表为空时，采用了尾插入法插入数据
+	if d.Head == nil{
+		return d.AddToTail(info)
+	}
+	// 当index大于链表的值时，默认将数据插入到链表的后面
+	if int(math.Abs(float64(index))) &gt; d.len-1{
+		return d.AddToTail(info)
+	}
+	// 插入链表的头部
+	if index == 0{
+		return d.AddToHead(info)
+	}
+	// 插入到链表的末尾
+	if index == -1{
+		return d.AddToTail(info)
+	}
+	// 当index 为负数时，从右到左插入
+	if index &lt; 0{
+		index += d.len +1
+	}
+	__index := 1  // 内部的index值
+	// 从第二个值开始插入
+	for node := d.Head; node != d.Tail; node = node.next{
+		if index == __index{
+			newNode := createNode(info)
+			node.next.prev = newNode   // 节点的后驱节点的先驱指向新节点
+			newNode.prev = node        // 新节点的前驱指向节点
+			newNode.next = node.next   // 新节点的后驱指向节点的后驱
+			node.next = newNode           // 节点的后驱指向新节点
+			// 链表的节点数加1
+			d.len ++
+			return d
+		}
+		__index ++
+	}
+	return d
+}
+
+</code></pre><h4 id="链表的合并">链表的合并</h4>
+<pre tabindex="0"><code>// 将新的链表插入头部
+func (d *DoubleList)AddListToHead(list *DoubleList)*DoubleList{
+	// 两个链表都为空时
+	if d.Head == nil &amp;&amp; list.Head == nil{
+		return d
+	}
+	// 合并表为空
+	if d.Head != nil &amp;&amp; list.Head == nil{
+		return d
+	}
+	// 主表为空
+	if d.Head == nil &amp;&amp; list.Head != nil{
+		return list
+	}
+	// 合并表的尾指针指向主表的头
+	list.Tail.next = d.Head
+	d.Head.prev = list.Tail
+	list.Tail = d.Tail
+	// 表节点数合并
+	list.len += d.len
+	return list
+}
+
+// 将新的链表插入到尾部
+func (d *DoubleList)AddListToTail(list *DoubleList)*DoubleList{
+	// 两个链表都为空时
+	if d.Head == nil &amp;&amp; list.Head == nil{
+		return d
+	}
+	// 合并表为空
+	if d.Head != nil &amp;&amp; list.Head == nil{
+		return d
+	}
+	// 主表为空
+	if d.Head == nil &amp;&amp; list.Head != nil{
+		return list
+	}
+	// 将新表插入到主表之后
+	d.Tail.next = list.Head
+	list.Head.prev = d.Tail
+	d.Tail = list.Tail
+	d.len += list.len
+	return d
+}
+
+// 经新的表插入到index
+func (d *DoubleList)AddListToIndex(index int, list *DoubleList) *DoubleList {
+	// 两个链表都为空时
+	if d.Head == nil &amp;&amp; list.Head == nil{
+		return d
+	}
+	// 合并表为空
+	if d.Head != nil &amp;&amp; list.Head == nil{
+		return d
+	}
+	// 主表为空
+	if d.Head == nil &amp;&amp; list.Head != nil{
+		return list
+	}
+	if int(math.Abs(float64(index))) &gt; d.len{
+		fmt.Println(&quot;错误的index&quot;)
+		return d
+	}
+	if index == 0{
+		return d.AddListToHead(list)
+	}
+	if  index == -1{
+		return d.AddListToTail(list)
+	}
+	if index &lt; 0{
+		index += d.len
+	}
+	__index := 1
+	for node := d.Head; node != d.Tail; node = node.next{
+		if index == __index{
+			node.next.prev = list.Tail
+			list.Tail.next = node.next
+			node.next = list.Head
+			list.Head.prev = node
+			d.len += list.len  // 链表的数值相加
+			return d
+		}
+		__index ++
+	}
+	return d
+}
+
+</code></pre><h3 id="数据的删除">数据的删除</h3>
+<pre tabindex="0"><code>// 链表头删除法
+func (d *DoubleList)DeleteToHead()*DoubleList{
+	// 链表为空
+	if d.Head == nil{
+		return d
+	}
+	// 链表中只有一个数
+	if d.Head == d.Tail{
+		d.Head = nil
+		d.Tail = nil
+		d.len  = 0
+		return d
+	}
+	d.Head = d.Head.next
+	d.Head.prev = nil
+	// node数减一
+	d.len --
+	return d
+}
+
+// 链表尾删除法
+func (d *DoubleList)DeleteToTail()*DoubleList{
+	// 链表为空
+	if d.Tail == nil{
+		return d
+	}
+	// 链表中只有一个数
+	if d.Head == d.Tail{
+		d.Head = nil
+		d.Tail = nil
+		d.len = 0
+		return d
+	}
+	d.Tail = d.Tail.prev
+	d.Tail.next = nil
+	// node数减一
+	d.len --
+	return d
+}
+
+// 通过值=&gt;删除链表的节点(第一个)
+func (d *DoubleList)DeleteToAValue(value interface{})*DoubleList{
+	// 链表为空
+	if d.Head == nil{
+		fmt.Println(&quot;链表为空&quot;)
+		return d
+	}
+	// value == head.info
+	// 就采用头删法
+	if value == d.Head.info{
+		return  d.DeleteToHead()
+	}
+	if value == d.Tail.info{
+		return  d.DeleteToTail()
+	}
+	// 中间采用轮询查找value, 从第二个开始轮询到倒数第二个结束
+	for node := d.Head.next; node != d.Tail; node = node.next{
+		if node.info == value{
+			//  删除node
+			node.next.prev = node.prev
+			node.prev.next = node.next
+			d.len --
+			return d
+		}
+	}
+	fmt.Println(&quot;链表中：值不存在&quot;)
+	return d
+}
+
+// 通过值=&gt;删除链表的节点(所有)
+func (d *DoubleList)DeleteToValue(value interface{})*DoubleList{
+	// 链表为空
+	if d.Head == nil{
+		fmt.Println(&quot;链表为空&quot;)
+		return d
+	}
+	node := d.Head         // 当前的node
+	for {
+		// 当下一个节点是尾节点时，就判断首位和末尾是为需要删除的node
+		if node == d.Tail {
+			if d.Head.info == value{
+				d.DeleteToHead()
+			}
+			if d.Tail.info == value{
+				d.DeleteToTail()
+			}
+			return d
+		}
+		if node.info == value{
+			// 删除node， 非头节点
+			if node.prev != nil{
+				node.next.prev = node.prev
+				node.prev.next = node.next
+				d.len --
+			}else{
+				// 头节点
+				d.DeleteToHead()
+			}
+		}
+		node = node.next
+
+	}
+}
+
+// 通过index=&gt;删除链表的节点
+// index为正数 为从左-&gt;右 // 0表示第一个节点
+// index为负数 为从右-&gt;左 // -1表示第一个节点
+func (d *DoubleList)DeleteToIndex(index int)*DoubleList{
+	// 链表为空
+	if d.Head == nil{
+		fmt.Println(&quot;链表为空&quot;)
+		return d
+	}
+	// index 超过链表数
+	if int(math.Abs(float64(index))) &gt; d.len-1{
+		fmt.Println(&quot;错误的index&quot;)
+		return d
+	}
+	// 删除第一个node
+	if index == 0{
+		return d.DeleteToHead()
+	}
+	if index &lt; 0{
+		index += d.len
+	}
+	if index == d.len -1{
+		return d.DeleteToTail()
+	}
+	_index := 1
+	node := d.Head.next
+	for {
+		if index == _index{
+			node.next.prev = node.prev
+			node.prev.next = node.next
+			d.len --
+			return d
+		}
+		node = node.next
+		_index ++
+	}
+}
+
+</code></pre><h3 id="数据的查询">数据的查询</h3>
+<pre tabindex="0"><code>// 遍历链表
+func (d *DoubleList) QuireAll() {
+	if d.Head == nil{
+		fmt.Println(&quot;链表数据为空&quot;)
+		return
+	}
+	node := d.Head
+	for {
+		if node == nil{
+			return
+		}
+		fmt.Println(node.info)
+		if node == d.Tail{
+			return
+		}
+		node = node.next
+	}
+}
+
+// 判断valve是否存在
+func (d *DoubleList)QuireValue(value interface{}) bool{
+	// 表为空
+	if d.Head == nil{
+		return false
+	}
+	// 表中只存在一个值
+	if d.Head == d.Tail{
+		if d.Head.info == value{
+			return true
+		}
+		return false
+	}
+	// 遍历查值
+	for node := d.Head; node != d.Tail.next; node = node.next{
+		if node.info == value{
+			return true
+		}
+	}
+	return false
+}
+
+// 根据索引返回值
+func (d *DoubleList)QuireIndex(index int) interface{} {
+	// 链表为空
+	if d.Head == nil{
+		return nil
+	}
+	if int(math.Abs(float64(index))) &gt; d.len -1 {
+		fmt.Println(&quot;索引值错误&quot;)
+		return nil
+	}
+	if index == 0{
+		return d.Head.info
+	}
+	if index == d.len -1 || index == -1{
+		return d.Tail.info
+	}
+	if index &lt; 0{
+		index += d.len
+	}
+	__index := 1
+	for node := d.Head.next; node != d.Tail; node = node.next{
+		if __index == index{
+			return node.info
+		}
+		__index ++
+	}
+	//fmt.Println(&quot;未能找到！！！！&quot;)
+	return nil
+}
+
+</code></pre><h3 id="结构的入口">结构的入口</h3>
+<pre tabindex="0"><code>func NewDoubleLinkedList()*DoubleList{
+	// 创建的链表头尾节点都为空
+	return &amp;DoubleList{
+		Head: nil,
+		Tail: nil,
+		len: 0,
+	}
+}
+</code></pre><h2 id="循环双向链表">循环双向链表</h2>
+<h3 id="数据结构的定义-1">数据结构的定义</h3>
+<pre tabindex="0"><code>// 节点的定义
+type circleDoubleNode struct {
+	info  interface{}  // 数据结构的定义
+	prev  *circleDoubleNode  // 前驱指针
+	next  *circleDoubleNode  // 后驱指针
+}
+
+// 双向循环链表的定义
+type circleDoubleList struct {
+	currentNode *circleDoubleNode  // 指向链表的指针
+	len  int    // 链表的长度
+}
+</code></pre><h3 id="创建节点-1">创建节点</h3>
+<pre tabindex="0"><code>func createNode(data interface{}) *circleDoubleNode{
+	return &amp;circleDoubleNode{
+		info: data,
+		prev: nil,
+		next: nil,
+	}
+}
+// 得到链表的长度
+func (c *circleDoubleList)GetLen()int{
+	return c.len
+}
+</code></pre><h3 id="节点的插入">节点的插入</h3>
+<pre tabindex="0"><code>func (c *circleDoubleList)InsertNode(data interface{}) {
+	newNode := createNode(data)
+	// 如果链表为空
+	if c.currentNode == nil{
+		c.currentNode = newNode  // 新创建的节点为当前节点
+		// 节点的前驱与后驱都指向自己
+		c.currentNode.next = c.currentNode
+		c.currentNode.prev = c.currentNode
+	}else{
+		// 节点的插入
+		c.currentNode.next.prev = newNode
+		newNode.prev = c.currentNode
+		newNode.next = c.currentNode.next
+		c.currentNode.next = newNode
+		c.currentNode = newNode
+	}
+	// 链表长度 +1
+	c.len ++
+}
+</code></pre><h3 id="当前节点的删除">当前节点的删除</h3>
+<pre tabindex="0"><code>func (c *circleDoubleList)DeleteNode() bool{
+	// 链表为空
+	if c.currentNode == nil{
+		return false
+	}
+	// 当链表值存在一个元素时
+	if c.len == 1{
+		c.currentNode = nil
+		c.len --
+		return true
+	}
+	// 当链表只存在两个元素时
+	if c.len == 2{
+		c.currentNode = c.currentNode.next
+		c.len --
+		return true
+	}
+	// 当前节点的后驱节点的前驱指针指向当前节点的的前驱节点
+	c.currentNode.next.prev = c.currentNode.prev
+	// 当前节点的前驱节点的后驱指针指向当前节点的后驱节点
+	c.currentNode.prev.next = c.currentNode.next
+	// 设置当前节点的后驱节点为当前节点
+	c.currentNode = c.currentNode.next
+	c.len --
+	return true
+}
+</code></pre><h3 id="遍历说有节点">遍历说有节点</h3>
+<pre tabindex="0"><code>func (c *circleDoubleList)QuireAll(){
+	if c.currentNode == nil{
+		fmt.Println(&quot;circle double linked list is empty&quot;)
+		return
+	}
+	//__index := 1
+	//for node := c.currentNode.next; node != c.currentNode; node = node.next{
+	//	fmt.Printf(&quot;index is %d, node value is %v&quot;, __index, node.info)
+	//	__index ++
+	//}
+	fmt.Printf(&quot;circle double linked list len is %d \n&quot;, c.len)
+	node := c.currentNode.next
+	for i := 1; i &lt; c.len; i++{
+		fmt.Printf(&quot;index is %d, node value is %v \n&quot;, i, node.info)
+		node = node.next
+	}
+	fmt.Printf(&quot;index is %d, node value is %v \n&quot;, c.len, c.currentNode.info)
+}
+
+// 判断值是否存在
+func (c *circleDoubleList)QuireValue(data interface{}) bool{
+	if c.currentNode == nil{
+		return false
+	}
+	node := c.currentNode
+	for i := 1; i &lt;= c.len; i++{
+		if node.info == data{
+			return true
+		}
+		node = node.next
+	}
+	return  false
+}
+</code></pre><h3 id="链表实例化">链表实例化</h3>
+<pre tabindex="0"><code>func NewCircleDoubleList()*circleDoubleList{
+	return &amp;circleDoubleList{
+		currentNode: nil,
+		len:         0,
+	}
+}
+</code></pre><h2 id="源码">源码</h2>
+<ul>
+<li><a class="link" href="https://github.com/zcj-git520/DataStructuresAlgorithmsForGo/tree/master/Linked_list/double_linked_list"  target="_blank" rel="noopener"
+    >我的github:https://github.com/zcj-git520/DataStructuresAlgorithmsForGo/tree/master/Linked_list/double_linked_list</a></li>
+<li><a class="link" href="https://github.com/zcj-git520/DataStructuresAlgorithmsForGo/tree/master/Linked_list/circle_double_linked_list"  target="_blank" rel="noopener"
+    >我的github:https://github.com/zcj-git520/DataStructuresAlgorithmsForGo/tree/master/Linked_list/circle_double_linked_list</a></li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E6%A0%88%E5%9F%BA%E4%BA%8E%E5%8D%95%E9%A1%B9%E9%93%BE%E8%A1%A8%E9%98%9F%E5%88%97%E5%9F%BA%E4%BA%8E%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E5%AE%9E%E7%8E%B0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E6%A0%88%E5%9F%BA%E4%BA%8E%E5%8D%95%E9%A1%B9%E9%93%BE%E8%A1%A8%E9%98%9F%E5%88%97%E5%9F%BA%E4%BA%8E%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E5%AE%9E%E7%8E%B0/1.d90a4e817af655a738f16cd6b901b471_hucc057a99640c389677e7decbd4886594_40524_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-2QpOgXr2Vac48WzWuQG0cQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">数据结构-栈(基于单项链表)&amp;&amp;队列(基于双向链表)go实现</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E5%90%91%E9%93%BE%E8%A1%A8go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E5%90%91%E9%93%BE%E8%A1%A8go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/1.d4063513636ac24a26f405f7f6147e2d_huda65db0749ea5cfbe7a2aa726c042ca1_14970_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-1AY1E2Nqwkom9AX39hR&#43;LQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">数据结构-单向链表go语言实现</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E8%B6%85%E6%97%B6%E9%87%8D%E8%AF%95%E6%9C%BA%E5%88%B6-host_try/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E8%B6%85%E6%97%B6%E9%87%8D%E8%AF%95%E6%9C%BA%E5%88%B6-host_try/1.1931b402306b88ed6a8349fa8f6192cf_huc278944164dd3ada59be56854851c305_117502_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-GTG0AjBriO1qg0n6j2GSzw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">超时重试机制-host_try</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/timertask-%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%8C%85/">
+        
+        
+            <div class="article-image">
+                <img src="/p/timertask-%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%8C%85/1.327cf6058a6103ca13390923e6164970_hu8e77554b4f75574526b9eba572e1dcc7_37690_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-Mnz2BYphA8oTOQkj5hZJcA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">timerTask 定时任务包</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/go%E5%AE%89%E5%85%A8%E6%8C%87%E5%8D%97/">
+        
+        
+            <div class="article-image">
+                <img src="/p/go%E5%AE%89%E5%85%A8%E6%8C%87%E5%8D%97/1.8dd79ab0693d3ec84cafb85d5cdb343b_hu7c5d570e6f1bb8cc35e9c2f13acb3eec_11753_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-jdeasGk9PshMr7hdXNs0Ow==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Go安全指南</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2021 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#双向链表">双向链表</a>
+      <ol>
+        <li><a href="#数据结构的定义">数据结构的定义</a></li>
+        <li><a href="#创建节点">创建节点</a></li>
+        <li><a href="#链表的长度">链表的长度</a></li>
+        <li><a href="#数据的插入">数据的插入</a>
+          <ol>
+            <li><a href="#单个节点的插入">单个节点的插入</a></li>
+            <li><a href="#链表的合并">链表的合并</a></li>
+          </ol>
+        </li>
+        <li><a href="#数据的删除">数据的删除</a></li>
+        <li><a href="#数据的查询">数据的查询</a></li>
+        <li><a href="#结构的入口">结构的入口</a></li>
+      </ol>
+    </li>
+    <li><a href="#循环双向链表">循环双向链表</a>
+      <ol>
+        <li><a href="#数据结构的定义-1">数据结构的定义</a></li>
+        <li><a href="#创建节点-1">创建节点</a></li>
+        <li><a href="#节点的插入">节点的插入</a></li>
+        <li><a href="#当前节点的删除">当前节点的删除</a></li>
+        <li><a href="#遍历说有节点">遍历说有节点</a></li>
+        <li><a href="#链表实例化">链表实例化</a></li>
+      </ol>
+    </li>
+    <li><a href="#源码">源码</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
