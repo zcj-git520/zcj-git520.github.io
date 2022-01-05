@@ -6,7 +6,16 @@
     <description>Recent content in Posts on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Fri, 31 Dec 2021 22:00:08 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 01 Jan 2022 21:00:08 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>数据结构-Binary search tree c&#43;&#43;实现</title>
+      <link>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-binary-search-tree-c-%E5%AE%9E%E7%8E%B0/</link>
+      <pubDate>Sat, 01 Jan 2022 21:00:08 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-binary-search-tree-c-%E5%AE%9E%E7%8E%B0/</guid>
+      <description>二叉查找树 数据结构定义 // 节点的定义template&amp;lt;class T&amp;gt;class BinarySearchTreeNode{public:BinarySearchTreeNode(){left = 0;right = 0;}BinarySearchTreeNode(T data){this-&amp;gt;data = data;left = 0;right = 0;}~BinarySearchTreeNode(){};T data; // 保存的节点的数据BinarySearchTreeNode *left; // 指向左节点BinarySearchTreeNode *right; // 指向右节点};// 树的定义template&amp;lt;class T&amp;gt;class BinarySearchTree{private:BinarySearchTreeNode&amp;lt;T&amp;gt; *root; // 定义头节点int treeNodeNum; // 树的节点数void deleteNodeAll(BinarySearchTreeNode&amp;lt;T&amp;gt; *node); // 删除所有节点// 显示节点void DLR(BinarySearchTreeNode&amp;lt;T&amp;gt; *node);void LDR(BinarySearchTreeNode&amp;lt;T&amp;gt; *node);void LRD(BinarySearchTreeNode&amp;lt;T&amp;gt; *node);// 删除*&amp;amp;代表指针引用void deleteNodeByMerge(BinarySearchTreeNode&amp;lt;T&amp;gt;*&amp;amp; node); // 合并删除void deleteNodeByCopy(BinarySearchTreeNode&amp;lt;T&amp;gt;*&amp;amp; node); // 复制删除public:BinarySearchTree(){root = 0;treeNodeNum = 0;};~BinarySearchTree();// 清空树void clear();// 节点的个数int Nodes(){return treeNodeNum;}// 是否为空树bool isEmpty(){return root == 0;}// 插入数据void inseartNode(const T data);// 深度优先遍历树// 前序遍历(DLR 根-&amp;gt;左-&amp;gt;右)void showNodeByDLR();// 中序遍历(LDR 左-&amp;gt;根-&amp;gt;右)void showNodeByLDR();// 后序遍历(LRD 左-&amp;gt;右-&amp;gt;根)void showNodeByLRD();// 删除节点的数据// 合并删除bool removeNodeMerge(const T data);// 复制删除bool removeNodeCopy(const T data);// 查找数据bool SearchData(const T data);};数据操作  增删改查  数据的插入 template&amp;lt;class T&amp;gt;void BinarySearchTree&amp;lt;T&amp;gt; ::inseartNode(const T data){BinarySearchTreeNode&amp;lt;T&amp;gt; *new_node = new BinarySearchTreeNode&amp;lt;T&amp;gt;(data);// 如果为空树if(isEmpty()){root = new_node; // 新建节点设置为root 节点treeNodeNum ++; // 树的节点数+1return;}BinarySearchTreeNode&amp;lt;T&amp;gt; *node = root;// 遍历树， 找到插入的节点的位置while (node !</description>
+    </item>
+    
     <item>
       <title>数据结构-栈(基于单项链表)&amp;&amp;队列(基于双向链表)go实现</title>
       <link>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E6%A0%88%E5%9F%BA%E4%BA%8E%E5%8D%95%E9%A1%B9%E9%93%BE%E8%A1%A8%E9%98%9F%E5%88%97%E5%9F%BA%E4%BA%8E%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E5%AE%9E%E7%8E%B0/</link>

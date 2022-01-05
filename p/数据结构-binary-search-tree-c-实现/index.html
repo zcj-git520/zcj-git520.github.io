@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='二叉查找树 数据结构定义 // 节点的定义template&amp;lt;class T&amp;gt;class BinarySearchTreeNode{public:BinarySearchTreeNode(){left = 0;right = 0;}BinarySearchTreeNode(T data){this-&amp;gt;data = data;left = 0;right = 0;}~BinarySearchTreeNode(){};T data; // 保存的节点的数据BinarySearchTreeNode *left; // 指向左节点BinarySearchTreeNode *right; // 指向右节点};// 树的定义template&amp;lt;class T&amp;gt;class BinarySearchTree{private:BinarySearchTreeNode&amp;lt;T&amp;gt; *root; // 定义头节点int treeNodeNum; // 树的节点数void deleteNodeAll(BinarySearchTreeNode&amp;lt;T&amp;gt; *node); // 删除所有节点// 显示节点void DLR(BinarySearchTreeNode&amp;lt;T&amp;gt; *node);void LDR(BinarySearchTreeNode&amp;lt;T&amp;gt; *node);void LRD(BinarySearchTreeNode&amp;lt;T&amp;gt; *node);// 删除*&amp;amp;代表指针引用void deleteNodeByMerge(BinarySearchTreeNode&amp;lt;T&amp;gt;*&amp;amp; node); // 合并删除void deleteNodeByCopy(BinarySearchTreeNode&amp;lt;T&amp;gt;*&amp;amp; node); // 复制删除public:BinarySearchTree(){root = 0;treeNodeNum = 0;};~BinarySearchTree();// 清空树void clear();// 节点的个数int Nodes(){return treeNodeNum;}// 是否为空树bool isEmpty(){return root == 0;}// 插入数据void inseartNode(const T data);// 深度优先遍历树// 前序遍历(DLR 根-&amp;gt;左-&amp;gt;右)void showNodeByDLR();// 中序遍历(LDR 左-&amp;gt;根-&amp;gt;右)void showNodeByLDR();// 后序遍历(LRD 左-&amp;gt;右-&amp;gt;根)void showNodeByLRD();// 删除节点的数据// 合并删除bool removeNodeMerge(const T data);// 复制删除bool removeNodeCopy(const T data);// 查找数据bool SearchData(const T data);};数据操作  增删改查  数据的插入 template&amp;lt;class T&amp;gt;void BinarySearchTree&amp;lt;T&amp;gt; ::inseartNode(const T data){BinarySearchTreeNode&amp;lt;T&amp;gt; *new_node = new BinarySearchTreeNode&amp;lt;T&amp;gt;(data);// 如果为空树if(isEmpty()){root = new_node; // 新建节点设置为root 节点treeNodeNum &#43;&#43;; // 树的节点数&#43;1return;}BinarySearchTreeNode&amp;lt;T&amp;gt; *node = root;// 遍历树， 找到插入的节点的位置while (node !'><title>数据结构-Binary search tree c&#43;&#43;实现</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-binary-search-tree-c-%E5%AE%9E%E7%8E%B0/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='数据结构-Binary search tree c&#43;&#43;实现'>
+<meta property='og:description' content='二叉查找树 数据结构定义 // 节点的定义template&amp;lt;class T&amp;gt;class BinarySearchTreeNode{public:BinarySearchTreeNode(){left = 0;right = 0;}BinarySearchTreeNode(T data){this-&amp;gt;data = data;left = 0;right = 0;}~BinarySearchTreeNode(){};T data; // 保存的节点的数据BinarySearchTreeNode *left; // 指向左节点BinarySearchTreeNode *right; // 指向右节点};// 树的定义template&amp;lt;class T&amp;gt;class BinarySearchTree{private:BinarySearchTreeNode&amp;lt;T&amp;gt; *root; // 定义头节点int treeNodeNum; // 树的节点数void deleteNodeAll(BinarySearchTreeNode&amp;lt;T&amp;gt; *node); // 删除所有节点// 显示节点void DLR(BinarySearchTreeNode&amp;lt;T&amp;gt; *node);void LDR(BinarySearchTreeNode&amp;lt;T&amp;gt; *node);void LRD(BinarySearchTreeNode&amp;lt;T&amp;gt; *node);// 删除*&amp;amp;代表指针引用void deleteNodeByMerge(BinarySearchTreeNode&amp;lt;T&amp;gt;*&amp;amp; node); // 合并删除void deleteNodeByCopy(BinarySearchTreeNode&amp;lt;T&amp;gt;*&amp;amp; node); // 复制删除public:BinarySearchTree(){root = 0;treeNodeNum = 0;};~BinarySearchTree();// 清空树void clear();// 节点的个数int Nodes(){return treeNodeNum;}// 是否为空树bool isEmpty(){return root == 0;}// 插入数据void inseartNode(const T data);// 深度优先遍历树// 前序遍历(DLR 根-&amp;gt;左-&amp;gt;右)void showNodeByDLR();// 中序遍历(LDR 左-&amp;gt;根-&amp;gt;右)void showNodeByLDR();// 后序遍历(LRD 左-&amp;gt;右-&amp;gt;根)void showNodeByLRD();// 删除节点的数据// 合并删除bool removeNodeMerge(const T data);// 复制删除bool removeNodeCopy(const T data);// 查找数据bool SearchData(const T data);};数据操作  增删改查  数据的插入 template&amp;lt;class T&amp;gt;void BinarySearchTree&amp;lt;T&amp;gt; ::inseartNode(const T data){BinarySearchTreeNode&amp;lt;T&amp;gt; *new_node = new BinarySearchTreeNode&amp;lt;T&amp;gt;(data);// 如果为空树if(isEmpty()){root = new_node; // 新建节点设置为root 节点treeNodeNum &#43;&#43;; // 树的节点数&#43;1return;}BinarySearchTreeNode&amp;lt;T&amp;gt; *node = root;// 遍历树， 找到插入的节点的位置while (node !'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-binary-search-tree-c-%E5%AE%9E%E7%8E%B0/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2022-01-01T21:00:08&#43;08:00'/><meta property='article:modified_time' content='2022-01-01T21:00:08&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-binary-search-tree-c-%E5%AE%9E%E7%8E%B0/1.gif' />
+<meta name="twitter:title" content="数据结构-Binary search tree c&#43;&#43;实现">
+<meta name="twitter:description" content="二叉查找树 数据结构定义 // 节点的定义template&amp;lt;class T&amp;gt;class BinarySearchTreeNode{public:BinarySearchTreeNode(){left = 0;right = 0;}BinarySearchTreeNode(T data){this-&amp;gt;data = data;left = 0;right = 0;}~BinarySearchTreeNode(){};T data; // 保存的节点的数据BinarySearchTreeNode *left; // 指向左节点BinarySearchTreeNode *right; // 指向右节点};// 树的定义template&amp;lt;class T&amp;gt;class BinarySearchTree{private:BinarySearchTreeNode&amp;lt;T&amp;gt; *root; // 定义头节点int treeNodeNum; // 树的节点数void deleteNodeAll(BinarySearchTreeNode&amp;lt;T&amp;gt; *node); // 删除所有节点// 显示节点void DLR(BinarySearchTreeNode&amp;lt;T&amp;gt; *node);void LDR(BinarySearchTreeNode&amp;lt;T&amp;gt; *node);void LRD(BinarySearchTreeNode&amp;lt;T&amp;gt; *node);// 删除*&amp;amp;代表指针引用void deleteNodeByMerge(BinarySearchTreeNode&amp;lt;T&amp;gt;*&amp;amp; node); // 合并删除void deleteNodeByCopy(BinarySearchTreeNode&amp;lt;T&amp;gt;*&amp;amp; node); // 复制删除public:BinarySearchTree(){root = 0;treeNodeNum = 0;};~BinarySearchTree();// 清空树void clear();// 节点的个数int Nodes(){return treeNodeNum;}// 是否为空树bool isEmpty(){return root == 0;}// 插入数据void inseartNode(const T data);// 深度优先遍历树// 前序遍历(DLR 根-&amp;gt;左-&amp;gt;右)void showNodeByDLR();// 中序遍历(LDR 左-&amp;gt;根-&amp;gt;右)void showNodeByLDR();// 后序遍历(LRD 左-&amp;gt;右-&amp;gt;根)void showNodeByLRD();// 删除节点的数据// 合并删除bool removeNodeMerge(const T data);// 复制删除bool removeNodeCopy(const T data);// 查找数据bool SearchData(const T data);};数据操作  增删改查  数据的插入 template&amp;lt;class T&amp;gt;void BinarySearchTree&amp;lt;T&amp;gt; ::inseartNode(const T data){BinarySearchTreeNode&amp;lt;T&amp;gt; *new_node = new BinarySearchTreeNode&amp;lt;T&amp;gt;(data);// 如果为空树if(isEmpty()){root = new_node; // 新建节点设置为root 节点treeNodeNum &#43;&#43;; // 树的节点数&#43;1return;}BinarySearchTreeNode&amp;lt;T&amp;gt; *node = root;// 遍历树， 找到插入的节点的位置while (node !"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-binary-search-tree-c-%E5%AE%9E%E7%8E%B0/1.gif' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-binary-search-tree-c-%E5%AE%9E%E7%8E%B0/">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-binary-search-tree-c-%E5%AE%9E%E7%8E%B0/1_hu163e0849e6d75821587eb02814146518_65785_800x0_resize_box.gif"
+                        srcset="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-binary-search-tree-c-%E5%AE%9E%E7%8E%B0/1_hu163e0849e6d75821587eb02814146518_65785_800x0_resize_box.gif 800w, /p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-binary-search-tree-c-%E5%AE%9E%E7%8E%B0/1_hu163e0849e6d75821587eb02814146518_65785_1600x0_resize_box.gif 1600w"
+                        width="800" 
+                        height="450" 
+                        loading="lazy"
+                        alt="Featured image of post 数据结构-Binary search tree c&#43;&#43;实现" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/language/" style="background-color: #2a9d8f; color: #fff;">
+                语言学习
+            </a>
+        
+            <a href="/categories/c_c&#43;&#43;/" style="background-color: #2a9d8f; color: #fff;">
+                C_C&#43;&#43;
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-binary-search-tree-c-%E5%AE%9E%E7%8E%B0/">数据结构-Binary search tree c&#43;&#43;实现</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jan 01, 2022</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 6 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h2 id="二叉查找树">二叉查找树</h2>
+<h3 id="数据结构定义">数据结构定义</h3>
+<pre tabindex="0"><code>
+
+// 节点的定义
+template&lt;class T&gt;
+class BinarySearchTreeNode
+{
+public:
+    BinarySearchTreeNode()
+    {
+        left = 0;
+        right = 0;
+    }
+    BinarySearchTreeNode(T data)
+    {
+        this-&gt;data = data;
+        left =  0;
+        right = 0;
+    }
+    ~BinarySearchTreeNode(){};
+    T data;  // 保存的节点的数据
+    BinarySearchTreeNode *left; // 指向左节点
+    BinarySearchTreeNode *right; // 指向右节点
+};
+
+
+// 树的定义
+template&lt;class T&gt;
+class BinarySearchTree
+{
+private:
+    BinarySearchTreeNode&lt;T&gt; *root;  // 定义头节点
+    int treeNodeNum;             // 树的节点数
+    void deleteNodeAll(BinarySearchTreeNode&lt;T&gt; *node); // 删除所有节点
+    // 显示节点
+    void DLR(BinarySearchTreeNode&lt;T&gt; *node);
+    void LDR(BinarySearchTreeNode&lt;T&gt; *node);
+    void LRD(BinarySearchTreeNode&lt;T&gt; *node);
+    // 删除*&amp;代表指针引用
+    void deleteNodeByMerge(BinarySearchTreeNode&lt;T&gt;*&amp; node); // 合并删除
+    void deleteNodeByCopy(BinarySearchTreeNode&lt;T&gt;*&amp; node);  // 复制删除
+public:
+    BinarySearchTree()
+    {
+        root = 0;
+        treeNodeNum = 0;
+    };
+    ~BinarySearchTree();
+    // 清空树
+    void clear();
+    // 节点的个数
+    int Nodes()
+    {
+        return treeNodeNum;
+    }
+    // 是否为空树
+    bool isEmpty()
+    {
+        return root == 0;
+    }
+    // 插入数据
+    void inseartNode(const T data);
+    // 深度优先遍历树
+    // 前序遍历(DLR 根-&gt;左-&gt;右)
+    void showNodeByDLR();
+    // 中序遍历(LDR 左-&gt;根-&gt;右)
+    void showNodeByLDR();
+    // 后序遍历(LRD 左-&gt;右-&gt;根)
+    void showNodeByLRD();
+    // 删除节点的数据
+    // 合并删除
+    bool removeNodeMerge(const T data);
+    // 复制删除
+    bool removeNodeCopy(const T data);
+    // 查找数据
+    bool SearchData(const T data);
+};
+
+</code></pre><h3 id="数据操作">数据操作</h3>
+<ul>
+<li>增删改查</li>
+</ul>
+<h4 id="数据的插入">数据的插入</h4>
+<pre tabindex="0"><code>template&lt;class T&gt;
+void BinarySearchTree&lt;T&gt; ::inseartNode(const T data)
+{
+    BinarySearchTreeNode&lt;T&gt; *new_node = new BinarySearchTreeNode&lt;T&gt;(data);
+    // 如果为空树
+    if(isEmpty())
+    {
+        root = new_node;  // 新建节点设置为root 节点
+        treeNodeNum ++;   // 树的节点数+1
+        return;
+    }
+    BinarySearchTreeNode&lt;T&gt; *node = root;
+    // 遍历树， 找到插入的节点的位置
+    while (node != 0)
+    {
+        // 当节点的值大于插入的值时，就插入到左子数
+        if(node-&gt;data &gt; data)
+        {
+            // 左节点为nill, 将新节点赋值给节点的左节点
+            if(node-&gt;left == NULL)
+            {
+                node-&gt;left = new_node;
+                break;     // 推出循环
+            }
+            else
+            {
+                node = node-&gt;left;
+                continue;     // 继续查找下一个节点
+            }
+        }
+        else
+        {
+            // 如果右节点为nill, 右节点-&gt;新节点
+            if(node-&gt;right == NULL)
+            {
+                node-&gt;right = new_node;
+                break;
+            }
+            else
+            {
+                node = node-&gt;right;
+                continue;
+            }
+
+        }    
+    }
+    treeNodeNum ++; // 数的节点数+1
+
+}
+</code></pre><h4 id="数据的删除">数据的删除</h4>
+<pre tabindex="0"><code>// 采用递归的方式删除节点
+template&lt;class T&gt;
+void BinarySearchTree&lt;T&gt; ::deleteNodeAll(BinarySearchTreeNode&lt;T&gt; *node)
+{
+    // 如果的空树就结束递归
+    if(node == 0)
+    {
+        return;
+    }
+    deleteNodeAll(node-&gt;left);
+    deleteNodeAll(node-&gt;right);
+    cout &lt;&lt; node-&gt;data &lt;&lt; endl;
+
+    delete node;   // 释放资源
+}
+template&lt;class T&gt;
+void BinarySearchTree&lt;T&gt; ::clear()
+{
+    deleteNodeAll(root);   // 清空所有节点
+    treeNodeNum = 0;    // 树的节点数为0
+}
+
+/*
+合并删除法：
+从删除的节点的两棵子树合并未一棵树，然后将这颗树连接到删除节点的父节点
+具体操作：左子树的最大值左作为有子树的父节点，左子树的根节点作为这棵树的根节点 
+或右子树的最小值作为左子树的父节点，右子树的根节点作为这棵树的根节点
+*/
+template&lt;class T&gt;
+void BinarySearchTree&lt;T&gt; ::deleteNodeByMerge(BinarySearchTreeNode&lt;T&gt;*&amp; node)
+{
+    // 左子树作为root作为树的root
+    /*
+    BinarySearchTreeNode&lt;T&gt; *temp = node;
+    if(node != 0)
+    {
+        // 如果节点的左节点为空
+        if(!node-&gt;left)
+        {
+            node = node-&gt;right;  //直接指向node的右节点
+        }
+        // 如果右子节点为空
+        else if(!node-&gt;right)
+        {
+            node = node-&gt;left;  // 直接指向node的左节点
+        }
+        else{
+            temp = node-&gt;left; // temp 为node的左节点
+            // 找出左节点中的最大值
+            while (temp-&gt;right)
+            {
+                temp = temp-&gt;right;
+            }
+            temp-&gt;right = node-&gt;right; // 左子树的最大值指向右节点
+            temp = node;           
+            node = node-&gt;left;         // 左子树作为两颗树的头节点
+            
+        }
+        delete temp;
+    } */
+    // 右子树的root作为树的root
+    BinarySearchTreeNode&lt;T&gt; *temp = node;
+    if(node)
+    {
+        if(!node-&gt;left)
+        {
+            node = node-&gt;right;
+        }
+        else if(!node-&gt;right)
+        {
+            node = node-&gt;left;
+        }
+        else
+        {
+            temp = node-&gt;right;
+            while (temp-&gt;left)
+            {
+                temp = temp -&gt;left;
+            }
+            temp -&gt;left = node-&gt;left;
+            temp = node;
+            node = node-&gt;right;
+        }
+        delete temp;
+    }
+}
+
+/*
+复制删除法：
+将被删除节点的左子树的最大值或者右子树的最小值复制给被删除的节点的数值，
+然后删除左子树的最大值的节点或者右子树的最小值的节点
+*/
+template&lt;class T&gt;
+void BinarySearchTree&lt;T&gt; ::deleteNodeByCopy(BinarySearchTreeNode&lt;T&gt;*&amp; node)
+{
+    // 复制右子树的最小值
+    /*
+    BinarySearchTreeNode&lt;T&gt; *prev = 0;       // 复制节点(右子树最小值被删节点)的前驱节点
+    BinarySearchTreeNode&lt;T&gt; *temp = node;
+    if(node)
+    {
+        if(!node-&gt;left)
+        {
+            node = node-&gt;right;
+        }
+        else if(!node-&gt;right)
+        {
+            node = node-&gt;left;
+        }
+        else
+        {
+            temp = node-&gt;right;
+            // 找到右子树的最小值
+            while (temp-&gt;left)
+            {
+                prev = temp;
+                temp = temp-&gt;left;
+            }
+            node-&gt;data = temp-&gt;data;   // 将右子树的最小值复制给被删节点
+            // 当右子树的首节点没有左节点时
+            if(prev == node)
+            {
+                node-&gt;right = temp-&gt;right; // 直接指向被删节点的右节点
+            }
+            else
+            {
+                prev-&gt;left = temp-&gt;right; // 先驱节点的左节点指向删除节点的右节点
+            }
+        }
+        delete temp;
+    }*/
+    // 复制左子树的最大值
+    BinarySearchTreeNode&lt;T&gt; *prev = 0;       // 复制节点(右子树最小值被删节点)的前驱节点
+    BinarySearchTreeNode&lt;T&gt; *temp = node;
+    if(node)
+    {
+        if(!node-&gt;left)
+        {
+            node = node-&gt;right;
+        }
+        else if(!node-&gt;right)
+        {
+            node = node-&gt;left;
+        }
+        else
+        {
+            temp = node-&gt;left;
+            // 找到左子树的最大值
+            while (temp-&gt;right)
+            {
+                prev = temp;
+                temp = temp-&gt;right;
+            }
+            node-&gt;data = temp-&gt;data;   // 将左子树的最大值复制给被删节点
+            // 当左子树的首节点没有右节点时
+            if(prev == node)
+            {
+                node-&gt;left = temp-&gt;left; // 直接指向被删节点的左节点
+            }
+            else
+            {
+                prev-&gt;right = temp-&gt;left; // 先驱节点的右节点指向删除节点的左节点
+            }
+        }
+        delete temp;
+    }
+
+
+}
+
+// 合并删除
+template&lt;class T&gt;
+bool BinarySearchTree&lt;T&gt; ::removeNodeMerge(const T data)
+{
+    if(isEmpty())
+    {
+        cout &lt;&lt; &quot;the tree is empty&quot; &lt;&lt; endl;
+        return false;
+    }
+    BinarySearchTreeNode&lt;T&gt; *prev_node = 0;  // 头节点
+    BinarySearchTreeNode&lt;T&gt; *node = root;
+    // 找到值的节点
+    while (node)
+    {
+        // 如果node的值等于data
+        if(node-&gt;data == data)
+        {
+            break;
+        }
+        prev_node = node;  // node的头节点
+        // node 的值大于deta 就往左子树找
+        if(node-&gt;data &gt; data)
+        {
+            node = node-&gt;left;
+        }
+        // node 的值小于 data 就往右子树找
+        else{
+            node = node-&gt;right;
+        }
+    }
+    // 找到值的节点了
+    if(node != 0 &amp;&amp; node-&gt;data == data)
+    {
+        // 如果是头节点
+        if(node == root)
+        {
+            // deleteNodeByMerge(root);
+            deleteNodeByCopy(root);
+        }
+        // 其他节点的左节点==data
+        else if(prev_node-&gt;left == node)
+        {
+            // deleteNodeByMerge(prev_node-&gt;left);
+            deleteNodeByCopy(prev_node-&gt;left);
+        }
+        else
+        {
+            // deleteNodeByMerge(prev_node-&gt;right);
+            deleteNodeByCopy(prev_node-&gt;right);
+        }
+        treeNodeNum--; //节点数减一
+        return true;
+    }
+    else
+    {
+        cout &lt;&lt; data &lt;&lt; &quot;no exits tree&quot; &lt;&lt; endl;
+    }
+    return false;
+}
+
+// 复制删除
+template&lt;class T&gt;
+bool BinarySearchTree&lt;T&gt; ::removeNodeCopy(const T data)
+{
+    if(isEmpty())
+    {
+        cout &lt;&lt; &quot;the tree is empty&quot; &lt;&lt; endl;
+        return false;
+    }
+    BinarySearchTreeNode&lt;T&gt; *node = root;
+    BinarySearchTreeNode&lt;T&gt; *prev = 0;
+    // 找到数据的节点
+    while (node)
+    {
+        // 找到值就跳出循环
+        if(node-&gt;data == data)
+        {
+            break;
+        }
+        // 未找到，父节点给prev
+        prev = node;
+        // data &gt; value -&gt; 右子树查找
+        if(data &gt; node-&gt;data)
+        {
+            node = node-&gt;right;
+        }
+        // 左子树查找
+        else
+        {
+            node = node-&gt;left;
+        }
+    }
+    // 找到节点
+    if(node &amp;&amp; node-&gt;data == data)
+    {
+        // 节点为根节点
+        if(node == root)
+        {
+            deleteNodeByCopy(root);
+        }
+        // 右节点
+        else if(prev-&gt;right == node)
+        {
+            deleteNodeByCopy(prev-&gt;right);
+        }
+        // 左节点
+        else
+        {
+            deleteNodeByCopy(prev-&gt;left);
+        }
+        // 节点数-1
+        treeNodeNum--;
+        return true;
+    }
+    // 未找到
+    else
+    {
+        cout &lt;&lt; data &lt;&lt; &quot;no exits in zhe tree&quot; &lt;&lt; endl;
+    }
+    return false;
+}
+</code></pre><h4 id="数据的查询">数据的查询</h4>
+<ul>
+<li>前序遍历、中序遍历、后续遍历、值查询</li>
+</ul>
+<pre tabindex="0"><code>template&lt;class T&gt;
+void BinarySearchTree&lt;T&gt; ::DLR(BinarySearchTreeNode&lt;T&gt; *node)
+{
+    if(!node)
+    { 
+        return;
+    }
+    // 前序遍历(DLR)(根-&gt;左-&gt;右)
+    cout &lt;&lt; node-&gt;data &lt;&lt; &quot;-&gt;&quot;;
+    DLR(node-&gt;left);
+    DLR(node-&gt;right);
+}
+template&lt;class T&gt;
+void BinarySearchTree&lt;T&gt; ::LDR(BinarySearchTreeNode&lt;T&gt; *node)
+{
+    if(!node)
+    {
+        return;
+    }
+     // 中序遍历(LDR)(左-&gt;根-&gt;右)
+    LDR(node-&gt;left);
+    cout &lt;&lt; node-&gt;data &lt;&lt; &quot;-&gt;&quot;;
+    LDR(node-&gt;right);
+}
+template&lt;class T&gt;
+void BinarySearchTree&lt;T&gt; ::LRD(BinarySearchTreeNode&lt;T&gt; *node)
+{
+    if(!node)
+    {
+        return;
+    }
+     // 后序遍历(LRD)(左-&gt;右-&gt;根)
+    LRD(node-&gt;left);
+    LRD(node-&gt;right);
+    cout &lt;&lt; node-&gt;data &lt;&lt; &quot;-&gt;&quot;;
+}
+template&lt;class T&gt;
+void BinarySearchTree&lt;T&gt; ::showNodeByDLR()
+{
+    if(isEmpty())
+    {
+        cout &lt;&lt; &quot;this tree is empty&quot; &lt;&lt; endl;
+        return;
+    }
+    // 遍历树
+    BinarySearchTreeNode&lt;T&gt; *node = root;
+    cout &lt;&lt; &quot;DLR: &quot;;
+    DLR(node);  
+    cout &lt;&lt; endl;
+}
+
+template&lt;class T&gt;
+void BinarySearchTree&lt;T&gt; ::showNodeByLDR()
+{
+    if(isEmpty())
+    {
+        cout &lt;&lt; &quot;this tree is empty&quot; &lt;&lt; endl;
+        return;
+    }
+    // 遍历树
+    BinarySearchTreeNode&lt;T&gt; *node = root;
+    cout &lt;&lt; &quot;LDR: &quot;;
+    LDR(node); 
+    cout &lt;&lt; endl; 
+}
+
+template&lt;class T&gt;
+void BinarySearchTree&lt;T&gt; ::showNodeByLRD()
+{
+    if(isEmpty())
+    {
+        cout &lt;&lt; &quot;this tree is empty&quot; &lt;&lt; endl;
+        return;
+    }
+    // 遍历树
+    BinarySearchTreeNode&lt;T&gt; *node = root;
+    cout &lt;&lt; &quot;LRD: &quot;;
+    LRD(node); 
+    cout &lt;&lt; endl; 
+}
+
+template&lt;class T&gt;
+bool BinarySearchTree&lt;T&gt; ::SearchData(const T data)
+{
+    if(isEmpty())
+    {
+        return false;
+    }
+    BinarySearchTreeNode&lt;T&gt; *node = root;
+    while (node)
+    {
+        if(node-&gt;data == data)
+        {
+            return true;
+        }
+        else if(data &gt; node-&gt;data)
+        {
+            node = node-&gt;right;
+        }
+        else
+        {
+            node = node-&gt;left;
+        }
+    }
+    return false
+    ;
+}
+</code></pre><h3 id="测试">测试</h3>
+<pre tabindex="0"><code>
+int main(int argc, char const *argv[])
+{
+    BinarySearchTree&lt;int&gt; tree;
+    tree.inseartNode(5);
+    tree.inseartNode(3);
+    tree.inseartNode(2);
+    tree.inseartNode(4);
+    tree.inseartNode(6);
+    tree.inseartNode(5);
+    tree.inseartNode(7);
+    // 前序遍历
+    tree.showNodeByDLR();
+    // 中序遍历
+    tree.showNodeByLDR();
+    // 后序遍历
+    tree.showNodeByLRD();
+    cout &lt;&lt; &quot;*******************************&quot; &lt;&lt; endl;
+    cout &lt;&lt; tree.removeNodeMerge(5)  &lt;&lt;  endl;
+    // 前序遍历
+    tree.showNodeByDLR();
+    // 中序遍历
+    tree.showNodeByLDR();
+    // 后序遍历5
+    tree.showNodeByLRD();
+    cout &lt;&lt; &quot;nodes is:&quot; &lt;&lt; tree.Nodes() &lt;&lt; endl;
+    cout &lt;&lt; &quot;*******************************&quot; &lt;&lt; endl;
+    cout &lt;&lt; tree.removeNodeCopy(7)  &lt;&lt;  endl;
+    // 前序遍历
+    tree.showNodeByDLR();
+    // 中序遍历
+    tree.showNodeByLDR();
+    // 后序遍历
+    tree.showNodeByLRD();
+    cout &lt;&lt; &quot;nodes is:&quot; &lt;&lt; tree.Nodes() &lt;&lt; endl;
+    cout &lt;&lt; &quot;*******************************&quot; &lt;&lt; endl;
+    cout &lt;&lt; tree.SearchData(21) &lt;&lt; endl;
+    system(&quot;pause&quot;);
+    return 0;
+}
+</code></pre><h2 id="源码">源码</h2>
+<ul>
+<li><a class="link" href="https://github.com/zcj-git520/DataStructuresAlgorithmsForC/tree/master/tree/binary_tree"  target="_blank" rel="noopener"
+    >我的github:https://github.com/zcj-git520/DataStructuresAlgorithmsForC/tree/master/tree/binary_tree</a></li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E6%A0%88%E5%9F%BA%E4%BA%8E%E5%8D%95%E9%A1%B9%E9%93%BE%E8%A1%A8%E9%98%9F%E5%88%97%E5%9F%BA%E4%BA%8E%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8c-%E5%AE%9E%E7%8E%B0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E6%A0%88%E5%9F%BA%E4%BA%8E%E5%8D%95%E9%A1%B9%E9%93%BE%E8%A1%A8%E9%98%9F%E5%88%97%E5%9F%BA%E4%BA%8E%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8c-%E5%AE%9E%E7%8E%B0/1.d90a4e817af655a738f16cd6b901b471_hucc057a99640c389677e7decbd4886594_40524_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-2QpOgXr2Vac48WzWuQG0cQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">数据结构-栈(基于单项链表)&amp;&amp;队列(基于双向链表)c&#43;&#43;实现</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8-c-%E5%AE%9E%E7%8E%B0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8-c-%E5%AE%9E%E7%8E%B0/1.8698f35cbd072100d008bc5611dc9311_huc216cf6486350636a2e6728955e7fc78_62516_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-hpjzXL0HIQDQCLxWEdyTEQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">数据结构-双向链表&amp;&amp;循环双向链表 c&#43;&#43;实现</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E5%90%91%E9%93%BE%E8%A1%A8c-%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E5%90%91%E9%93%BE%E8%A1%A8c-%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/1.d4063513636ac24a26f405f7f6147e2d_huda65db0749ea5cfbe7a2aa726c042ca1_14970_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-1AY1E2Nqwkom9AX39hR&#43;LQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">数据结构-单向链表c&#43;&#43;语言实现</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/c/c-%E5%AE%89%E5%85%A8%E6%8C%87%E5%8D%97/">
+        
+        
+            <div class="article-image">
+                <img src="/p/c/c-%E5%AE%89%E5%85%A8%E6%8C%87%E5%8D%97/1.8a9c37704d9a62457afff477ab59d921_hub729bb727716490d1309dfd2d43fb84b_10267_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-ipw3cE2aYkV6//R3q1nZIQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">c/c&#43;&#43;安全指南</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E6%A0%88%E5%9F%BA%E4%BA%8E%E5%8D%95%E9%A1%B9%E9%93%BE%E8%A1%A8%E9%98%9F%E5%88%97%E5%9F%BA%E4%BA%8E%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E5%AE%9E%E7%8E%B0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E6%A0%88%E5%9F%BA%E4%BA%8E%E5%8D%95%E9%A1%B9%E9%93%BE%E8%A1%A8%E9%98%9F%E5%88%97%E5%9F%BA%E4%BA%8E%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E5%AE%9E%E7%8E%B0/1.d90a4e817af655a738f16cd6b901b471_hucc057a99640c389677e7decbd4886594_40524_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-2QpOgXr2Vac48WzWuQG0cQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">数据结构-栈(基于单项链表)&amp;&amp;队列(基于双向链表)go实现</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#二叉查找树">二叉查找树</a>
+      <ol>
+        <li><a href="#数据结构定义">数据结构定义</a></li>
+        <li><a href="#数据操作">数据操作</a>
+          <ol>
+            <li><a href="#数据的插入">数据的插入</a></li>
+            <li><a href="#数据的删除">数据的删除</a></li>
+            <li><a href="#数据的查询">数据的查询</a></li>
+          </ol>
+        </li>
+        <li><a href="#测试">测试</a></li>
+      </ol>
+    </li>
+    <li><a href="#源码">源码</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
