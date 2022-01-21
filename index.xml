@@ -6,7 +6,546 @@
         <description>Recent content on Chengji Zhao&#39;s blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Wed, 05 Jan 2022 21:00:08 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Mon, 10 Jan 2022 21:00:08 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>数据结构-AVR tree c&#43;&#43;实现</title>
+        <link>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-avr-tree-c-%E5%AE%9E%E7%8E%B0/</link>
+        <pubDate>Mon, 10 Jan 2022 21:00:08 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-avr-tree-c-%E5%AE%9E%E7%8E%B0/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-avr-tree-c-%E5%AE%9E%E7%8E%B0/1.png" alt="Featured image of post 数据结构-AVR tree c&#43;&#43;实现" /&gt;&lt;h2 id=&#34;二叉查找树&#34;&gt;二叉查找树&lt;/h2&gt;
+&lt;h3 id=&#34;数据结构定义&#34;&gt;数据结构定义&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;
+
+// 定义树的节点
+template&amp;lt;class T&amp;gt;
+class AvrTreeNode
+{
+public:
+    AvrTreeNode(){};
+    AvrTreeNode(T data)
+    {
+        this-&amp;gt;data = data;
+        left = 0;
+        right = 0;
+        hight = -1;
+    }
+    ~AvrTreeNode(){};
+    T data;                 // 存储的数据
+    AvrTreeNode *left;      // 左子树
+    AvrTreeNode *right;     // 右子树
+    int hight;              // 高度 
+};
+
+// 定义树
+template&amp;lt;class T&amp;gt;
+class AvrTree
+{
+private:
+    AvrTreeNode&amp;lt;T&amp;gt; *root;     // 定义根节点
+    // 插入节点
+    void inseartNode(AvrTreeNode&amp;lt;T&amp;gt;*&amp;amp; node, const T data);
+    void deleteNodeAll(AvrTreeNode&amp;lt;T&amp;gt; *node); // 删除所有节点
+    // 显示节点
+    void DLR(AvrTreeNode&amp;lt;T&amp;gt; *node);
+    void LDR(AvrTreeNode&amp;lt;T&amp;gt; *node);
+    void LRD(AvrTreeNode&amp;lt;T&amp;gt; *node);
+    // 删除*&amp;amp;代表指针引用
+    bool deleteNode(AvrTreeNode&amp;lt;T&amp;gt;*&amp;amp; node, const T data);
+    // void deleteNodeByMerge(AvrTreeNode&amp;lt;T&amp;gt;*&amp;amp; node); // 合并删除
+    // void deleteNodeByCopy(AvrTreeNode&amp;lt;T&amp;gt;*&amp;amp; node);  // 复制删除
+    // 单右旋
+    void LL(AvrTreeNode&amp;lt;T&amp;gt; *&amp;amp;node);
+    // 单左旋
+    void RR(AvrTreeNode&amp;lt;T&amp;gt; *&amp;amp;node);
+    // 左右旋
+    void RLR(AvrTreeNode&amp;lt;T&amp;gt; *&amp;amp;node);
+    // 右左旋
+    void LRR(AvrTreeNode&amp;lt;T&amp;gt; *&amp;amp;node);
+    // 求高度的最大值
+    int maxHight(int h1, int h2)
+    {
+        return h1&amp;gt;h2 ? h1:h2;
+    }
+      // 得到树的高度
+    int getTreeHight(AvrTreeNode&amp;lt;T&amp;gt; *node)
+    {
+        if(!node)
+        {
+            return -1;
+        }
+        return node-&amp;gt;hight;
+    }
+public:
+    AvrTree(/* args */)
+    {
+        root = 0;
+    }
+    ~AvrTree();
+    // 清空树
+    void clear();
+    // 是否为空树
+    bool isEmpty()
+    {
+        return root == 0;
+    }
+    // 插入数据
+    void inseartData(const T data);
+    // 深度优先遍历树
+    // 前序遍历(DLR 根-&amp;gt;左-&amp;gt;右)
+    void showNodeByDLR();
+    // 中序遍历(LDR 左-&amp;gt;根-&amp;gt;右)
+    void showNodeByLDR();
+    // 后序遍历(LRD 左-&amp;gt;右-&amp;gt;根)
+    void showNodeByLRD();
+    // 删除节点的数据
+    bool remove(const T data);
+    // LVR查找树
+    bool LVRSearchData(const T data);
+};
+
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;数据操作&#34;&gt;数据操作&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;增删改查&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;数据的插入&#34;&gt;数据的插入&lt;/h4&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;
+// 数据的插入
+template&amp;lt;class T&amp;gt;
+void AvrTree&amp;lt;T&amp;gt; ::inseartNode(AvrTreeNode&amp;lt;T&amp;gt; *&amp;amp; node, const T data)
+{
+    // 如果节点为空
+    if(node == 0)
+    {
+        node = new AvrTreeNode&amp;lt;T&amp;gt;(data);
+        return;
+    }
+    // 插入在左子树
+    if(data &amp;lt; node-&amp;gt;data)
+    {
+        inseartNode(node-&amp;gt;left, data);
+        // 树不平衡时
+        if(getTreeHight(node-&amp;gt;left) - getTreeHight(node-&amp;gt;right) &amp;gt; 1)
+        {
+            // 当值比左节点的值小时，则进行单右旋
+            if(data &amp;lt; node-&amp;gt;left-&amp;gt;data)
+            {
+                LL(node);
+            }
+            // 否则进行左右旋
+            else
+            {
+                RLR(node);
+            }
+        }  
+    }
+    // 插入在右子树
+    else
+        {
+            inseartNode(node-&amp;gt;right, data);
+            // 树不平衡时
+            if(getTreeHight(node-&amp;gt;right) - getTreeHight(node-&amp;gt;left) &amp;gt; 1)
+            {
+                // 当值比右节点的值大时，则进行单左旋
+                if(data &amp;gt;= node-&amp;gt;right-&amp;gt;data)
+                {
+                    RR(node);
+                }
+                // 否则进行右左旋
+                else
+                {
+                    LRR(node);
+                }
+            }
+
+        }
+   // 重新计算节点的高度，节点的深度+1
+    node-&amp;gt;hight = maxHight(getTreeHight(node-&amp;gt;left), getTreeHight(node-&amp;gt;right)) + 1;
+}
+
+template&amp;lt;class T&amp;gt;
+void AvrTree&amp;lt;T&amp;gt; ::inseartData(const T data)
+{
+    // 如果为空树
+    if(isEmpty())
+    {
+        root = new AvrTreeNode&amp;lt;T&amp;gt;(data);
+        root-&amp;gt;hight = 0;
+        return;
+    }
+    inseartNode(root, data);
+}
+
+&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&#34;数据的删除&#34;&gt;数据的删除&lt;/h4&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;
+// 数据的删除
+template&amp;lt;class T&amp;gt;
+void AvrTree&amp;lt;T&amp;gt; ::deleteNodeAll(AvrTreeNode&amp;lt;T&amp;gt; *node)
+{
+    if(node == 0)
+    {
+        return;
+    }
+    // 删除左节点
+    deleteNodeAll(node-&amp;gt;left);
+    // 删除右节点
+    deleteNodeAll(node-&amp;gt;right);
+    // 释放节点
+    delete node;
+
+}
+
+template&amp;lt;class T&amp;gt;
+void AvrTree&amp;lt;T&amp;gt; ::clear()
+{
+    // 如果为空树，直接返回
+    if(root == 0)
+    {
+        return;
+    }
+    deleteNodeAll(root);
+}
+
+template&amp;lt;class T&amp;gt;
+bool AvrTree&amp;lt;T&amp;gt; ::deleteNode(AvrTreeNode&amp;lt;T&amp;gt; *&amp;amp; node, const T data)
+{
+    // 如果节点为空，直接返回，表示未找到数据
+    if(!node)
+    {
+        cout &amp;lt;&amp;lt; &amp;quot;no find:&amp;quot; &amp;lt;&amp;lt; data &amp;lt;&amp;lt; endl;
+        return false;
+    }
+    // 找到数据节点
+    if(data == node-&amp;gt;data)
+    {
+        AvrTreeNode&amp;lt;T&amp;gt; *temp = node;
+        // 只有右节点
+        if(!node-&amp;gt;left)
+        {
+            node = node-&amp;gt;right;
+        }
+        // 只有左节点
+        else if(!node-&amp;gt;right)
+        {
+            node = node-&amp;gt;left;
+        }
+        else
+        {
+            // 采用合并的方式进行删除节点
+            temp = node-&amp;gt;left;
+            // 找到左子树的做大值
+            while (temp-&amp;gt;right)
+            {
+                temp = temp-&amp;gt;right;
+            }
+            temp-&amp;gt;right = node-&amp;gt;right;
+            temp = node;
+            node = node-&amp;gt;left;
+             // 是否对树进行调整
+            if(getTreeHight(node-&amp;gt;left)-getTreeHight(node-&amp;gt;right) &amp;gt; 1)
+            {
+                // 值比最大值大或者等于，就采用单左旋
+                if(data &amp;gt;= node-&amp;gt;right-&amp;gt;data)
+                {
+                    RR(node);
+                }
+                //采用先右旋在左旋
+                else
+                {
+                    LRR(node);
+                }
+
+            }
+        }
+        // 删除节点，返回
+        delete temp;
+        if(node)
+        {
+            node-&amp;gt;hight = maxHight(getTreeHight(node-&amp;gt;right), getTreeHight(node-&amp;gt;right)) + 1;
+        }
+        return true;
+    }
+    // 在左子树查找
+    else if(data &amp;lt; node-&amp;gt;data)
+    {
+        deleteNode(node-&amp;gt;left, data);
+        // 是否对树进行调整
+        if(getTreeHight(node-&amp;gt;left)-getTreeHight(node-&amp;gt;right) &amp;gt; 1)
+        {
+            // 如果值比左子树小，就采用单右旋，
+            if(data &amp;lt; node-&amp;gt;left-&amp;gt;data)
+            {
+                LL(node);
+            }
+            // 采用先左旋在右旋
+            else
+            {
+                RLR(node);
+            }
+        }
+    }
+    // 在右子树查找
+    else
+    {
+        deleteNode(node-&amp;gt;right, data);
+        // 是否要对树进行调整
+        if(getTreeHight(node-&amp;gt;right) - getTreeHight(node-&amp;gt;left) &amp;gt; 1)
+        {
+            // 值比最大值大或者等于，就采用单左旋
+            if(data &amp;gt;= node-&amp;gt;right-&amp;gt;data)
+            {
+                RR(node);
+            }
+            // 采用先右旋在左旋
+            else
+            {
+                LRR(node);
+            }
+        }
+
+    }
+    // 对节点的深度进行调整
+    node-&amp;gt;hight = maxHight(getTreeHight(node-&amp;gt;right), getTreeHight(node-&amp;gt;right)) + 1;
+}
+
+template&amp;lt;class T&amp;gt;
+bool AvrTree&amp;lt;T&amp;gt; ::remove(const T data)
+{
+    // 如果为空树
+    if(isEmpty())
+    {
+        cout &amp;lt;&amp;lt; &amp;quot;this tree is empty&amp;quot; &amp;lt;&amp;lt; endl;
+        return false;
+    }
+    return deleteNode(root, data);
+}
+
+&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&#34;数据的查询&#34;&gt;数据的查询&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;前序遍历、中序遍历、后续遍历、值查询&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;// 数据的查询
+template&amp;lt;class T&amp;gt;
+void AvrTree&amp;lt;T&amp;gt; ::DLR(AvrTreeNode&amp;lt;T&amp;gt; *node)
+{
+    if(!node)
+    { 
+        return;
+    }
+    // 前序遍历(DLR)(根-&amp;gt;左-&amp;gt;右)
+    cout &amp;lt;&amp;lt; node-&amp;gt;data &amp;lt;&amp;lt; &amp;quot;-&amp;gt;&amp;quot;;
+    DLR(node-&amp;gt;left);
+    DLR(node-&amp;gt;right);
+}
+
+template&amp;lt;class T&amp;gt;
+void AvrTree&amp;lt;T&amp;gt; ::LDR(AvrTreeNode&amp;lt;T&amp;gt; *node)
+{
+    if(!node)
+    {
+        return;
+    }
+     // 中序遍历(LDR)(左-&amp;gt;根-&amp;gt;右)
+    LDR(node-&amp;gt;left);
+    cout &amp;lt;&amp;lt; node-&amp;gt;data &amp;lt;&amp;lt; &amp;quot;-&amp;gt;&amp;quot;;
+    LDR(node-&amp;gt;right);
+}
+
+template&amp;lt;class T&amp;gt;
+void AvrTree&amp;lt;T&amp;gt; ::LRD(AvrTreeNode&amp;lt;T&amp;gt; *node)
+{
+    if(!node)
+    {
+        return;
+    }
+     // 后序遍历(LRD)(左-&amp;gt;右-&amp;gt;根)
+    LRD(node-&amp;gt;left);
+    LRD(node-&amp;gt;right);
+    cout &amp;lt;&amp;lt; node-&amp;gt;data &amp;lt;&amp;lt; &amp;quot;-&amp;gt;&amp;quot;;
+}
+
+template&amp;lt;class T&amp;gt;
+void AvrTree&amp;lt;T&amp;gt; ::showNodeByDLR()
+{
+    if(isEmpty())
+    {
+        cout &amp;lt;&amp;lt; &amp;quot;this tree is empty&amp;quot; &amp;lt;&amp;lt; endl;
+        return;
+    }
+    // 遍历树
+    AvrTreeNode&amp;lt;T&amp;gt; *node = root;
+    cout &amp;lt;&amp;lt; &amp;quot;DLR: &amp;quot;;
+    DLR(node);  
+    cout &amp;lt;&amp;lt; endl;
+}
+
+template&amp;lt;class T&amp;gt;
+void AvrTree&amp;lt;T&amp;gt; ::showNodeByLDR()
+{
+    if(isEmpty())
+    {
+        cout &amp;lt;&amp;lt; &amp;quot;this tree is empty&amp;quot; &amp;lt;&amp;lt; endl;
+        return;
+    }
+    // 遍历树
+    AvrTreeNode&amp;lt;T&amp;gt; *node = root;
+    cout &amp;lt;&amp;lt; &amp;quot;LDR: &amp;quot;;
+    LDR(node); 
+    cout &amp;lt;&amp;lt; endl; 
+}
+
+template&amp;lt;class T&amp;gt;
+void AvrTree&amp;lt;T&amp;gt; ::showNodeByLRD()
+{
+    if(isEmpty())
+    {
+        cout &amp;lt;&amp;lt; &amp;quot;this tree is empty&amp;quot; &amp;lt;&amp;lt; endl;
+        return;
+    }
+    // 遍历树
+    AvrTreeNode&amp;lt;T&amp;gt; *node = root;
+    cout &amp;lt;&amp;lt; &amp;quot;LRD: &amp;quot;;
+    LRD(node); 
+    cout &amp;lt;&amp;lt; endl; 
+}
+
+template&amp;lt;class T&amp;gt;
+bool AvrTree&amp;lt;T&amp;gt; ::LVRSearchData(const T data)
+{
+   // 如果树为空就直接返回
+   if(isEmpty())
+   {
+       return false;
+   }
+   AvrTreeNode&amp;lt;T&amp;gt; *node = root;
+   while (node)
+   {
+       if(data == node-&amp;gt;data)
+       {
+           return true;
+       }
+       else if(data &amp;lt; node-&amp;gt;data)
+       {
+           node = node-&amp;gt;left;
+       }
+       else
+       {
+           node = node-&amp;gt;right;
+       }
+   }
+   return false;
+}
+
+&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&#34;树的旋转&#34;&gt;树的旋转&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;单左旋 单右旋 左右旋 右左旋&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;// 节点的旋转
+template&amp;lt;class T&amp;gt;
+void AvrTree&amp;lt;T&amp;gt; ::LL(AvrTreeNode&amp;lt;T&amp;gt; *&amp;amp; node)
+{
+    // 临时节点为节点的左节点
+    AvrTreeNode&amp;lt;T&amp;gt; *temp = node-&amp;gt;left;
+    // 节点的左节点指向临时节点的右节点
+    node-&amp;gt;left = temp-&amp;gt;right;
+    // 临时节点的右节点指向节点(将临时节点的设置为根)
+    temp-&amp;gt;right = node;
+    // 重新获得树的高度
+    temp-&amp;gt;hight = maxHight(getTreeHight(temp-&amp;gt;left), getTreeHight(temp-&amp;gt;right)) + 1;
+    node-&amp;gt;hight = maxHight(getTreeHight(node-&amp;gt;left), getTreeHight(node-&amp;gt;right)) + 1;
+    // 经node 重新指向temp, 即将temp设置为根节点，防止树的断
+    node = temp; 
+}
+
+template&amp;lt;class T&amp;gt;
+void AvrTree&amp;lt;T&amp;gt; ::RR(AvrTreeNode&amp;lt;T&amp;gt; *&amp;amp; node)
+{
+    // 临时节点为节点的右节点
+    AvrTreeNode&amp;lt;T&amp;gt; *temp = node-&amp;gt;right;
+    // 节点的右节点指向临时节点的节点
+    node-&amp;gt;right = temp-&amp;gt;left;
+    // 临时节点的左节点指向节点
+    temp-&amp;gt;left = node;
+    // 重新计算树的高度
+    temp-&amp;gt;hight = maxHight(getTreeHight(temp-&amp;gt;left), getTreeHight(temp-&amp;gt;right)) + 1;
+    node-&amp;gt;hight = maxHight(getTreeHight(node-&amp;gt;left), getTreeHight(node-&amp;gt;right)) + 1;
+     // 经node 重新指向temp, 即将temp设置为根节点，防止树的断
+    node = temp;
+}
+
+template&amp;lt;class T&amp;gt;
+void AvrTree&amp;lt;T&amp;gt; ::RLR(AvrTreeNode&amp;lt;T&amp;gt; *&amp;amp; node)
+{
+    // 先进行左旋
+    RR(node-&amp;gt;left);
+    // 在进行右旋
+    LL(node);
+}
+
+template&amp;lt;class T&amp;gt;
+void AvrTree&amp;lt;T&amp;gt; ::LRR(AvrTreeNode&amp;lt;T&amp;gt; *&amp;amp; node)
+{
+    // 先进行右旋
+    LL(node-&amp;gt;right);
+    // 在进行左旋
+    RR(node);
+}
+
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;测试&#34;&gt;测试&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;
+int main(int argc, char const *argv[])
+{
+    AvrTree&amp;lt;int&amp;gt; avr;
+    avr.inseartData(12);
+    avr.inseartData(42);
+    avr.inseartData(93);
+    avr.inseartData(4);
+    avr.inseartData(15);
+    avr.inseartData(66);
+    avr.inseartData(97);
+    avr.showNodeByDLR();
+    cout &amp;lt;&amp;lt; &amp;quot;***********************************&amp;quot; &amp;lt;&amp;lt; endl;
+    avr.showNodeByLDR();
+    cout &amp;lt;&amp;lt; &amp;quot;***********************************&amp;quot; &amp;lt;&amp;lt; endl;
+    avr.showNodeByLRD();
+    cout &amp;lt;&amp;lt; &amp;quot;***********************************&amp;quot; &amp;lt;&amp;lt; endl;
+    bool ok = avr.remove(42);
+    cout &amp;lt;&amp;lt; &amp;quot;remove is:&amp;quot; &amp;lt;&amp;lt; ok &amp;lt;&amp;lt; endl;
+    avr.showNodeByDLR();
+    cout &amp;lt;&amp;lt; &amp;quot;***********************************&amp;quot; &amp;lt;&amp;lt; endl;
+    avr.showNodeByLDR();
+    cout &amp;lt;&amp;lt; &amp;quot;***********************************&amp;quot; &amp;lt;&amp;lt; endl;
+    avr.showNodeByLRD();
+    cout &amp;lt;&amp;lt; &amp;quot;***********************************&amp;quot; &amp;lt;&amp;lt; endl;
+    bool is = avr.remove(12);
+    cout &amp;lt;&amp;lt; &amp;quot;remove is:&amp;quot; &amp;lt;&amp;lt; is &amp;lt;&amp;lt; endl;
+    avr.showNodeByDLR();
+    cout &amp;lt;&amp;lt; &amp;quot;***********************************&amp;quot; &amp;lt;&amp;lt; endl;
+    avr.showNodeByLDR();
+    cout &amp;lt;&amp;lt; &amp;quot;***********************************&amp;quot; &amp;lt;&amp;lt; endl;
+    avr.showNodeByLRD();
+    cout &amp;lt;&amp;lt; &amp;quot;***********************************&amp;quot; &amp;lt;&amp;lt; endl;
+    bool is1 = avr.remove(661);
+    cout &amp;lt;&amp;lt; &amp;quot;remove1 is:&amp;quot; &amp;lt;&amp;lt; is1 &amp;lt;&amp;lt; endl;
+    avr.showNodeByDLR();
+    cout &amp;lt;&amp;lt; &amp;quot;***********************************&amp;quot; &amp;lt;&amp;lt; endl;
+    avr.showNodeByLDR();
+    cout &amp;lt;&amp;lt; &amp;quot;***********************************&amp;quot; &amp;lt;&amp;lt; endl;
+    avr.showNodeByLRD();
+    cout &amp;lt;&amp;lt; &amp;quot;***********************************&amp;quot; &amp;lt;&amp;lt; endl;
+    bool ok_ = avr.LVRSearchData(66);
+    cout &amp;lt;&amp;lt; &amp;quot;SearchData is:&amp;quot; &amp;lt;&amp;lt; ok_ &amp;lt;&amp;lt; endl;
+    system(&amp;quot;pause&amp;quot;);
+    return 0;
+}
+
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;源码&#34;&gt;源码&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/zcj-git520/DataStructuresAlgorithmsForC/tree/master/tree/avr_tree&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;我的github:https://github.com/zcj-git520/DataStructuresAlgorithmsForC/tree/master/tree/avr_tree&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        <item>
         <title>数据结构-Binary search tree go实现</title>
         <link>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-binary-search-tree-go%E5%AE%9E%E7%8E%B0/</link>
         <pubDate>Wed, 05 Jan 2022 21:00:08 +0800</pubDate>

@@ -6,7 +6,16 @@
     <description>Recent content in 语言学习 on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Wed, 05 Jan 2022 21:00:08 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/language/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 10 Jan 2022 21:00:08 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/language/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>数据结构-AVR tree c&#43;&#43;实现</title>
+      <link>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-avr-tree-c-%E5%AE%9E%E7%8E%B0/</link>
+      <pubDate>Mon, 10 Jan 2022 21:00:08 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-avr-tree-c-%E5%AE%9E%E7%8E%B0/</guid>
+      <description>二叉查找树 数据结构定义 // 定义树的节点template&amp;lt;class T&amp;gt;class AvrTreeNode{public:AvrTreeNode(){};AvrTreeNode(T data){this-&amp;gt;data = data;left = 0;right = 0;hight = -1;}~AvrTreeNode(){};T data; // 存储的数据AvrTreeNode *left; // 左子树AvrTreeNode *right; // 右子树int hight; // 高度 };// 定义树template&amp;lt;class T&amp;gt;class AvrTree{private:AvrTreeNode&amp;lt;T&amp;gt; *root; // 定义根节点// 插入节点void inseartNode(AvrTreeNode&amp;lt;T&amp;gt;*&amp;amp; node, const T data);void deleteNodeAll(AvrTreeNode&amp;lt;T&amp;gt; *node); // 删除所有节点// 显示节点void DLR(AvrTreeNode&amp;lt;T&amp;gt; *node);void LDR(AvrTreeNode&amp;lt;T&amp;gt; *node);void LRD(AvrTreeNode&amp;lt;T&amp;gt; *node);// 删除*&amp;amp;代表指针引用bool deleteNode(AvrTreeNode&amp;lt;T&amp;gt;*&amp;amp; node, const T data);// void deleteNodeByMerge(AvrTreeNode&amp;lt;T&amp;gt;*&amp;amp; node); // 合并删除// void deleteNodeByCopy(AvrTreeNode&amp;lt;T&amp;gt;*&amp;amp; node); // 复制删除// 单右旋void LL(AvrTreeNode&amp;lt;T&amp;gt; *&amp;amp;node);// 单左旋void RR(AvrTreeNode&amp;lt;T&amp;gt; *&amp;amp;node);// 左右旋void RLR(AvrTreeNode&amp;lt;T&amp;gt; *&amp;amp;node);// 右左旋void LRR(AvrTreeNode&amp;lt;T&amp;gt; *&amp;amp;node);// 求高度的最大值int maxHight(int h1, int h2){return h1&amp;gt;h2 ?</description>
+    </item>
+    
     <item>
       <title>数据结构-Binary search tree go实现</title>
       <link>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-binary-search-tree-go%E5%AE%9E%E7%8E%B0/</link>
