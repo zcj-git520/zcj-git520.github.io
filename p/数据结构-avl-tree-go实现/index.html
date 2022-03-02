@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='平衡二叉树 数据结构定义 // 定义树的节点type AVLTreeNode struct {info int // 定义存储的内容height int // 树的高度right *AVLTreeNode // 右节点left *AVLTreeNode // 左节点}// 定义树type AVLTree struct {root *AVLTreeNode // 定义根节点}// 创建节点func creatNode(data int) *AVLTreeNode{return &amp;amp;AVLTreeNode{info: data,height: -1,right: nil,left: nil,}}数据操作  增删改查  数据的插入 // 数据的插入func getHeight(node *AVLTreeNode) int {if node == nil{return -1}return node.'><title>数据结构-AVL tree go实现</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-avl-tree-go%E5%AE%9E%E7%8E%B0/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='数据结构-AVL tree go实现'>
+<meta property='og:description' content='平衡二叉树 数据结构定义 // 定义树的节点type AVLTreeNode struct {info int // 定义存储的内容height int // 树的高度right *AVLTreeNode // 右节点left *AVLTreeNode // 左节点}// 定义树type AVLTree struct {root *AVLTreeNode // 定义根节点}// 创建节点func creatNode(data int) *AVLTreeNode{return &amp;amp;AVLTreeNode{info: data,height: -1,right: nil,left: nil,}}数据操作  增删改查  数据的插入 // 数据的插入func getHeight(node *AVLTreeNode) int {if node == nil{return -1}return node.'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-avl-tree-go%E5%AE%9E%E7%8E%B0/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2022-02-15T21:00:08&#43;08:00'/><meta property='article:modified_time' content='2022-02-15T21:00:08&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-avl-tree-go%E5%AE%9E%E7%8E%B0/1.png' />
+<meta name="twitter:title" content="数据结构-AVL tree go实现">
+<meta name="twitter:description" content="平衡二叉树 数据结构定义 // 定义树的节点type AVLTreeNode struct {info int // 定义存储的内容height int // 树的高度right *AVLTreeNode // 右节点left *AVLTreeNode // 左节点}// 定义树type AVLTree struct {root *AVLTreeNode // 定义根节点}// 创建节点func creatNode(data int) *AVLTreeNode{return &amp;amp;AVLTreeNode{info: data,height: -1,right: nil,left: nil,}}数据操作  增删改查  数据的插入 // 数据的插入func getHeight(node *AVLTreeNode) int {if node == nil{return -1}return node."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-avl-tree-go%E5%AE%9E%E7%8E%B0/1.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-avl-tree-go%E5%AE%9E%E7%8E%B0/">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-avl-tree-go%E5%AE%9E%E7%8E%B0/1_hu627ccad35150ba5c25206c4fe774bc3e_21463_800x0_resize_box_3.png"
+                        srcset="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-avl-tree-go%E5%AE%9E%E7%8E%B0/1_hu627ccad35150ba5c25206c4fe774bc3e_21463_800x0_resize_box_3.png 800w, /p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-avl-tree-go%E5%AE%9E%E7%8E%B0/1_hu627ccad35150ba5c25206c4fe774bc3e_21463_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="946" 
+                        loading="lazy"
+                        alt="Featured image of post 数据结构-AVL tree go实现" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/language/" style="background-color: #2a9d8f; color: #fff;">
+                语言学习
+            </a>
+        
+            <a href="/categories/golang/" style="background-color: #2a9d8f; color: #fff;">
+                Golang
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-avl-tree-go%E5%AE%9E%E7%8E%B0/">数据结构-AVL tree go实现</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Feb 15, 2022</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 4 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h2 id="平衡二叉树">平衡二叉树</h2>
+<h3 id="数据结构定义">数据结构定义</h3>
+<pre tabindex="0"><code>// 定义树的节点
+type AVLTreeNode struct {
+	info   int  // 定义存储的内容
+	height int  // 树的高度
+	right  *AVLTreeNode  // 右节点
+	left   *AVLTreeNode  // 左节点
+}
+
+// 定义树
+type AVLTree struct {
+	root *AVLTreeNode  // 定义根节点
+}
+
+// 创建节点
+func creatNode(data int) *AVLTreeNode{
+	return &amp;AVLTreeNode{
+		info:   data,
+		height: -1,
+		right:  nil,
+		left:   nil,
+	}
+}
+</code></pre><h3 id="数据操作">数据操作</h3>
+<ul>
+<li>增删改查</li>
+</ul>
+<h4 id="数据的插入">数据的插入</h4>
+<pre tabindex="0"><code>
+// 数据的插入
+func getHeight(node *AVLTreeNode) int {
+	if node == nil{
+		return -1
+	}
+	return node.height
+}
+// 左子树调整
+func (a *AVLTree)leftTreeAdjust(node *AVLTreeNode, data int) *AVLTreeNode {
+	// 判断是否需要调整树
+	if getHeight(node.left) - getHeight(node.right) &gt; 1{
+		// 插入的节点在左边上，进右旋
+		if data &lt; node.left.info{
+			return a.lR(node)
+		}else{
+			// 进行左右旋
+			return a.rLR(node)
+		}
+	}
+	return  node
+}
+
+// 右子树调整
+func (a *AVLTree)rightTreeAdjust(node *AVLTreeNode, data int) *AVLTreeNode  {
+	// 判断是否需要调整树
+	if getHeight(node.right) - getHeight(node.left) &gt; 1{
+		// 插入的节点在右边上，进左旋
+		if data &gt;= node.right.info{
+			return a.rR(node)
+		}else{
+			// 进行右左旋
+			return  a.lRR(node)
+		}
+	}
+	return node
+}
+
+func (a *AVLTree)insertNode(node **AVLTreeNode, data int)  {
+	if *node == nil{
+		*node = creatNode(data)
+		(*node).height = maxValue(getHeight((*node).left), getHeight((*node).right)) + 1
+		return
+	}
+	// 插入左子树
+	if data &lt; (*node).info{
+		a.insertNode(&amp;(*node).left, data)
+		// 调整树
+		*node = a.leftTreeAdjust(*node, data)
+
+	}else{
+		// 插入右子树
+		a.insertNode(&amp;(*node).right, data)
+		// 调整树
+		*node = a.rightTreeAdjust(*node, data)
+	}
+	// 调整节点的高度
+	(*node).height = maxValue(getHeight((*node).left), getHeight((*node).right)) + 1
+}
+
+func (a *AVLTree)InsertData(data int )  {
+	// 如果树为空
+	if a.root == nil{
+		a.root = creatNode(data)
+		a.root.height = 0
+		return
+	}
+	a.insertNode(&amp;a.root, data)
+}
+</code></pre><h4 id="数据的删除">数据的删除</h4>
+<pre tabindex="0"><code>// 清空树
+func (a *AVLTree)Clear(){
+	a.root = nil
+}
+
+// 删除节点
+func (a *AVLTree)deleteNode(node **AVLTreeNode, data int)  {
+	if *node == nil{
+		fmt.Printf(&quot;no find data is %d \n&quot;, data)
+		return
+	}
+	if (*node).info == data{
+		// 如果右节点为nil
+		if (*node).right == nil{
+			*node = (*node).left
+
+		}else if (*node).left == nil{
+			*node = (*node).right
+		}else{
+			// 找出左子树的最大值
+			temp := (*node).left
+			prev := *node  // 左子树最大值的最前驱节点
+			for ; temp.right != nil; temp = temp.right{
+				prev = temp
+			}
+			// 左子树的最大值复制给node
+			(*node).info = temp.info
+			if prev == *node{ // 如果左子树的最大值为node的node的子节点
+				prev.left = temp.left  // 先驱节点的左节点指向左子树最大节点的左节点
+			}else{
+				prev.right = temp.left  // 先驱节点的右节点指向左子树最大节点的右节点
+			}
+			a.leftTreeAdjust(*node, data)
+		}
+		if *node != nil{
+			// 调整节点的高度
+			(*node).height = maxValue(getHeight((*node).left), getHeight((*node).right)) + 1
+		}
+		return
+	}else if (*node).info &gt; data{
+		a.deleteNode(&amp;(*node).left, data)
+		a.leftTreeAdjust(*node, data)
+	}else {
+		a.deleteNode(&amp;(*node).right, data)
+		a.rightTreeAdjust(*node,data)
+	}
+	(*node).height = maxValue(getHeight((*node).left), getHeight((*node).right)) + 1
+}
+
+func (a *AVLTree)Remove(data int)  {
+	if a.root == nil{
+		return
+	}
+	a.deleteNode(&amp;a.root, data)
+}
+
+// 得到最大值
+func maxValue(value, value1 int) int {
+	if value &gt;= value1{
+		return value
+	}
+	return value1
+}
+</code></pre><h4 id="数据的查询">数据的查询</h4>
+<ul>
+<li>前序遍历、中序遍历、后续遍历、值查询</li>
+</ul>
+<pre tabindex="0"><code>// 树的遍历
+// 前序遍历
+func (a *AVLTree)nLR(node *AVLTreeNode){
+	// 如果节点为空就返回
+	if node == nil{
+		return
+	}
+	fmt.Printf(&quot;%d-&gt;&quot;, node.info)
+	// 遍历左子树
+	a.nLR(node.left)
+	// 遍历右子树
+	a.nLR(node.right)
+}
+
+// 中序遍历
+func (a *AVLTree)lNR(node *AVLTreeNode){
+	// 如果节点为空就返回
+	if node == nil{
+		return
+	}
+	a.lNR(node.left)
+	fmt.Printf(&quot;%d-&gt;&quot;, node.info)
+	a.lNR(node.right)
+}
+
+// 后序遍历
+func (a *AVLTree)lRN(node *AVLTreeNode){
+	if node == nil{
+		return
+	}
+	a.lRN(node.left)
+	a.lRN(node.right)
+	fmt.Printf(&quot;%d-&gt;&quot;, node.info)
+}
+
+// 前序显示
+func (a *AVLTree)ShowNLR(){
+	if a.root == nil{
+		fmt.Println(&quot;zhe tree is empty&quot;)
+		return
+	}
+	fmt.Print(&quot;NLR:&quot;)
+	node := a.root
+	a.nLR(node)
+	fmt.Println()
+}
+
+// 中序显示
+func (a *AVLTree)ShowLNR(){
+	if a.root == nil{
+		fmt.Println(&quot;zhe tree is empty&quot;)
+		return
+	}
+	fmt.Print(&quot;LNR:&quot;)
+	node := a.root
+	a.lNR(node)
+	fmt.Println()
+}
+
+// 后序显示
+func (a *AVLTree)ShowLRN(){
+	if a.root == nil{
+		fmt.Println(&quot;zhe tree is empty&quot;)
+		return
+	}
+	fmt.Print(&quot;LRN:&quot;)
+	node := a.root
+	a.lRN(node)
+	fmt.Println()
+}
+
+</code></pre><h4 id="树的旋转">树的旋转</h4>
+<ul>
+<li>单左旋 单右旋 左右旋 右左旋</li>
+</ul>
+<pre tabindex="0"><code>// 单右旋
+func (a *AVLTree)lR(node *AVLTreeNode) *AVLTreeNode {
+	// 临时node 指向节点的左节点
+	temp := (*node).left
+	// node的左节点指向temp 的右节点
+	(*node).left = temp.right
+	// temp 的右节点指向node（node 为temp的右节点的）
+	temp.right = node
+	// 调整高度
+	(*node).height = maxValue(getHeight((*node).left), getHeight((*node).right)) + 1
+	temp.height = maxValue(getHeight(temp.left), getHeight(temp.right)) + 1
+	return  temp
+}
+
+// 单左旋
+func (a *AVLTree)rR(node *AVLTreeNode) *AVLTreeNode {
+	// 临时node 指向节点的右节点
+	temp := (*node).right
+	// node的右节点指向temp的左节点
+	(*node).right = temp.left
+	// temp的左节点指向node
+	temp.left = node
+	// 调整树的高度
+	(*node).height = maxValue(getHeight((*node).left), getHeight((*node).right)) + 1
+	temp.height = maxValue(getHeight(temp.left), getHeight(temp.right)) + 1
+	return temp
+}
+
+// 左右旋(先左旋在右旋)
+func (a *AVLTree)rLR(node *AVLTreeNode) *AVLTreeNode {
+	node.left =  a.rR(node.left)
+	return a.lR(node)
+}
+
+// 右左旋(先右旋再左旋)
+func (a *AVLTree)lRR(node *AVLTreeNode) *AVLTreeNode {
+	node.right = a.lR(node.right)
+	return a.rR(node)
+}
+
+</code></pre><h3 id="测试">测试</h3>
+<pre tabindex="0"><code>
+func TestAVRTree_InsertData(t *testing.T) {
+	avl := CreatAVLTree()
+	avl.InsertData(2)
+	avl.InsertData(12)
+	avl.InsertData(24)
+	avl.InsertData(1)
+	avl.InsertData(65)
+	avl.InsertData(72)
+	avl.InsertData(32)
+	avl.InsertData(21)
+	avl.ShowNLR()
+	avl.ShowLNR()
+	avl.ShowLRN()
+}
+
+func TestAVLTree_Remove(t *testing.T) {
+	avl := CreatAVLTree()
+	avl.InsertData(1)
+	avl.InsertData(2)
+	avl.InsertData(3)
+	avl.InsertData(4)
+	avl.InsertData(5)
+	avl.InsertData(6)
+	avl.InsertData(7)
+	avl.InsertData(8)
+	avl.ShowNLR()
+	avl.ShowLNR()
+	avl.ShowLRN()
+	fmt.Println(&quot;**********************&quot;)
+	avl.Remove(4)
+	avl.ShowNLR()
+	avl.ShowLNR()
+	avl.ShowLRN()
+}
+
+func TestAVLTree_IsValue(t *testing.T) {
+	avl := CreatAVLTree()
+	avl.InsertData(1)
+	avl.InsertData(2)
+	avl.InsertData(3)
+	avl.InsertData(4)
+	avl.InsertData(5)
+	avl.InsertData(6)
+	avl.InsertData(7)
+	avl.InsertData(8)
+	avl.ShowNLR()
+	avl.ShowLNR()
+	avl.ShowLRN()
+	data := 4
+	is := avl.IsValue(data)
+	if is{
+		fmt.Printf(&quot;%d :is exits\n&quot;, data)
+	}else{
+		fmt.Printf(&quot;%d :is not exits\n&quot;, data)
+	}
+}
+
+</code></pre><h2 id="源码">源码</h2>
+<ul>
+<li><a class="link" href="https://github.com/zcj-git520/DataStructuresAlgorithmsForGo/tree/master/tree/AVL_tree"  target="_blank" rel="noopener"
+    >我的github:https://github.com/zcj-git520/DataStructuresAlgorithmsForGo/tree/master/tree/AVL_tree</a></li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-binary-search-tree-go%E5%AE%9E%E7%8E%B0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-binary-search-tree-go%E5%AE%9E%E7%8E%B0/1.93ea940fc2529072f0e70cb78e43eee7_hu163e0849e6d75821587eb02814146518_65785_250x150_fill_box_smart1.gif" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-k&#43;qUD8JSkHLw5wy3jkPu5w==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">数据结构-Binary search tree go实现</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E6%A0%88%E5%9F%BA%E4%BA%8E%E5%8D%95%E9%A1%B9%E9%93%BE%E8%A1%A8%E9%98%9F%E5%88%97%E5%9F%BA%E4%BA%8E%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E5%AE%9E%E7%8E%B0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E6%A0%88%E5%9F%BA%E4%BA%8E%E5%8D%95%E9%A1%B9%E9%93%BE%E8%A1%A8%E9%98%9F%E5%88%97%E5%9F%BA%E4%BA%8E%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E5%AE%9E%E7%8E%B0/1.d90a4e817af655a738f16cd6b901b471_hucc057a99640c389677e7decbd4886594_40524_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-2QpOgXr2Vac48WzWuQG0cQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">数据结构-栈(基于单项链表)&amp;&amp;队列(基于双向链表)go实现</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/1.8698f35cbd072100d008bc5611dc9311_huc216cf6486350636a2e6728955e7fc78_62516_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-hpjzXL0HIQDQCLxWEdyTEQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">数据结构-双向链表&amp;&amp;循环双向链表go语言实现</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E5%90%91%E9%93%BE%E8%A1%A8go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E5%90%91%E9%93%BE%E8%A1%A8go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/1.d4063513636ac24a26f405f7f6147e2d_huda65db0749ea5cfbe7a2aa726c042ca1_14970_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-1AY1E2Nqwkom9AX39hR&#43;LQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">数据结构-单向链表go语言实现</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E8%B6%85%E6%97%B6%E9%87%8D%E8%AF%95%E6%9C%BA%E5%88%B6-host_try/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E8%B6%85%E6%97%B6%E9%87%8D%E8%AF%95%E6%9C%BA%E5%88%B6-host_try/1.1931b402306b88ed6a8349fa8f6192cf_huc278944164dd3ada59be56854851c305_117502_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-GTG0AjBriO1qg0n6j2GSzw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">超时重试机制-host_try</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#平衡二叉树">平衡二叉树</a>
+      <ol>
+        <li><a href="#数据结构定义">数据结构定义</a></li>
+        <li><a href="#数据操作">数据操作</a>
+          <ol>
+            <li><a href="#数据的插入">数据的插入</a></li>
+            <li><a href="#数据的删除">数据的删除</a></li>
+            <li><a href="#数据的查询">数据的查询</a></li>
+            <li><a href="#树的旋转">树的旋转</a></li>
+          </ol>
+        </li>
+        <li><a href="#测试">测试</a></li>
+      </ol>
+    </li>
+    <li><a href="#源码">源码</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

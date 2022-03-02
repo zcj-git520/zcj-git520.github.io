@@ -6,7 +6,16 @@
     <description>Recent content in Golang on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Wed, 05 Jan 2022 21:00:08 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/golang/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 15 Feb 2022 21:00:08 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/golang/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>数据结构-AVL tree go实现</title>
+      <link>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-avl-tree-go%E5%AE%9E%E7%8E%B0/</link>
+      <pubDate>Tue, 15 Feb 2022 21:00:08 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-avl-tree-go%E5%AE%9E%E7%8E%B0/</guid>
+      <description>平衡二叉树 数据结构定义 // 定义树的节点type AVLTreeNode struct {info int // 定义存储的内容height int // 树的高度right *AVLTreeNode // 右节点left *AVLTreeNode // 左节点}// 定义树type AVLTree struct {root *AVLTreeNode // 定义根节点}// 创建节点func creatNode(data int) *AVLTreeNode{return &amp;amp;AVLTreeNode{info: data,height: -1,right: nil,left: nil,}}数据操作  增删改查  数据的插入 // 数据的插入func getHeight(node *AVLTreeNode) int {if node == nil{return -1}return node.</description>
+    </item>
+    
     <item>
       <title>数据结构-Binary search tree go实现</title>
       <link>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-binary-search-tree-go%E5%AE%9E%E7%8E%B0/</link>

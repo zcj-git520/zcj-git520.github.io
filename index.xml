@@ -6,13 +6,398 @@
         <description>Recent content on Chengji Zhao&#39;s blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Mon, 10 Jan 2022 21:00:08 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
-        <title>数据结构-AVR tree c&#43;&#43;实现</title>
-        <link>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-avr-tree-c-%E5%AE%9E%E7%8E%B0/</link>
+        <lastBuildDate>Sun, 20 Feb 2022 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>mysql底层基本原理</title>
+        <link>https://zcj-git520.github.io/p/mysql%E5%BA%95%E5%B1%82%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/</link>
+        <pubDate>Sun, 20 Feb 2022 22:00:38 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/mysql%E5%BA%95%E5%B1%82%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/mysql%E5%BA%95%E5%B1%82%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/1.jpg" alt="Featured image of post mysql底层基本原理" /&gt;&lt;h2 id=&#34;索引&#34;&gt;索引&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;索引是帮助数据库获取有序数据的数据结构，实现快速检索&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;数据库索引的数据结构&#34;&gt;数据库索引的数据结构&lt;/h3&gt;
+&lt;h4 id=&#34;哈希表hash&#34;&gt;哈希表(hash)&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;通过哈希函数，实现key-value的存储，同时可以使用开放地址法和拉链法解决哈希冲突，对查询单个值的
+时间复杂度为O(1)，例如查找id=1：select * from user where id=1
+,但对范围查询十分的不友好,例如查找范围id&amp;gt;100的值：select * from user where id &amp;gt;100;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;二叉树&#34;&gt;二叉树&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;二叉树的数据结构左小右大，可以通过中序遍历直接获取所有升序的数据，二叉树的查询的时间复杂度为
+O(lgn),缺点是二叉树容易退化链表，增加数据的查找的时间。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;平衡二叉树avl&#34;&gt;平衡二叉树(AVL)&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;避免退化为链表&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;红黑树&#34;&gt;红黑树&lt;/h3&gt;
+&lt;h2 id=&#34;参考文献&#34;&gt;参考文献：&lt;/h2&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.jianshu.com/p/576dbf44b2ae&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;什么是 JWT &amp;ndash; JSON WEB TOKEN&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>数据结构-AVL tree go实现</title>
+        <link>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-avl-tree-go%E5%AE%9E%E7%8E%B0/</link>
+        <pubDate>Tue, 15 Feb 2022 21:00:08 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-avl-tree-go%E5%AE%9E%E7%8E%B0/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-avl-tree-go%E5%AE%9E%E7%8E%B0/1.png" alt="Featured image of post 数据结构-AVL tree go实现" /&gt;&lt;h2 id=&#34;平衡二叉树&#34;&gt;平衡二叉树&lt;/h2&gt;
+&lt;h3 id=&#34;数据结构定义&#34;&gt;数据结构定义&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;// 定义树的节点
+type AVLTreeNode struct {
+	info   int  // 定义存储的内容
+	height int  // 树的高度
+	right  *AVLTreeNode  // 右节点
+	left   *AVLTreeNode  // 左节点
+}
+
+// 定义树
+type AVLTree struct {
+	root *AVLTreeNode  // 定义根节点
+}
+
+// 创建节点
+func creatNode(data int) *AVLTreeNode{
+	return &amp;amp;AVLTreeNode{
+		info:   data,
+		height: -1,
+		right:  nil,
+		left:   nil,
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;数据操作&#34;&gt;数据操作&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;增删改查&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;数据的插入&#34;&gt;数据的插入&lt;/h4&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;
+// 数据的插入
+func getHeight(node *AVLTreeNode) int {
+	if node == nil{
+		return -1
+	}
+	return node.height
+}
+// 左子树调整
+func (a *AVLTree)leftTreeAdjust(node *AVLTreeNode, data int) *AVLTreeNode {
+	// 判断是否需要调整树
+	if getHeight(node.left) - getHeight(node.right) &amp;gt; 1{
+		// 插入的节点在左边上，进右旋
+		if data &amp;lt; node.left.info{
+			return a.lR(node)
+		}else{
+			// 进行左右旋
+			return a.rLR(node)
+		}
+	}
+	return  node
+}
+
+// 右子树调整
+func (a *AVLTree)rightTreeAdjust(node *AVLTreeNode, data int) *AVLTreeNode  {
+	// 判断是否需要调整树
+	if getHeight(node.right) - getHeight(node.left) &amp;gt; 1{
+		// 插入的节点在右边上，进左旋
+		if data &amp;gt;= node.right.info{
+			return a.rR(node)
+		}else{
+			// 进行右左旋
+			return  a.lRR(node)
+		}
+	}
+	return node
+}
+
+func (a *AVLTree)insertNode(node **AVLTreeNode, data int)  {
+	if *node == nil{
+		*node = creatNode(data)
+		(*node).height = maxValue(getHeight((*node).left), getHeight((*node).right)) + 1
+		return
+	}
+	// 插入左子树
+	if data &amp;lt; (*node).info{
+		a.insertNode(&amp;amp;(*node).left, data)
+		// 调整树
+		*node = a.leftTreeAdjust(*node, data)
+
+	}else{
+		// 插入右子树
+		a.insertNode(&amp;amp;(*node).right, data)
+		// 调整树
+		*node = a.rightTreeAdjust(*node, data)
+	}
+	// 调整节点的高度
+	(*node).height = maxValue(getHeight((*node).left), getHeight((*node).right)) + 1
+}
+
+func (a *AVLTree)InsertData(data int )  {
+	// 如果树为空
+	if a.root == nil{
+		a.root = creatNode(data)
+		a.root.height = 0
+		return
+	}
+	a.insertNode(&amp;amp;a.root, data)
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&#34;数据的删除&#34;&gt;数据的删除&lt;/h4&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;// 清空树
+func (a *AVLTree)Clear(){
+	a.root = nil
+}
+
+// 删除节点
+func (a *AVLTree)deleteNode(node **AVLTreeNode, data int)  {
+	if *node == nil{
+		fmt.Printf(&amp;quot;no find data is %d \n&amp;quot;, data)
+		return
+	}
+	if (*node).info == data{
+		// 如果右节点为nil
+		if (*node).right == nil{
+			*node = (*node).left
+
+		}else if (*node).left == nil{
+			*node = (*node).right
+		}else{
+			// 找出左子树的最大值
+			temp := (*node).left
+			prev := *node  // 左子树最大值的最前驱节点
+			for ; temp.right != nil; temp = temp.right{
+				prev = temp
+			}
+			// 左子树的最大值复制给node
+			(*node).info = temp.info
+			if prev == *node{ // 如果左子树的最大值为node的node的子节点
+				prev.left = temp.left  // 先驱节点的左节点指向左子树最大节点的左节点
+			}else{
+				prev.right = temp.left  // 先驱节点的右节点指向左子树最大节点的右节点
+			}
+			a.leftTreeAdjust(*node, data)
+		}
+		if *node != nil{
+			// 调整节点的高度
+			(*node).height = maxValue(getHeight((*node).left), getHeight((*node).right)) + 1
+		}
+		return
+	}else if (*node).info &amp;gt; data{
+		a.deleteNode(&amp;amp;(*node).left, data)
+		a.leftTreeAdjust(*node, data)
+	}else {
+		a.deleteNode(&amp;amp;(*node).right, data)
+		a.rightTreeAdjust(*node,data)
+	}
+	(*node).height = maxValue(getHeight((*node).left), getHeight((*node).right)) + 1
+}
+
+func (a *AVLTree)Remove(data int)  {
+	if a.root == nil{
+		return
+	}
+	a.deleteNode(&amp;amp;a.root, data)
+}
+
+// 得到最大值
+func maxValue(value, value1 int) int {
+	if value &amp;gt;= value1{
+		return value
+	}
+	return value1
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&#34;数据的查询&#34;&gt;数据的查询&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;前序遍历、中序遍历、后续遍历、值查询&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;// 树的遍历
+// 前序遍历
+func (a *AVLTree)nLR(node *AVLTreeNode){
+	// 如果节点为空就返回
+	if node == nil{
+		return
+	}
+	fmt.Printf(&amp;quot;%d-&amp;gt;&amp;quot;, node.info)
+	// 遍历左子树
+	a.nLR(node.left)
+	// 遍历右子树
+	a.nLR(node.right)
+}
+
+// 中序遍历
+func (a *AVLTree)lNR(node *AVLTreeNode){
+	// 如果节点为空就返回
+	if node == nil{
+		return
+	}
+	a.lNR(node.left)
+	fmt.Printf(&amp;quot;%d-&amp;gt;&amp;quot;, node.info)
+	a.lNR(node.right)
+}
+
+// 后序遍历
+func (a *AVLTree)lRN(node *AVLTreeNode){
+	if node == nil{
+		return
+	}
+	a.lRN(node.left)
+	a.lRN(node.right)
+	fmt.Printf(&amp;quot;%d-&amp;gt;&amp;quot;, node.info)
+}
+
+// 前序显示
+func (a *AVLTree)ShowNLR(){
+	if a.root == nil{
+		fmt.Println(&amp;quot;zhe tree is empty&amp;quot;)
+		return
+	}
+	fmt.Print(&amp;quot;NLR:&amp;quot;)
+	node := a.root
+	a.nLR(node)
+	fmt.Println()
+}
+
+// 中序显示
+func (a *AVLTree)ShowLNR(){
+	if a.root == nil{
+		fmt.Println(&amp;quot;zhe tree is empty&amp;quot;)
+		return
+	}
+	fmt.Print(&amp;quot;LNR:&amp;quot;)
+	node := a.root
+	a.lNR(node)
+	fmt.Println()
+}
+
+// 后序显示
+func (a *AVLTree)ShowLRN(){
+	if a.root == nil{
+		fmt.Println(&amp;quot;zhe tree is empty&amp;quot;)
+		return
+	}
+	fmt.Print(&amp;quot;LRN:&amp;quot;)
+	node := a.root
+	a.lRN(node)
+	fmt.Println()
+}
+
+&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&#34;树的旋转&#34;&gt;树的旋转&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;单左旋 单右旋 左右旋 右左旋&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;// 单右旋
+func (a *AVLTree)lR(node *AVLTreeNode) *AVLTreeNode {
+	// 临时node 指向节点的左节点
+	temp := (*node).left
+	// node的左节点指向temp 的右节点
+	(*node).left = temp.right
+	// temp 的右节点指向node（node 为temp的右节点的）
+	temp.right = node
+	// 调整高度
+	(*node).height = maxValue(getHeight((*node).left), getHeight((*node).right)) + 1
+	temp.height = maxValue(getHeight(temp.left), getHeight(temp.right)) + 1
+	return  temp
+}
+
+// 单左旋
+func (a *AVLTree)rR(node *AVLTreeNode) *AVLTreeNode {
+	// 临时node 指向节点的右节点
+	temp := (*node).right
+	// node的右节点指向temp的左节点
+	(*node).right = temp.left
+	// temp的左节点指向node
+	temp.left = node
+	// 调整树的高度
+	(*node).height = maxValue(getHeight((*node).left), getHeight((*node).right)) + 1
+	temp.height = maxValue(getHeight(temp.left), getHeight(temp.right)) + 1
+	return temp
+}
+
+// 左右旋(先左旋在右旋)
+func (a *AVLTree)rLR(node *AVLTreeNode) *AVLTreeNode {
+	node.left =  a.rR(node.left)
+	return a.lR(node)
+}
+
+// 右左旋(先右旋再左旋)
+func (a *AVLTree)lRR(node *AVLTreeNode) *AVLTreeNode {
+	node.right = a.lR(node.right)
+	return a.rR(node)
+}
+
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;测试&#34;&gt;测试&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;
+func TestAVRTree_InsertData(t *testing.T) {
+	avl := CreatAVLTree()
+	avl.InsertData(2)
+	avl.InsertData(12)
+	avl.InsertData(24)
+	avl.InsertData(1)
+	avl.InsertData(65)
+	avl.InsertData(72)
+	avl.InsertData(32)
+	avl.InsertData(21)
+	avl.ShowNLR()
+	avl.ShowLNR()
+	avl.ShowLRN()
+}
+
+func TestAVLTree_Remove(t *testing.T) {
+	avl := CreatAVLTree()
+	avl.InsertData(1)
+	avl.InsertData(2)
+	avl.InsertData(3)
+	avl.InsertData(4)
+	avl.InsertData(5)
+	avl.InsertData(6)
+	avl.InsertData(7)
+	avl.InsertData(8)
+	avl.ShowNLR()
+	avl.ShowLNR()
+	avl.ShowLRN()
+	fmt.Println(&amp;quot;**********************&amp;quot;)
+	avl.Remove(4)
+	avl.ShowNLR()
+	avl.ShowLNR()
+	avl.ShowLRN()
+}
+
+func TestAVLTree_IsValue(t *testing.T) {
+	avl := CreatAVLTree()
+	avl.InsertData(1)
+	avl.InsertData(2)
+	avl.InsertData(3)
+	avl.InsertData(4)
+	avl.InsertData(5)
+	avl.InsertData(6)
+	avl.InsertData(7)
+	avl.InsertData(8)
+	avl.ShowNLR()
+	avl.ShowLNR()
+	avl.ShowLRN()
+	data := 4
+	is := avl.IsValue(data)
+	if is{
+		fmt.Printf(&amp;quot;%d :is exits\n&amp;quot;, data)
+	}else{
+		fmt.Printf(&amp;quot;%d :is not exits\n&amp;quot;, data)
+	}
+}
+
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;源码&#34;&gt;源码&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/zcj-git520/DataStructuresAlgorithmsForGo/tree/master/tree/AVL_tree&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;我的github:https://github.com/zcj-git520/DataStructuresAlgorithmsForGo/tree/master/tree/AVL_tree&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        <item>
+        <title>数据结构-AVL tree c&#43;&#43;实现</title>
+        <link>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-avl-tree-c-%E5%AE%9E%E7%8E%B0/</link>
         <pubDate>Mon, 10 Jan 2022 21:00:08 +0800</pubDate>
         
-        <guid>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-avr-tree-c-%E5%AE%9E%E7%8E%B0/</guid>
-        <description>&lt;img src="https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-avr-tree-c-%E5%AE%9E%E7%8E%B0/1.png" alt="Featured image of post 数据结构-AVR tree c&#43;&#43;实现" /&gt;&lt;h2 id=&#34;二叉查找树&#34;&gt;二叉查找树&lt;/h2&gt;
+        <guid>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-avl-tree-c-%E5%AE%9E%E7%8E%B0/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-avl-tree-c-%E5%AE%9E%E7%8E%B0/1.png" alt="Featured image of post 数据结构-AVL tree c&#43;&#43;实现" /&gt;&lt;h2 id=&#34;平衡二叉树&#34;&gt;平衡二叉树&lt;/h2&gt;
 &lt;h3 id=&#34;数据结构定义&#34;&gt;数据结构定义&lt;/h3&gt;
 &lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;
 
