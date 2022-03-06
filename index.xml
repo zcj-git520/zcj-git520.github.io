@@ -14,7 +14,69 @@
         <guid>https://zcj-git520.github.io/p/mysql%E4%BA%8B%E5%8A%A1%E5%AE%9E%E7%8E%B0%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/</guid>
         <description>&lt;img src="https://zcj-git520.github.io/p/mysql%E4%BA%8B%E5%8A%A1%E5%AE%9E%E7%8E%B0%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/1.png" alt="Featured image of post mysql事务实现基本原理" /&gt;&lt;h2 id=&#34;事务&#34;&gt;事务&lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;事务就是一组原子性的SQL语句&lt;/li&gt;
+&lt;li&gt;事务就是一组原子性的SQL语句.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;buffer-pool&#34;&gt;buffer Pool&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;当启动mysql会开启默认为128M的内存空间来保存从磁盘获取的页的数据到这块内存空间。
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 103; 
+			flex-basis: 247px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/mysql%E4%BA%8B%E5%8A%A1%E5%AE%9E%E7%8E%B0%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/4.png&#34; data-size=&#34;676x656&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/mysql%E4%BA%8B%E5%8A%A1%E5%AE%9E%E7%8E%B0%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/4.png&#34;
+			width=&#34;676&#34;
+			height=&#34;656&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/mysql%E4%BA%8B%E5%8A%A1%E5%AE%9E%E7%8E%B0%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/4_huf2f92c82b6d4783456b3162dabdbebb8_71871_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/mysql%E4%BA%8B%E5%8A%A1%E5%AE%9E%E7%8E%B0%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/4_huf2f92c82b6d4783456b3162dabdbebb8_71871_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;li&gt;InnoDB通过free链表来管理buffer Pool中的空闲页，通过控制块来指向空白页.即从磁盘中的获取的页数据通过
+控制块放入到buffer Pool中对应的空闲页中。&lt;/li&gt;
+&lt;li&gt;通过flush链表来管理buffer Poll中的脏页(通过事务修改过的页)。通过链表中控制块指向脏页。&lt;/li&gt;
+&lt;li&gt;通过lru链表来对Buffer Pool中的页进行淘汰。通过头插法将最新的页插入到链表中的控制块。当buffer Pool中的页满后，删除链表最后的控制块。
+也存在当全表扫描时，也造成数据的覆盖，性能下降。因此链表被划分为热数据区域(5/8)和冷数据区域(3/8)。当两次访问页的时间大于1秒时，把页放入到热数据的控制块
+，否则就放入冷数据页，避免了全表扫描造成热数据被覆盖。生成redo log后，mysql通过后台进程经将脏页持久化到磁盘。当MySQL挂了之后，
+会通过redo log恢复数据。
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 209; 
+			flex-basis: 503px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/mysql%E4%BA%8B%E5%8A%A1%E5%AE%9E%E7%8E%B0%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/2.png&#34; data-size=&#34;1346x641&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/mysql%E4%BA%8B%E5%8A%A1%E5%AE%9E%E7%8E%B0%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/2.png&#34;
+			width=&#34;1346&#34;
+			height=&#34;641&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/mysql%E4%BA%8B%E5%8A%A1%E5%AE%9E%E7%8E%B0%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/2_hu56fb40fab0e4369feae4525e597efaf7_183232_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/mysql%E4%BA%8B%E5%8A%A1%E5%AE%9E%E7%8E%B0%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/2_hu56fb40fab0e4369feae4525e597efaf7_183232_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 311; 
+			flex-basis: 747px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/mysql%E4%BA%8B%E5%8A%A1%E5%AE%9E%E7%8E%B0%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/3.png&#34; data-size=&#34;1264x406&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/mysql%E4%BA%8B%E5%8A%A1%E5%AE%9E%E7%8E%B0%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/3.png&#34;
+			width=&#34;1264&#34;
+			height=&#34;406&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/mysql%E4%BA%8B%E5%8A%A1%E5%AE%9E%E7%8E%B0%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/3_hua668fce7a2f5bc44213ed5e50e023fb3_144803_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/mysql%E4%BA%8B%E5%8A%A1%E5%AE%9E%E7%8E%B0%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/3_hua668fce7a2f5bc44213ed5e50e023fb3_144803_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h3 id=&#34;事务具有的acid的特性&#34;&gt;事务具有的ACID的特性&lt;/h3&gt;
 &lt;ol&gt;
@@ -50,6 +112,22 @@
 &lt;h4 id=&#34;死锁&#34;&gt;死锁&lt;/h4&gt;
 &lt;ul&gt;
 &lt;li&gt;死锁：两个或多个事务在同一资源上相互占用并请求锁定对方占用的资源，从而导致恶性循环的现象。MySQL的部分存储引擎能够检测到死锁的循环依赖并产生相应的错误。InnoDB引擎解决死锁的方案是将持有最少排它锁的事务进行回滚&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;mvcc原理&#34;&gt;MVCC原理&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;mvcc 多版本并发控制：指在读取数据时通过一种类似快照的方式将数据保存下来，这样读锁和写锁不冲突。是 innodb 实现事务并发与回滚的重要功能。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;版本链&#34;&gt;版本链&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;每次更新后，都会将旧值放到一条 undo log 中，就算是该记录的一个旧版本，随着更新次数的增多，所有的版本都会被roll_ptr 属性连接成一个链表，我们把这个链表称之为版本链，版本链的头节点就是当前记录最新的值&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;trx_id：每次一个事务对某条聚簇索引记录进行改动时，都会把该事务的事务id赋值给trx_id隐藏列。
+roll_pointer：每次对某条聚簇索引记录进行改动时，都会把旧的版本写入到undo日志中，然后这个隐藏列就相当于一个指针，可以通过它来找到该记录修改前的信息。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h4 id=&#34;readview&#34;&gt;ReadView&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;InnoDB提出了一个ReadView的概念，这个ReadView 中有个 id 列表 trx_ids 来存储系统中当前活跃着的读写事务，也就是 begin 了还未 commit 或 rollback 的事务&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;参考文献&#34;&gt;参考文献：&lt;/h2&gt;
 &lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.linuxidc.com/Linux/2014-04/99721.htm&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
