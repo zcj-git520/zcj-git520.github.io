@@ -6,7 +6,120 @@
         <description>Recent content on Chengji Zhao&#39;s blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Fri, 25 Feb 2022 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Tue, 01 Mar 2022 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>mysql性能调优-分库分表</title>
+        <link>https://zcj-git520.github.io/p/mysql%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/</link>
+        <pubDate>Tue, 01 Mar 2022 22:00:38 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/mysql%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/mysql%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/3.png" alt="Featured image of post mysql性能调优-分库分表" /&gt;&lt;h2 id=&#34;数据切分&#34;&gt;数据切分&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;当数据库中的数据或者单表数据过大时，会影响对数据库查询等操作的效率。此时可以减轻数据库的负担
+可以将数据库进行拆分，即分库分表。来提高数据库的效率。&lt;/li&gt;
+&lt;li&gt;数据库有两种拆分方式：水平切分和垂直切分&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;垂直切分&#34;&gt;垂直切分&lt;/h2&gt;
+&lt;h3 id=&#34;垂直分库&#34;&gt;垂直分库&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;垂直分库：根据业务解耦，以表为单位，将相同业务的表存储在同一数据库中。将大数据库拆分为不同的小数据库。
+小数据库的结构和存储的数据不一样。小数据库的并集为大数据库。
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 145; 
+			flex-basis: 348px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/mysql%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/1.png&#34; data-size=&#34;825x568&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/mysql%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/1.png&#34;
+			width=&#34;825&#34;
+			height=&#34;568&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/mysql%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/1_huc81ff6a1490027b3cba856c0fa33c5e4_209327_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/mysql%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/1_huc81ff6a1490027b3cba856c0fa33c5e4_209327_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;li&gt;使用场景高并发时，将数据分类到不同数据库中，提升数据库的查询效率&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;垂直分表&#34;&gt;垂直分表&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;垂直分表：是以字段为单位，将表中的不常用的字段和字段名较长的字段拆分到扩展表中，其余放入到主表中。也可以经热数据放入主表，冷
+数据放入拓展表。主表和拓展表的数据结构和存储的数据是不一样。将表中的进行冷热数据的拆分，减少了对磁盘io的操作，提升数据库的效率
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 192; 
+			flex-basis: 463px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/mysql%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/2.png&#34; data-size=&#34;826x428&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/mysql%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/2.png&#34;
+			width=&#34;826&#34;
+			height=&#34;428&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/mysql%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/2_hub0013f0b591b75a5db27099043fb4213_107563_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/mysql%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/2_hub0013f0b591b75a5db27099043fb4213_107563_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;li&gt;使用场景：表的记录并不多，但是字段多，并且热点数据和非热点数据在一起，单行数据所需的存储空间较大。以至于数据库缓存的数据行减少，查询时会去读磁盘数据产生大量的随机读IO，产生IO瓶颈&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;优缺点&#34;&gt;优缺点&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;优点：业务解耦合，方便对不同业务进行管理，提升数据库的效率&lt;/li&gt;
+&lt;li&gt;缺点：部分表不能join,表中的热数据太多&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;水平切分&#34;&gt;水平切分&lt;/h2&gt;
+&lt;h3 id=&#34;水平分库和分表&#34;&gt;水平分库和分表&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;都是以字段为单位，通过哈希和随机等策略，将数据分到不同的子库或者子表中。
+所有的子库和子表的数据结构一样和数据不一致，即所有子库的数据等于数据库中的数据。形成分布式的效果。
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 85; 
+			flex-basis: 205px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/mysql%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/3.png&#34; data-size=&#34;602x703&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/mysql%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/3.png&#34;
+			width=&#34;602&#34;
+			height=&#34;703&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/mysql%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/3_hu5261706da37be2572fd4622db307b63b_273707_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/mysql%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/3_hu5261706da37be2572fd4622db307b63b_273707_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;li&gt;使用场景：数据量行数巨大，存在单库读写、存储性能瓶颈，数据量太多，影响了SQL效率，加重了CPU负担，以至于成为瓶颈。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;优缺点-1&#34;&gt;优缺点&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;优点：提升系统稳定性和负载能力&lt;/li&gt;
+&lt;li&gt;缺点：事务一致性难以保证&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;数据库的瓶颈&#34;&gt;数据库的瓶颈&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;数据库的瓶颈可分为：io瓶颈和cpu瓶颈&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;io瓶颈&#34;&gt;io瓶颈&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;磁盘读写io瓶颈：当热数据过多时，数据库内存(buffer Pool)保存不下时，会产生大量的io。此时就需要进行分库和垂直分表。&lt;/li&gt;
+&lt;li&gt;网络io瓶颈：请求的数据太多，网络带宽不够，此时就需要分库。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;cpu瓶颈&#34;&gt;CPU瓶颈&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;sql中使用了大量的cpu运算的操作。此时需要优化sql,如增加索引&lt;/li&gt;
+&lt;li&gt;单表数据量大时，且进行全表扫描，查询效率低时，需要水平分表分库。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;heading&#34;&gt;&lt;/h3&gt;
+&lt;h2 id=&#34;参考文献&#34;&gt;参考文献：&lt;/h2&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://zhuanlan.zhihu.com/p/104992837&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;数据库分库分表思路&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>mysql事务实现基本原理</title>
         <link>https://zcj-git520.github.io/p/mysql%E4%BA%8B%E5%8A%A1%E5%AE%9E%E7%8E%B0%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/</link>
         <pubDate>Fri, 25 Feb 2022 22:00:38 +0800</pubDate>
