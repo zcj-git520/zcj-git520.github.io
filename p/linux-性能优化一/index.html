@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Linux常用的性能查看命令 CPU性能查看  使用ps查看正在运行的进程   使用top查看各cup的使用情况、对应内存以及个进程占cpu和使用内存的情况  vmstat命令：查看CPU负载   内存使用情况查看  除了使用top可以查看内存使用情况外，还可以使用free命令进行查看   磁盘I/O性能查看  可以使用df 或者 df -h 查看磁盘占用用情况  iostat -d 进行查看   查看网络情况  使用ifconfig查看或者修改网络  netstat命令：-i 查看网络接口信息，-r 检测系统路由表信息   动态监控性能  使用watch命令：动态监控，默认2秒钟执行一次，执行结果更新在屏幕上    '><title>linux 性能优化(一)</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='linux 性能优化(一)'>
+<meta property='og:description' content='Linux常用的性能查看命令 CPU性能查看  使用ps查看正在运行的进程   使用top查看各cup的使用情况、对应内存以及个进程占cpu和使用内存的情况  vmstat命令：查看CPU负载   内存使用情况查看  除了使用top可以查看内存使用情况外，还可以使用free命令进行查看   磁盘I/O性能查看  可以使用df 或者 df -h 查看磁盘占用用情况  iostat -d 进行查看   查看网络情况  使用ifconfig查看或者修改网络  netstat命令：-i 查看网络接口信息，-r 检测系统路由表信息   动态监控性能  使用watch命令：动态监控，默认2秒钟执行一次，执行结果更新在屏幕上    '>
+<meta property='og:url' content='https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2022-03-05T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2022-03-05T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/3.png' />
+<meta name="twitter:title" content="linux 性能优化(一)">
+<meta name="twitter:description" content="Linux常用的性能查看命令 CPU性能查看  使用ps查看正在运行的进程   使用top查看各cup的使用情况、对应内存以及个进程占cpu和使用内存的情况  vmstat命令：查看CPU负载   内存使用情况查看  除了使用top可以查看内存使用情况外，还可以使用free命令进行查看   磁盘I/O性能查看  可以使用df 或者 df -h 查看磁盘占用用情况  iostat -d 进行查看   查看网络情况  使用ifconfig查看或者修改网络  netstat命令：-i 查看网络接口信息，-r 检测系统路由表信息   动态监控性能  使用watch命令：动态监控，默认2秒钟执行一次，执行结果更新在屏幕上    "><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/3.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/">
+                <img src="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/3_hu66cf5664c43f449fa744670ec4319b24_173122_800x0_resize_box_3.png"
+                        srcset="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/3_hu66cf5664c43f449fa744670ec4319b24_173122_800x0_resize_box_3.png 800w, /p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/3_hu66cf5664c43f449fa744670ec4319b24_173122_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="436" 
+                        loading="lazy"
+                        alt="Featured image of post linux 性能优化(一)" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/computer/" style="background-color: #2a9d8f; color: #fff;">
+                知识学习
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/">linux 性能优化(一)</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Mar 05, 2022</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 1 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h2 id="linux常用的性能查看命令">Linux常用的性能查看命令</h2>
+<h3 id="cpu性能查看">CPU性能查看</h3>
+<ol>
+<li>使用ps查看正在运行的进程
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 168; 
+			flex-basis: 404px"
+	>
+	<a href="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/1.png" data-size="1164x690">
+		<img src="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/1.png"
+			width="1164"
+			height="690"
+			srcset="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/1_hud352ebb526399801a7382ecb45827a96_76217_480x0_resize_box_3.png 480w, /p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/1_hud352ebb526399801a7382ecb45827a96_76217_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure>
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 120; 
+			flex-basis: 289px"
+	>
+	<a href="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/2.png" data-size="877x728">
+		<img src="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/2.png"
+			width="877"
+			height="728"
+			srcset="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/2_hu7711e5e375a95a94c8f76c64de13e2e0_134520_480x0_resize_box_3.png 480w, /p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/2_hu7711e5e375a95a94c8f76c64de13e2e0_134520_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></li>
+<li>使用top查看各cup的使用情况、对应内存以及个进程占cpu和使用内存的情况
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 183; 
+			flex-basis: 440px"
+	>
+	<a href="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/3.png" data-size="1361x742">
+		<img src="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/3.png"
+			width="1361"
+			height="742"
+			srcset="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/3_hu66cf5664c43f449fa744670ec4319b24_173122_480x0_resize_box_3.png 480w, /p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/3_hu66cf5664c43f449fa744670ec4319b24_173122_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></li>
+<li>vmstat命令：查看CPU负载
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 805; 
+			flex-basis: 1934px"
+	>
+	<a href="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/4.png" data-size="822x102">
+		<img src="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/4.png"
+			width="822"
+			height="102"
+			srcset="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/4_hua29ecafa10b7c2e837fc83b1946d2863_18299_480x0_resize_box_3.png 480w, /p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/4_hua29ecafa10b7c2e837fc83b1946d2863_18299_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></li>
+</ol>
+<h3 id="内存使用情况查看">内存使用情况查看</h3>
+<ul>
+<li>除了使用top可以查看内存使用情况外，还可以使用free命令进行查看
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 585; 
+			flex-basis: 1404px"
+	>
+	<a href="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/5.png" data-size="749x128">
+		<img src="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/5.png"
+			width="749"
+			height="128"
+			srcset="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/5_hue05bab33803ae96086f1fcaba47a50e2_19352_480x0_resize_box_3.png 480w, /p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/5_hue05bab33803ae96086f1fcaba47a50e2_19352_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></li>
+</ul>
+<h3 id="磁盘io性能查看">磁盘I/O性能查看</h3>
+<ol>
+<li>可以使用df 或者 df -h 查看磁盘占用用情况
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 158; 
+			flex-basis: 381px"
+	>
+	<a href="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/6.png" data-size="635x400">
+		<img src="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/6.png"
+			width="635"
+			height="400"
+			srcset="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/6_huf1d499cd45246d7290abe352fe9ff45a_89541_480x0_resize_box_3.png 480w, /p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/6_huf1d499cd45246d7290abe352fe9ff45a_89541_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></li>
+<li>iostat -d 进行查看
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 292; 
+			flex-basis: 703px"
+	>
+	<a href="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/7.png" data-size="999x341">
+		<img src="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/7.png"
+			width="999"
+			height="341"
+			srcset="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/7_huf00b96b4cff54e7d4a8f4f1c2555ad35_56884_480x0_resize_box_3.png 480w, /p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/7_huf00b96b4cff54e7d4a8f4f1c2555ad35_56884_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></li>
+</ol>
+<h3 id="查看网络情况">查看网络情况</h3>
+<ol>
+<li>使用ifconfig查看或者修改网络
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 221; 
+			flex-basis: 532px"
+	>
+	<a href="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/8.png" data-size="792x357">
+		<img src="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/8.png"
+			width="792"
+			height="357"
+			srcset="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/8_hu1f4ff6ae1758e7848c32cdaf96a01f88_76473_480x0_resize_box_3.png 480w, /p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/8_hu1f4ff6ae1758e7848c32cdaf96a01f88_76473_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></li>
+<li>netstat命令：-i 查看网络接口信息，-r 检测系统路由表信息
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 346; 
+			flex-basis: 831px"
+	>
+	<a href="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/9.png" data-size="825x238">
+		<img src="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/9.png"
+			width="825"
+			height="238"
+			srcset="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/9_hub74d6223efb06e0a0c47c9dce23fedf6_43319_480x0_resize_box_3.png 480w, /p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/9_hub74d6223efb06e0a0c47c9dce23fedf6_43319_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></li>
+</ol>
+<h3 id="动态监控性能">动态监控性能</h3>
+<ul>
+<li>使用watch命令：动态监控，默认2秒钟执行一次，执行结果更新在屏幕上
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 239; 
+			flex-basis: 574px"
+	>
+	<a href="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/10.png" data-size="1739x726">
+		<img src="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/10.png"
+			width="1739"
+			height="726"
+			srcset="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/10_hu0938913199fe6be4e994bcf9de02b974_102418_480x0_resize_box_3.png 480w, /p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/10_hu0938913199fe6be4e994bcf9de02b974_102418_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure>
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 1281; 
+			flex-basis: 3075px"
+	>
+	<a href="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/11.png" data-size="1858x145">
+		<img src="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/11.png"
+			width="1858"
+			height="145"
+			srcset="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/11_hu15d41aba72496328c8648425813a5081_22674_480x0_resize_box_3.png 480w, /p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/11_hu15d41aba72496328c8648425813a5081_22674_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/mysql%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/">
+        
+        
+            <div class="article-image">
+                <img src="/p/mysql%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/3.117842f1f408b0c348e681ab68c9fa7c_hu5261706da37be2572fd4622db307b63b_273707_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-EXhC8fQIsMNI5oGraMn6fA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">mysql性能调优-分库分表</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/mysql%E4%BA%8B%E5%8A%A1%E5%AE%9E%E7%8E%B0%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/">
+        
+        
+            <div class="article-image">
+                <img src="/p/mysql%E4%BA%8B%E5%8A%A1%E5%AE%9E%E7%8E%B0%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/1.a6a89cd5fadeab0f03d10b534bbcd0ac_hub1d649ce0ea89887083315ebed128a77_18394_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-pqic1freqw8D0QtTS7zQrA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">mysql事务实现基本原理</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/mysql%E5%BA%95%E5%B1%82%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/">
+        
+        
+            <div class="article-image">
+                <img src="/p/mysql%E5%BA%95%E5%B1%82%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/1.923fdda1d7a4767f5b07e09a53cd77fc_huc45b7cee299d4b0bd96f8dd390c7ebfb_163533_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-kj/dodekdn9bB&#43;CaU813/A==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">mysql底层基本原理</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/io%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/">
+        
+        
+            <div class="article-image">
+                <img src="/p/io%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/3.29d05d0d5674dc265853a7ce03f6079a_hu407313779efa40a3c2449c5134b0af99_194287_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-KdBdDVZ03CZYU6fOA/YHmg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">io多路复用</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/redis%E8%BF%9B%E9%98%B6/">
+        
+        
+            <div class="article-image">
+                <img src="/p/redis%E8%BF%9B%E9%98%B6/5.bf8a8aa3d41d8a55feee69541f3e55f6_hu55d28ed2616667077617555b48a30f7c_17120_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-v4qKo9QdilX&#43;7mlUHz5V9g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">redis进阶</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#linux常用的性能查看命令">Linux常用的性能查看命令</a>
+      <ol>
+        <li><a href="#cpu性能查看">CPU性能查看</a></li>
+        <li><a href="#内存使用情况查看">内存使用情况查看</a></li>
+        <li><a href="#磁盘io性能查看">磁盘I/O性能查看</a></li>
+        <li><a href="#查看网络情况">查看网络情况</a></li>
+        <li><a href="#动态监控性能">动态监控性能</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

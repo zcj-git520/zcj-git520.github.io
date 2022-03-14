@@ -6,7 +6,227 @@
         <description>Recent content on Chengji Zhao&#39;s blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Tue, 01 Mar 2022 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sat, 05 Mar 2022 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>linux 性能优化(一)</title>
+        <link>https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/</link>
+        <pubDate>Sat, 05 Mar 2022 22:00:38 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/3.png" alt="Featured image of post linux 性能优化(一)" /&gt;&lt;h2 id=&#34;linux常用的性能查看命令&#34;&gt;Linux常用的性能查看命令&lt;/h2&gt;
+&lt;h3 id=&#34;cpu性能查看&#34;&gt;CPU性能查看&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;使用ps查看正在运行的进程
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 168; 
+			flex-basis: 404px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/1.png&#34; data-size=&#34;1164x690&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/1.png&#34;
+			width=&#34;1164&#34;
+			height=&#34;690&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/1_hud352ebb526399801a7382ecb45827a96_76217_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/1_hud352ebb526399801a7382ecb45827a96_76217_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 120; 
+			flex-basis: 289px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/2.png&#34; data-size=&#34;877x728&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/2.png&#34;
+			width=&#34;877&#34;
+			height=&#34;728&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/2_hu7711e5e375a95a94c8f76c64de13e2e0_134520_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/2_hu7711e5e375a95a94c8f76c64de13e2e0_134520_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;li&gt;使用top查看各cup的使用情况、对应内存以及个进程占cpu和使用内存的情况
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 183; 
+			flex-basis: 440px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/3.png&#34; data-size=&#34;1361x742&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/3.png&#34;
+			width=&#34;1361&#34;
+			height=&#34;742&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/3_hu66cf5664c43f449fa744670ec4319b24_173122_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/3_hu66cf5664c43f449fa744670ec4319b24_173122_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;li&gt;vmstat命令：查看CPU负载
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 805; 
+			flex-basis: 1934px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/4.png&#34; data-size=&#34;822x102&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/4.png&#34;
+			width=&#34;822&#34;
+			height=&#34;102&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/4_hua29ecafa10b7c2e837fc83b1946d2863_18299_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/4_hua29ecafa10b7c2e837fc83b1946d2863_18299_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;内存使用情况查看&#34;&gt;内存使用情况查看&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;除了使用top可以查看内存使用情况外，还可以使用free命令进行查看
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 585; 
+			flex-basis: 1404px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/5.png&#34; data-size=&#34;749x128&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/5.png&#34;
+			width=&#34;749&#34;
+			height=&#34;128&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/5_hue05bab33803ae96086f1fcaba47a50e2_19352_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/5_hue05bab33803ae96086f1fcaba47a50e2_19352_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;磁盘io性能查看&#34;&gt;磁盘I/O性能查看&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;可以使用df 或者 df -h 查看磁盘占用用情况
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 158; 
+			flex-basis: 381px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/6.png&#34; data-size=&#34;635x400&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/6.png&#34;
+			width=&#34;635&#34;
+			height=&#34;400&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/6_huf1d499cd45246d7290abe352fe9ff45a_89541_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/6_huf1d499cd45246d7290abe352fe9ff45a_89541_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;li&gt;iostat -d 进行查看
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 292; 
+			flex-basis: 703px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/7.png&#34; data-size=&#34;999x341&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/7.png&#34;
+			width=&#34;999&#34;
+			height=&#34;341&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/7_huf00b96b4cff54e7d4a8f4f1c2555ad35_56884_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/7_huf00b96b4cff54e7d4a8f4f1c2555ad35_56884_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;查看网络情况&#34;&gt;查看网络情况&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;使用ifconfig查看或者修改网络
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 221; 
+			flex-basis: 532px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/8.png&#34; data-size=&#34;792x357&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/8.png&#34;
+			width=&#34;792&#34;
+			height=&#34;357&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/8_hu1f4ff6ae1758e7848c32cdaf96a01f88_76473_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/8_hu1f4ff6ae1758e7848c32cdaf96a01f88_76473_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;li&gt;netstat命令：-i 查看网络接口信息，-r 检测系统路由表信息
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 346; 
+			flex-basis: 831px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/9.png&#34; data-size=&#34;825x238&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/9.png&#34;
+			width=&#34;825&#34;
+			height=&#34;238&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/9_hub74d6223efb06e0a0c47c9dce23fedf6_43319_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/9_hub74d6223efb06e0a0c47c9dce23fedf6_43319_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;动态监控性能&#34;&gt;动态监控性能&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;使用watch命令：动态监控，默认2秒钟执行一次，执行结果更新在屏幕上
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 239; 
+			flex-basis: 574px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/10.png&#34; data-size=&#34;1739x726&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/10.png&#34;
+			width=&#34;1739&#34;
+			height=&#34;726&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/10_hu0938913199fe6be4e994bcf9de02b974_102418_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/10_hu0938913199fe6be4e994bcf9de02b974_102418_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 1281; 
+			flex-basis: 3075px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/11.png&#34; data-size=&#34;1858x145&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/11.png&#34;
+			width=&#34;1858&#34;
+			height=&#34;145&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/11_hu15d41aba72496328c8648425813a5081_22674_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/11_hu15d41aba72496328c8648425813a5081_22674_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        <item>
         <title>mysql性能调优-分库分表</title>
         <link>https://zcj-git520.github.io/p/mysql%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/</link>
         <pubDate>Tue, 01 Mar 2022 22:00:38 +0800</pubDate>
