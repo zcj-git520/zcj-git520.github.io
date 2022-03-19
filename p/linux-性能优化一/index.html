@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Linux常用的性能查看命令 CPU性能查看  使用ps查看正在运行的进程   使用top查看各cup的使用情况、对应内存以及个进程占cpu和使用内存的情况  vmstat命令：查看CPU负载   内存使用情况查看  除了使用top可以查看内存使用情况外，还可以使用free命令进行查看   磁盘I/O性能查看  可以使用df 或者 df -h 查看磁盘占用用情况  iostat -d 进行查看   查看网络情况  使用ifconfig查看或者修改网络  netstat命令：-i 查看网络接口信息，-r 检测系统路由表信息   动态监控性能  使用watch命令：动态监控，默认2秒钟执行一次，执行结果更新在屏幕上    '><title>linux 性能优化(一)</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Linux常用的性能查看命令 CPU CPU的性能指标  cup的使用率分为：    用户CPU使用率，主要包括用户态和低优先级用户态，反应的是应用程序的cpu的使用情况 系统CPU使用率，cpu在内核态运行的时间百分比,不包含中断。反应的是内核的使用情况 等待IO的CPU使用率，反应的是系统与硬件IO的交互的情况 软/硬中断CPU的使用率，反应的中断的发生的情况 steal CPU / guest CPU, 表示虚拟机占用的CPU百分比.    在理想情况下，平均负载等于逻辑CPU个数(几核的CPU),表示每个CUP都被充分使用。大于这个逻辑CPU个数表示负载较大 CUP缓存率指的是CPU缓存的复用情况。命中率越高表示性能越好，其中L1/L2常用在单核,L3则用在多核中  CPU的优化  用户态的优化，即应用程序的的优化，尽可能的减少cpu的上下文的切换 内核态的优化，即内核的优化，可以CPU绑定，调整有优先级，中断的负载均衡等尽可能的减少内核态中上下文的切换  性能工具  根据不同的性能指标来找合适的工具
+ 根据指标查找   CPU性能查看  使用ps查看正在运行的进程   使用top查看各cup的使用情况、对应内存以及个进程占cpu和使用内存的情况  vmstat命令：查看CPU负载   内存使用情况查看  除了使用top可以查看内存使用情况外，还可以使用free命令进行查看   磁盘I/O性能查看  可以使用df 或者 df -h 查看磁盘占用用情况  iostat -d 进行查看   查看网络情况  使用ifconfig查看或者修改网络  netstat命令：-i 查看网络接口信息，-r 检测系统路由表信息   动态监控性能  使用watch命令：动态监控，默认2秒钟执行一次，执行结果更新在屏幕上    '><title>linux 性能优化(一)</title>
 
 <link rel='canonical' href='https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/'>
 
 <link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='linux 性能优化(一)'>
-<meta property='og:description' content='Linux常用的性能查看命令 CPU性能查看  使用ps查看正在运行的进程   使用top查看各cup的使用情况、对应内存以及个进程占cpu和使用内存的情况  vmstat命令：查看CPU负载   内存使用情况查看  除了使用top可以查看内存使用情况外，还可以使用free命令进行查看   磁盘I/O性能查看  可以使用df 或者 df -h 查看磁盘占用用情况  iostat -d 进行查看   查看网络情况  使用ifconfig查看或者修改网络  netstat命令：-i 查看网络接口信息，-r 检测系统路由表信息   动态监控性能  使用watch命令：动态监控，默认2秒钟执行一次，执行结果更新在屏幕上    '>
+<meta property='og:description' content='Linux常用的性能查看命令 CPU CPU的性能指标  cup的使用率分为：    用户CPU使用率，主要包括用户态和低优先级用户态，反应的是应用程序的cpu的使用情况 系统CPU使用率，cpu在内核态运行的时间百分比,不包含中断。反应的是内核的使用情况 等待IO的CPU使用率，反应的是系统与硬件IO的交互的情况 软/硬中断CPU的使用率，反应的中断的发生的情况 steal CPU / guest CPU, 表示虚拟机占用的CPU百分比.    在理想情况下，平均负载等于逻辑CPU个数(几核的CPU),表示每个CUP都被充分使用。大于这个逻辑CPU个数表示负载较大 CUP缓存率指的是CPU缓存的复用情况。命中率越高表示性能越好，其中L1/L2常用在单核,L3则用在多核中  CPU的优化  用户态的优化，即应用程序的的优化，尽可能的减少cpu的上下文的切换 内核态的优化，即内核的优化，可以CPU绑定，调整有优先级，中断的负载均衡等尽可能的减少内核态中上下文的切换  性能工具  根据不同的性能指标来找合适的工具
+ 根据指标查找   CPU性能查看  使用ps查看正在运行的进程   使用top查看各cup的使用情况、对应内存以及个进程占cpu和使用内存的情况  vmstat命令：查看CPU负载   内存使用情况查看  除了使用top可以查看内存使用情况外，还可以使用free命令进行查看   磁盘I/O性能查看  可以使用df 或者 df -h 查看磁盘占用用情况  iostat -d 进行查看   查看网络情况  使用ifconfig查看或者修改网络  netstat命令：-i 查看网络接口信息，-r 检测系统路由表信息   动态监控性能  使用watch命令：动态监控，默认2秒钟执行一次，执行结果更新在屏幕上    '>
 <meta property='og:url' content='https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/'>
 <meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2022-03-05T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2022-03-05T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/3.png' />
 <meta name="twitter:title" content="linux 性能优化(一)">
-<meta name="twitter:description" content="Linux常用的性能查看命令 CPU性能查看  使用ps查看正在运行的进程   使用top查看各cup的使用情况、对应内存以及个进程占cpu和使用内存的情况  vmstat命令：查看CPU负载   内存使用情况查看  除了使用top可以查看内存使用情况外，还可以使用free命令进行查看   磁盘I/O性能查看  可以使用df 或者 df -h 查看磁盘占用用情况  iostat -d 进行查看   查看网络情况  使用ifconfig查看或者修改网络  netstat命令：-i 查看网络接口信息，-r 检测系统路由表信息   动态监控性能  使用watch命令：动态监控，默认2秒钟执行一次，执行结果更新在屏幕上    "><meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:description" content="Linux常用的性能查看命令 CPU CPU的性能指标  cup的使用率分为：    用户CPU使用率，主要包括用户态和低优先级用户态，反应的是应用程序的cpu的使用情况 系统CPU使用率，cpu在内核态运行的时间百分比,不包含中断。反应的是内核的使用情况 等待IO的CPU使用率，反应的是系统与硬件IO的交互的情况 软/硬中断CPU的使用率，反应的中断的发生的情况 steal CPU / guest CPU, 表示虚拟机占用的CPU百分比.    在理想情况下，平均负载等于逻辑CPU个数(几核的CPU),表示每个CUP都被充分使用。大于这个逻辑CPU个数表示负载较大 CUP缓存率指的是CPU缓存的复用情况。命中率越高表示性能越好，其中L1/L2常用在单核,L3则用在多核中  CPU的优化  用户态的优化，即应用程序的的优化，尽可能的减少cpu的上下文的切换 内核态的优化，即内核的优化，可以CPU绑定，调整有优先级，中断的负载均衡等尽可能的减少内核态中上下文的切换  性能工具  根据不同的性能指标来找合适的工具
+ 根据指标查找   CPU性能查看  使用ps查看正在运行的进程   使用top查看各cup的使用情况、对应内存以及个进程占cpu和使用内存的情况  vmstat命令：查看CPU负载   内存使用情况查看  除了使用top可以查看内存使用情况外，还可以使用free命令进行查看   磁盘I/O性能查看  可以使用df 或者 df -h 查看磁盘占用用情况  iostat -d 进行查看   查看网络情况  使用ifconfig查看或者修改网络  netstat命令：-i 查看网络接口信息，-r 检测系统路由表信息   动态监控性能  使用watch命令：动态监控，默认2秒钟执行一次，执行结果更新在屏幕上    "><meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content='https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/3.png' />
     </head>
     <body class="
@@ -130,7 +133,69 @@
 
     <section class="article-content">
     <h2 id="linux常用的性能查看命令">Linux常用的性能查看命令</h2>
-<h3 id="cpu性能查看">CPU性能查看</h3>
+<h3 id="cpu">CPU</h3>
+<h4 id="cpu的性能指标">CPU的性能指标</h4>
+<ul>
+<li>cup的使用率分为：</li>
+</ul>
+<blockquote>
+<ol>
+<li>用户CPU使用率，主要包括用户态和低优先级用户态，反应的是应用程序的cpu的使用情况</li>
+<li>系统CPU使用率，cpu在内核态运行的时间百分比,不包含中断。反应的是内核的使用情况</li>
+<li>等待IO的CPU使用率，反应的是系统与硬件IO的交互的情况</li>
+<li>软/硬中断CPU的使用率，反应的中断的发生的情况</li>
+<li>steal CPU / guest CPU, 表示虚拟机占用的CPU百分比.</li>
+</ol>
+</blockquote>
+<ul>
+<li>在理想情况下，平均负载等于逻辑CPU个数(几核的CPU),表示每个CUP都被充分使用。大于这个逻辑CPU个数表示负载较大</li>
+<li>CUP缓存率指的是CPU缓存的复用情况。命中率越高表示性能越好，其中L1/L2常用在单核,L3则用在多核中</li>
+</ul>
+<h4 id="cpu的优化">CPU的优化</h4>
+<ol>
+<li>用户态的优化，即应用程序的的优化，尽可能的减少cpu的上下文的切换</li>
+<li>内核态的优化，即内核的优化，可以CPU绑定，调整有优先级，中断的负载均衡等尽可能的减少内核态中上下文的切换</li>
+</ol>
+<h4 id="性能工具">性能工具</h4>
+<ul>
+<li>根据不同的性能指标来找合适的工具<br>
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 73; 
+			flex-basis: 176px"
+	>
+	<a href="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/12.png" data-size="1080x1470">
+		<img src="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/12.png"
+			width="1080"
+			height="1470"
+			srcset="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/12_hu0c34dc19359d9daaa64de820de831cae_436117_480x0_resize_box_3.png 480w, /p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/12_hu0c34dc19359d9daaa64de820de831cae_436117_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></li>
+<li>根据指标查找
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 97; 
+			flex-basis: 234px"
+	>
+	<a href="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/13.png" data-size="1080x1106">
+		<img src="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/13.png"
+			width="1080"
+			height="1106"
+			srcset="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/13_huf28f4f3333d79e1e53607d4b6599bcfc_334243_480x0_resize_box_3.png 480w, /p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/13_huf28f4f3333d79e1e53607d4b6599bcfc_334243_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></li>
+</ul>
+<h4 id="cpu性能查看">CPU性能查看</h4>
 <ol>
 <li>使用ps查看正在运行的进程
 <figure 
@@ -610,7 +675,14 @@
   <ol>
     <li><a href="#linux常用的性能查看命令">Linux常用的性能查看命令</a>
       <ol>
-        <li><a href="#cpu性能查看">CPU性能查看</a></li>
+        <li><a href="#cpu">CPU</a>
+          <ol>
+            <li><a href="#cpu的性能指标">CPU的性能指标</a></li>
+            <li><a href="#cpu的优化">CPU的优化</a></li>
+            <li><a href="#性能工具">性能工具</a></li>
+            <li><a href="#cpu性能查看">CPU性能查看</a></li>
+          </ol>
+        </li>
         <li><a href="#内存使用情况查看">内存使用情况查看</a></li>
         <li><a href="#磁盘io性能查看">磁盘I/O性能查看</a></li>
         <li><a href="#查看网络情况">查看网络情况</a></li>

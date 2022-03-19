@@ -100,7 +100,69 @@ cup的上下文切换可分为：线程上下文切换、进程上下文切换�
         
         <guid>https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/</guid>
         <description>&lt;img src="https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/3.png" alt="Featured image of post linux 性能优化(一)" /&gt;&lt;h2 id=&#34;linux常用的性能查看命令&#34;&gt;Linux常用的性能查看命令&lt;/h2&gt;
-&lt;h3 id=&#34;cpu性能查看&#34;&gt;CPU性能查看&lt;/h3&gt;
+&lt;h3 id=&#34;cpu&#34;&gt;CPU&lt;/h3&gt;
+&lt;h4 id=&#34;cpu的性能指标&#34;&gt;CPU的性能指标&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;cup的使用率分为：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;ol&gt;
+&lt;li&gt;用户CPU使用率，主要包括用户态和低优先级用户态，反应的是应用程序的cpu的使用情况&lt;/li&gt;
+&lt;li&gt;系统CPU使用率，cpu在内核态运行的时间百分比,不包含中断。反应的是内核的使用情况&lt;/li&gt;
+&lt;li&gt;等待IO的CPU使用率，反应的是系统与硬件IO的交互的情况&lt;/li&gt;
+&lt;li&gt;软/硬中断CPU的使用率，反应的中断的发生的情况&lt;/li&gt;
+&lt;li&gt;steal CPU / guest CPU, 表示虚拟机占用的CPU百分比.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;在理想情况下，平均负载等于逻辑CPU个数(几核的CPU),表示每个CUP都被充分使用。大于这个逻辑CPU个数表示负载较大&lt;/li&gt;
+&lt;li&gt;CUP缓存率指的是CPU缓存的复用情况。命中率越高表示性能越好，其中L1/L2常用在单核,L3则用在多核中&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;cpu的优化&#34;&gt;CPU的优化&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;用户态的优化，即应用程序的的优化，尽可能的减少cpu的上下文的切换&lt;/li&gt;
+&lt;li&gt;内核态的优化，即内核的优化，可以CPU绑定，调整有优先级，中断的负载均衡等尽可能的减少内核态中上下文的切换&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;性能工具&#34;&gt;性能工具&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;根据不同的性能指标来找合适的工具&lt;br&gt;
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 73; 
+			flex-basis: 176px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/12.png&#34; data-size=&#34;1080x1470&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/12.png&#34;
+			width=&#34;1080&#34;
+			height=&#34;1470&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/12_hu0c34dc19359d9daaa64de820de831cae_436117_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/12_hu0c34dc19359d9daaa64de820de831cae_436117_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;li&gt;根据指标查找
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 97; 
+			flex-basis: 234px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/13.png&#34; data-size=&#34;1080x1106&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/13.png&#34;
+			width=&#34;1080&#34;
+			height=&#34;1106&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/13_huf28f4f3333d79e1e53607d4b6599bcfc_334243_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/13_huf28f4f3333d79e1e53607d4b6599bcfc_334243_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;cpu性能查看&#34;&gt;CPU性能查看&lt;/h4&gt;
 &lt;ol&gt;
 &lt;li&gt;使用ps查看正在运行的进程
 &lt;figure 
