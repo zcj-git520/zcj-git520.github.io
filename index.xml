@@ -6,7 +6,1380 @@
         <description>Recent content on Chengji Zhao&#39;s blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Tue, 15 Mar 2022 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Mon, 30 May 2022 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Linux-Multi-Disk (MD)模块</title>
+        <link>https://zcj-git520.github.io/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/</link>
+        <pubDate>Mon, 30 May 2022 22:00:38 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/image-20220613151649807.png" alt="Featured image of post Linux-Multi-Disk (MD)模块" /&gt;&lt;h4 id=&#34;概述&#34;&gt;概述&lt;/h4&gt;
+&lt;p&gt;Linux内核在多块设备的基础上，注册了一块特殊的设备，称为为MD设备。这个MD设备形成一个逻辑层，支持不同的RAID技术&lt;/p&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 130; 
+			flex-basis: 313px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/image-20220613151649807.png&#34; data-size=&#34;491x376&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/image-20220613151649807.png&#34;
+			width=&#34;491&#34;
+			height=&#34;376&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/image-20220613151649807_huc45ff52f0cf6b2c13cf0b9e2262e1b7b_66945_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/image-20220613151649807_huc45ff52f0cf6b2c13cf0b9e2262e1b7b_66945_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;MD模块是一个虚拟块设备，它属于块i/o子系统中的块设备驱动层，架构于物理块设备层；其有两层：RAID共性层和RAID个性层&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;RAID共性层：它提取出各种级别的RAID的公共特性，依照块设备的实现模板向上层注册，同时向RAID个性层提供公共函数，以及接口注册函数&lt;/li&gt;
+&lt;li&gt;RAID个性层：是各种级别RAID的个性体现，它向RAID公共层注册个性接口，利用RAID公共层提供的公共函数，基于低层实现个性化功能&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;raid模块对象&#34;&gt;RAID模块对象&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;核心MD设备结构mddev及其成员磁盘设备结构mdk_rdev_t是系统中的两个关键结构。核心MD设备结构mddev_t是内核中RAID设备保存自身信息的结构体，它包括了完整的RAID设备的信息。成员磁盘设备结构mdk_rdev_t反映了组成MD设备的底层块设备的信息；&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;MD设备处理可以有不同的特性，它指向一个MD个性结构体，有个性ND设备的操作表和操作的最终数据&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;MD设备通过块设备号和块设备描述符（block_device）关联起来，低层成员磁盘也指向和它相对应的块设备描述符正是以块设备描述符为“纽带”，使得MD可以构建在其他的物理或虚拟磁盘设备之上，成为一个“栈式”块设备；&lt;/p&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 161; 
+			flex-basis: 386px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/image-20220613154538680.png&#34; data-size=&#34;546x339&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/image-20220613154538680.png&#34;
+			width=&#34;546&#34;
+			height=&#34;339&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/image-20220613154538680_hu95e6a8286145ebb4704fcc542b2119eb_66459_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/image-20220613154538680_hu95e6a8286145ebb4704fcc542b2119eb_66459_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;md模块初始化&#34;&gt;MD模块初始化&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;MD模块加载时，它的初始化函数md_init将被执行;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;__register_blkdev函数:是维护主设备号和块设备名之间的关联,所有块设备模块初始化时，都应该调用这个函数&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;static void md_geninit(void)
+{
+	pr_debug(&amp;quot;md: sizeof(mdp_super_t) = %d\n&amp;quot;, (int)sizeof(mdp_super_t));
+
+	proc_create(&amp;quot;mdstat&amp;quot;, S_IRUGO, NULL, &amp;amp;mdstat_proc_ops);
+}
+
+static int __init md_init(void)
+{
+	int ret = -ENOMEM;
+
+	md_wq = alloc_workqueue(&amp;quot;md&amp;quot;, WQ_MEM_RECLAIM, 0);
+	if (!md_wq)
+      goto err_wq;
+
+	md_misc_wq = alloc_workqueue(&amp;quot;md_misc&amp;quot;, 0, 0);
+	if (!md_misc_wq)
+      goto err_misc_wq;
+
+	md_rdev_misc_wq = alloc_workqueue(&amp;quot;md_rdev_misc&amp;quot;, 0, 0);
+	if (!md_rdev_misc_wq)
+      goto err_rdev_misc_wq;
+
+	ret = __register_blkdev(MD_MAJOR, &amp;quot;md&amp;quot;, md_probe);
+	if (ret &amp;lt; 0)
+      goto err_md;
+
+	ret = __register_blkdev(0, &amp;quot;mdp&amp;quot;, md_probe);
+	if (ret &amp;lt; 0)
+      goto err_mdp;
+	mdp_major = ret;
+
+	register_reboot_notifier(&amp;amp;md_notifier);
+	raid_table_header = register_sysctl_table(raid_root_table);
+
+	md_geninit();
+	return 0;
+
+err_mdp:
+	unregister_blkdev(MD_MAJOR, &amp;quot;md&amp;quot;);
+err_md:
+	destroy_workqueue(md_rdev_misc_wq);
+err_rdev_misc_wq:
+	destroy_workqueue(md_misc_wq);
+err_misc_wq:
+	destroy_workqueue(md_wq);
+err_wq:
+	return ret;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;md设备创建&#34;&gt;MD设备创建&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;md_probe()函数负责创建MD对象,直接调用md_alloc函数；&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;static void md_probe(dev_t dev)
+{
+	if (MAJOR(dev) == MD_MAJOR &amp;amp;&amp;amp; MINOR(dev) &amp;gt;= 512)
+      return;
+	if (create_on_open)
+      md_alloc(dev, NULL);
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;md_open():是系统调用open的实现代码继续执行，调用块设备操作表的open回调函数的实例化&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;用户态发送ioctl创建md&#34;&gt;用户态发送ioctl创建MD&lt;/h4&gt;
+&lt;p&gt;使用管理工具创建MD是通过ioctl来实现的。在打开MD设备文件（如/dev/md0）情况下，文件操作表被设置为def_blk_fops，其unlocked_ioctl回调函数的实现为block_ioctl，而后者经调用blkdev_ioctl，再调用__blkdev_driver_ioctl，最后调用的是通用磁盘的块设备操作表中的ioctl回调函数&lt;/p&gt;
+&lt;p&gt;函数md_iocal()可对设备驱动、磁盘、设备进行查询、控制和配置:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;针对于RAID驱动程序，而非特定的阵列；例如获取RAID驱动程序版本号以及打印所有RAID阵列信息等&lt;/li&gt;
+&lt;li&gt;针对于特定阵列，主要命令如下：如SET_ARRAY_INFO设置MD设备信息；ADD_NEW_DISK在MD设备中添加一个磁盘设备；RUN_ARRAY运行MD设备等&lt;/li&gt;
+&lt;li&gt;SET_ARRAY_INFO：在md_ioctl，处理SET_ARRAY_INFO控制码的代码首先从用户空间复制参数，然后根据MD设备是否已经存在分别调用update_array_info和md_set_array_info函数；&lt;/li&gt;
+&lt;li&gt;ADD_NEW_DISK:在md_ioctl，处理ADD_NEW_DISK控制码的代码首先从用户空间复制参数，然后调md_add_new_disk函数;&lt;/li&gt;
+&lt;li&gt;RUN_ARRAY:处理RUN_ARRAY控制码的代码直接调用do_md_run函数;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;md设备请求执行&#34;&gt;MD设备请求执行&lt;/h4&gt;
+&lt;p&gt;MD模块中提供了一个通用的接口函数md_make_request作为各种级别RAID设备的读／写请求的入口;&lt;/p&gt;
+&lt;p&gt;加载MD模块时，调用blk_queue_make_request函数将所有对主设备号为MD_MAJOR的读／写请求都转发到这个函数。但这个函数并不执行真正处理，只是通过映射找到块设备次设备号对应MD设备结构，进而获得其个性化结构指针，调用个性化结构的make_request，即通过和该RAID级别对应的请求处理函数来处理这个请求;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Linux-raid5学习</title>
+        <link>https://zcj-git520.github.io/p/linux-raid5%E5%AD%A6%E4%B9%A0/</link>
+        <pubDate>Sun, 15 May 2022 22:00:38 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/linux-raid5%E5%AD%A6%E4%B9%A0/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/linux-raid5%E5%AD%A6%E4%B9%A0/1.png" alt="Featured image of post Linux-raid5学习" /&gt;&lt;h3 id=&#34;raid5模块&#34;&gt;RAID5模块&lt;/h3&gt;
+&lt;p&gt;RAID5模块的对象，模块的执行过程及其同步和恢复过程&lt;/p&gt;
+&lt;h4 id=&#34;raid5模块对象&#34;&gt;RAID5模块对象&lt;/h4&gt;
+&lt;p&gt;对于RAID5，MD设备描述符（mddev）的private域指向RAID5私有配置结构r5conf。后者包含一个成员磁盘
+数组，每一项都指向对应的成员磁盘描述符（mdk_rdev_t），而这些成员磁盘描述符被链入MD设备描述符的成员磁盘链表，并且有指针指向MD设备；&lt;/p&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 214; 
+			flex-basis: 513px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-raid5%E5%AD%A6%E4%B9%A0/1.png&#34; data-size=&#34;546x255&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-raid5%E5%AD%A6%E4%B9%A0/1.png&#34;
+			width=&#34;546&#34;
+			height=&#34;255&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-raid5%E5%AD%A6%E4%B9%A0/1_hu7e02b142b51acc83a4bc67a855e709b3_49591_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-raid5%E5%AD%A6%E4%B9%A0/1_hu7e02b142b51acc83a4bc67a855e709b3_49591_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;RAID5支持冗余，在条带中采用了校验和技术。对RAID5设备的正常读／写和同步／恢复／扩展等操作都是以条带为基本单位处理的，条带管理结构为“条带头”（stripe_head）。每个RAID5设备分配有固定数目的条带头，随着系统运行，这些条带头可能被挂载到RAID5设备的不同链表，被条带使用中的条带头结构还会链入RAID5的哈希表以便于查找&lt;/p&gt;
+&lt;p&gt;每个RAID5设备被分配一定数目的条带用于处理提交给它的请求，最大条带数目由max_nr_stripes域给出。这些条带根据其状态被链入到不同的链表。RAID5设备有以下五个不同的链表&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;inactive_list为空闲的条带列表：在RAID5开始运行之初，所有的条带都在inactive_list中。在有请求到达时，为它分配并关联一个条带。条带处理完成，又被释放回到这个链表；&lt;/li&gt;
+&lt;li&gt;handle_list为需要处理的条带列表：要处理的条带都会被添加到handle_list链表，RAID5守护线程就是根据这个链表进行处理的。条带被处理时，会被从链表中删除，暂时处于“游离”状态。一个条带需要多轮处理，每一轮处理完成之后，都被重新加入某个链表，最终又会被重新加入handle_list链表，开始新一轮处理。&lt;/li&gt;
+&lt;li&gt;bitmap_list为因等待位图更新而延迟的条带链表：如果在对RAID5设备进行写操作时突然掉电，就可能造成某些条带的不同步，有可能数据已经被写入成员磁盘，而校验和还没有被写入，又或者校验和已经被写入，而某些数据还没有被写入成员磁盘。当RAID5再次被重组以后，就需要进行同步处478理，而这需要我们知道哪些条带需要被同步，否则只能进行全面的同步，这样做显然开销非常大。位图就是为此目的而引入的。如果RAID5支持位图，每一个块会对应一个位图位，在进行写操作的时候，会先将对应的位图位置成1，这时写请求也被放入bitmap_list链表，只有在该位图位被成功冲刷到磁盘之后，才能处理这个写请求。当进行同步操作的时候，根据位图位，只同步那些被置为1的条带。采用位图策略最大的优点是减少了无谓的同步操作，提高了同步操作效率。&lt;/li&gt;
+&lt;li&gt;delayed_list为被延迟处理的条带链表：在有写请求到达条带的某个成员磁盘时，并不是立即将请求放handle_list准备处理，而是先放入delayed_list链表延迟一段时间，延迟的目的是为了等待“可能有”更多针对这个条带的其他成员磁盘的写请求到来，这样做可以从整体上减少“预读”（无论是重构写还是读改写）的次数。只有当条带被“激活读”后，才开始将delayed_list链表中的条带转移到其他链表进行处理。&lt;/li&gt;
+&lt;li&gt;hold_list为准备好预读的条带链表：当前的Linux内核版本为了防止delayed_list一股脑儿将所有的条带转移到handle_list，在其中引入hold_list链表，延迟的条带先被保存到hold_list链表以进一步延迟，根据特定的算法，hold_list被绕过，也有可能被转移到handle_list而得到处理。事实证明，这样做可以改进写性能&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 128; 
+			flex-basis: 308px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-raid5%E5%AD%A6%E4%B9%A0/2.png&#34; data-size=&#34;754x587&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-raid5%E5%AD%A6%E4%B9%A0/2.png&#34;
+			width=&#34;754&#34;
+			height=&#34;587&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-raid5%E5%AD%A6%E4%B9%A0/2_hu8959bc3f50cba5ee7ab9bfeff9b4b77c_194121_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-raid5%E5%AD%A6%E4%B9%A0/2_hu8959bc3f50cba5ee7ab9bfeff9b4b77c_194121_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;h4 id=&#34;请求执行过程&#34;&gt;请求执行过程&lt;/h4&gt;
+&lt;p&gt;RAID5作为一个独立的模块，在初始化时调用raid5_init，在卸载时调用raid5_exit。而raid5_init则是通过调用register_md_personality注册RAID5个性化，包括模块名和一些个性化方法信息。在raid5_exit中则调用unregister_md_personality注销RAID5个性化；&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;接收上层提交请求：上层提交给MD设备的请求，会被传递给raid5_make_request函数；&lt;/li&gt;
+&lt;li&gt;md_write_start函数，它和后面的md_write_end互为对应，都是MD模块提供的公共函数，供RAID5等支持冗余的个性模块调用;&lt;/li&gt;
+&lt;li&gt;chunk_aligned_read函数处理对齐读。所谓对齐读（AlignedRead），是指要读的数据在一个Chunk边界内，因此只需要从某个成员磁盘读取即可，不涉及整个条带的配合;函数根据请求是否在一个Chunk边界内，以及目标成员磁盘是否处在同步状态等，判断是否可以按对齐读处理&lt;/li&gt;
+&lt;li&gt;raid5_compute_sector:函数输入一个相对RAID5设备的“大的”扇区编号，输出数据磁盘和校验磁盘的编号，以及其上的扇区编号，即条带编号，根据扇区编号计算数据磁盘和校验磁盘的编号及在其上的扇区编号&lt;/li&gt;
+&lt;li&gt;raids_compute_sector函数有五个参数：第一个为指向r5conf描述符的指针；第二个为目标扇区编号（相对于RAID5设备）；第三个为1表示根据变更前的参数进行计算，为0表示根据变更后的参数进行计算；第四个为输出参数，通过它返回数据单元在条带中的编号；第五个为指向对应stripe_head描述符的指针，这时计算好的P校验单元编号、Q校验单元编号、ddf_layout标志将被保存在它的对应域，或为NULL。函数返回对应扇区在成员磁盘上的扇区编号，即条带编号&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h5 id=&#34;raid5校验盘和数据盘编号与算法&#34;&gt;RAID5校验盘和数据盘编号与算法&lt;/h5&gt;
+&lt;p&gt;假设数据单元标号为chunk_number，RAID磁盘数为raid_disks，数据盘数为data_disks，所在条带编号为stripe=chunk_number/data_disks。然后计算在条带内的数据磁盘和校验磁盘编号&lt;/p&gt;
+&lt;p&gt;RAID5的算法如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;向左不对称算法：校验盘编号为data_disks-stripe%raid_disks。数据盘编号为chunk_number%data_disks，如果该值大于或等于校验盘编号，则还需要加1；&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;向右不对称算法：校验盘编号为stripe%raid_disks。数据盘编号为chunk_number%data_disks，如果该值大于或等于校验盘编号，则还需要加1；&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;向左对称算法：校验盘编号为data_disks-stripe%raid_disks，而数据盘编号为（校验盘编号＋1＋chunk_number%data_disks）%raid_disks；&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;向右对称算法：校验盘编号为stripe%raid_disks，而数据盘编号为（校验盘编号＋1＋chunk_number%data_disks）%raid_disks。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;最后，目标扇区在数据盘和校验盘上的扇区编号为stripe*sectors_per_chunk＋
+chunk_offset。&lt;/p&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 195; 
+			flex-basis: 468px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-raid5%E5%AD%A6%E4%B9%A0/image-20220615135945792.png&#34; data-size=&#34;546x280&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-raid5%E5%AD%A6%E4%B9%A0/image-20220615135945792.png&#34;
+			width=&#34;546&#34;
+			height=&#34;280&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-raid5%E5%AD%A6%E4%B9%A0/image-20220615135945792_hu56cf7082cf273c5a6b9a0abcf9200974_210594_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-raid5%E5%AD%A6%E4%B9%A0/image-20220615135945792_hu56cf7082cf273c5a6b9a0abcf9200974_210594_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;管理raid5条带资源&#34;&gt;管理RAID5条带资源&lt;/h4&gt;
+&lt;p&gt;条带头是在RAID5开始运行的时候开辟的缓冲区，这是一个有限的资源，除了在数据处理过程中需要调度以外，还需要一套完整的机制去使得这些有限的资源能够满足数据请求处理所需&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;raid5_get_active_stripe：函数有五个参数：第一个为指向RAID5私有数据描述符的指针；第二个为条带编号；第三个为1表示根据变更前的参数进行计算，为0表示根据变更后的参数进行计算；第四个为1表示不要阻塞，为0表示阻塞，直到获得一个活动条带；第五个为noquiesce。函数返回指向条带头描述符的指针，或者在失败时返回NULL&lt;/li&gt;
+&lt;li&gt;__find_stripe：在哈希表中找看指定扇区的条带是否已经存在。如果不存在，函数会返回NULL&lt;/li&gt;
+&lt;li&gt;get_free_stripe从inactive_list链表尝试获得一个条带；&lt;/li&gt;
+&lt;li&gt;当条带使用完毕后，也就是没有条带的时候，会先将inactive_blocked域置1，然后调用wait_event_lock_irq开始等待；&lt;/li&gt;
+&lt;li&gt;wait_event_lock_irq：四个参数：第一个为等待队列；第二个为条件；第三个为锁；第四个为命令。它的解释为：如果条件不满足，就将当前线程加入到等待队列，当时在放弃执行之前，还会执行一个命令，这通常就是督促其他部分去赶紧处理，使得等待的条件尽早满足；等待条件是：1.RAID5的inactive_list链表不为空；2.RAID5的活动条带数域小于其最大条带数目的3/4，或者RAID5的inactive_blocked为0&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;raid5守护线程处理&#34;&gt;RAID5守护线程处理&lt;/h4&gt;
+&lt;p&gt;每个RAID4/5/6设备可以同时存在两个MD线程：一个名字为md#_raid5，称为RAID5守护线程，它执行的处理函数为raid5d；另一个名字为resync或reshape，笼统地称为RAID5同步线程，它执行的处理函数为md_do_sync&lt;/p&gt;
+&lt;p&gt;RAID5守护线程，它负责条带各个轮次的处理，从接受上层请求时开始，处理过程中不断推进条带状态的变化，直至最终完成&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Linux-文件系统(简阅)</title>
+        <link>https://zcj-git520.github.io/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/</link>
+        <pubDate>Thu, 12 May 2022 22:00:38 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/1.png" alt="Featured image of post Linux-文件系统(简阅)" /&gt;&lt;h4 id=&#34;概述&#34;&gt;概述&lt;/h4&gt;
+&lt;p&gt;文件系统是存储和组织文件，以便可以访问和查找的一种机制；不同的文件系统有不同的存储和组织方式；基于磁盘的有一下几种存储方式：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;连续存储：把数据作为连续的数据块存储到磁盘上；这一方案简单、容易实现，记录文件用到的磁盘块仅需记住第一块的地址，并且性能较好，一次操作就可读出整个文件。但是，它有一个致命的缺陷。在创建文件时，必须知道文件的最大长度，否则无法确定需要为它保留多少磁盘空间。因此，连续存储主要适合于文件数据一次性写入的系统（例如romfs）&lt;/li&gt;
+&lt;li&gt;连接表存储：将每个文件用磁盘块顺序连接起来；虽然用于链接磁盘块的指针可以使用磁盘块本身的空间，但这将使得每个磁盘块实际存储的数据字节数不再是2的幂，给上层应用程序带来不便。文件系统从磁盘块中取出一些指针，作为索引存放在文件分配表FAT。只需要记录文件的起始磁盘块编号，顺着文件分配表中索引指针组织成的链表，就可以找到文件的所有磁盘块。&lt;/li&gt;
+&lt;li&gt;inode存储：每个文件都有一个称为node的表；通过它获取所有磁盘的编号；小文件的所有磁盘块编号都直接存放在inode内。稍大的一些文件，inode记录了一个称为一次间接块的磁盘块编号，这个磁盘块存放着文件的其他磁
+盘块编号。如果文件再扩大，可以在inode中记录二次间接块编号，二次间接块存放着多个一次间接块的编号，而每个一次间接块又存放着文件的其他磁盘块编号。如果这也不够的话，还可以使用三次间接块。本章要讨论的Minix文件系统，就使用的这种分配方案&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Linux将文件系统分为两层：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;上层为虚拟文件系统开关层，简称为虚拟文件系统：它是具体文件系统和上层应用之间的接口层，将各种不同文件系统的操作和管理纳入一个统一的框架，使得用户不需要关心各种不同文件系统的实现细节。VFS由超级块、inode、dentry、vfsmount等信息组成&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;下层为具体文件系统实现，如Minix、EXT2/3/4、sysfs等。具体文件系统实现代码组织成模块形式，向Linux VFS注册回调函数，处理和具体文件系统密切相关的细节操作&lt;/p&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 207; 
+			flex-basis: 498px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/1.png&#34; data-size=&#34;513x247&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/1.png&#34;
+			width=&#34;513&#34;
+			height=&#34;247&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/1_hudd81952809099175edb54de5cef86875_45536_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/1_hudd81952809099175edb54de5cef86875_45536_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;文件系统对象&#34;&gt;文件系统对象&lt;/h4&gt;
+&lt;p&gt;Linux文件系统对象之间的关系可以概括为文件系统类型、超级块、inode、dentry和vfsmount之间的关系；&lt;/p&gt;
+&lt;p&gt;Linux有一颗全局文件系统树，反映了Linux VFS对象之间的关系；&lt;/p&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 100; 
+			flex-basis: 240px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/2.png&#34; data-size=&#34;546x546&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/2.png&#34;
+			width=&#34;546&#34;
+			height=&#34;546&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/2_hu97f7504c4d7172949bd90e2b95d8f280_119893_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/2_hu97f7504c4d7172949bd90e2b95d8f280_119893_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;每个文件系统装载实例有四个必备元素：vfsmount、超级块、根inode和根dentry。&lt;/p&gt;
+&lt;h4 id=&#34;装载文件系统&#34;&gt;装载文件系统&lt;/h4&gt;
+&lt;p&gt;文件系统要被使用就应该被装载。体现一个文件系统装载实例要素是：vfsmount、super_block、根dentry和根inode；&lt;/p&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 234; 
+			flex-basis: 562px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/3.png&#34; data-size=&#34;546x233&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/3.png&#34;
+			width=&#34;546&#34;
+			height=&#34;233&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/3_hu683ec3b3d789a1463d3ac034598e77a1_61958_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/3_hu683ec3b3d789a1463d3ac034598e77a1_61958_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;在内核角度，装载过程中，文件系统类型中的get_sb将被调用，它将生成一个新的文件系统装载对象vfsmount，并和该文件系统类型的一个超级块实例关联起来；&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Linux-文件系统简阅</title>
+        <link>https://zcj-git520.github.io/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/</link>
+        <pubDate>Thu, 12 May 2022 22:00:38 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/1.png" alt="Featured image of post Linux-文件系统简阅" /&gt;&lt;h3 id=&#34;mdadm&#34;&gt;mdadm&lt;/h3&gt;
+&lt;p&gt;mdadm是linux下的一款标准的RAID的管理工具&lt;/p&gt;
+&lt;h5 id=&#34;基本语法&#34;&gt;基本语法&lt;/h5&gt;
+&lt;p&gt;mdadm [mode] &lt;!-- raw HTML omitted --&gt; [option] &lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;h5 id=&#34;目前支持&#34;&gt;目前支持&lt;/h5&gt;
+&lt;p&gt;RAID0(striping), RAID1(mirroring), RAID4, RAID5, RAID6, RAID10, MULTIPATH和FAULTY&lt;/p&gt;
+&lt;h5 id=&#34;模式&#34;&gt;模式&lt;/h5&gt;
+&lt;ul&gt;
+&lt;li&gt;Assemble：加入一个以前定义的阵列&lt;/li&gt;
+&lt;li&gt;Build：创建一个没有超级块的阵列&lt;/li&gt;
+&lt;li&gt;Create：创建一个新的阵列，每个设备具有超级块； -l,&amp;ndash;level: RAID级别 -n,&amp;ndash;raid-devices: 活动设备个数 -a {yes|no}: 是否自动为其创建设备文件 -c,&amp;ndash;chunk: CHUNK大小, 默认为64K，重要的参数,决定了一次向阵列中每个磁盘写入数据的大小 -x,&amp;ndash;spare-devices: 备用盘个数&lt;/li&gt;
+&lt;li&gt;Manage： 管理阵列(如添加和删除)&lt;/li&gt;
+&lt;li&gt;Misc：允许单独对阵列中的某个设备进行操作(如停止阵列)&lt;/li&gt;
+&lt;li&gt;Follow or Monitor:监控RAID的状态&lt;/li&gt;
+&lt;li&gt;Grow：改变RAID的容量或阵列中的设备数目 ；-n,&amp;ndash;raid-devices=: 活动设备个数-x,&amp;ndash;spare-devices=：备用盘个数-c,&amp;ndash;chunk=: CHUNK大小, 默认为64K，重要的参数,决定了一次向阵列中每个磁盘写入数据的大小-z,&amp;ndash;size=：阵列中从每个磁盘获取的空间总数-l,&amp;ndash;level=: RAID级别-p,&amp;ndash;layout=：设定raid5 和raid10的奇偶校验规则；并且控制故障的故障模式&amp;ndash;parity: 类似于&amp;ndash;layout&amp;ndash;assume-clean:目前仅用于 &amp;ndash;build 选项-R &amp;ndash;run: 强制激活RAID，使用这个选项，设备上有旧的元数据信息的提示会被忽略-N &amp;ndash;name=: 设定阵列的名称–-rounding：在linear array中的rounding factor，等于条带大小。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id=&#34;可用的options&#34;&gt;可用的[options]&lt;/h5&gt;
+&lt;ul&gt;
+&lt;li&gt;-A，&amp;ndash;assemble：加入一个以前定义的阵列&lt;/li&gt;
+&lt;li&gt;-B,&amp;ndash;build:Build a legacy array without superblocks .&lt;/li&gt;
+&lt;li&gt;-C，&amp;ndash;create：创建一个新的阵列&lt;/li&gt;
+&lt;li&gt;-Q&amp;ndash;query：查看一个device，判断它为一个md device或是一个md阵列的一部分&lt;/li&gt;
+&lt;li&gt;-D，&amp;ndash;detail：打印一个或多个md device的详细信息&lt;/li&gt;
+&lt;li&gt;-E，&amp;ndash;examine：打印device上的md superblock 的内容&lt;/li&gt;
+&lt;li&gt;-F，&amp;ndash;follow，&amp;ndash;monitor：选择Monitor模式&lt;/li&gt;
+&lt;li&gt;-G，&amp;ndash;grow：改变在用阵列的大小或形态&lt;/li&gt;
+&lt;li&gt;-h，&amp;ndash;help：帮助信息，用在以上选项后，则显示该选项信息&amp;ndash;help-options&lt;/li&gt;
+&lt;li&gt;-V,&amp;ndash;version&lt;/li&gt;
+&lt;li&gt;-V，&amp;ndash;verbose：显示细节&lt;/li&gt;
+&lt;li&gt;-b,&amp;ndash;brief：较少的细节。用于&amp;ndash;detail和&amp;ndash;examine选项&lt;/li&gt;
+&lt;li&gt;-f,&amp;ndash;force&lt;/li&gt;
+&lt;li&gt;-c，&amp;ndash;config=：指定配置文件，缺省为/etc/mdadm/mdadm. conf&lt;/li&gt;
+&lt;li&gt;-s，&amp;ndash;scan：扫描配置文件或/proc/mdstat以搜寻丢失的信息。配置文件/etc/mdadm/mdadm. conf&lt;/li&gt;
+&lt;li&gt;create或build使用的选项：&lt;/li&gt;
+&lt;li&gt;-c,&amp;ndash;chunk=:Specify chunk size of kibibytes.缺省为64.&lt;/li&gt;
+&lt;li&gt;&amp;ndash;rounding=:Specify rounding factor for linear array(==chunk size)&lt;/li&gt;
+&lt;li&gt;-I,&amp;ndash;level=:设定raid level.&lt;/li&gt;
+&lt;li&gt;&amp;ndash;create可用：linear，raid 0，0，stripe，raid 1，1，mirror，raid 4，4，raid 5，5，raid 6，6，multipath, mp.&lt;/li&gt;
+&lt;li&gt;&amp;ndash;build可用：linear，raid 0，0，stripe.&lt;/li&gt;
+&lt;li&gt;-p，&amp;ndash;parity=：设定raid 5的奇偶校验规则：eft- asymmetric ，left-symmetric，right- asymmetric , right-symmetric, la, ra, ls, rs.缺省为left-symmetric&amp;ndash;layout=：类似于&amp;ndash;parity&lt;/li&gt;
+&lt;li&gt;-n，&amp;ndash;raid-devices=：指定阵列中可用device数目，这个数目只能由&amp;ndash;grow修改-x，&amp;ndash;spare-devices=：指定初始阵列的富余device数目&lt;/li&gt;
+&lt;li&gt;-z，&amp;ndash;size=：组建RAID1/4/5/6后从每个device获取的空间总数&amp;ndash;assume-clean:目前仅用于&amp;ndash;build选项&lt;/li&gt;
+&lt;li&gt;-R，-run：阵列中的某一部分出现在其他阵列或文件系统中时，m dadm会确认该阵列。此选项将不作确认。&lt;/li&gt;
+&lt;li&gt;-f, &amp;ndash;force:通常mdadm不允许只用一个device创建阵列，而且创建raid5时会使用一个device作为missingdrive。此选项正相反&lt;/li&gt;
+&lt;li&gt;-a, &amp;ndash;auto{=no,yes,md,mdp,part,p}{NN}&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;测试&#34;&gt;测试&lt;/h4&gt;
+&lt;h5 id=&#34;创建raid5阵列&#34;&gt;创建RAID5阵列&lt;/h5&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;执行命令: mdadm &amp;ndash;create /dev/md0 &amp;ndash;level=5 &amp;ndash;chunk=64 &amp;ndash;raid-devices=4 &amp;ndash;spare-devices=1 /dev/sd[b-f]&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;使用cat /proc/mdstat查看RAID5阵列状态&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;结果：&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Personalities : [linear] [multipath] [raid0] [raid1] [raid6] [raid5] [raid4] [raid10] 
+md0 : active raid5 sde[5] sdf[4](S) sdd[2] sdc[1] sdb[0]
+      328704 blocks super 1.2 level 5, 64k chunk, algorithm 2 [4/4] [UUUU]
+
+unused devices: &amp;lt;none&amp;gt;
+显示设备盘为sdf为热备盘， 使用fdisk –l查看磁盘阵列, 显示磁盘大小为：Disk /dev/md0: 320 MB
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id=&#34;停止raid5阵列&#34;&gt;停止RAID5阵列&lt;/h5&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;执行命令: sudo mdadm -Ss 或者 mdadm &amp;ndash;stop /dev/md0&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;使用cat /proc/mdstat查看RAID5阵列状态&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;结果&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Personalities : [linear] [multipath] [raid0] [raid1] [raid6] [raid5] [raid4] [raid10] 
+unused devices: &amp;lt;none&amp;gt;
+// 磁盘已经停止 mdadm: stopped /dev/md0
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id=&#34;启动raid5阵列&#34;&gt;启动RAID5阵列&lt;/h5&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;执行命令: sudo mdadm -As&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;使用cat /proc/mdstat查看RAID5阵列状态&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;结果&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;mdadm: /dev/md/0 has been started with 4 drives and 1 spare.
+
+Personalities : [linear] [multipath] [raid0] [raid1] [raid6] [raid5] [raid4] [raid10] 
+md0 : active raid5 sdb[0] sdf[4](S) sde[5] sdd[2] sdc[1]
+      328704 blocks super 1.2 level 5, 64k chunk, algorithm 2 [4/4] [UUUU]
+
+unused devices: &amp;lt;none&amp;gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id=&#34;查看md状态&#34;&gt;查看md状态&lt;/h5&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;执行命令：mdadm -D /dev/md0&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;结果：&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;/dev/md0:
+           Version : 1.2
+     Creation Time : Wed Jun  8 14:28:56 2022
+        Raid Level : raid5
+        Array Size : 328704 (321.00 MiB 336.59 MB)
+     Used Dev Size : 109568 (107.00 MiB 112.20 MB)
+      Raid Devices : 4
+     Total Devices : 5
+       Persistence : Superblock is persistent
+
+       Update Time : Wed Jun  8 14:28:57 2022
+             State : clean 
+    Active Devices : 4
+   Working Devices : 5
+    Failed Devices : 0
+     Spare Devices : 1
+
+            Layout : left-symmetric
+        Chunk Size : 64K
+
+Consistency Policy : resync
+
+              Name : zcjubuntu-virtual-machine:0  (local to host zcjubuntu-virtual-machine)
+              UUID : 03cfb72d:971a754f:8236aa23:21b23fd3
+            Events : 18
+
+    Number   Major   Minor   RaidDevice State
+       0       8       16        0      active sync   /dev/sdb
+       1       8       32        1      active sync   /dev/sdc
+       2       8       48        2      active sync   /dev/sdd
+       5       8       64        3      active sync   /dev/sde
+
+       4       8       80        -      spare   /dev/sdf
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id=&#34;模拟损坏&#34;&gt;模拟损坏&lt;/h5&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;执行命令：mdadm /dev/md0 -f /dev/sdf&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;使用cat /proc/mdstat查看RAID5阵列状态&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;结果&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Personalities : [linear] [multipath] [raid0] [raid1] [raid6] [raid5] [raid4] [raid10] 
+md0 : active raid5 sde[5] sdf[4](F) sdd[2] sdc[1] sdb[0]
+      328704 blocks super 1.2 level 5, 64k chunk, algorithm 2 [4/4] [UUUU]
+
+unused devices: &amp;lt;none&amp;gt;
+
+/dev/md0:
+           Version : 1.2
+     Creation Time : Wed Jun  8 14:28:56 2022
+        Raid Level : raid5
+        Array Size : 328704 (321.00 MiB 336.59 MB)
+     Used Dev Size : 109568 (107.00 MiB 112.20 MB)
+      Raid Devices : 4
+     Total Devices : 5
+       Persistence : Superblock is persistent
+
+       Update Time : Wed Jun  8 14:44:51 2022
+             State : clean 
+    Active Devices : 4
+   Working Devices : 4
+    Failed Devices : 1
+     Spare Devices : 0
+
+            Layout : left-symmetric
+        Chunk Size : 64K
+
+Consistency Policy : resync
+
+              Name : zcjubuntu-virtual-machine:0  (local to host zcjubuntu-virtual-machine)
+              UUID : 03cfb72d:971a754f:8236aa23:21b23fd3
+            Events : 19
+
+    Number   Major   Minor   RaidDevice State
+       0       8       16        0      active sync   /dev/sdb
+       1       8       32        1      active sync   /dev/sdc
+       2       8       48        2      active sync   /dev/sdd
+       5       8       64        3      active sync   /dev/sde
+
+       4       8       80        -      faulty   /dev/sdf
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id=&#34;移除损坏的磁盘&#34;&gt;移除损坏的磁盘&lt;/h5&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;执行命令：mdadm /dev/md0 -r /dev/sdf&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;使用cat /proc/mdstat查看RAID5阵列状态&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;结果&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Personalities : [linear] [multipath] [raid0] [raid1] [raid6] [raid5] [raid4] [raid10] 
+md0 : active raid5 sde[5] sdd[2] sdc[1] sdb[0]
+      328704 blocks super 1.2 level 5, 64k chunk, algorithm 2 [4/4] [UUUU]
+
+unused devices: &amp;lt;none&amp;gt;
+
+/dev/md0:
+           Version : 1.2
+     Creation Time : Wed Jun  8 14:28:56 2022
+        Raid Level : raid5
+        Array Size : 328704 (321.00 MiB 336.59 MB)
+     Used Dev Size : 109568 (107.00 MiB 112.20 MB)
+      Raid Devices : 4
+     Total Devices : 4
+       Persistence : Superblock is persistent
+
+       Update Time : Wed Jun  8 14:49:13 2022
+             State : clean 
+    Active Devices : 4
+   Working Devices : 4
+    Failed Devices : 0
+     Spare Devices : 0
+
+            Layout : left-symmetric
+        Chunk Size : 64K
+
+Consistency Policy : resync
+
+              Name : zcjubuntu-virtual-machine:0  (local to host zcjubuntu-virtual-machine)
+              UUID : 03cfb72d:971a754f:8236aa23:21b23fd3
+            Events : 20
+
+    Number   Major   Minor   RaidDevice State
+       0       8       16        0      active sync   /dev/sdb
+       1       8       32        1      active sync   /dev/sdc
+       2       8       48        2      active sync   /dev/sdd
+       5       8       64        3      active sync   /dev/sde
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id=&#34;添加新的硬盘到已有阵列&#34;&gt;添加新的硬盘到已有阵列&lt;/h5&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;执行命令：mdadm /dev/md0 -a /dev/sdf&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;使用cat /proc/mdstat查看RAID5阵列状态&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;结果&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;md0 : active raid5 sdf[4](S) sde[5] sdd[2] sdc[1] sdb[0]
+      328704 blocks super 1.2 level 5, 64k chunk, algorithm 2 [4/4] [UUUU]
+
+unused devices: &amp;lt;none&amp;gt;
+
+/dev/md0:
+           Version : 1.2
+     Creation Time : Wed Jun  8 14:28:56 2022
+        Raid Level : raid5
+        Array Size : 328704 (321.00 MiB 336.59 MB)
+     Used Dev Size : 109568 (107.00 MiB 112.20 MB)
+      Raid Devices : 4
+     Total Devices : 5
+       Persistence : Superblock is persistent
+
+       Update Time : Wed Jun  8 14:53:45 2022
+             State : clean 
+    Active Devices : 4
+   Working Devices : 5
+    Failed Devices : 0
+     Spare Devices : 1
+
+            Layout : left-symmetric
+        Chunk Size : 64K
+
+Consistency Policy : resync
+
+              Name : zcjubuntu-virtual-machine:0  (local to host zcjubuntu-virtual-machine)
+              UUID : 03cfb72d:971a754f:8236aa23:21b23fd3
+            Events : 21
+
+    Number   Major   Minor   RaidDevice State
+       0       8       16        0      active sync   /dev/sdb
+       1       8       32        1      active sync   /dev/sdc
+       2       8       48        2      active sync   /dev/sdd
+       5       8       64        3      active sync   /dev/sde
+
+       4       8       80        -      spare   /dev/sdf
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        <item>
+        <title>Linux-raid学习</title>
+        <link>https://zcj-git520.github.io/p/linux-raid%E5%AD%A6%E4%B9%A0/</link>
+        <pubDate>Sat, 30 Apr 2022 22:00:38 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/linux-raid%E5%AD%A6%E4%B9%A0/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/linux-raid%E5%AD%A6%E4%B9%A0/1.png" alt="Featured image of post Linux-raid学习" /&gt;&lt;h4 id=&#34;raid是什么&#34;&gt;raid是什么&lt;/h4&gt;
+&lt;p&gt;raid是廉价冗余磁盘阵列，简称磁盘阵列。&lt;/p&gt;
+&lt;p&gt;raid:是一种把多块独立的物理磁盘按不同的技术组合起来的形成的一个磁盘组，在逻辑上看起来是一块大的磁盘，可以提供比较单个的物理磁盘更大的存储容量或更高的存储性能，同时有能提供不同级别数据的冗余备份的一种技术&lt;/p&gt;
+&lt;h4 id=&#34;raid的级别&#34;&gt;raid的级别&lt;/h4&gt;
+&lt;p&gt;把多个物理磁盘通过不同的技术方式组成的磁盘阵列，不同的技术称为raid级别。&lt;/p&gt;
+&lt;p&gt;级别一般有：raid0,raid1,raid0+1(raid10),raid2,raid3,raid4,raid5,raid6,raid7,raid53&lt;/p&gt;
+&lt;p&gt;生产环境常用的级别为：raid0,raid1,raid10,raid5&lt;/p&gt;
+&lt;h4 id=&#34;raid级别的比较&#34;&gt;raid级别的比较&lt;/h4&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;raid级别&lt;/th&gt;
+&lt;th&gt;优点&lt;/th&gt;
+&lt;th&gt;缺点&lt;/th&gt;
+&lt;th&gt;实际使用场景&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;raid0&lt;/td&gt;
+&lt;td&gt;读写速度快&lt;/td&gt;
+&lt;td&gt;没有冗余&lt;/td&gt;
+&lt;td&gt;mysql slave,集群的节点rs&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;raid1&lt;/td&gt;
+&lt;td&gt;100%冗余，镜像&lt;/td&gt;
+&lt;td&gt;读写性能一般，成本高&lt;/td&gt;
+&lt;td&gt;单独的，数据重要，且宕机的业务，监控，系统盘&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;raid5&lt;/td&gt;
+&lt;td&gt;具备一定的性能和冗余，可坏一块盘，读写性能不错&lt;/td&gt;
+&lt;td&gt;写入性能不高&lt;/td&gt;
+&lt;td&gt;用于一般的业务&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;raid10&lt;/td&gt;
+&lt;td&gt;读写速度快，100%冗余&lt;/td&gt;
+&lt;td&gt;成本高&lt;/td&gt;
+&lt;td&gt;性能和冗余的业务要求高的业务&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h4 id=&#34;raid技术分类&#34;&gt;raid技术分类&lt;/h4&gt;
+&lt;h5 id=&#34;软raid技术&#34;&gt;软raid技术&lt;/h5&gt;
+&lt;p&gt;在linux中，通过自带软件就能实现软raid功能，它的配置高，管理方便，可以是实现将将几个物理盘合成一个更大的虚拟设备，从而到达性能的改进合数据的冗余的目的&lt;/p&gt;
+&lt;h5 id=&#34;硬raid技术&#34;&gt;硬raid技术&lt;/h5&gt;
+&lt;p&gt;基于硬件的raid解决方案比基于软件的raid技术在使用的性能合服务器上更好，具体表现在检测和修复多位错误的能力，错误的磁盘自动检测和阵列重建等方面，从安全性上考虑，基于硬件的raid的解决方案更加的安全&lt;/p&gt;
+&lt;h4 id=&#34;raid0原理及特点&#34;&gt;raid0原理及特点&lt;/h4&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 146; 
+			flex-basis: 352px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-raid%E5%AD%A6%E4%B9%A0/1.png&#34; data-size=&#34;435x296&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-raid%E5%AD%A6%E4%B9%A0/1.png&#34;
+			width=&#34;435&#34;
+			height=&#34;296&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-raid%E5%AD%A6%E4%B9%A0/1_huf00169aa6abc51faa601f0bf72d243b8_76358_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-raid%E5%AD%A6%E4%B9%A0/1_huf00169aa6abc51faa601f0bf72d243b8_76358_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;h5 id=&#34;特点&#34;&gt;特点：&lt;/h5&gt;
+&lt;ol&gt;
+&lt;li&gt;读写性能高&lt;/li&gt;
+&lt;li&gt;没有冗余&lt;/li&gt;
+&lt;li&gt;可用空间N*min（s1,S2&amp;hellip;）&lt;/li&gt;
+&lt;li&gt;最少磁盘数为，2，2+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;raid1特点&#34;&gt;raid1特点&lt;/h4&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 132; 
+			flex-basis: 317px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-raid%E5%AD%A6%E4%B9%A0/2.png&#34; data-size=&#34;381x288&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-raid%E5%AD%A6%E4%B9%A0/2.png&#34;
+			width=&#34;381&#34;
+			height=&#34;288&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-raid%E5%AD%A6%E4%B9%A0/2_hu4af629af77d3fd79a0bd5f0b30771561_59179_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-raid%E5%AD%A6%E4%B9%A0/2_hu4af629af77d3fd79a0bd5f0b30771561_59179_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;h5 id=&#34;特点-1&#34;&gt;特点&lt;/h5&gt;
+&lt;ol&gt;
+&lt;li&gt;读性能提升，写性能降低&lt;/li&gt;
+&lt;li&gt;可用空间为：min（s1,S2&amp;hellip;）&lt;/li&gt;
+&lt;li&gt;可冗余&lt;/li&gt;
+&lt;li&gt;最少磁盘数为：2，2+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;raid5特点&#34;&gt;raid5特点&lt;/h4&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 149; 
+			flex-basis: 359px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-raid%E5%AD%A6%E4%B9%A0/3.png&#34; data-size=&#34;391x261&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-raid%E5%AD%A6%E4%B9%A0/3.png&#34;
+			width=&#34;391&#34;
+			height=&#34;261&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-raid%E5%AD%A6%E4%B9%A0/3_hu834ce2fd4f66c1d76d0558a7de2a7222_63192_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-raid%E5%AD%A6%E4%B9%A0/3_hu834ce2fd4f66c1d76d0558a7de2a7222_63192_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;h5 id=&#34;特点-2&#34;&gt;特点：&lt;/h5&gt;
+&lt;ol&gt;
+&lt;li&gt;读性能有提升，写性能有所欠缺&lt;/li&gt;
+&lt;li&gt;可用空间为：（n-1）*min(s1,s2,&amp;hellip;)&lt;/li&gt;
+&lt;li&gt;有冗余，有一块磁盘&lt;/li&gt;
+&lt;li&gt;最少磁盘数：3，3+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;raid10特点&#34;&gt;raid10特点&lt;/h4&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 148; 
+			flex-basis: 355px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-raid%E5%AD%A6%E4%B9%A0/4.png&#34; data-size=&#34;516x348&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-raid%E5%AD%A6%E4%B9%A0/4.png&#34;
+			width=&#34;516&#34;
+			height=&#34;348&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-raid%E5%AD%A6%E4%B9%A0/4_huc236dc3145ca4e9e01341d700c8fb959_118797_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-raid%E5%AD%A6%E4%B9%A0/4_huc236dc3145ca4e9e01341d700c8fb959_118797_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;h5 id=&#34;特点-3&#34;&gt;特点：&lt;/h5&gt;
+&lt;ol&gt;
+&lt;li&gt;读写性能有提升&lt;/li&gt;
+&lt;li&gt;可用空间：N*min（s1,s2&amp;hellip;）/2&lt;/li&gt;
+&lt;li&gt;有冗余，每组最多坏一块&lt;/li&gt;
+&lt;li&gt;最少磁盘数为：4，4+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;raid5的基本架构&#34;&gt;RAID5的基本架构&lt;/h4&gt;
+&lt;p&gt;RAID5的读写操作采用的是stripe的基本结构，即以stripe为读写的基本单位，假设一个3+1的RAID5，即3个数据盘+1个校验盘，那么一个stripe就包含3个数据块和一个校验块；&lt;/p&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 157; 
+			flex-basis: 377px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-raid%E5%AD%A6%E4%B9%A0/1653296737857.png&#34; data-size=&#34;767x487&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-raid%E5%AD%A6%E4%B9%A0/1653296737857.png&#34;
+			width=&#34;767&#34;
+			height=&#34;487&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-raid%E5%AD%A6%E4%B9%A0/1653296737857_hue5c2a153273afe566aaf9c45f014bd20_43199_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-raid%E5%AD%A6%E4%B9%A0/1653296737857_hue5c2a153273afe566aaf9c45f014bd20_43199_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;如图所示，这是一个3+1的RAID5，图中的每一个方块表示一个stripe的一个基本单元，又称为chunk；相同颜色的方块组成一个stripe，即每个stripe由3个数据chunk(A,B,C)+1个校验chunk(P)组成。关于校验块的生成方法以及数据恢复原理如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;校验块P的生成方法为&lt;code&gt;P=A⊕B⊕C&lt;/code&gt; 。(⊕表示异或运算)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;加入1号盘坏了，此时有读请求读B0块的数据，那么可以通过&lt;code&gt;B0=A0⊕C0⊕P0&lt;/code&gt; 的方法 来进行恢复&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        <item>
+        <title>Linux存储技术学习笔记</title>
+        <link>https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</link>
+        <pubDate>Fri, 15 Apr 2022 22:00:38 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/1.png" alt="Featured image of post Linux存储技术学习笔记" /&gt;&lt;h4 id=&#34;存储设备&#34;&gt;存储设备&lt;/h4&gt;
+&lt;h5 id=&#34;磁盘柜&#34;&gt;磁盘柜&lt;/h5&gt;
+&lt;p&gt;磁盘柜一般分为磁盘阵列（disk array）和磁盘族（jbod）两种；&lt;/p&gt;
+&lt;p&gt;RAID（Redundant Array of Independent Disks），即“独立磁盘冗余阵列”或者简称
+为“磁盘阵列”，基本思想就是把多个独立的磁盘组合起来，成为一个磁盘阵列组，以
+获得一个或多个方面的好处：增加容量（Capacity）、提升性能（Performance）、增强
+容错性（Redundancy）和降低成本（Cost）。
+JBOD（Just a Bundle Of Disks）译成中文可以是“简单磁盘捆绑”或者“磁盘簇”。在
+Linux中，它相当于Linear RAID模式，但这不是标准的RAID级别，JBOD在逻辑上把几
+个物理磁盘一个接一个串联到一起，从而提供一个大的逻辑磁盘。&lt;/p&gt;
+&lt;h5 id=&#34;nas存储设备&#34;&gt;NAS存储设备&lt;/h5&gt;
+&lt;p&gt;NAS是一种将存储设备和应用服务器分开的机制，它使用CIFS和NFS向客服端提供文件级服务。&lt;/p&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 192; 
+			flex-basis: 462px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/1.png&#34; data-size=&#34;514x267&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/1.png&#34;
+			width=&#34;514&#34;
+			height=&#34;267&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/1_hub95fcc2a246a65208e8832126d70bee7_36058_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/1_hub95fcc2a246a65208e8832126d70bee7_36058_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			alt=&#34;图(1)&#34;&gt;
+	&lt;/a&gt;
+	
+	&lt;figcaption&gt;图(1)&lt;/figcaption&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;h5 id=&#34;iscsi存储设备&#34;&gt;iSCSI存储设备&lt;/h5&gt;
+&lt;p&gt;isCSI存储设备既以硬件方式或者软件方式实现IsCSI协议目标端的存储设备。&lt;/p&gt;
+&lt;p&gt;iSCSI，即Internet SCSI或SCSI over TCP/IP，是IETF制定的一项基于IP的存储网络标
+准，用于连接数据存储设备。透过在IP网络上传输SCSI命令，iSCSI可以摆脱SCSI总线
+的距离限制。iSCSI被用于在局域网（LAN）、广域网（WAN）或者Internet上传输数
+据，实现位置无关的数据存储及检索。iSCSI是一个广为流行的存储区域网络协议，允
+许企业将存储归并到数据中心，同时向应用服务器提供无区别于本地磁盘的幻想。和
+传统的Fibre Channel不同，iSCSI不需要专用的线缆，可以在现有的网络基础设施上长
+距离传输。&lt;/p&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 159; 
+			flex-basis: 381px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/2.png&#34; data-size=&#34;592x372&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/2.png&#34;
+			width=&#34;592&#34;
+			height=&#34;372&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/2_hu071dc91c75a1e067a9df63dbc27ba99e_97773_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/2_hu071dc91c75a1e067a9df63dbc27ba99e_97773_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			alt=&#34;图(2)&#34;&gt;
+	&lt;/a&gt;
+	
+	&lt;figcaption&gt;图(2)&lt;/figcaption&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;h5 id=&#34;nasiscsi集成存储设备&#34;&gt;NAS/iSCSI集成存储设备&lt;/h5&gt;
+&lt;p&gt;NAS/iSCSI集成存储设备结合了NAS存储设备和iSCSI存储
+设备的优势，同时支持iSCSI磁盘和本地磁盘，对外支持CIFS协议和iSCSI协议，即支
+持块数据和文件数据，理论上可以整合无限的存储容量，构建RAID和LVM，灵活配置
+成纯文件服务器、纯iSCSI目标器，或者将存储空间分别用于文件服务和块服务。&lt;/p&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 185; 
+			flex-basis: 444px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/3.png&#34; data-size=&#34;604x326&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/3.png&#34;
+			width=&#34;604&#34;
+			height=&#34;326&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/3_hub6e52a619a16f4ec9a92734495b91f5f_93520_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/3_hub6e52a619a16f4ec9a92734495b91f5f_93520_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			alt=&#34;图(3)&#34;&gt;
+	&lt;/a&gt;
+	
+	&lt;figcaption&gt;图(3)&lt;/figcaption&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;h4 id=&#34;linux-驱动模型&#34;&gt;Linux 驱动模型&lt;/h4&gt;
+&lt;p&gt;Linux内核基于kobject内核对象机制将系统中的总线、设备和驱动设备分别用bus_type、device和device_driver等对象描述将其组织成一个层次结构的系统，统一管理各种内别的设备以其接口，同时借助sysdfs文件系统将其内核所见的设备展给用户空间，提供一个完全层次结构的用户视图。&lt;/p&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 148; 
+			flex-basis: 357px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/4.png&#34; data-size=&#34;560x376&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/4.png&#34;
+			width=&#34;560&#34;
+			height=&#34;376&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/4_huaec02b528613130708d2c230cf0ecbab_93161_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/4_huaec02b528613130708d2c230cf0ecbab_93161_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			alt=&#34;图(4)&#34;&gt;
+	&lt;/a&gt;
+	
+	&lt;figcaption&gt;图(4)&lt;/figcaption&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;Linux驱动模型的核心内容综合如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;以内核对象为基础&lt;/li&gt;
+&lt;li&gt;用sysfs文件系统导出到用户空间&lt;/li&gt;
+&lt;li&gt;将Linux子系统表达为总线类型/驱动/设备/类/接口的关系，分别用bus_type、device、device_driver、class和class_interface结构表示&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h5 id=&#34;引用计数&#34;&gt;引用计数&lt;/h5&gt;
+&lt;p&gt;引用计数的主要功能为：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;防止内存泄漏：确保已分配的对象最终会被释放；&lt;/li&gt;
+&lt;li&gt;防止访问已释放的内存：确保不会使用已经被释放的对象&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Linux内核提供了相关函数进行操作：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;void kref_init (struct kref *kref);初始化对象，将对象引用次数设置为1，而不是0；这是因为生成该对象的代码也需要最初的引用，以防止其他部分在调用kref_put时释放该对象&lt;/li&gt;
+&lt;li&gt;void kref_get (struct kref *kref); 递增对象的引用计数。在这之前，确保引用次数不为0，否则答应一条警告信息。这可以防止常见的错误：不先调用kref_init，而直接调用kref_get。&lt;/li&gt;
+&lt;li&gt;int kref_put (struct kref *kref, void (*release) (struct kref *kref));递减对象的引用计数。如果该计数减为0，则表明是该对象的最后一个引用，因此传入的release函数被调用，以回收这个对象用到的内存。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h5 id=&#34;内核对象及集合&#34;&gt;内核对象及集合&lt;/h5&gt;
+&lt;p&gt;Linux驱动模型的基础是内核对象。它将总线类型、设备、驱动等都看作是内核对
+象。表示内核对象的结构是kobject，相当于Linux驱动模型的“基类”&lt;/p&gt;
+&lt;p&gt;在Linux内核中的双循环链表实现方式下：
+● 链表结构作为一个成员嵌入到宿主数据结构内；
+● 可以将链表结构放在宿主结构内的任何地方；
+● 可以为链表结构取任何名字；
+● 宿主结构可以有多个链表结构。&lt;/p&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 354; 
+			flex-basis: 850px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/5.png&#34; data-size=&#34;574x162&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/5.png&#34;
+			width=&#34;574&#34;
+			height=&#34;162&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/5_hu32d75d70aff03f54335d42faccf5602d_37280_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/5_hu32d75d70aff03f54335d42faccf5602d_37280_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			alt=&#34;图(5)&#34;&gt;
+	&lt;/a&gt;
+	
+	&lt;figcaption&gt;图(5)&lt;/figcaption&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;h5 id=&#34;sysfs文件系统&#34;&gt;sysfs文件系统&lt;/h5&gt;
+&lt;p&gt;sysfs核心负责为内核中的内部表示和用户空间的外部呈现之间建立对应关系，也称为sysfs映射：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;内核对象被映射为用户空间的目录&lt;/li&gt;
+&lt;li&gt;对象属性被映射为用户空间的常规文件&lt;/li&gt;
+&lt;li&gt;对象关系被映射为用户空间的符号链接&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;sysfs核心确实将内核对象、对象属性以及对象关系也组织成树的结构。sysfs内部树中有四种类型的节点：目录节点、链接节点、属性节点和二进制属性节点，分别和内核对象、对象关系、对象属性相对应。&lt;/p&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 201; 
+			flex-basis: 483px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/6.png&#34; data-size=&#34;621x308&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/6.png&#34;
+			width=&#34;621&#34;
+			height=&#34;308&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/6_hu9ae40068ba4a3fb5d70cf7e7e5686635_62981_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/6_hu9ae40068ba4a3fb5d70cf7e7e5686635_62981_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			alt=&#34;图(6)&#34;&gt;
+	&lt;/a&gt;
+	
+	&lt;figcaption&gt;图(6)&lt;/figcaption&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;h5 id=&#34;驱动模型对象&#34;&gt;驱动模型对象&lt;/h5&gt;
+&lt;p&gt;Linux驱动模型适用于linux各种子系统，它描述了总线类型、设备、驱动以及类和接口之间的关系。每一个子系统都有属于自己的唯一的总线类型。它上面链接了注册了这一总线类型的多个设备。另外它还注册了到这个总线类型的多个驱动链接在一起。&lt;/p&gt;
+&lt;p&gt;总线类型：Linux驱动模型中的总线类型结构使用bus_type和bus_type_private两个结构体来表
+示&lt;/p&gt;
+&lt;p&gt;设备：Linux驱动模型中的设备，我们有时简称为驱动模型设备，使用device和device_private两个结构体来表示&lt;/p&gt;
+&lt;p&gt;驱动：同总线类型和设备一样，在Linux驱动模型中表示一个驱动也需要两个结构体：device_driver和driver_private。这两个结构体同时存在，并且一一对应。&lt;/p&gt;
+&lt;h4 id=&#34;pci子系统&#34;&gt;PCI子系统&lt;/h4&gt;
+&lt;p&gt;PCI是外围设备互联的简称，是一种通用总线的接口标准。PCI总线是一种常见的主机I/O总线，用于链接高速的外部设备。&lt;/p&gt;
+&lt;p&gt;PCI总线体系是结构是一种层次式的体系结构。&lt;/p&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 177; 
+			flex-basis: 425px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/7.png&#34; data-size=&#34;552x311&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/7.png&#34;
+			width=&#34;552&#34;
+			height=&#34;311&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/7_hu4f9bc14b8314502b0bee122352a25cb4_45790_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/7_hu4f9bc14b8314502b0bee122352a25cb4_45790_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			alt=&#34;图(7)&#34;&gt;
+	&lt;/a&gt;
+	
+	&lt;figcaption&gt;图(7)&lt;/figcaption&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;● PCI设备：遵循PCI规范，工作在PCI局部总线环境下的设备。典型的PCI设备
+是封装在集成线路板（IC Package）中，或者集成到PCI扩展卡上的完整的外围元件适
+配器。通常见到的有网络、显示或者SCSI适配器。PCI局部总线规范指出，每个PCI设
+备可以包含最多8个PCI功能，每个功能是一个逻辑设备。
+● PCI桥设备：由于电子负载限制，每条PCI总线上可以挂载的设备数目是有限
+的，因此使用了一种特殊的设备，即PCI-PCI桥设备。PCI-PCI桥为两条独立的PCI总线
+提供连接。PCI-PCI桥设备也是一种广义上的PCI设备。在本文中，PCI-PCI桥设备简称
+PCI桥。
+● 主桥设备：PCI桥设备和PCI设备最终通过Host-PCI桥设备连接到CPU，使整个
+系统看起来像一颗倒置的树状结构，树的顶端是CPU和内存。由Host-PCI桥设备引出的
+PCI总线也称为PCI根总线。在本文中，Host-PCI桥设备简称为主桥。&lt;/p&gt;
+&lt;h5 id=&#34;pci子系统对象&#34;&gt;PCI子系统对象&lt;/h5&gt;
+&lt;p&gt;在PIC子系统中有PCI总线和PCI设备，基于这两个核心的x抽象，linux PCI子系统定义了两个关键的数据结构：pci_bus和pci_dev,以此来描述PCI总线和PCI设备&lt;/p&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 255; 
+			flex-basis: 612px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/8.png&#34; data-size=&#34;643x252&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/8.png&#34;
+			width=&#34;643&#34;
+			height=&#34;252&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/8_hu4c06f2ab7654aef4e96a3c1935b9fef2_57584_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/8_hu4c06f2ab7654aef4e96a3c1935b9fef2_57584_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			alt=&#34;图(8)&#34;&gt;
+	&lt;/a&gt;
+	
+	&lt;figcaption&gt;图(8)&lt;/figcaption&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;pci_bus：PCI总线：pci_bus是描述PCI总线的结构。无论是根PCI总线，还是非根PCI总线，都对应一个pci_bus描述符&lt;/p&gt;
+&lt;p&gt;pci_dev：PCI设备：由于每条PCI总线上可以挂载的物理设备数目是有限的，因此作为扩展，每个物理设备可以包含多个功能，即逻辑设备。从物理硬件的角度，PCI设备实际上指的是包含从一个到八个“功能”的某个PCI硬件，它被集成到系统主板上，或者安装在插槽中，这是PCI物理硬件的概念&lt;/p&gt;
+&lt;h4 id=&#34;scsi子系统&#34;&gt;SCSI子系统&lt;/h4&gt;
+&lt;p&gt;Linux SCSI子系统是一种分层的架构，共三层。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;低层：最低一层代表是适用于SCSI的物理接口的实际驱动器。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;中间层，也称公共层或统一层，在这一层包含SCSI堆栈的高层和底层的公共服务函数。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;高层：高层代表着各种SCSI设备类型的驱动。&lt;/p&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 241; 
+			flex-basis: 580px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/9.png&#34; data-size=&#34;573x237&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/9.png&#34;
+			width=&#34;573&#34;
+			height=&#34;237&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/9_hu5f2ec8d6c5f9e0019ebaf72a6d6d13e9_61284_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/9_hu5f2ec8d6c5f9e0019ebaf72a6d6d13e9_61284_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			alt=&#34;图(9)&#34;&gt;
+	&lt;/a&gt;
+	
+	&lt;figcaption&gt;图(9)&lt;/figcaption&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id=&#34;scsi子系统对象&#34;&gt;SCSI子系统对象&lt;/h5&gt;
+&lt;p&gt;Scsi_Host、scsi_target和scsi_device分别描述的是Linux SCSI模型中的主机适配器、目标节点和逻辑单元。&lt;/p&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 279; 
+			flex-basis: 670px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/10.png&#34; data-size=&#34;601x215&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/10.png&#34;
+			width=&#34;601&#34;
+			height=&#34;215&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/10_hu4abcfc481f41cfd289d792f9bb2b1a5a_48987_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/10_hu4abcfc481f41cfd289d792f9bb2b1a5a_48987_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			alt=&#34;图(10)&#34;&gt;
+	&lt;/a&gt;
+	
+	&lt;figcaption&gt;图(10)&lt;/figcaption&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Linux内核中设备驱动</title>
+        <link>https://zcj-git520.github.io/p/linux%E5%86%85%E6%A0%B8%E4%B8%AD%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/</link>
+        <pubDate>Sat, 02 Apr 2022 22:00:38 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/linux%E5%86%85%E6%A0%B8%E4%B8%AD%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/linux%E5%86%85%E6%A0%B8%E4%B8%AD%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/1.png" alt="Featured image of post Linux内核中设备驱动" /&gt;&lt;h4 id=&#34;基本概念&#34;&gt;基本概念&lt;/h4&gt;
+&lt;h5 id=&#34;块设备block-device&#34;&gt;块设备（block device）&lt;/h5&gt;
+&lt;p&gt;是一种有一定结构的随机存取的设备，对于这种设备的读写是按块进行的，他使用的缓冲区来存放暂时的数据，达到一定条件后。从缓存一次性写入设备或者从设备一次性读到缓冲区&lt;/p&gt;
+&lt;h5 id=&#34;字符设备character-device&#34;&gt;字符设备（character device）&lt;/h5&gt;
+&lt;p&gt;是一种顺序的数据设备，对于这种设备的读写是按字符进行的，连续的字符组成数据流，是没有缓冲区，是只用实时的读写设备；&lt;/p&gt;
+&lt;h5 id=&#34;块设备与字符设备之间的区别&#34;&gt;块设备与字符设备之间的区别&lt;/h5&gt;
+&lt;ol&gt;
+&lt;li&gt;读写数据的单元不同：块设备是以块为读写单元，而字符设备是以字符为读写单元&lt;/li&gt;
+&lt;li&gt;块设备是可以随机访问，而字符设备只能顺序访问&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h5 id=&#34;扇区sectors&#34;&gt;扇区（sectors）&lt;/h5&gt;
+&lt;p&gt;是块设备硬件对数据处理的基本单位，通常1扇区=512byte&lt;/p&gt;
+&lt;h5 id=&#34;块blocks&#34;&gt;块（blocks）&lt;/h5&gt;
+&lt;p&gt;是Linux种制定对内核或文件系统等数据处理的基本单位，通常1块=1个或多个扇区&lt;/p&gt;
+&lt;h5 id=&#34;段segments&#34;&gt;段（segments）&lt;/h5&gt;
+&lt;p&gt;是由若干个相邻的块组成。是linux内存管理机制中一个内存页或者内存页中的一部分&lt;/p&gt;
+&lt;h5 id=&#34;页段块扇区之间的关系如图&#34;&gt;页、段、块、扇区之间的关系如图&lt;/h5&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 295; 
+			flex-basis: 708px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux%E5%86%85%E6%A0%B8%E4%B8%AD%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/1.png&#34; data-size=&#34;638x216&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux%E5%86%85%E6%A0%B8%E4%B8%AD%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/1.png&#34;
+			width=&#34;638&#34;
+			height=&#34;216&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux%E5%86%85%E6%A0%B8%E4%B8%AD%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/1_huf160ae63de05609269a7d8cc29249a6e_88106_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux%E5%86%85%E6%A0%B8%E4%B8%AD%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/1_huf160ae63de05609269a7d8cc29249a6e_88106_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			alt=&#34;图(1)&#34;&gt;
+	&lt;/a&gt;
+	
+	&lt;figcaption&gt;图(1)&lt;/figcaption&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;h4 id=&#34;块设备的层次&#34;&gt;块设备的层次&lt;/h4&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 123; 
+			flex-basis: 296px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux%E5%86%85%E6%A0%B8%E4%B8%AD%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/2.png&#34; data-size=&#34;743x601&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux%E5%86%85%E6%A0%B8%E4%B8%AD%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/2.png&#34;
+			width=&#34;743&#34;
+			height=&#34;601&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux%E5%86%85%E6%A0%B8%E4%B8%AD%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/2_huf72a8c95f7642b75cf7d4ce010fe63fa_379610_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux%E5%86%85%E6%A0%B8%E4%B8%AD%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/2_huf72a8c95f7642b75cf7d4ce010fe63fa_379610_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			alt=&#34;图(2)&#34;&gt;
+	&lt;/a&gt;
+	
+	&lt;figcaption&gt;图(2)&lt;/figcaption&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Linux是支持多种不同存储介质，在内核中间都要适配有块设备驱动程序来读写块设备。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;往上是io调度层，将文件系统的读写请求进行编排，合并用以提高磁盘的读写效率。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;通用块层，对应与bio结构。是将io请求的抽象，描述对应的io操作涉及到多个页&lt;/p&gt;
+&lt;h5 id=&#34;块设备的应用在linux中是一个完整的子系统&#34;&gt;块设备的应用在linux中是一个完整的子系统&lt;/h5&gt;
+&lt;p&gt;在linux中，驱动对块设备的中输入或者输出（io）操作都会向块设备发出请求，在驱动中使用request结构体描述。&lt;/p&gt;
+&lt;p&gt;对于一些磁盘设备请求的速度很慢，内核提供一种队列的机制，将这些io请求添加到队列中（即：请求队列），在驱动中使用request_queue结构体进行描述。在向块设备提交这些请求前内核会先执行请求合并和排序的预操作，以提高访问的效率，然后在由内核中的io调度程序子系统来负责提交io请求，调度程序将磁盘分配给系统中所有挂起的块io请求，其工作是管理块设备的请求队列。&lt;/p&gt;
+&lt;p&gt;在由通用层（generic block layer）负责维持一个io请求在上层文件系统与底层物理磁盘之间的关系，在通用层中，通常用一个bio结构体来对应一个io请求。&lt;/p&gt;
+&lt;p&gt;linux提供一个gendisk数据结构体，用来表示一个独立的磁盘设备或者是分区，用来对底层物理磁盘的访问。在gendisk中有一个类似于字符设备中的file_operations的硬件操作结构指针，是block_device_operations结构体。&lt;/p&gt;
+&lt;p&gt;当多个请求在提交块设备时。执行的效率依赖于请求的顺序。如果请求的速度是同一方向，执行效率最大。内核在调用块设备驱动程序请求之前，先收集io请求并将请求进行排序，然后将连续扇区操作的请求进行合并以提高执行效率。&lt;/p&gt;
+&lt;h5 id=&#34;块设备的缓冲区和缓冲区头&#34;&gt;块设备的缓冲区和缓冲区头&lt;/h5&gt;
+&lt;p&gt;缓冲区对应一个磁盘块，当磁盘块被调入内存时，就存储在缓冲区；块包含一个或多个扇区，且不大于一个页，所以一个页可以容纳一个或者多个块，并存储一些控制信息。控制信息一般是使用结构体buff-head来表示，结构体如下：&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;buffer_head&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;long&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;b_state&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;cm&#34;&gt;/* 标志位 */&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;buffer_head&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;b_this_page&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;cm&#34;&gt;/* 页面中的缓冲区 */&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;page&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;b_page&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;cm&#34;&gt;/* 当前页面 */&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;sector_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;b_blocknr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;cm&#34;&gt;/* 起始块号 */&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;size_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;size&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;cm&#34;&gt;/* 映像的大小 */&lt;/span&gt;
+  &lt;span class=&#34;kt&#34;&gt;char&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;b_data&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;  &lt;span class=&#34;cm&#34;&gt;/* 数据指针 */&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;block_device&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;b_bdev&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;cm&#34;&gt;/* 关联的块设备 */&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;atomic_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;b_count&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;  &lt;span class=&#34;cm&#34;&gt;/* 使用计数 */&lt;/span&gt;
+  &lt;span class=&#34;p&#34;&gt;...&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;};&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;请求结构request&#34;&gt;请求结构request&lt;/h4&gt;
+&lt;p&gt;结构request代表了挂起的io请求，每一个请求用同一个结构request实例进行描述，存放在请求队列链表中，由电梯算法进行排序，每一个请求包含1个或多个结构体bio实例，其结构体如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;request&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;c1&#34;&gt;//用于挂在请求队列链表的节点，使用函数blkdev_dequeue_request访问它，而不能直接访
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;问&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;list_head&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;queuelist&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; 
+    &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;list_head&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;donelist&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;  &lt;span class=&#34;cm&#34;&gt;/*用于挂在已完成请求链表的节点*/&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;request_queue&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;q&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;   &lt;span class=&#34;cm&#34;&gt;/*指向请求队列*/&lt;/span&gt;
+    &lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;cmd_flags&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;    &lt;span class=&#34;cm&#34;&gt;/*命令标识*/&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;enum&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;rq_cmd_type_bits&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;cmd_type&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;  &lt;span class=&#34;cm&#34;&gt;/*命令类型*/&lt;/span&gt;
+    &lt;span class=&#34;cm&#34;&gt;/*各种各样的扇区计数*/&lt;/span&gt;
+   &lt;span class=&#34;cm&#34;&gt;/*为提交i/o维护bio横断面的状态信息，hard_*成员是块层内部使用的，驱动程序不应该改变
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;它们*/&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;sector_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;sector&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;     &lt;span class=&#34;cm&#34;&gt;/*将提交的下一个扇区*/&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;sector_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;hard_sector&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;        &lt;span class=&#34;cm&#34;&gt;/* 将完成的下一个扇区*/&lt;/span&gt;
+    &lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;long&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;nr_sectors&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;  &lt;span class=&#34;cm&#34;&gt;/* 整个请求还需要传送的扇区数*/&lt;/span&gt;
+    &lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;long&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;hard_nr_sectors&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;cm&#34;&gt;/* 将完成的扇区数*/&lt;/span&gt;
+ &lt;span class=&#34;cm&#34;&gt;/*在当前bio中还需要传送的扇区数 */&lt;/span&gt;
+    &lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;current_nr_sectors&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;cm&#34;&gt;/*在当前段中将完成的扇区数*/&lt;/span&gt;
+    &lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;hard_cur_sectors&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bio&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bio&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;     &lt;span class=&#34;cm&#34;&gt;/*请求中第一个未完成操作的bio*、
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;    struct bio *biotail; /*请求链表中末尾的bio*、
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;    struct hlist_node hash;  /*融合 hash */&lt;/span&gt;
+    &lt;span class=&#34;cm&#34;&gt;/* rb_node仅用在I/O调度器中，当请求被移到分发队列中时，
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;请求将被删除。因此，让completion_data与rb_node分享空间*/&lt;/span&gt;    
+    &lt;span class=&#34;k&#34;&gt;union&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;rb_node&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;rb_node&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;   &lt;span class=&#34;cm&#34;&gt;/* 排序/查找*/&lt;/span&gt;
+        &lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;completion_data&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;};&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;bio结构体&#34;&gt;bio结构体&lt;/h4&gt;
+&lt;p&gt;通常1个bio对应1个io请求，io调度算法可将连续的bio合并成1个请求。所以一个请求可以包含多个bio。&lt;/p&gt;
+&lt;p&gt;bio为通用层的主要数据结构，即描述了磁盘的位置，又描述了内存的位置，是上层内核vfs与下层驱动的连接纽带，其结构体如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bio&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;sector_t&lt;/span&gt;        &lt;span class=&#34;n&#34;&gt;bi_sector&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//该bio结构所要传输的第一个（512字节）扇区：磁盘的位置
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bio&lt;/span&gt;        &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bi_next&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;    &lt;span class=&#34;c1&#34;&gt;//请求链表
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;block_device&lt;/span&gt;    &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bi_bdev&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//相关的块设备
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;long&lt;/span&gt;        &lt;span class=&#34;n&#34;&gt;bi_flags&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//状态和命令标志
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;long&lt;/span&gt;        &lt;span class=&#34;n&#34;&gt;bi_rw&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;//读写
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;short&lt;/span&gt;        &lt;span class=&#34;n&#34;&gt;bi_vcnt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//bio_vesc偏移的个数
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;short&lt;/span&gt;        &lt;span class=&#34;n&#34;&gt;bi_idx&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;    &lt;span class=&#34;c1&#34;&gt;//bi_io_vec的当前索引
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;short&lt;/span&gt;        &lt;span class=&#34;n&#34;&gt;bi_phys_segments&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//结合后的片段数目
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;short&lt;/span&gt;        &lt;span class=&#34;n&#34;&gt;bi_hw_segments&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//重映射后的片段数目
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;        &lt;span class=&#34;n&#34;&gt;bi_size&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;    &lt;span class=&#34;c1&#34;&gt;//I/O计数
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;        &lt;span class=&#34;n&#34;&gt;bi_hw_front_size&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//第一个可合并的段大小;
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;        &lt;span class=&#34;n&#34;&gt;bi_hw_back_size&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//最后一个可合并的段大小
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;        &lt;span class=&#34;n&#34;&gt;bi_max_vecs&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;    &lt;span class=&#34;c1&#34;&gt;//bio_vecs数目上限
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bio_vec&lt;/span&gt;        &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bi_io_vec&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;    &lt;span class=&#34;c1&#34;&gt;//bio_vec链表：内存的位置
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bio_end_io_t&lt;/span&gt;        &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bi_end_io&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//I/O完成方法
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;atomic_t&lt;/span&gt;        &lt;span class=&#34;n&#34;&gt;bi_cnt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;//使用计数
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt;            &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bi_private&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;//拥有者的私有方法
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bio_destructor_t&lt;/span&gt;    &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bi_destructor&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;    &lt;span class=&#34;c1&#34;&gt;//销毁方法
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;};&lt;/span&gt;
+ 
+&lt;span class=&#34;err&#34;&gt;内存数据段结构&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bio_vec&lt;/span&gt;
+       &lt;span class=&#34;err&#34;&gt;结构&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bio_vec代表了内存中的一个数据段&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;，数据段用页、偏移和长度描&lt;/span&gt;
+&lt;span class=&#34;err&#34;&gt;述。&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;I&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;O需要执行的内存位置用段表示&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;，结构&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bio指向了一个段的数组&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;。&lt;/span&gt;
+&lt;span class=&#34;err&#34;&gt;结构&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bio_vec列出如下&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;（在&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;include&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;linux&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bio&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;h中&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;）：&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bio_vec&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+       &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;page&lt;/span&gt;     &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bv_page&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;   &lt;span class=&#34;cm&#34;&gt;/*数据段所在的页*/&lt;/span&gt;
+       &lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;short&lt;/span&gt;  &lt;span class=&#34;n&#34;&gt;bv_len&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;     &lt;span class=&#34;cm&#34;&gt;/*数据段的长度*/&lt;/span&gt;
+       &lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;short&lt;/span&gt;  &lt;span class=&#34;n&#34;&gt;bv_offset&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;  &lt;span class=&#34;cm&#34;&gt;/*数据段页内偏移*/&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;};&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;块设备结构体-block_device&#34;&gt;块设备结构体 block_device&lt;/h4&gt;
+&lt;p&gt;内核用结构体block_device实例代表一个块设备对象，块设备的结构体为block_device如下&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;block_device&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+ &lt;span class=&#34;n&#34;&gt;dev_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bd_dev&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;  &lt;span class=&#34;cm&#34;&gt;/* not a kdev_t - it&amp;#39;s a search key */&lt;/span&gt;
+ &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;inode&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bd_inode&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;cm&#34;&gt;/* 分区节点 */&lt;/span&gt;
+ &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;super_block&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bd_super&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+ &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bd_openers&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+ &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mutex&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bd_mutex&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;/* open/close mutex 打开与关闭的互斥量*/&lt;/span&gt;
+ &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;semaphore&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bd_mount_sem&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;    &lt;span class=&#34;cm&#34;&gt;/*挂载操作信号量*/&lt;/span&gt; 
+ &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;list_head&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bd_inodes&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+ &lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bd_holder&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+ &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bd_holders&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+ &lt;span class=&#34;cp&#34;&gt;#ifdef CONFIG_SYSFS
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;list_head&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bd_holder_list&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+ &lt;span class=&#34;cp&#34;&gt;#endif
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;block_device&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bd_contains&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+ &lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bd_block_size&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;     &lt;span class=&#34;cm&#34;&gt;/*分区块大小*/&lt;/span&gt;
+ &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;hd_struct&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bd_part&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+ &lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bd_part_count&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;   &lt;span class=&#34;cm&#34;&gt;/*打开次数*/&lt;/span&gt;
+ &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bd_invalidated&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+ &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;gendisk&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bd_disk&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;cm&#34;&gt;/*设备为硬盘时，指向通用硬盘结构*/&lt;/span&gt;
+ &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;list_head&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bd_list&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+ &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;backing_dev_info&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bd_inode_backing_dev_info&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+ &lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;long&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bd_private&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+ &lt;span class=&#34;cm&#34;&gt;/* The counter of freeze processes */&lt;/span&gt;
+ &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bd_fsfreeze_count&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+ &lt;span class=&#34;cm&#34;&gt;/* Mutex for freeze */&lt;/span&gt;
+ &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mutex&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bd_fsfreeze_mutex&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+ &lt;span class=&#34;p&#34;&gt;};&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;通用硬盘结构-gendisk&#34;&gt;通用硬盘结构 gendisk&lt;/h4&gt;
+&lt;p&gt;结构gendisk代表了一个通用硬盘（genreic hard disk）对象，它存储了一个硬盘的信息，包括请求队列，分区链表和块设备操作函数集等。块设备驱动程序分配结构gendisk实例，装载分区表，分配请求队列并填充结构的其他域。其结构体如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;gendisk&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;major&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;            &lt;span class=&#34;cm&#34;&gt;/* 驱动程序的主设备号 */&lt;/span&gt;
+    &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;first_minor&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;       &lt;span class=&#34;cm&#34;&gt;/*第一个次设备号*/&lt;/span&gt;
+    &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;minors&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;          &lt;span class=&#34;cm&#34;&gt;/*次设备号的最大数量，没有分区的设备，此值为1 */&lt;/span&gt;
+    &lt;span class=&#34;kt&#34;&gt;char&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;disk_name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;32&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;];&lt;/span&gt;  &lt;span class=&#34;cm&#34;&gt;/* 主设备号驱动程序的名字*/&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;hd_struct&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;**&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;part&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;   &lt;span class=&#34;cm&#34;&gt;/* 分区列表，由次设备号排序 */&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;block_device_operations&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;fops&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;  &lt;span class=&#34;cm&#34;&gt;/*块设备操作函数集*/&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;request_queue&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;queue&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;         &lt;span class=&#34;cm&#34;&gt;/*请求队列*/&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;blk_scsi_cmd_filter&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;cmd_filter&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;private_data&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;                 &lt;span class=&#34;cm&#34;&gt;/*私有数据*/&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;sector_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;capacity&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;     &lt;span class=&#34;cm&#34;&gt;/* 函数set_capacity设置的容量，以扇区为单位*/&lt;/span&gt;
+    &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;flags&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;                 &lt;span class=&#34;cm&#34;&gt;/*设置驱动器状态的标志，如：可移动介质为
+&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;GENHD_FL_REMOVABLE*/&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;device&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;dev&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;                 &lt;span class=&#34;cm&#34;&gt;/*从设备驱动模型基类结构device继承*/&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;kobject&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;holder_dir&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;kobject&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;slave_dir&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+ &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;timer_rand_state&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;random&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;policy&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; 
+    &lt;span class=&#34;n&#34;&gt;atomic_t&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;sync_io&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;        &lt;span class=&#34;cm&#34;&gt;/* RAID */&lt;/span&gt;
+    &lt;span class=&#34;kt&#34;&gt;unsigned&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;long&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;stamp&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;in_flight&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;cp&#34;&gt;#ifdef  CONFIG_SMP
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;disk_stats&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;dkstats&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;  
+&lt;span class=&#34;cp&#34;&gt;#else
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;/*硬盘统计信息，如：读或写的扇区数、融合的扇区数、在请求队列的时间等*/&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;disk_stats&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;dkstats&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;cp&#34;&gt;#endif
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;work_struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;async_notify&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;cp&#34;&gt;#ifdef  CONFIG_BLK_DEV_INTEGRITY
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;blk_integrity&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;integrity&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;   &lt;span class=&#34;cm&#34;&gt;/*用于数据完整性扩展*/&lt;/span&gt;
+&lt;span class=&#34;cp&#34;&gt;#endif
+&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;};&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h5 id=&#34;块设备各个结构体间的关系&#34;&gt;块设备各个结构体间的关系&lt;/h5&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 97; 
+			flex-basis: 233px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux%E5%86%85%E6%A0%B8%E4%B8%AD%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/3.png&#34; data-size=&#34;703x724&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux%E5%86%85%E6%A0%B8%E4%B8%AD%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/3.png&#34;
+			width=&#34;703&#34;
+			height=&#34;724&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux%E5%86%85%E6%A0%B8%E4%B8%AD%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/3_hu9fd0a86fa30ace59961f6dc242e22798_298431_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux%E5%86%85%E6%A0%B8%E4%B8%AD%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/3_hu9fd0a86fa30ace59961f6dc242e22798_298431_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			alt=&#34;图(3)&#34;&gt;
+	&lt;/a&gt;
+	
+	&lt;figcaption&gt;图(3)&lt;/figcaption&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>linux 性能优化(二)</title>
         <link>https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%BA%8C/</link>
         <pubDate>Tue, 15 Mar 2022 22:00:38 +0800</pubDate>
@@ -121,7 +1494,7 @@ cup的上下文切换可分为：线程上下文切换、进程上下文切换�
 &lt;h4 id=&#34;cpu的优化&#34;&gt;CPU的优化&lt;/h4&gt;
 &lt;ol&gt;
 &lt;li&gt;用户态的优化，即应用程序的的优化，尽可能的减少cpu的上下文的切换&lt;/li&gt;
-&lt;li&gt;内核态的优化，即内核的优化，可以CPU绑定，调整有优先级，中断的负载均衡等尽可能的减少内核态中上下文的切换&lt;/li&gt;
+&lt;li&gt;内核态的优化，即内核的优化，可以CPU绑定，调整有优先级，中断的负载均衡等&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h4 id=&#34;性能工具&#34;&gt;性能工具&lt;/h4&gt;
 &lt;ul&gt;

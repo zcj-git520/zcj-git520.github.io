@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='mdadm mdadm是linux下的一款标准的RAID的管理工具
+基本语法 mdadm [mode] [option] 目前支持 RAID0(striping), RAID1(mirroring), RAID4, RAID5, RAID6, RAID10, MULTIPATH和FAULTY
+模式  Assemble：加入一个以前定义的阵列 Build：创建一个没有超级块的阵列 Create：创建一个新的阵列，每个设备具有超级块； -l,&amp;ndash;level: RAID级别 -n,&amp;ndash;raid-devices: 活动设备个数 -a {yes|no}: 是否自动为其创建设备文件 -c,&amp;ndash;chunk: CHUNK大小, 默认为64K，重要的参数,决定了一次向阵列中每个磁盘写入数据的大小 -x,&amp;ndash;spare-devices: 备用盘个数 Manage： 管理阵列(如添加和删除) Misc：允许单独对阵列中的某个设备进行操作(如停止阵列) Follow or Monitor:监控RAID的状态 Grow：改变RAID的容量或阵列中的设备数目 ；-n,&amp;ndash;raid-devices=: 活动设备个数-x,&amp;ndash;spare-devices=：备用盘个数-c,&amp;ndash;chunk=: CHUNK大小, 默认为64K，重要的参数,决定了一次向阵列中每个磁盘写入数据的大小-z,&amp;ndash;size=：阵列中从每个磁盘获取的空间总数-l,&amp;ndash;level=: RAID级别-p,&amp;ndash;layout=：设定raid5 和raid10的奇偶校验规则；并且控制故障的故障模式&amp;ndash;parity: 类似于&amp;ndash;layout&amp;ndash;assume-clean:目前仅用于 &amp;ndash;build 选项-R &amp;ndash;run: 强制激活RAID，使用这个选项，设备上有旧的元数据信息的提示会被忽略-N &amp;ndash;name=: 设定阵列的名称–-rounding：在linear array中的rounding factor，等于条带大小。  可用的[options]  -A，&amp;ndash;assemble：加入一个以前定义的阵列 -B,&amp;ndash;build:Build a legacy array without superblocks . -C，&amp;ndash;create：创建一个新的阵列 -Q&amp;ndash;query：查看一个device，判断它为一个md device或是一个md阵列的一部分 -D，&amp;ndash;detail：打印一个或多个md device的详细信息 -E，&amp;ndash;examine：打印device上的md superblock 的内容 -F，&amp;ndash;follow，&amp;ndash;monitor：选择Monitor模式 -G，&amp;ndash;grow：改变在用阵列的大小或形态 -h，&amp;ndash;help：帮助信息，用在以上选项后，则显示该选项信息&amp;ndash;help-options -V,&amp;ndash;version -V，&amp;ndash;verbose：显示细节 -b,&amp;ndash;brief：较少的细节。用于&amp;ndash;detail和&amp;ndash;examine选项 -f,&amp;ndash;force -c，&amp;ndash;config=：指定配置文件，缺省为/etc/mdadm/mdadm.'><title>Linux-文件系统简阅</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Linux-文件系统简阅'>
+<meta property='og:description' content='mdadm mdadm是linux下的一款标准的RAID的管理工具
+基本语法 mdadm [mode] [option] 目前支持 RAID0(striping), RAID1(mirroring), RAID4, RAID5, RAID6, RAID10, MULTIPATH和FAULTY
+模式  Assemble：加入一个以前定义的阵列 Build：创建一个没有超级块的阵列 Create：创建一个新的阵列，每个设备具有超级块； -l,&amp;ndash;level: RAID级别 -n,&amp;ndash;raid-devices: 活动设备个数 -a {yes|no}: 是否自动为其创建设备文件 -c,&amp;ndash;chunk: CHUNK大小, 默认为64K，重要的参数,决定了一次向阵列中每个磁盘写入数据的大小 -x,&amp;ndash;spare-devices: 备用盘个数 Manage： 管理阵列(如添加和删除) Misc：允许单独对阵列中的某个设备进行操作(如停止阵列) Follow or Monitor:监控RAID的状态 Grow：改变RAID的容量或阵列中的设备数目 ；-n,&amp;ndash;raid-devices=: 活动设备个数-x,&amp;ndash;spare-devices=：备用盘个数-c,&amp;ndash;chunk=: CHUNK大小, 默认为64K，重要的参数,决定了一次向阵列中每个磁盘写入数据的大小-z,&amp;ndash;size=：阵列中从每个磁盘获取的空间总数-l,&amp;ndash;level=: RAID级别-p,&amp;ndash;layout=：设定raid5 和raid10的奇偶校验规则；并且控制故障的故障模式&amp;ndash;parity: 类似于&amp;ndash;layout&amp;ndash;assume-clean:目前仅用于 &amp;ndash;build 选项-R &amp;ndash;run: 强制激活RAID，使用这个选项，设备上有旧的元数据信息的提示会被忽略-N &amp;ndash;name=: 设定阵列的名称–-rounding：在linear array中的rounding factor，等于条带大小。  可用的[options]  -A，&amp;ndash;assemble：加入一个以前定义的阵列 -B,&amp;ndash;build:Build a legacy array without superblocks . -C，&amp;ndash;create：创建一个新的阵列 -Q&amp;ndash;query：查看一个device，判断它为一个md device或是一个md阵列的一部分 -D，&amp;ndash;detail：打印一个或多个md device的详细信息 -E，&amp;ndash;examine：打印device上的md superblock 的内容 -F，&amp;ndash;follow，&amp;ndash;monitor：选择Monitor模式 -G，&amp;ndash;grow：改变在用阵列的大小或形态 -h，&amp;ndash;help：帮助信息，用在以上选项后，则显示该选项信息&amp;ndash;help-options -V,&amp;ndash;version -V，&amp;ndash;verbose：显示细节 -b,&amp;ndash;brief：较少的细节。用于&amp;ndash;detail和&amp;ndash;examine选项 -f,&amp;ndash;force -c，&amp;ndash;config=：指定配置文件，缺省为/etc/mdadm/mdadm.'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2022-05-12T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2022-05-12T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/1.png' />
+<meta name="twitter:title" content="Linux-文件系统简阅">
+<meta name="twitter:description" content="mdadm mdadm是linux下的一款标准的RAID的管理工具
+基本语法 mdadm [mode] [option] 目前支持 RAID0(striping), RAID1(mirroring), RAID4, RAID5, RAID6, RAID10, MULTIPATH和FAULTY
+模式  Assemble：加入一个以前定义的阵列 Build：创建一个没有超级块的阵列 Create：创建一个新的阵列，每个设备具有超级块； -l,&amp;ndash;level: RAID级别 -n,&amp;ndash;raid-devices: 活动设备个数 -a {yes|no}: 是否自动为其创建设备文件 -c,&amp;ndash;chunk: CHUNK大小, 默认为64K，重要的参数,决定了一次向阵列中每个磁盘写入数据的大小 -x,&amp;ndash;spare-devices: 备用盘个数 Manage： 管理阵列(如添加和删除) Misc：允许单独对阵列中的某个设备进行操作(如停止阵列) Follow or Monitor:监控RAID的状态 Grow：改变RAID的容量或阵列中的设备数目 ；-n,&amp;ndash;raid-devices=: 活动设备个数-x,&amp;ndash;spare-devices=：备用盘个数-c,&amp;ndash;chunk=: CHUNK大小, 默认为64K，重要的参数,决定了一次向阵列中每个磁盘写入数据的大小-z,&amp;ndash;size=：阵列中从每个磁盘获取的空间总数-l,&amp;ndash;level=: RAID级别-p,&amp;ndash;layout=：设定raid5 和raid10的奇偶校验规则；并且控制故障的故障模式&amp;ndash;parity: 类似于&amp;ndash;layout&amp;ndash;assume-clean:目前仅用于 &amp;ndash;build 选项-R &amp;ndash;run: 强制激活RAID，使用这个选项，设备上有旧的元数据信息的提示会被忽略-N &amp;ndash;name=: 设定阵列的名称–-rounding：在linear array中的rounding factor，等于条带大小。  可用的[options]  -A，&amp;ndash;assemble：加入一个以前定义的阵列 -B,&amp;ndash;build:Build a legacy array without superblocks . -C，&amp;ndash;create：创建一个新的阵列 -Q&amp;ndash;query：查看一个device，判断它为一个md device或是一个md阵列的一部分 -D，&amp;ndash;detail：打印一个或多个md device的详细信息 -E，&amp;ndash;examine：打印device上的md superblock 的内容 -F，&amp;ndash;follow，&amp;ndash;monitor：选择Monitor模式 -G，&amp;ndash;grow：改变在用阵列的大小或形态 -h，&amp;ndash;help：帮助信息，用在以上选项后，则显示该选项信息&amp;ndash;help-options -V,&amp;ndash;version -V，&amp;ndash;verbose：显示细节 -b,&amp;ndash;brief：较少的细节。用于&amp;ndash;detail和&amp;ndash;examine选项 -f,&amp;ndash;force -c，&amp;ndash;config=：指定配置文件，缺省为/etc/mdadm/mdadm."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/1.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/">
+                <img src="/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/1_hu859ea59f552859095fb986ed5a22b665_11306_800x0_resize_box_3.png"
+                        srcset="/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/1_hu859ea59f552859095fb986ed5a22b665_11306_800x0_resize_box_3.png 800w, /p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/1_hu859ea59f552859095fb986ed5a22b665_11306_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="846" 
+                        loading="lazy"
+                        alt="Featured image of post Linux-文件系统(简阅)" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/computer/" style="background-color: #2a9d8f; color: #fff;">
+                知识学习
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/">Linux-文件系统简阅</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">May 12, 2022</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 5 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h4 id="概述">概述</h4>
+<p>文件系统是存储和组织文件，以便可以访问和查找的一种机制；不同的文件系统有不同的存储和组织方式；基于磁盘的有一下几种存储方式：</p>
+<ul>
+<li>连续存储：把数据作为连续的数据块存储到磁盘上；这一方案简单、容易实现，记录文件用到的磁盘块仅需记住第一块的地址，并且性能较好，一次操作就可读出整个文件。但是，它有一个致命的缺陷。在创建文件时，必须知道文件的最大长度，否则无法确定需要为它保留多少磁盘空间。因此，连续存储主要适合于文件数据一次性写入的系统（例如romfs）</li>
+<li>连接表存储：将每个文件用磁盘块顺序连接起来；虽然用于链接磁盘块的指针可以使用磁盘块本身的空间，但这将使得每个磁盘块实际存储的数据字节数不再是2的幂，给上层应用程序带来不便。文件系统从磁盘块中取出一些指针，作为索引存放在文件分配表FAT。只需要记录文件的起始磁盘块编号，顺着文件分配表中索引指针组织成的链表，就可以找到文件的所有磁盘块。</li>
+<li>inode存储：每个文件都有一个称为node的表；通过它获取所有磁盘的编号；小文件的所有磁盘块编号都直接存放在inode内。稍大的一些文件，inode记录了一个称为一次间接块的磁盘块编号，这个磁盘块存放着文件的其他磁
+盘块编号。如果文件再扩大，可以在inode中记录二次间接块编号，二次间接块存放着多个一次间接块的编号，而每个一次间接块又存放着文件的其他磁盘块编号。如果这也不够的话，还可以使用三次间接块。本章要讨论的Minix文件系统，就使用的这种分配方案</li>
+</ul>
+<p>Linux将文件系统分为两层：</p>
+<ol>
+<li>
+<p>上层为虚拟文件系统开关层，简称为虚拟文件系统：它是具体文件系统和上层应用之间的接口层，将各种不同文件系统的操作和管理纳入一个统一的框架，使得用户不需要关心各种不同文件系统的实现细节。VFS由超级块、inode、dentry、vfsmount等信息组成</p>
+</li>
+<li>
+<p>下层为具体文件系统实现，如Minix、EXT2/3/4、sysfs等。具体文件系统实现代码组织成模块形式，向Linux VFS注册回调函数，处理和具体文件系统密切相关的细节操作</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 207; 
+			flex-basis: 498px"
+	>
+	<a href="/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/1.png" data-size="513x247">
+		<img src="/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/1.png"
+			width="513"
+			height="247"
+			srcset="/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/1_hudd81952809099175edb54de5cef86875_45536_480x0_resize_box_3.png 480w, /p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/1_hudd81952809099175edb54de5cef86875_45536_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+</li>
+</ol>
+<h4 id="文件系统对象">文件系统对象</h4>
+<p>Linux文件系统对象之间的关系可以概括为文件系统类型、超级块、inode、dentry和vfsmount之间的关系；</p>
+<p>Linux有一颗全局文件系统树，反映了Linux VFS对象之间的关系；</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 100; 
+			flex-basis: 240px"
+	>
+	<a href="/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/2.png" data-size="546x546">
+		<img src="/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/2.png"
+			width="546"
+			height="546"
+			srcset="/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/2_hu97f7504c4d7172949bd90e2b95d8f280_119893_480x0_resize_box_3.png 480w, /p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/2_hu97f7504c4d7172949bd90e2b95d8f280_119893_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<p>每个文件系统装载实例有四个必备元素：vfsmount、超级块、根inode和根dentry。</p>
+<h4 id="装载文件系统">装载文件系统</h4>
+<p>文件系统要被使用就应该被装载。体现一个文件系统装载实例要素是：vfsmount、super_block、根dentry和根inode；</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 234; 
+			flex-basis: 562px"
+	>
+	<a href="/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/3.png" data-size="546x233">
+		<img src="/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/3.png"
+			width="546"
+			height="233"
+			srcset="/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/3_hu683ec3b3d789a1463d3ac034598e77a1_61958_480x0_resize_box_3.png 480w, /p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/3_hu683ec3b3d789a1463d3ac034598e77a1_61958_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<p>在内核角度，装载过程中，文件系统类型中的get_sb将被调用，它将生成一个新的文件系统装载对象vfsmount，并和该文件系统类型的一个超级块实例关联起来；</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/_huc45ff52f0cf6b2c13cf0b9e2262e1b7b_66945_00fb710e5378cc4d967388d67c9d27dc.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-Ej431j4sWI7qDLD5P2Z/PQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux-Multi-Disk (MD)模块</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/linux-raid5%E5%AD%A6%E4%B9%A0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux-raid5%E5%AD%A6%E4%B9%A0/1.686b3e94bd875a9513d4f47a48d8b455_hu7e02b142b51acc83a4bc67a855e709b3_49591_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-aGs&#43;lL2HWpUT1PR6SNi0VQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux-raid5学习</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/1.ed89b6c78fd07949e3718faf6ec6e1fa_hudd81952809099175edb54de5cef86875_45536_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-7Ym2x4/QeUnjcY&#43;vbsbh&#43;g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux-文件系统简阅</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/linux-raid%E5%AD%A6%E4%B9%A0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux-raid%E5%AD%A6%E4%B9%A0/1.88ce101fba5ae1efe74c455210209183_huf00169aa6abc51faa601f0bf72d243b8_76358_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-iM4QH7pa4e/nTEVSECCRgw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux-raid学习</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/1.326ee6a4fbef335065f5784cfffb098a_hub95fcc2a246a65208e8832126d70bee7_36058_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-Mm7mpPvvM1Bl9XhM//sJig==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux存储技术学习笔记</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#概述">概述</a></li>
+            <li><a href="#文件系统对象">文件系统对象</a></li>
+            <li><a href="#装载文件系统">装载文件系统</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

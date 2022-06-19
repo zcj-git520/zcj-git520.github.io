@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='概述 Linux内核在多块设备的基础上，注册了一块特殊的设备，称为为MD设备。这个MD设备形成一个逻辑层，支持不同的RAID技术
+
+MD模块是一个虚拟块设备，它属于块i/o子系统中的块设备驱动层，架构于物理块设备层；其有两层：RAID共性层和RAID个性层
+ RAID共性层：它提取出各种级别的RAID的公共特性，依照块设备的实现模板向上层注册，同时向RAID个性层提供公共函数，以及接口注册函数 RAID个性层：是各种级别RAID的个性体现，它向RAID公共层注册个性接口，利用RAID公共层提供的公共函数，基于低层实现个性化功能  RAID模块对象   核心MD设备结构mddev及其成员磁盘设备结构mdk_rdev_t是系统中的两个关键结构。核心MD设备结构mddev_t是内核中RAID设备保存自身信息的结构体，它包括了完整的RAID设备的信息。成员磁盘设备结构mdk_rdev_t反映了组成MD设备的底层块设备的信息；
+  MD设备处理可以有不同的特性，它指向一个MD个性结构体，有个性ND设备的操作表和操作的最终数据
+  MD设备通过块设备号和块设备描述符（block_device）关联起来，低层成员磁盘也指向和它相对应的块设备描述符正是以块设备描述符为“纽带”，使得MD可以构建在其他的物理或虚拟磁盘设备之上，成为一个“栈式”块设备；
+
+  MD模块初始化   MD模块加载时，它的初始化函数md_init将被执行;
+  __register_blkdev函数:是维护主设备号和块设备名之间的关联,所有块设备模块初始化时，都应该调用这个函数
+static void md_geninit(void) { pr_debug(&amp;quot;md: sizeof(mdp_super_t) = %d\n&amp;quot;, (int)sizeof(mdp_super_t)); proc_create(&amp;quot;mdstat&amp;quot;, S_IRUGO, NULL, &amp;amp;mdstat_proc_ops); } static int __init md_init(void) { int ret = -ENOMEM; md_wq = alloc_workqueue(&amp;quot;md&amp;quot;, WQ_MEM_RECLAIM, 0); if (!md_wq) goto err_wq; md_misc_wq = alloc_workqueue(&amp;quot;md_misc&amp;quot;, 0, 0); if (!md_misc_wq) goto err_misc_wq; md_rdev_misc_wq = alloc_workqueue(&amp;quot;md_rdev_misc&amp;quot;, 0, 0); if (!'><title>Linux-Multi-Disk (MD)模块</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Linux-Multi-Disk (MD)模块'>
+<meta property='og:description' content='概述 Linux内核在多块设备的基础上，注册了一块特殊的设备，称为为MD设备。这个MD设备形成一个逻辑层，支持不同的RAID技术
+
+MD模块是一个虚拟块设备，它属于块i/o子系统中的块设备驱动层，架构于物理块设备层；其有两层：RAID共性层和RAID个性层
+ RAID共性层：它提取出各种级别的RAID的公共特性，依照块设备的实现模板向上层注册，同时向RAID个性层提供公共函数，以及接口注册函数 RAID个性层：是各种级别RAID的个性体现，它向RAID公共层注册个性接口，利用RAID公共层提供的公共函数，基于低层实现个性化功能  RAID模块对象   核心MD设备结构mddev及其成员磁盘设备结构mdk_rdev_t是系统中的两个关键结构。核心MD设备结构mddev_t是内核中RAID设备保存自身信息的结构体，它包括了完整的RAID设备的信息。成员磁盘设备结构mdk_rdev_t反映了组成MD设备的底层块设备的信息；
+  MD设备处理可以有不同的特性，它指向一个MD个性结构体，有个性ND设备的操作表和操作的最终数据
+  MD设备通过块设备号和块设备描述符（block_device）关联起来，低层成员磁盘也指向和它相对应的块设备描述符正是以块设备描述符为“纽带”，使得MD可以构建在其他的物理或虚拟磁盘设备之上，成为一个“栈式”块设备；
+
+  MD模块初始化   MD模块加载时，它的初始化函数md_init将被执行;
+  __register_blkdev函数:是维护主设备号和块设备名之间的关联,所有块设备模块初始化时，都应该调用这个函数
+static void md_geninit(void) { pr_debug(&amp;quot;md: sizeof(mdp_super_t) = %d\n&amp;quot;, (int)sizeof(mdp_super_t)); proc_create(&amp;quot;mdstat&amp;quot;, S_IRUGO, NULL, &amp;amp;mdstat_proc_ops); } static int __init md_init(void) { int ret = -ENOMEM; md_wq = alloc_workqueue(&amp;quot;md&amp;quot;, WQ_MEM_RECLAIM, 0); if (!md_wq) goto err_wq; md_misc_wq = alloc_workqueue(&amp;quot;md_misc&amp;quot;, 0, 0); if (!md_misc_wq) goto err_misc_wq; md_rdev_misc_wq = alloc_workqueue(&amp;quot;md_rdev_misc&amp;quot;, 0, 0); if (!'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2022-05-30T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2022-05-30T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/image-20220613151649807.png' />
+<meta name="twitter:title" content="Linux-Multi-Disk (MD)模块">
+<meta name="twitter:description" content="概述 Linux内核在多块设备的基础上，注册了一块特殊的设备，称为为MD设备。这个MD设备形成一个逻辑层，支持不同的RAID技术
+
+MD模块是一个虚拟块设备，它属于块i/o子系统中的块设备驱动层，架构于物理块设备层；其有两层：RAID共性层和RAID个性层
+ RAID共性层：它提取出各种级别的RAID的公共特性，依照块设备的实现模板向上层注册，同时向RAID个性层提供公共函数，以及接口注册函数 RAID个性层：是各种级别RAID的个性体现，它向RAID公共层注册个性接口，利用RAID公共层提供的公共函数，基于低层实现个性化功能  RAID模块对象   核心MD设备结构mddev及其成员磁盘设备结构mdk_rdev_t是系统中的两个关键结构。核心MD设备结构mddev_t是内核中RAID设备保存自身信息的结构体，它包括了完整的RAID设备的信息。成员磁盘设备结构mdk_rdev_t反映了组成MD设备的底层块设备的信息；
+  MD设备处理可以有不同的特性，它指向一个MD个性结构体，有个性ND设备的操作表和操作的最终数据
+  MD设备通过块设备号和块设备描述符（block_device）关联起来，低层成员磁盘也指向和它相对应的块设备描述符正是以块设备描述符为“纽带”，使得MD可以构建在其他的物理或虚拟磁盘设备之上，成为一个“栈式”块设备；
+
+  MD模块初始化   MD模块加载时，它的初始化函数md_init将被执行;
+  __register_blkdev函数:是维护主设备号和块设备名之间的关联,所有块设备模块初始化时，都应该调用这个函数
+static void md_geninit(void) { pr_debug(&amp;quot;md: sizeof(mdp_super_t) = %d\n&amp;quot;, (int)sizeof(mdp_super_t)); proc_create(&amp;quot;mdstat&amp;quot;, S_IRUGO, NULL, &amp;amp;mdstat_proc_ops); } static int __init md_init(void) { int ret = -ENOMEM; md_wq = alloc_workqueue(&amp;quot;md&amp;quot;, WQ_MEM_RECLAIM, 0); if (!md_wq) goto err_wq; md_misc_wq = alloc_workqueue(&amp;quot;md_misc&amp;quot;, 0, 0); if (!md_misc_wq) goto err_misc_wq; md_rdev_misc_wq = alloc_workqueue(&amp;quot;md_rdev_misc&amp;quot;, 0, 0); if (!"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/image-20220613151649807.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/">
+                <img src="/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/image-20220613151649807_huc45ff52f0cf6b2c13cf0b9e2262e1b7b_66945_800x0_resize_box_3.png"
+                        srcset="/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/image-20220613151649807_huc45ff52f0cf6b2c13cf0b9e2262e1b7b_66945_800x0_resize_box_3.png 800w, /p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/image-20220613151649807_huc45ff52f0cf6b2c13cf0b9e2262e1b7b_66945_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="613" 
+                        loading="lazy"
+                        alt="Featured image of post Linux-Multi-Disk (MD)模块" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/computer/" style="background-color: #2a9d8f; color: #fff;">
+                知识学习
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/">Linux-Multi-Disk (MD)模块</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">May 30, 2022</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 1 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h4 id="概述">概述</h4>
+<p>Linux内核在多块设备的基础上，注册了一块特殊的设备，称为为MD设备。这个MD设备形成一个逻辑层，支持不同的RAID技术</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 130; 
+			flex-basis: 313px"
+	>
+	<a href="/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/image-20220613151649807.png" data-size="491x376">
+		<img src="/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/image-20220613151649807.png"
+			width="491"
+			height="376"
+			srcset="/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/image-20220613151649807_huc45ff52f0cf6b2c13cf0b9e2262e1b7b_66945_480x0_resize_box_3.png 480w, /p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/image-20220613151649807_huc45ff52f0cf6b2c13cf0b9e2262e1b7b_66945_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<p>MD模块是一个虚拟块设备，它属于块i/o子系统中的块设备驱动层，架构于物理块设备层；其有两层：RAID共性层和RAID个性层</p>
+<ul>
+<li>RAID共性层：它提取出各种级别的RAID的公共特性，依照块设备的实现模板向上层注册，同时向RAID个性层提供公共函数，以及接口注册函数</li>
+<li>RAID个性层：是各种级别RAID的个性体现，它向RAID公共层注册个性接口，利用RAID公共层提供的公共函数，基于低层实现个性化功能</li>
+</ul>
+<h4 id="raid模块对象">RAID模块对象</h4>
+<ol>
+<li>
+<p>核心MD设备结构mddev及其成员磁盘设备结构mdk_rdev_t是系统中的两个关键结构。核心MD设备结构mddev_t是内核中RAID设备保存自身信息的结构体，它包括了完整的RAID设备的信息。成员磁盘设备结构mdk_rdev_t反映了组成MD设备的底层块设备的信息；</p>
+</li>
+<li>
+<p>MD设备处理可以有不同的特性，它指向一个MD个性结构体，有个性ND设备的操作表和操作的最终数据</p>
+</li>
+<li>
+<p>MD设备通过块设备号和块设备描述符（block_device）关联起来，低层成员磁盘也指向和它相对应的块设备描述符正是以块设备描述符为“纽带”，使得MD可以构建在其他的物理或虚拟磁盘设备之上，成为一个“栈式”块设备；</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 161; 
+			flex-basis: 386px"
+	>
+	<a href="/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/image-20220613154538680.png" data-size="546x339">
+		<img src="/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/image-20220613154538680.png"
+			width="546"
+			height="339"
+			srcset="/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/image-20220613154538680_hu95e6a8286145ebb4704fcc542b2119eb_66459_480x0_resize_box_3.png 480w, /p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/image-20220613154538680_hu95e6a8286145ebb4704fcc542b2119eb_66459_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+</li>
+</ol>
+<h4 id="md模块初始化">MD模块初始化</h4>
+<ul>
+<li>
+<p>MD模块加载时，它的初始化函数md_init将被执行;</p>
+</li>
+<li>
+<p>__register_blkdev函数:是维护主设备号和块设备名之间的关联,所有块设备模块初始化时，都应该调用这个函数</p>
+<pre tabindex="0"><code>static void md_geninit(void)
+{
+	pr_debug(&quot;md: sizeof(mdp_super_t) = %d\n&quot;, (int)sizeof(mdp_super_t));
+
+	proc_create(&quot;mdstat&quot;, S_IRUGO, NULL, &amp;mdstat_proc_ops);
+}
+
+static int __init md_init(void)
+{
+	int ret = -ENOMEM;
+
+	md_wq = alloc_workqueue(&quot;md&quot;, WQ_MEM_RECLAIM, 0);
+	if (!md_wq)
+      goto err_wq;
+
+	md_misc_wq = alloc_workqueue(&quot;md_misc&quot;, 0, 0);
+	if (!md_misc_wq)
+      goto err_misc_wq;
+
+	md_rdev_misc_wq = alloc_workqueue(&quot;md_rdev_misc&quot;, 0, 0);
+	if (!md_rdev_misc_wq)
+      goto err_rdev_misc_wq;
+
+	ret = __register_blkdev(MD_MAJOR, &quot;md&quot;, md_probe);
+	if (ret &lt; 0)
+      goto err_md;
+
+	ret = __register_blkdev(0, &quot;mdp&quot;, md_probe);
+	if (ret &lt; 0)
+      goto err_mdp;
+	mdp_major = ret;
+
+	register_reboot_notifier(&amp;md_notifier);
+	raid_table_header = register_sysctl_table(raid_root_table);
+
+	md_geninit();
+	return 0;
+
+err_mdp:
+	unregister_blkdev(MD_MAJOR, &quot;md&quot;);
+err_md:
+	destroy_workqueue(md_rdev_misc_wq);
+err_rdev_misc_wq:
+	destroy_workqueue(md_misc_wq);
+err_misc_wq:
+	destroy_workqueue(md_wq);
+err_wq:
+	return ret;
+}
+</code></pre></li>
+</ul>
+<h4 id="md设备创建">MD设备创建</h4>
+<ul>
+<li>
+<p>md_probe()函数负责创建MD对象,直接调用md_alloc函数；</p>
+<pre tabindex="0"><code>static void md_probe(dev_t dev)
+{
+	if (MAJOR(dev) == MD_MAJOR &amp;&amp; MINOR(dev) &gt;= 512)
+      return;
+	if (create_on_open)
+      md_alloc(dev, NULL);
+}
+</code></pre></li>
+<li>
+<p>md_open():是系统调用open的实现代码继续执行，调用块设备操作表的open回调函数的实例化</p>
+</li>
+</ul>
+<h4 id="用户态发送ioctl创建md">用户态发送ioctl创建MD</h4>
+<p>使用管理工具创建MD是通过ioctl来实现的。在打开MD设备文件（如/dev/md0）情况下，文件操作表被设置为def_blk_fops，其unlocked_ioctl回调函数的实现为block_ioctl，而后者经调用blkdev_ioctl，再调用__blkdev_driver_ioctl，最后调用的是通用磁盘的块设备操作表中的ioctl回调函数</p>
+<p>函数md_iocal()可对设备驱动、磁盘、设备进行查询、控制和配置:</p>
+<ol>
+<li>针对于RAID驱动程序，而非特定的阵列；例如获取RAID驱动程序版本号以及打印所有RAID阵列信息等</li>
+<li>针对于特定阵列，主要命令如下：如SET_ARRAY_INFO设置MD设备信息；ADD_NEW_DISK在MD设备中添加一个磁盘设备；RUN_ARRAY运行MD设备等</li>
+<li>SET_ARRAY_INFO：在md_ioctl，处理SET_ARRAY_INFO控制码的代码首先从用户空间复制参数，然后根据MD设备是否已经存在分别调用update_array_info和md_set_array_info函数；</li>
+<li>ADD_NEW_DISK:在md_ioctl，处理ADD_NEW_DISK控制码的代码首先从用户空间复制参数，然后调md_add_new_disk函数;</li>
+<li>RUN_ARRAY:处理RUN_ARRAY控制码的代码直接调用do_md_run函数;</li>
+</ol>
+<h4 id="md设备请求执行">MD设备请求执行</h4>
+<p>MD模块中提供了一个通用的接口函数md_make_request作为各种级别RAID设备的读／写请求的入口;</p>
+<p>加载MD模块时，调用blk_queue_make_request函数将所有对主设备号为MD_MAJOR的读／写请求都转发到这个函数。但这个函数并不执行真正处理，只是通过映射找到块设备次设备号对应MD设备结构，进而获得其个性化结构指针，调用个性化结构的make_request，即通过和该RAID级别对应的请求处理函数来处理这个请求;</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/linux-raid5%E5%AD%A6%E4%B9%A0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux-raid5%E5%AD%A6%E4%B9%A0/1.686b3e94bd875a9513d4f47a48d8b455_hu7e02b142b51acc83a4bc67a855e709b3_49591_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-aGs&#43;lL2HWpUT1PR6SNi0VQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux-raid5学习</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/1.ed89b6c78fd07949e3718faf6ec6e1fa_hudd81952809099175edb54de5cef86875_45536_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-7Ym2x4/QeUnjcY&#43;vbsbh&#43;g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux-文件系统(简阅)</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/1.ed89b6c78fd07949e3718faf6ec6e1fa_hudd81952809099175edb54de5cef86875_45536_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-7Ym2x4/QeUnjcY&#43;vbsbh&#43;g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux-文件系统简阅</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/linux-raid%E5%AD%A6%E4%B9%A0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux-raid%E5%AD%A6%E4%B9%A0/1.88ce101fba5ae1efe74c455210209183_huf00169aa6abc51faa601f0bf72d243b8_76358_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-iM4QH7pa4e/nTEVSECCRgw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux-raid学习</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/1.326ee6a4fbef335065f5784cfffb098a_hub95fcc2a246a65208e8832126d70bee7_36058_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-Mm7mpPvvM1Bl9XhM//sJig==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux存储技术学习笔记</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#概述">概述</a></li>
+            <li><a href="#raid模块对象">RAID模块对象</a></li>
+            <li><a href="#md模块初始化">MD模块初始化</a></li>
+            <li><a href="#md设备创建">MD设备创建</a></li>
+            <li><a href="#用户态发送ioctl创建md">用户态发送ioctl创建MD</a></li>
+            <li><a href="#md设备请求执行">MD设备请求执行</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

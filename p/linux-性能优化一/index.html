@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Linux常用的性能查看命令 CPU CPU的性能指标  cup的使用率分为：    用户CPU使用率，主要包括用户态和低优先级用户态，反应的是应用程序的cpu的使用情况 系统CPU使用率，cpu在内核态运行的时间百分比,不包含中断。反应的是内核的使用情况 等待IO的CPU使用率，反应的是系统与硬件IO的交互的情况 软/硬中断CPU的使用率，反应的中断的发生的情况 steal CPU / guest CPU, 表示虚拟机占用的CPU百分比.    在理想情况下，平均负载等于逻辑CPU个数(几核的CPU),表示每个CUP都被充分使用。大于这个逻辑CPU个数表示负载较大 CUP缓存率指的是CPU缓存的复用情况。命中率越高表示性能越好，其中L1/L2常用在单核,L3则用在多核中  CPU的优化  用户态的优化，即应用程序的的优化，尽可能的减少cpu的上下文的切换 内核态的优化，即内核的优化，可以CPU绑定，调整有优先级，中断的负载均衡等尽可能的减少内核态中上下文的切换  性能工具  根据不同的性能指标来找合适的工具
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Linux常用的性能查看命令 CPU CPU的性能指标  cup的使用率分为：    用户CPU使用率，主要包括用户态和低优先级用户态，反应的是应用程序的cpu的使用情况 系统CPU使用率，cpu在内核态运行的时间百分比,不包含中断。反应的是内核的使用情况 等待IO的CPU使用率，反应的是系统与硬件IO的交互的情况 软/硬中断CPU的使用率，反应的中断的发生的情况 steal CPU / guest CPU, 表示虚拟机占用的CPU百分比.    在理想情况下，平均负载等于逻辑CPU个数(几核的CPU),表示每个CUP都被充分使用。大于这个逻辑CPU个数表示负载较大 CUP缓存率指的是CPU缓存的复用情况。命中率越高表示性能越好，其中L1/L2常用在单核,L3则用在多核中  CPU的优化  用户态的优化，即应用程序的的优化，尽可能的减少cpu的上下文的切换 内核态的优化，即内核的优化，可以CPU绑定，调整有优先级，中断的负载均衡等  性能工具  根据不同的性能指标来找合适的工具
  根据指标查找   CPU性能查看  使用ps查看正在运行的进程   使用top查看各cup的使用情况、对应内存以及个进程占cpu和使用内存的情况  vmstat命令：查看CPU负载   内存使用情况查看  除了使用top可以查看内存使用情况外，还可以使用free命令进行查看   磁盘I/O性能查看  可以使用df 或者 df -h 查看磁盘占用用情况  iostat -d 进行查看   查看网络情况  使用ifconfig查看或者修改网络  netstat命令：-i 查看网络接口信息，-r 检测系统路由表信息   动态监控性能  使用watch命令：动态监控，默认2秒钟执行一次，执行结果更新在屏幕上    '><title>linux 性能优化(一)</title>
 
 <link rel='canonical' href='https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/'>
 
 <link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='linux 性能优化(一)'>
-<meta property='og:description' content='Linux常用的性能查看命令 CPU CPU的性能指标  cup的使用率分为：    用户CPU使用率，主要包括用户态和低优先级用户态，反应的是应用程序的cpu的使用情况 系统CPU使用率，cpu在内核态运行的时间百分比,不包含中断。反应的是内核的使用情况 等待IO的CPU使用率，反应的是系统与硬件IO的交互的情况 软/硬中断CPU的使用率，反应的中断的发生的情况 steal CPU / guest CPU, 表示虚拟机占用的CPU百分比.    在理想情况下，平均负载等于逻辑CPU个数(几核的CPU),表示每个CUP都被充分使用。大于这个逻辑CPU个数表示负载较大 CUP缓存率指的是CPU缓存的复用情况。命中率越高表示性能越好，其中L1/L2常用在单核,L3则用在多核中  CPU的优化  用户态的优化，即应用程序的的优化，尽可能的减少cpu的上下文的切换 内核态的优化，即内核的优化，可以CPU绑定，调整有优先级，中断的负载均衡等尽可能的减少内核态中上下文的切换  性能工具  根据不同的性能指标来找合适的工具
+<meta property='og:description' content='Linux常用的性能查看命令 CPU CPU的性能指标  cup的使用率分为：    用户CPU使用率，主要包括用户态和低优先级用户态，反应的是应用程序的cpu的使用情况 系统CPU使用率，cpu在内核态运行的时间百分比,不包含中断。反应的是内核的使用情况 等待IO的CPU使用率，反应的是系统与硬件IO的交互的情况 软/硬中断CPU的使用率，反应的中断的发生的情况 steal CPU / guest CPU, 表示虚拟机占用的CPU百分比.    在理想情况下，平均负载等于逻辑CPU个数(几核的CPU),表示每个CUP都被充分使用。大于这个逻辑CPU个数表示负载较大 CUP缓存率指的是CPU缓存的复用情况。命中率越高表示性能越好，其中L1/L2常用在单核,L3则用在多核中  CPU的优化  用户态的优化，即应用程序的的优化，尽可能的减少cpu的上下文的切换 内核态的优化，即内核的优化，可以CPU绑定，调整有优先级，中断的负载均衡等  性能工具  根据不同的性能指标来找合适的工具
  根据指标查找   CPU性能查看  使用ps查看正在运行的进程   使用top查看各cup的使用情况、对应内存以及个进程占cpu和使用内存的情况  vmstat命令：查看CPU负载   内存使用情况查看  除了使用top可以查看内存使用情况外，还可以使用free命令进行查看   磁盘I/O性能查看  可以使用df 或者 df -h 查看磁盘占用用情况  iostat -d 进行查看   查看网络情况  使用ifconfig查看或者修改网络  netstat命令：-i 查看网络接口信息，-r 检测系统路由表信息   动态监控性能  使用watch命令：动态监控，默认2秒钟执行一次，执行结果更新在屏幕上    '>
 <meta property='og:url' content='https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/'>
 <meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2022-03-05T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2022-03-05T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/3.png' />
 <meta name="twitter:title" content="linux 性能优化(一)">
-<meta name="twitter:description" content="Linux常用的性能查看命令 CPU CPU的性能指标  cup的使用率分为：    用户CPU使用率，主要包括用户态和低优先级用户态，反应的是应用程序的cpu的使用情况 系统CPU使用率，cpu在内核态运行的时间百分比,不包含中断。反应的是内核的使用情况 等待IO的CPU使用率，反应的是系统与硬件IO的交互的情况 软/硬中断CPU的使用率，反应的中断的发生的情况 steal CPU / guest CPU, 表示虚拟机占用的CPU百分比.    在理想情况下，平均负载等于逻辑CPU个数(几核的CPU),表示每个CUP都被充分使用。大于这个逻辑CPU个数表示负载较大 CUP缓存率指的是CPU缓存的复用情况。命中率越高表示性能越好，其中L1/L2常用在单核,L3则用在多核中  CPU的优化  用户态的优化，即应用程序的的优化，尽可能的减少cpu的上下文的切换 内核态的优化，即内核的优化，可以CPU绑定，调整有优先级，中断的负载均衡等尽可能的减少内核态中上下文的切换  性能工具  根据不同的性能指标来找合适的工具
+<meta name="twitter:description" content="Linux常用的性能查看命令 CPU CPU的性能指标  cup的使用率分为：    用户CPU使用率，主要包括用户态和低优先级用户态，反应的是应用程序的cpu的使用情况 系统CPU使用率，cpu在内核态运行的时间百分比,不包含中断。反应的是内核的使用情况 等待IO的CPU使用率，反应的是系统与硬件IO的交互的情况 软/硬中断CPU的使用率，反应的中断的发生的情况 steal CPU / guest CPU, 表示虚拟机占用的CPU百分比.    在理想情况下，平均负载等于逻辑CPU个数(几核的CPU),表示每个CUP都被充分使用。大于这个逻辑CPU个数表示负载较大 CUP缓存率指的是CPU缓存的复用情况。命中率越高表示性能越好，其中L1/L2常用在单核,L3则用在多核中  CPU的优化  用户态的优化，即应用程序的的优化，尽可能的减少cpu的上下文的切换 内核态的优化，即内核的优化，可以CPU绑定，调整有优先级，中断的负载均衡等  性能工具  根据不同的性能指标来找合适的工具
  根据指标查找   CPU性能查看  使用ps查看正在运行的进程   使用top查看各cup的使用情况、对应内存以及个进程占cpu和使用内存的情况  vmstat命令：查看CPU负载   内存使用情况查看  除了使用top可以查看内存使用情况外，还可以使用free命令进行查看   磁盘I/O性能查看  可以使用df 或者 df -h 查看磁盘占用用情况  iostat -d 进行查看   查看网络情况  使用ifconfig查看或者修改网络  netstat命令：-i 查看网络接口信息，-r 检测系统路由表信息   动态监控性能  使用watch命令：动态监控，默认2秒钟执行一次，执行结果更新在屏幕上    "><meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content='https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%B8%80/3.png' />
     </head>
@@ -154,7 +154,7 @@
 <h4 id="cpu的优化">CPU的优化</h4>
 <ol>
 <li>用户态的优化，即应用程序的的优化，尽可能的减少cpu的上下文的切换</li>
-<li>内核态的优化，即内核的优化，可以CPU绑定，调整有优先级，中断的负载均衡等尽可能的减少内核态中上下文的切换</li>
+<li>内核态的优化，即内核的优化，可以CPU绑定，调整有优先级，中断的负载均衡等</li>
 </ol>
 <h4 id="性能工具">性能工具</h4>
 <ul>
@@ -440,110 +440,110 @@
                 
                     
 <article class="has-image">
-    <a href="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%BA%8C/">
+    <a href="/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/">
         
         
             <div class="article-image">
-                <img src="/p/linux-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E4%BA%8C/3.5cc0c3dc65dd8ec02e29048c71b6b3bb_hu66cf5664c43f449fa744670ec4319b24_173122_250x150_fill_box_smart1_3.png" 
+                <img src="/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/_huc45ff52f0cf6b2c13cf0b9e2262e1b7b_66945_00fb710e5378cc4d967388d67c9d27dc.png" 
                         width="250" 
                         height="150" 
                         loading="lazy" 
                         data-key="" 
-                        data-hash="md5-XMDD3GXdjsAuKQSMcbazuw==">
+                        data-hash="md5-Ej431j4sWI7qDLD5P2Z/PQ==">
                 
             </div>
         
 
         <div class="article-details">
-            <h2 class="article-title">linux 性能优化(二)</h2>
+            <h2 class="article-title">Linux-Multi-Disk (MD)模块</h2>
         </div>
     </a>
 </article>
                 
                     
 <article class="has-image">
-    <a href="/p/mysql%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/">
+    <a href="/p/linux-raid5%E5%AD%A6%E4%B9%A0/">
         
         
             <div class="article-image">
-                <img src="/p/mysql%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/3.117842f1f408b0c348e681ab68c9fa7c_hu5261706da37be2572fd4622db307b63b_273707_250x150_fill_box_smart1_3.png" 
+                <img src="/p/linux-raid5%E5%AD%A6%E4%B9%A0/1.686b3e94bd875a9513d4f47a48d8b455_hu7e02b142b51acc83a4bc67a855e709b3_49591_250x150_fill_box_smart1_3.png" 
                         width="250" 
                         height="150" 
                         loading="lazy" 
                         data-key="" 
-                        data-hash="md5-EXhC8fQIsMNI5oGraMn6fA==">
+                        data-hash="md5-aGs&#43;lL2HWpUT1PR6SNi0VQ==">
                 
             </div>
         
 
         <div class="article-details">
-            <h2 class="article-title">mysql性能调优-分库分表</h2>
+            <h2 class="article-title">Linux-raid5学习</h2>
         </div>
     </a>
 </article>
                 
                     
 <article class="has-image">
-    <a href="/p/mysql%E4%BA%8B%E5%8A%A1%E5%AE%9E%E7%8E%B0%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/">
+    <a href="/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/">
         
         
             <div class="article-image">
-                <img src="/p/mysql%E4%BA%8B%E5%8A%A1%E5%AE%9E%E7%8E%B0%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/1.a6a89cd5fadeab0f03d10b534bbcd0ac_hub1d649ce0ea89887083315ebed128a77_18394_250x150_fill_box_smart1_3.png" 
+                <img src="/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/1.ed89b6c78fd07949e3718faf6ec6e1fa_hudd81952809099175edb54de5cef86875_45536_250x150_fill_box_smart1_3.png" 
                         width="250" 
                         height="150" 
                         loading="lazy" 
                         data-key="" 
-                        data-hash="md5-pqic1freqw8D0QtTS7zQrA==">
+                        data-hash="md5-7Ym2x4/QeUnjcY&#43;vbsbh&#43;g==">
                 
             </div>
         
 
         <div class="article-details">
-            <h2 class="article-title">mysql事务实现基本原理</h2>
+            <h2 class="article-title">Linux-文件系统(简阅)</h2>
         </div>
     </a>
 </article>
                 
                     
 <article class="has-image">
-    <a href="/p/mysql%E5%BA%95%E5%B1%82%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/">
+    <a href="/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/">
         
         
             <div class="article-image">
-                <img src="/p/mysql%E5%BA%95%E5%B1%82%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/1.923fdda1d7a4767f5b07e09a53cd77fc_huc45b7cee299d4b0bd96f8dd390c7ebfb_163533_250x150_fill_box_smart1_3.png" 
+                <img src="/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/1.ed89b6c78fd07949e3718faf6ec6e1fa_hudd81952809099175edb54de5cef86875_45536_250x150_fill_box_smart1_3.png" 
                         width="250" 
                         height="150" 
                         loading="lazy" 
                         data-key="" 
-                        data-hash="md5-kj/dodekdn9bB&#43;CaU813/A==">
+                        data-hash="md5-7Ym2x4/QeUnjcY&#43;vbsbh&#43;g==">
                 
             </div>
         
 
         <div class="article-details">
-            <h2 class="article-title">mysql底层基本原理</h2>
+            <h2 class="article-title">Linux-文件系统简阅</h2>
         </div>
     </a>
 </article>
                 
                     
 <article class="has-image">
-    <a href="/p/io%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/">
+    <a href="/p/linux-raid%E5%AD%A6%E4%B9%A0/">
         
         
             <div class="article-image">
-                <img src="/p/io%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8/3.29d05d0d5674dc265853a7ce03f6079a_hu407313779efa40a3c2449c5134b0af99_194287_250x150_fill_box_smart1_3.png" 
+                <img src="/p/linux-raid%E5%AD%A6%E4%B9%A0/1.88ce101fba5ae1efe74c455210209183_huf00169aa6abc51faa601f0bf72d243b8_76358_250x150_fill_box_smart1_3.png" 
                         width="250" 
                         height="150" 
                         loading="lazy" 
                         data-key="" 
-                        data-hash="md5-KdBdDVZ03CZYU6fOA/YHmg==">
+                        data-hash="md5-iM4QH7pa4e/nTEVSECCRgw==">
                 
             </div>
         
 
         <div class="article-details">
-            <h2 class="article-title">io多路复用</h2>
+            <h2 class="article-title">Linux-raid学习</h2>
         </div>
     </a>
 </article>

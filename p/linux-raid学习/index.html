@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='raid是什么 raid是廉价冗余磁盘阵列，简称磁盘阵列。
+raid:是一种把多块独立的物理磁盘按不同的技术组合起来的形成的一个磁盘组，在逻辑上看起来是一块大的磁盘，可以提供比较单个的物理磁盘更大的存储容量或更高的存储性能，同时有能提供不同级别数据的冗余备份的一种技术
+raid的级别 把多个物理磁盘通过不同的技术方式组成的磁盘阵列，不同的技术称为raid级别。
+级别一般有：raid0,raid1,raid0&#43;1(raid10),raid2,raid3,raid4,raid5,raid6,raid7,raid53
+生产环境常用的级别为：raid0,raid1,raid10,raid5
+raid级别的比较    raid级别 优点 缺点 实际使用场景     raid0 读写速度快 没有冗余 mysql slave,集群的节点rs   raid1 100%冗余，镜像 读写性能一般，成本高 单独的，数据重要，且宕机的业务，监控，系统盘   raid5 具备一定的性能和冗余，可坏一块盘，读写性能不错 写入性能不高 用于一般的业务   raid10 读写速度快，100%冗余 成本高 性能和冗余的业务要求高的业务    raid技术分类 软raid技术 在linux中，通过自带软件就能实现软raid功能，它的配置高，管理方便，可以是实现将将几个物理盘合成一个更大的虚拟设备，从而到达性能的改进合数据的冗余的目的
+硬raid技术 基于硬件的raid解决方案比基于软件的raid技术在使用的性能合服务器上更好，具体表现在检测和修复多位错误的能力，错误的磁盘自动检测和阵列重建等方面，从安全性上考虑，基于硬件的raid的解决方案更加的安全
+raid0原理及特点 
+特点：  读写性能高 没有冗余 可用空间N*min（s1,S2&amp;hellip;） 最少磁盘数为，2，2&#43;  raid1特点 
+特点  读性能提升，写性能降低 可用空间为：min（s1,S2&amp;hellip;） 可冗余 最少磁盘数为：2，2&#43;  raid5特点'><title>Linux-raid学习</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/linux-raid%E5%AD%A6%E4%B9%A0/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Linux-raid学习'>
+<meta property='og:description' content='raid是什么 raid是廉价冗余磁盘阵列，简称磁盘阵列。
+raid:是一种把多块独立的物理磁盘按不同的技术组合起来的形成的一个磁盘组，在逻辑上看起来是一块大的磁盘，可以提供比较单个的物理磁盘更大的存储容量或更高的存储性能，同时有能提供不同级别数据的冗余备份的一种技术
+raid的级别 把多个物理磁盘通过不同的技术方式组成的磁盘阵列，不同的技术称为raid级别。
+级别一般有：raid0,raid1,raid0&#43;1(raid10),raid2,raid3,raid4,raid5,raid6,raid7,raid53
+生产环境常用的级别为：raid0,raid1,raid10,raid5
+raid级别的比较    raid级别 优点 缺点 实际使用场景     raid0 读写速度快 没有冗余 mysql slave,集群的节点rs   raid1 100%冗余，镜像 读写性能一般，成本高 单独的，数据重要，且宕机的业务，监控，系统盘   raid5 具备一定的性能和冗余，可坏一块盘，读写性能不错 写入性能不高 用于一般的业务   raid10 读写速度快，100%冗余 成本高 性能和冗余的业务要求高的业务    raid技术分类 软raid技术 在linux中，通过自带软件就能实现软raid功能，它的配置高，管理方便，可以是实现将将几个物理盘合成一个更大的虚拟设备，从而到达性能的改进合数据的冗余的目的
+硬raid技术 基于硬件的raid解决方案比基于软件的raid技术在使用的性能合服务器上更好，具体表现在检测和修复多位错误的能力，错误的磁盘自动检测和阵列重建等方面，从安全性上考虑，基于硬件的raid的解决方案更加的安全
+raid0原理及特点 
+特点：  读写性能高 没有冗余 可用空间N*min（s1,S2&amp;hellip;） 最少磁盘数为，2，2&#43;  raid1特点 
+特点  读性能提升，写性能降低 可用空间为：min（s1,S2&amp;hellip;） 可冗余 最少磁盘数为：2，2&#43;  raid5特点'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/linux-raid%E5%AD%A6%E4%B9%A0/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2022-04-30T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2022-04-30T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/linux-raid%E5%AD%A6%E4%B9%A0/1.png' />
+<meta name="twitter:title" content="Linux-raid学习">
+<meta name="twitter:description" content="raid是什么 raid是廉价冗余磁盘阵列，简称磁盘阵列。
+raid:是一种把多块独立的物理磁盘按不同的技术组合起来的形成的一个磁盘组，在逻辑上看起来是一块大的磁盘，可以提供比较单个的物理磁盘更大的存储容量或更高的存储性能，同时有能提供不同级别数据的冗余备份的一种技术
+raid的级别 把多个物理磁盘通过不同的技术方式组成的磁盘阵列，不同的技术称为raid级别。
+级别一般有：raid0,raid1,raid0&#43;1(raid10),raid2,raid3,raid4,raid5,raid6,raid7,raid53
+生产环境常用的级别为：raid0,raid1,raid10,raid5
+raid级别的比较    raid级别 优点 缺点 实际使用场景     raid0 读写速度快 没有冗余 mysql slave,集群的节点rs   raid1 100%冗余，镜像 读写性能一般，成本高 单独的，数据重要，且宕机的业务，监控，系统盘   raid5 具备一定的性能和冗余，可坏一块盘，读写性能不错 写入性能不高 用于一般的业务   raid10 读写速度快，100%冗余 成本高 性能和冗余的业务要求高的业务    raid技术分类 软raid技术 在linux中，通过自带软件就能实现软raid功能，它的配置高，管理方便，可以是实现将将几个物理盘合成一个更大的虚拟设备，从而到达性能的改进合数据的冗余的目的
+硬raid技术 基于硬件的raid解决方案比基于软件的raid技术在使用的性能合服务器上更好，具体表现在检测和修复多位错误的能力，错误的磁盘自动检测和阵列重建等方面，从安全性上考虑，基于硬件的raid的解决方案更加的安全
+raid0原理及特点 
+特点：  读写性能高 没有冗余 可用空间N*min（s1,S2&amp;hellip;） 最少磁盘数为，2，2&#43;  raid1特点 
+特点  读性能提升，写性能降低 可用空间为：min（s1,S2&amp;hellip;） 可冗余 最少磁盘数为：2，2&#43;  raid5特点"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/linux-raid%E5%AD%A6%E4%B9%A0/1.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/linux-raid%E5%AD%A6%E4%B9%A0/">
+                <img src="/p/linux-raid%E5%AD%A6%E4%B9%A0/1_huf00169aa6abc51faa601f0bf72d243b8_76358_800x0_resize_box_3.png"
+                        srcset="/p/linux-raid%E5%AD%A6%E4%B9%A0/1_huf00169aa6abc51faa601f0bf72d243b8_76358_800x0_resize_box_3.png 800w, /p/linux-raid%E5%AD%A6%E4%B9%A0/1_huf00169aa6abc51faa601f0bf72d243b8_76358_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="544" 
+                        loading="lazy"
+                        alt="Featured image of post Linux-raid学习" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/computer/" style="background-color: #2a9d8f; color: #fff;">
+                知识学习
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/linux-raid%E5%AD%A6%E4%B9%A0/">Linux-raid学习</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Apr 30, 2022</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 1 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h4 id="raid是什么">raid是什么</h4>
+<p>raid是廉价冗余磁盘阵列，简称磁盘阵列。</p>
+<p>raid:是一种把多块独立的物理磁盘按不同的技术组合起来的形成的一个磁盘组，在逻辑上看起来是一块大的磁盘，可以提供比较单个的物理磁盘更大的存储容量或更高的存储性能，同时有能提供不同级别数据的冗余备份的一种技术</p>
+<h4 id="raid的级别">raid的级别</h4>
+<p>把多个物理磁盘通过不同的技术方式组成的磁盘阵列，不同的技术称为raid级别。</p>
+<p>级别一般有：raid0,raid1,raid0+1(raid10),raid2,raid3,raid4,raid5,raid6,raid7,raid53</p>
+<p>生产环境常用的级别为：raid0,raid1,raid10,raid5</p>
+<h4 id="raid级别的比较">raid级别的比较</h4>
+<table>
+<thead>
+<tr>
+<th>raid级别</th>
+<th>优点</th>
+<th>缺点</th>
+<th>实际使用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>raid0</td>
+<td>读写速度快</td>
+<td>没有冗余</td>
+<td>mysql slave,集群的节点rs</td>
+</tr>
+<tr>
+<td>raid1</td>
+<td>100%冗余，镜像</td>
+<td>读写性能一般，成本高</td>
+<td>单独的，数据重要，且宕机的业务，监控，系统盘</td>
+</tr>
+<tr>
+<td>raid5</td>
+<td>具备一定的性能和冗余，可坏一块盘，读写性能不错</td>
+<td>写入性能不高</td>
+<td>用于一般的业务</td>
+</tr>
+<tr>
+<td>raid10</td>
+<td>读写速度快，100%冗余</td>
+<td>成本高</td>
+<td>性能和冗余的业务要求高的业务</td>
+</tr>
+</tbody>
+</table>
+<h4 id="raid技术分类">raid技术分类</h4>
+<h5 id="软raid技术">软raid技术</h5>
+<p>在linux中，通过自带软件就能实现软raid功能，它的配置高，管理方便，可以是实现将将几个物理盘合成一个更大的虚拟设备，从而到达性能的改进合数据的冗余的目的</p>
+<h5 id="硬raid技术">硬raid技术</h5>
+<p>基于硬件的raid解决方案比基于软件的raid技术在使用的性能合服务器上更好，具体表现在检测和修复多位错误的能力，错误的磁盘自动检测和阵列重建等方面，从安全性上考虑，基于硬件的raid的解决方案更加的安全</p>
+<h4 id="raid0原理及特点">raid0原理及特点</h4>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 146; 
+			flex-basis: 352px"
+	>
+	<a href="/p/linux-raid%E5%AD%A6%E4%B9%A0/1.png" data-size="435x296">
+		<img src="/p/linux-raid%E5%AD%A6%E4%B9%A0/1.png"
+			width="435"
+			height="296"
+			srcset="/p/linux-raid%E5%AD%A6%E4%B9%A0/1_huf00169aa6abc51faa601f0bf72d243b8_76358_480x0_resize_box_3.png 480w, /p/linux-raid%E5%AD%A6%E4%B9%A0/1_huf00169aa6abc51faa601f0bf72d243b8_76358_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<h5 id="特点">特点：</h5>
+<ol>
+<li>读写性能高</li>
+<li>没有冗余</li>
+<li>可用空间N*min（s1,S2&hellip;）</li>
+<li>最少磁盘数为，2，2+</li>
+</ol>
+<h4 id="raid1特点">raid1特点</h4>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 132; 
+			flex-basis: 317px"
+	>
+	<a href="/p/linux-raid%E5%AD%A6%E4%B9%A0/2.png" data-size="381x288">
+		<img src="/p/linux-raid%E5%AD%A6%E4%B9%A0/2.png"
+			width="381"
+			height="288"
+			srcset="/p/linux-raid%E5%AD%A6%E4%B9%A0/2_hu4af629af77d3fd79a0bd5f0b30771561_59179_480x0_resize_box_3.png 480w, /p/linux-raid%E5%AD%A6%E4%B9%A0/2_hu4af629af77d3fd79a0bd5f0b30771561_59179_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<h5 id="特点-1">特点</h5>
+<ol>
+<li>读性能提升，写性能降低</li>
+<li>可用空间为：min（s1,S2&hellip;）</li>
+<li>可冗余</li>
+<li>最少磁盘数为：2，2+</li>
+</ol>
+<h4 id="raid5特点">raid5特点</h4>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 149; 
+			flex-basis: 359px"
+	>
+	<a href="/p/linux-raid%E5%AD%A6%E4%B9%A0/3.png" data-size="391x261">
+		<img src="/p/linux-raid%E5%AD%A6%E4%B9%A0/3.png"
+			width="391"
+			height="261"
+			srcset="/p/linux-raid%E5%AD%A6%E4%B9%A0/3_hu834ce2fd4f66c1d76d0558a7de2a7222_63192_480x0_resize_box_3.png 480w, /p/linux-raid%E5%AD%A6%E4%B9%A0/3_hu834ce2fd4f66c1d76d0558a7de2a7222_63192_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<h5 id="特点-2">特点：</h5>
+<ol>
+<li>读性能有提升，写性能有所欠缺</li>
+<li>可用空间为：（n-1）*min(s1,s2,&hellip;)</li>
+<li>有冗余，有一块磁盘</li>
+<li>最少磁盘数：3，3+</li>
+</ol>
+<h4 id="raid10特点">raid10特点</h4>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 148; 
+			flex-basis: 355px"
+	>
+	<a href="/p/linux-raid%E5%AD%A6%E4%B9%A0/4.png" data-size="516x348">
+		<img src="/p/linux-raid%E5%AD%A6%E4%B9%A0/4.png"
+			width="516"
+			height="348"
+			srcset="/p/linux-raid%E5%AD%A6%E4%B9%A0/4_huc236dc3145ca4e9e01341d700c8fb959_118797_480x0_resize_box_3.png 480w, /p/linux-raid%E5%AD%A6%E4%B9%A0/4_huc236dc3145ca4e9e01341d700c8fb959_118797_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<h5 id="特点-3">特点：</h5>
+<ol>
+<li>读写性能有提升</li>
+<li>可用空间：N*min（s1,s2&hellip;）/2</li>
+<li>有冗余，每组最多坏一块</li>
+<li>最少磁盘数为：4，4+</li>
+</ol>
+<h4 id="raid5的基本架构">RAID5的基本架构</h4>
+<p>RAID5的读写操作采用的是stripe的基本结构，即以stripe为读写的基本单位，假设一个3+1的RAID5，即3个数据盘+1个校验盘，那么一个stripe就包含3个数据块和一个校验块；</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 157; 
+			flex-basis: 377px"
+	>
+	<a href="/p/linux-raid%E5%AD%A6%E4%B9%A0/1653296737857.png" data-size="767x487">
+		<img src="/p/linux-raid%E5%AD%A6%E4%B9%A0/1653296737857.png"
+			width="767"
+			height="487"
+			srcset="/p/linux-raid%E5%AD%A6%E4%B9%A0/1653296737857_hue5c2a153273afe566aaf9c45f014bd20_43199_480x0_resize_box_3.png 480w, /p/linux-raid%E5%AD%A6%E4%B9%A0/1653296737857_hue5c2a153273afe566aaf9c45f014bd20_43199_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<p>如图所示，这是一个3+1的RAID5，图中的每一个方块表示一个stripe的一个基本单元，又称为chunk；相同颜色的方块组成一个stripe，即每个stripe由3个数据chunk(A,B,C)+1个校验chunk(P)组成。关于校验块的生成方法以及数据恢复原理如下：</p>
+<ul>
+<li>
+<p>校验块P的生成方法为<code>P=A⊕B⊕C</code> 。(⊕表示异或运算)</p>
+</li>
+<li>
+<p>加入1号盘坏了，此时有读请求读B0块的数据，那么可以通过<code>B0=A0⊕C0⊕P0</code> 的方法 来进行恢复</p>
+</li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/_huc45ff52f0cf6b2c13cf0b9e2262e1b7b_66945_00fb710e5378cc4d967388d67c9d27dc.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-Ej431j4sWI7qDLD5P2Z/PQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux-Multi-Disk (MD)模块</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/linux-raid5%E5%AD%A6%E4%B9%A0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux-raid5%E5%AD%A6%E4%B9%A0/1.686b3e94bd875a9513d4f47a48d8b455_hu7e02b142b51acc83a4bc67a855e709b3_49591_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-aGs&#43;lL2HWpUT1PR6SNi0VQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux-raid5学习</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/1.ed89b6c78fd07949e3718faf6ec6e1fa_hudd81952809099175edb54de5cef86875_45536_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-7Ym2x4/QeUnjcY&#43;vbsbh&#43;g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux-文件系统(简阅)</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/1.ed89b6c78fd07949e3718faf6ec6e1fa_hudd81952809099175edb54de5cef86875_45536_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-7Ym2x4/QeUnjcY&#43;vbsbh&#43;g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux-文件系统简阅</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/1.326ee6a4fbef335065f5784cfffb098a_hub95fcc2a246a65208e8832126d70bee7_36058_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-Mm7mpPvvM1Bl9XhM//sJig==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux存储技术学习笔记</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#raid是什么">raid是什么</a></li>
+            <li><a href="#raid的级别">raid的级别</a></li>
+            <li><a href="#raid级别的比较">raid级别的比较</a></li>
+            <li><a href="#raid技术分类">raid技术分类</a></li>
+            <li><a href="#raid0原理及特点">raid0原理及特点</a></li>
+            <li><a href="#raid1特点">raid1特点</a></li>
+            <li><a href="#raid5特点">raid5特点</a></li>
+            <li><a href="#raid10特点">raid10特点</a></li>
+            <li><a href="#raid5的基本架构">RAID5的基本架构</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
