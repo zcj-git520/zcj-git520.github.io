@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='mdadm mdadm是linux下的一款标准的RAID的管理工具
+基本语法 mdadm [mode] [option] 目前支持 RAID0(striping), RAID1(mirroring), RAID4, RAID5, RAID6, RAID10, MULTIPATH和FAULTY
+模式  Assemble：加入一个以前定义的阵列 Build：创建一个没有超级块的阵列 Create：创建一个新的阵列，每个设备具有超级块； -l,&amp;ndash;level: RAID级别 -n,&amp;ndash;raid-devices: 活动设备个数 -a {yes|no}: 是否自动为其创建设备文件 -c,&amp;ndash;chunk: CHUNK大小, 默认为64K，重要的参数,决定了一次向阵列中每个磁盘写入数据的大小 -x,&amp;ndash;spare-devices: 备用盘个数 Manage： 管理阵列(如添加和删除) Misc：允许单独对阵列中的某个设备进行操作(如停止阵列) Follow or Monitor:监控RAID的状态 Grow：改变RAID的容量或阵列中的设备数目 ；-n,&amp;ndash;raid-devices=: 活动设备个数-x,&amp;ndash;spare-devices=：备用盘个数-c,&amp;ndash;chunk=: CHUNK大小, 默认为64K，重要的参数,决定了一次向阵列中每个磁盘写入数据的大小-z,&amp;ndash;size=：阵列中从每个磁盘获取的空间总数-l,&amp;ndash;level=: RAID级别-p,&amp;ndash;layout=：设定raid5 和raid10的奇偶校验规则；并且控制故障的故障模式&amp;ndash;parity: 类似于&amp;ndash;layout&amp;ndash;assume-clean:目前仅用于 &amp;ndash;build 选项-R &amp;ndash;run: 强制激活RAID，使用这个选项，设备上有旧的元数据信息的提示会被忽略-N &amp;ndash;name=: 设定阵列的名称–-rounding：在linear array中的rounding factor，等于条带大小。  可用的[options]  -A，&amp;ndash;assemble：加入一个以前定义的阵列 -B,&amp;ndash;build:Build a legacy array without superblocks . -C，&amp;ndash;create：创建一个新的阵列 -Q&amp;ndash;query：查看一个device，判断它为一个md device或是一个md阵列的一部分 -D，&amp;ndash;detail：打印一个或多个md device的详细信息 -E，&amp;ndash;examine：打印device上的md superblock 的内容 -F，&amp;ndash;follow，&amp;ndash;monitor：选择Monitor模式 -G，&amp;ndash;grow：改变在用阵列的大小或形态 -h，&amp;ndash;help：帮助信息，用在以上选项后，则显示该选项信息&amp;ndash;help-options -V,&amp;ndash;version -V，&amp;ndash;verbose：显示细节 -b,&amp;ndash;brief：较少的细节。用于&amp;ndash;detail和&amp;ndash;examine选项 -f,&amp;ndash;force -c，&amp;ndash;config=：指定配置文件，缺省为/etc/mdadm/mdadm.'><title>Linux-mdadm工具学习</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/linux-mdadm%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Linux-mdadm工具学习'>
+<meta property='og:description' content='mdadm mdadm是linux下的一款标准的RAID的管理工具
+基本语法 mdadm [mode] [option] 目前支持 RAID0(striping), RAID1(mirroring), RAID4, RAID5, RAID6, RAID10, MULTIPATH和FAULTY
+模式  Assemble：加入一个以前定义的阵列 Build：创建一个没有超级块的阵列 Create：创建一个新的阵列，每个设备具有超级块； -l,&amp;ndash;level: RAID级别 -n,&amp;ndash;raid-devices: 活动设备个数 -a {yes|no}: 是否自动为其创建设备文件 -c,&amp;ndash;chunk: CHUNK大小, 默认为64K，重要的参数,决定了一次向阵列中每个磁盘写入数据的大小 -x,&amp;ndash;spare-devices: 备用盘个数 Manage： 管理阵列(如添加和删除) Misc：允许单独对阵列中的某个设备进行操作(如停止阵列) Follow or Monitor:监控RAID的状态 Grow：改变RAID的容量或阵列中的设备数目 ；-n,&amp;ndash;raid-devices=: 活动设备个数-x,&amp;ndash;spare-devices=：备用盘个数-c,&amp;ndash;chunk=: CHUNK大小, 默认为64K，重要的参数,决定了一次向阵列中每个磁盘写入数据的大小-z,&amp;ndash;size=：阵列中从每个磁盘获取的空间总数-l,&amp;ndash;level=: RAID级别-p,&amp;ndash;layout=：设定raid5 和raid10的奇偶校验规则；并且控制故障的故障模式&amp;ndash;parity: 类似于&amp;ndash;layout&amp;ndash;assume-clean:目前仅用于 &amp;ndash;build 选项-R &amp;ndash;run: 强制激活RAID，使用这个选项，设备上有旧的元数据信息的提示会被忽略-N &amp;ndash;name=: 设定阵列的名称–-rounding：在linear array中的rounding factor，等于条带大小。  可用的[options]  -A，&amp;ndash;assemble：加入一个以前定义的阵列 -B,&amp;ndash;build:Build a legacy array without superblocks . -C，&amp;ndash;create：创建一个新的阵列 -Q&amp;ndash;query：查看一个device，判断它为一个md device或是一个md阵列的一部分 -D，&amp;ndash;detail：打印一个或多个md device的详细信息 -E，&amp;ndash;examine：打印device上的md superblock 的内容 -F，&amp;ndash;follow，&amp;ndash;monitor：选择Monitor模式 -G，&amp;ndash;grow：改变在用阵列的大小或形态 -h，&amp;ndash;help：帮助信息，用在以上选项后，则显示该选项信息&amp;ndash;help-options -V,&amp;ndash;version -V，&amp;ndash;verbose：显示细节 -b,&amp;ndash;brief：较少的细节。用于&amp;ndash;detail和&amp;ndash;examine选项 -f,&amp;ndash;force -c，&amp;ndash;config=：指定配置文件，缺省为/etc/mdadm/mdadm.'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/linux-mdadm%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2022-06-12T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2022-06-12T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/linux-mdadm%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/1.png' />
+<meta name="twitter:title" content="Linux-mdadm工具学习">
+<meta name="twitter:description" content="mdadm mdadm是linux下的一款标准的RAID的管理工具
+基本语法 mdadm [mode] [option] 目前支持 RAID0(striping), RAID1(mirroring), RAID4, RAID5, RAID6, RAID10, MULTIPATH和FAULTY
+模式  Assemble：加入一个以前定义的阵列 Build：创建一个没有超级块的阵列 Create：创建一个新的阵列，每个设备具有超级块； -l,&amp;ndash;level: RAID级别 -n,&amp;ndash;raid-devices: 活动设备个数 -a {yes|no}: 是否自动为其创建设备文件 -c,&amp;ndash;chunk: CHUNK大小, 默认为64K，重要的参数,决定了一次向阵列中每个磁盘写入数据的大小 -x,&amp;ndash;spare-devices: 备用盘个数 Manage： 管理阵列(如添加和删除) Misc：允许单独对阵列中的某个设备进行操作(如停止阵列) Follow or Monitor:监控RAID的状态 Grow：改变RAID的容量或阵列中的设备数目 ；-n,&amp;ndash;raid-devices=: 活动设备个数-x,&amp;ndash;spare-devices=：备用盘个数-c,&amp;ndash;chunk=: CHUNK大小, 默认为64K，重要的参数,决定了一次向阵列中每个磁盘写入数据的大小-z,&amp;ndash;size=：阵列中从每个磁盘获取的空间总数-l,&amp;ndash;level=: RAID级别-p,&amp;ndash;layout=：设定raid5 和raid10的奇偶校验规则；并且控制故障的故障模式&amp;ndash;parity: 类似于&amp;ndash;layout&amp;ndash;assume-clean:目前仅用于 &amp;ndash;build 选项-R &amp;ndash;run: 强制激活RAID，使用这个选项，设备上有旧的元数据信息的提示会被忽略-N &amp;ndash;name=: 设定阵列的名称–-rounding：在linear array中的rounding factor，等于条带大小。  可用的[options]  -A，&amp;ndash;assemble：加入一个以前定义的阵列 -B,&amp;ndash;build:Build a legacy array without superblocks . -C，&amp;ndash;create：创建一个新的阵列 -Q&amp;ndash;query：查看一个device，判断它为一个md device或是一个md阵列的一部分 -D，&amp;ndash;detail：打印一个或多个md device的详细信息 -E，&amp;ndash;examine：打印device上的md superblock 的内容 -F，&amp;ndash;follow，&amp;ndash;monitor：选择Monitor模式 -G，&amp;ndash;grow：改变在用阵列的大小或形态 -h，&amp;ndash;help：帮助信息，用在以上选项后，则显示该选项信息&amp;ndash;help-options -V,&amp;ndash;version -V，&amp;ndash;verbose：显示细节 -b,&amp;ndash;brief：较少的细节。用于&amp;ndash;detail和&amp;ndash;examine选项 -f,&amp;ndash;force -c，&amp;ndash;config=：指定配置文件，缺省为/etc/mdadm/mdadm."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/linux-mdadm%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/1.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/linux-mdadm%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/">
+                <img src="/p/linux-mdadm%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/1_hu859ea59f552859095fb986ed5a22b665_11306_800x0_resize_box_3.png"
+                        srcset="/p/linux-mdadm%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/1_hu859ea59f552859095fb986ed5a22b665_11306_800x0_resize_box_3.png 800w, /p/linux-mdadm%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/1_hu859ea59f552859095fb986ed5a22b665_11306_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="846" 
+                        loading="lazy"
+                        alt="Featured image of post Linux-mdadm工具学习" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/computer/" style="background-color: #2a9d8f; color: #fff;">
+                知识学习
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/linux-mdadm%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/">Linux-mdadm工具学习</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jun 12, 2022</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 5 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h3 id="mdadm">mdadm</h3>
+<p>mdadm是linux下的一款标准的RAID的管理工具</p>
+<h5 id="基本语法">基本语法</h5>
+<p>mdadm [mode] <!-- raw HTML omitted --> [option] <!-- raw HTML omitted --></p>
+<h5 id="目前支持">目前支持</h5>
+<p>RAID0(striping), RAID1(mirroring), RAID4, RAID5, RAID6, RAID10, MULTIPATH和FAULTY</p>
+<h5 id="模式">模式</h5>
+<ul>
+<li>Assemble：加入一个以前定义的阵列</li>
+<li>Build：创建一个没有超级块的阵列</li>
+<li>Create：创建一个新的阵列，每个设备具有超级块； -l,&ndash;level: RAID级别 -n,&ndash;raid-devices: 活动设备个数 -a {yes|no}: 是否自动为其创建设备文件 -c,&ndash;chunk: CHUNK大小, 默认为64K，重要的参数,决定了一次向阵列中每个磁盘写入数据的大小 -x,&ndash;spare-devices: 备用盘个数</li>
+<li>Manage： 管理阵列(如添加和删除)</li>
+<li>Misc：允许单独对阵列中的某个设备进行操作(如停止阵列)</li>
+<li>Follow or Monitor:监控RAID的状态</li>
+<li>Grow：改变RAID的容量或阵列中的设备数目 ；-n,&ndash;raid-devices=: 活动设备个数-x,&ndash;spare-devices=：备用盘个数-c,&ndash;chunk=: CHUNK大小, 默认为64K，重要的参数,决定了一次向阵列中每个磁盘写入数据的大小-z,&ndash;size=：阵列中从每个磁盘获取的空间总数-l,&ndash;level=: RAID级别-p,&ndash;layout=：设定raid5 和raid10的奇偶校验规则；并且控制故障的故障模式&ndash;parity: 类似于&ndash;layout&ndash;assume-clean:目前仅用于 &ndash;build 选项-R &ndash;run: 强制激活RAID，使用这个选项，设备上有旧的元数据信息的提示会被忽略-N &ndash;name=: 设定阵列的名称–-rounding：在linear array中的rounding factor，等于条带大小。</li>
+</ul>
+<h5 id="可用的options">可用的[options]</h5>
+<ul>
+<li>-A，&ndash;assemble：加入一个以前定义的阵列</li>
+<li>-B,&ndash;build:Build a legacy array without superblocks .</li>
+<li>-C，&ndash;create：创建一个新的阵列</li>
+<li>-Q&ndash;query：查看一个device，判断它为一个md device或是一个md阵列的一部分</li>
+<li>-D，&ndash;detail：打印一个或多个md device的详细信息</li>
+<li>-E，&ndash;examine：打印device上的md superblock 的内容</li>
+<li>-F，&ndash;follow，&ndash;monitor：选择Monitor模式</li>
+<li>-G，&ndash;grow：改变在用阵列的大小或形态</li>
+<li>-h，&ndash;help：帮助信息，用在以上选项后，则显示该选项信息&ndash;help-options</li>
+<li>-V,&ndash;version</li>
+<li>-V，&ndash;verbose：显示细节</li>
+<li>-b,&ndash;brief：较少的细节。用于&ndash;detail和&ndash;examine选项</li>
+<li>-f,&ndash;force</li>
+<li>-c，&ndash;config=：指定配置文件，缺省为/etc/mdadm/mdadm. conf</li>
+<li>-s，&ndash;scan：扫描配置文件或/proc/mdstat以搜寻丢失的信息。配置文件/etc/mdadm/mdadm. conf</li>
+<li>create或build使用的选项：</li>
+<li>-c,&ndash;chunk=:Specify chunk size of kibibytes.缺省为64.</li>
+<li>&ndash;rounding=:Specify rounding factor for linear array(==chunk size)</li>
+<li>-I,&ndash;level=:设定raid level.</li>
+<li>&ndash;create可用：linear，raid 0，0，stripe，raid 1，1，mirror，raid 4，4，raid 5，5，raid 6，6，multipath, mp.</li>
+<li>&ndash;build可用：linear，raid 0，0，stripe.</li>
+<li>-p，&ndash;parity=：设定raid 5的奇偶校验规则：eft- asymmetric ，left-symmetric，right- asymmetric , right-symmetric, la, ra, ls, rs.缺省为left-symmetric&ndash;layout=：类似于&ndash;parity</li>
+<li>-n，&ndash;raid-devices=：指定阵列中可用device数目，这个数目只能由&ndash;grow修改-x，&ndash;spare-devices=：指定初始阵列的富余device数目</li>
+<li>-z，&ndash;size=：组建RAID1/4/5/6后从每个device获取的空间总数&ndash;assume-clean:目前仅用于&ndash;build选项</li>
+<li>-R，-run：阵列中的某一部分出现在其他阵列或文件系统中时，m dadm会确认该阵列。此选项将不作确认。</li>
+<li>-f, &ndash;force:通常mdadm不允许只用一个device创建阵列，而且创建raid5时会使用一个device作为missingdrive。此选项正相反</li>
+<li>-a, &ndash;auto{=no,yes,md,mdp,part,p}{NN}</li>
+</ul>
+<h4 id="测试">测试</h4>
+<h5 id="创建raid5阵列">创建RAID5阵列</h5>
+<ul>
+<li>
+<p>执行命令: mdadm &ndash;create /dev/md0 &ndash;level=5 &ndash;chunk=64 &ndash;raid-devices=4 &ndash;spare-devices=1 /dev/sd[b-f]</p>
+</li>
+<li>
+<p>使用cat /proc/mdstat查看RAID5阵列状态</p>
+</li>
+<li>
+<p>结果：</p>
+<pre tabindex="0"><code>Personalities : [linear] [multipath] [raid0] [raid1] [raid6] [raid5] [raid4] [raid10] 
+md0 : active raid5 sde[5] sdf[4](S) sdd[2] sdc[1] sdb[0]
+      328704 blocks super 1.2 level 5, 64k chunk, algorithm 2 [4/4] [UUUU]
+
+unused devices: &lt;none&gt;
+显示设备盘为sdf为热备盘， 使用fdisk –l查看磁盘阵列, 显示磁盘大小为：Disk /dev/md0: 320 MB
+</code></pre></li>
+</ul>
+<h5 id="停止raid5阵列">停止RAID5阵列</h5>
+<ul>
+<li>
+<p>执行命令: sudo mdadm -Ss 或者 mdadm &ndash;stop /dev/md0</p>
+</li>
+<li>
+<p>使用cat /proc/mdstat查看RAID5阵列状态</p>
+</li>
+<li>
+<p>结果</p>
+<pre tabindex="0"><code>Personalities : [linear] [multipath] [raid0] [raid1] [raid6] [raid5] [raid4] [raid10] 
+unused devices: &lt;none&gt;
+// 磁盘已经停止 mdadm: stopped /dev/md0
+</code></pre></li>
+</ul>
+<h5 id="启动raid5阵列">启动RAID5阵列</h5>
+<ul>
+<li>
+<p>执行命令: sudo mdadm -As</p>
+</li>
+<li>
+<p>使用cat /proc/mdstat查看RAID5阵列状态</p>
+</li>
+<li>
+<p>结果</p>
+<pre tabindex="0"><code>mdadm: /dev/md/0 has been started with 4 drives and 1 spare.
+
+Personalities : [linear] [multipath] [raid0] [raid1] [raid6] [raid5] [raid4] [raid10] 
+md0 : active raid5 sdb[0] sdf[4](S) sde[5] sdd[2] sdc[1]
+      328704 blocks super 1.2 level 5, 64k chunk, algorithm 2 [4/4] [UUUU]
+
+unused devices: &lt;none&gt;
+
+</code></pre></li>
+</ul>
+<h5 id="查看md状态">查看md状态</h5>
+<ul>
+<li>
+<p>执行命令：mdadm -D /dev/md0</p>
+</li>
+<li>
+<p>结果：</p>
+<pre tabindex="0"><code>/dev/md0:
+           Version : 1.2
+     Creation Time : Wed Jun  8 14:28:56 2022
+        Raid Level : raid5
+        Array Size : 328704 (321.00 MiB 336.59 MB)
+     Used Dev Size : 109568 (107.00 MiB 112.20 MB)
+      Raid Devices : 4
+     Total Devices : 5
+       Persistence : Superblock is persistent
+
+       Update Time : Wed Jun  8 14:28:57 2022
+             State : clean 
+    Active Devices : 4
+   Working Devices : 5
+    Failed Devices : 0
+     Spare Devices : 1
+
+            Layout : left-symmetric
+        Chunk Size : 64K
+
+Consistency Policy : resync
+
+              Name : zcjubuntu-virtual-machine:0  (local to host zcjubuntu-virtual-machine)
+              UUID : 03cfb72d:971a754f:8236aa23:21b23fd3
+            Events : 18
+
+    Number   Major   Minor   RaidDevice State
+       0       8       16        0      active sync   /dev/sdb
+       1       8       32        1      active sync   /dev/sdc
+       2       8       48        2      active sync   /dev/sdd
+       5       8       64        3      active sync   /dev/sde
+
+       4       8       80        -      spare   /dev/sdf
+
+</code></pre></li>
+</ul>
+<h5 id="模拟损坏">模拟损坏</h5>
+<ul>
+<li>
+<p>执行命令：mdadm /dev/md0 -f /dev/sdf</p>
+</li>
+<li>
+<p>使用cat /proc/mdstat查看RAID5阵列状态</p>
+</li>
+<li>
+<p>结果</p>
+<pre tabindex="0"><code>Personalities : [linear] [multipath] [raid0] [raid1] [raid6] [raid5] [raid4] [raid10] 
+md0 : active raid5 sde[5] sdf[4](F) sdd[2] sdc[1] sdb[0]
+      328704 blocks super 1.2 level 5, 64k chunk, algorithm 2 [4/4] [UUUU]
+
+unused devices: &lt;none&gt;
+
+/dev/md0:
+           Version : 1.2
+     Creation Time : Wed Jun  8 14:28:56 2022
+        Raid Level : raid5
+        Array Size : 328704 (321.00 MiB 336.59 MB)
+     Used Dev Size : 109568 (107.00 MiB 112.20 MB)
+      Raid Devices : 4
+     Total Devices : 5
+       Persistence : Superblock is persistent
+
+       Update Time : Wed Jun  8 14:44:51 2022
+             State : clean 
+    Active Devices : 4
+   Working Devices : 4
+    Failed Devices : 1
+     Spare Devices : 0
+
+            Layout : left-symmetric
+        Chunk Size : 64K
+
+Consistency Policy : resync
+
+              Name : zcjubuntu-virtual-machine:0  (local to host zcjubuntu-virtual-machine)
+              UUID : 03cfb72d:971a754f:8236aa23:21b23fd3
+            Events : 19
+
+    Number   Major   Minor   RaidDevice State
+       0       8       16        0      active sync   /dev/sdb
+       1       8       32        1      active sync   /dev/sdc
+       2       8       48        2      active sync   /dev/sdd
+       5       8       64        3      active sync   /dev/sde
+
+       4       8       80        -      faulty   /dev/sdf
+</code></pre></li>
+</ul>
+<h5 id="移除损坏的磁盘">移除损坏的磁盘</h5>
+<ul>
+<li>
+<p>执行命令：mdadm /dev/md0 -r /dev/sdf</p>
+</li>
+<li>
+<p>使用cat /proc/mdstat查看RAID5阵列状态</p>
+</li>
+<li>
+<p>结果</p>
+<pre tabindex="0"><code>Personalities : [linear] [multipath] [raid0] [raid1] [raid6] [raid5] [raid4] [raid10] 
+md0 : active raid5 sde[5] sdd[2] sdc[1] sdb[0]
+      328704 blocks super 1.2 level 5, 64k chunk, algorithm 2 [4/4] [UUUU]
+
+unused devices: &lt;none&gt;
+
+/dev/md0:
+           Version : 1.2
+     Creation Time : Wed Jun  8 14:28:56 2022
+        Raid Level : raid5
+        Array Size : 328704 (321.00 MiB 336.59 MB)
+     Used Dev Size : 109568 (107.00 MiB 112.20 MB)
+      Raid Devices : 4
+     Total Devices : 4
+       Persistence : Superblock is persistent
+
+       Update Time : Wed Jun  8 14:49:13 2022
+             State : clean 
+    Active Devices : 4
+   Working Devices : 4
+    Failed Devices : 0
+     Spare Devices : 0
+
+            Layout : left-symmetric
+        Chunk Size : 64K
+
+Consistency Policy : resync
+
+              Name : zcjubuntu-virtual-machine:0  (local to host zcjubuntu-virtual-machine)
+              UUID : 03cfb72d:971a754f:8236aa23:21b23fd3
+            Events : 20
+
+    Number   Major   Minor   RaidDevice State
+       0       8       16        0      active sync   /dev/sdb
+       1       8       32        1      active sync   /dev/sdc
+       2       8       48        2      active sync   /dev/sdd
+       5       8       64        3      active sync   /dev/sde
+
+</code></pre></li>
+</ul>
+<h5 id="添加新的硬盘到已有阵列">添加新的硬盘到已有阵列</h5>
+<ul>
+<li>
+<p>执行命令：mdadm /dev/md0 -a /dev/sdf</p>
+</li>
+<li>
+<p>使用cat /proc/mdstat查看RAID5阵列状态</p>
+</li>
+<li>
+<p>结果</p>
+<pre tabindex="0"><code>md0 : active raid5 sdf[4](S) sde[5] sdd[2] sdc[1] sdb[0]
+      328704 blocks super 1.2 level 5, 64k chunk, algorithm 2 [4/4] [UUUU]
+
+unused devices: &lt;none&gt;
+
+/dev/md0:
+           Version : 1.2
+     Creation Time : Wed Jun  8 14:28:56 2022
+        Raid Level : raid5
+        Array Size : 328704 (321.00 MiB 336.59 MB)
+     Used Dev Size : 109568 (107.00 MiB 112.20 MB)
+      Raid Devices : 4
+     Total Devices : 5
+       Persistence : Superblock is persistent
+
+       Update Time : Wed Jun  8 14:53:45 2022
+             State : clean 
+    Active Devices : 4
+   Working Devices : 5
+    Failed Devices : 0
+     Spare Devices : 1
+
+            Layout : left-symmetric
+        Chunk Size : 64K
+
+Consistency Policy : resync
+
+              Name : zcjubuntu-virtual-machine:0  (local to host zcjubuntu-virtual-machine)
+              UUID : 03cfb72d:971a754f:8236aa23:21b23fd3
+            Events : 21
+
+    Number   Major   Minor   RaidDevice State
+       0       8       16        0      active sync   /dev/sdb
+       1       8       32        1      active sync   /dev/sdc
+       2       8       48        2      active sync   /dev/sdd
+       5       8       64        3      active sync   /dev/sde
+
+       4       8       80        -      spare   /dev/sdf
+
+</code></pre></li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/_huc45ff52f0cf6b2c13cf0b9e2262e1b7b_66945_00fb710e5378cc4d967388d67c9d27dc.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-Ej431j4sWI7qDLD5P2Z/PQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux-Multi-Disk (MD)模块</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/linux-raid5%E5%AD%A6%E4%B9%A0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux-raid5%E5%AD%A6%E4%B9%A0/1.686b3e94bd875a9513d4f47a48d8b455_hu7e02b142b51acc83a4bc67a855e709b3_49591_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-aGs&#43;lL2HWpUT1PR6SNi0VQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux-raid5学习</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/1.ed89b6c78fd07949e3718faf6ec6e1fa_hudd81952809099175edb54de5cef86875_45536_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-7Ym2x4/QeUnjcY&#43;vbsbh&#43;g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux-文件系统(简阅)</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/linux-raid%E5%AD%A6%E4%B9%A0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux-raid%E5%AD%A6%E4%B9%A0/1.88ce101fba5ae1efe74c455210209183_huf00169aa6abc51faa601f0bf72d243b8_76358_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-iM4QH7pa4e/nTEVSECCRgw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux-raid学习</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/1.326ee6a4fbef335065f5784cfffb098a_hub95fcc2a246a65208e8832126d70bee7_36058_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-Mm7mpPvvM1Bl9XhM//sJig==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux存储技术学习笔记</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#mdadm">mdadm</a>
+          <ol>
+            <li></li>
+            <li><a href="#测试">测试</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

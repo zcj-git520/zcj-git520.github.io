@@ -6,7 +6,310 @@
         <description>Recent content on Chengji Zhao&#39;s blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Mon, 30 May 2022 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sun, 12 Jun 2022 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Linux-mdadm工具学习</title>
+        <link>https://zcj-git520.github.io/p/linux-mdadm%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/</link>
+        <pubDate>Sun, 12 Jun 2022 22:00:38 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/linux-mdadm%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/linux-mdadm%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/1.png" alt="Featured image of post Linux-mdadm工具学习" /&gt;&lt;h3 id=&#34;mdadm&#34;&gt;mdadm&lt;/h3&gt;
+&lt;p&gt;mdadm是linux下的一款标准的RAID的管理工具&lt;/p&gt;
+&lt;h5 id=&#34;基本语法&#34;&gt;基本语法&lt;/h5&gt;
+&lt;p&gt;mdadm [mode] &lt;!-- raw HTML omitted --&gt; [option] &lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
+&lt;h5 id=&#34;目前支持&#34;&gt;目前支持&lt;/h5&gt;
+&lt;p&gt;RAID0(striping), RAID1(mirroring), RAID4, RAID5, RAID6, RAID10, MULTIPATH和FAULTY&lt;/p&gt;
+&lt;h5 id=&#34;模式&#34;&gt;模式&lt;/h5&gt;
+&lt;ul&gt;
+&lt;li&gt;Assemble：加入一个以前定义的阵列&lt;/li&gt;
+&lt;li&gt;Build：创建一个没有超级块的阵列&lt;/li&gt;
+&lt;li&gt;Create：创建一个新的阵列，每个设备具有超级块； -l,&amp;ndash;level: RAID级别 -n,&amp;ndash;raid-devices: 活动设备个数 -a {yes|no}: 是否自动为其创建设备文件 -c,&amp;ndash;chunk: CHUNK大小, 默认为64K，重要的参数,决定了一次向阵列中每个磁盘写入数据的大小 -x,&amp;ndash;spare-devices: 备用盘个数&lt;/li&gt;
+&lt;li&gt;Manage： 管理阵列(如添加和删除)&lt;/li&gt;
+&lt;li&gt;Misc：允许单独对阵列中的某个设备进行操作(如停止阵列)&lt;/li&gt;
+&lt;li&gt;Follow or Monitor:监控RAID的状态&lt;/li&gt;
+&lt;li&gt;Grow：改变RAID的容量或阵列中的设备数目 ；-n,&amp;ndash;raid-devices=: 活动设备个数-x,&amp;ndash;spare-devices=：备用盘个数-c,&amp;ndash;chunk=: CHUNK大小, 默认为64K，重要的参数,决定了一次向阵列中每个磁盘写入数据的大小-z,&amp;ndash;size=：阵列中从每个磁盘获取的空间总数-l,&amp;ndash;level=: RAID级别-p,&amp;ndash;layout=：设定raid5 和raid10的奇偶校验规则；并且控制故障的故障模式&amp;ndash;parity: 类似于&amp;ndash;layout&amp;ndash;assume-clean:目前仅用于 &amp;ndash;build 选项-R &amp;ndash;run: 强制激活RAID，使用这个选项，设备上有旧的元数据信息的提示会被忽略-N &amp;ndash;name=: 设定阵列的名称–-rounding：在linear array中的rounding factor，等于条带大小。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id=&#34;可用的options&#34;&gt;可用的[options]&lt;/h5&gt;
+&lt;ul&gt;
+&lt;li&gt;-A，&amp;ndash;assemble：加入一个以前定义的阵列&lt;/li&gt;
+&lt;li&gt;-B,&amp;ndash;build:Build a legacy array without superblocks .&lt;/li&gt;
+&lt;li&gt;-C，&amp;ndash;create：创建一个新的阵列&lt;/li&gt;
+&lt;li&gt;-Q&amp;ndash;query：查看一个device，判断它为一个md device或是一个md阵列的一部分&lt;/li&gt;
+&lt;li&gt;-D，&amp;ndash;detail：打印一个或多个md device的详细信息&lt;/li&gt;
+&lt;li&gt;-E，&amp;ndash;examine：打印device上的md superblock 的内容&lt;/li&gt;
+&lt;li&gt;-F，&amp;ndash;follow，&amp;ndash;monitor：选择Monitor模式&lt;/li&gt;
+&lt;li&gt;-G，&amp;ndash;grow：改变在用阵列的大小或形态&lt;/li&gt;
+&lt;li&gt;-h，&amp;ndash;help：帮助信息，用在以上选项后，则显示该选项信息&amp;ndash;help-options&lt;/li&gt;
+&lt;li&gt;-V,&amp;ndash;version&lt;/li&gt;
+&lt;li&gt;-V，&amp;ndash;verbose：显示细节&lt;/li&gt;
+&lt;li&gt;-b,&amp;ndash;brief：较少的细节。用于&amp;ndash;detail和&amp;ndash;examine选项&lt;/li&gt;
+&lt;li&gt;-f,&amp;ndash;force&lt;/li&gt;
+&lt;li&gt;-c，&amp;ndash;config=：指定配置文件，缺省为/etc/mdadm/mdadm. conf&lt;/li&gt;
+&lt;li&gt;-s，&amp;ndash;scan：扫描配置文件或/proc/mdstat以搜寻丢失的信息。配置文件/etc/mdadm/mdadm. conf&lt;/li&gt;
+&lt;li&gt;create或build使用的选项：&lt;/li&gt;
+&lt;li&gt;-c,&amp;ndash;chunk=:Specify chunk size of kibibytes.缺省为64.&lt;/li&gt;
+&lt;li&gt;&amp;ndash;rounding=:Specify rounding factor for linear array(==chunk size)&lt;/li&gt;
+&lt;li&gt;-I,&amp;ndash;level=:设定raid level.&lt;/li&gt;
+&lt;li&gt;&amp;ndash;create可用：linear，raid 0，0，stripe，raid 1，1，mirror，raid 4，4，raid 5，5，raid 6，6，multipath, mp.&lt;/li&gt;
+&lt;li&gt;&amp;ndash;build可用：linear，raid 0，0，stripe.&lt;/li&gt;
+&lt;li&gt;-p，&amp;ndash;parity=：设定raid 5的奇偶校验规则：eft- asymmetric ，left-symmetric，right- asymmetric , right-symmetric, la, ra, ls, rs.缺省为left-symmetric&amp;ndash;layout=：类似于&amp;ndash;parity&lt;/li&gt;
+&lt;li&gt;-n，&amp;ndash;raid-devices=：指定阵列中可用device数目，这个数目只能由&amp;ndash;grow修改-x，&amp;ndash;spare-devices=：指定初始阵列的富余device数目&lt;/li&gt;
+&lt;li&gt;-z，&amp;ndash;size=：组建RAID1/4/5/6后从每个device获取的空间总数&amp;ndash;assume-clean:目前仅用于&amp;ndash;build选项&lt;/li&gt;
+&lt;li&gt;-R，-run：阵列中的某一部分出现在其他阵列或文件系统中时，m dadm会确认该阵列。此选项将不作确认。&lt;/li&gt;
+&lt;li&gt;-f, &amp;ndash;force:通常mdadm不允许只用一个device创建阵列，而且创建raid5时会使用一个device作为missingdrive。此选项正相反&lt;/li&gt;
+&lt;li&gt;-a, &amp;ndash;auto{=no,yes,md,mdp,part,p}{NN}&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;测试&#34;&gt;测试&lt;/h4&gt;
+&lt;h5 id=&#34;创建raid5阵列&#34;&gt;创建RAID5阵列&lt;/h5&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;执行命令: mdadm &amp;ndash;create /dev/md0 &amp;ndash;level=5 &amp;ndash;chunk=64 &amp;ndash;raid-devices=4 &amp;ndash;spare-devices=1 /dev/sd[b-f]&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;使用cat /proc/mdstat查看RAID5阵列状态&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;结果：&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Personalities : [linear] [multipath] [raid0] [raid1] [raid6] [raid5] [raid4] [raid10] 
+md0 : active raid5 sde[5] sdf[4](S) sdd[2] sdc[1] sdb[0]
+      328704 blocks super 1.2 level 5, 64k chunk, algorithm 2 [4/4] [UUUU]
+
+unused devices: &amp;lt;none&amp;gt;
+显示设备盘为sdf为热备盘， 使用fdisk –l查看磁盘阵列, 显示磁盘大小为：Disk /dev/md0: 320 MB
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id=&#34;停止raid5阵列&#34;&gt;停止RAID5阵列&lt;/h5&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;执行命令: sudo mdadm -Ss 或者 mdadm &amp;ndash;stop /dev/md0&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;使用cat /proc/mdstat查看RAID5阵列状态&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;结果&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Personalities : [linear] [multipath] [raid0] [raid1] [raid6] [raid5] [raid4] [raid10] 
+unused devices: &amp;lt;none&amp;gt;
+// 磁盘已经停止 mdadm: stopped /dev/md0
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id=&#34;启动raid5阵列&#34;&gt;启动RAID5阵列&lt;/h5&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;执行命令: sudo mdadm -As&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;使用cat /proc/mdstat查看RAID5阵列状态&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;结果&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;mdadm: /dev/md/0 has been started with 4 drives and 1 spare.
+
+Personalities : [linear] [multipath] [raid0] [raid1] [raid6] [raid5] [raid4] [raid10] 
+md0 : active raid5 sdb[0] sdf[4](S) sde[5] sdd[2] sdc[1]
+      328704 blocks super 1.2 level 5, 64k chunk, algorithm 2 [4/4] [UUUU]
+
+unused devices: &amp;lt;none&amp;gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id=&#34;查看md状态&#34;&gt;查看md状态&lt;/h5&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;执行命令：mdadm -D /dev/md0&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;结果：&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;/dev/md0:
+           Version : 1.2
+     Creation Time : Wed Jun  8 14:28:56 2022
+        Raid Level : raid5
+        Array Size : 328704 (321.00 MiB 336.59 MB)
+     Used Dev Size : 109568 (107.00 MiB 112.20 MB)
+      Raid Devices : 4
+     Total Devices : 5
+       Persistence : Superblock is persistent
+
+       Update Time : Wed Jun  8 14:28:57 2022
+             State : clean 
+    Active Devices : 4
+   Working Devices : 5
+    Failed Devices : 0
+     Spare Devices : 1
+
+            Layout : left-symmetric
+        Chunk Size : 64K
+
+Consistency Policy : resync
+
+              Name : zcjubuntu-virtual-machine:0  (local to host zcjubuntu-virtual-machine)
+              UUID : 03cfb72d:971a754f:8236aa23:21b23fd3
+            Events : 18
+
+    Number   Major   Minor   RaidDevice State
+       0       8       16        0      active sync   /dev/sdb
+       1       8       32        1      active sync   /dev/sdc
+       2       8       48        2      active sync   /dev/sdd
+       5       8       64        3      active sync   /dev/sde
+
+       4       8       80        -      spare   /dev/sdf
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id=&#34;模拟损坏&#34;&gt;模拟损坏&lt;/h5&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;执行命令：mdadm /dev/md0 -f /dev/sdf&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;使用cat /proc/mdstat查看RAID5阵列状态&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;结果&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Personalities : [linear] [multipath] [raid0] [raid1] [raid6] [raid5] [raid4] [raid10] 
+md0 : active raid5 sde[5] sdf[4](F) sdd[2] sdc[1] sdb[0]
+      328704 blocks super 1.2 level 5, 64k chunk, algorithm 2 [4/4] [UUUU]
+
+unused devices: &amp;lt;none&amp;gt;
+
+/dev/md0:
+           Version : 1.2
+     Creation Time : Wed Jun  8 14:28:56 2022
+        Raid Level : raid5
+        Array Size : 328704 (321.00 MiB 336.59 MB)
+     Used Dev Size : 109568 (107.00 MiB 112.20 MB)
+      Raid Devices : 4
+     Total Devices : 5
+       Persistence : Superblock is persistent
+
+       Update Time : Wed Jun  8 14:44:51 2022
+             State : clean 
+    Active Devices : 4
+   Working Devices : 4
+    Failed Devices : 1
+     Spare Devices : 0
+
+            Layout : left-symmetric
+        Chunk Size : 64K
+
+Consistency Policy : resync
+
+              Name : zcjubuntu-virtual-machine:0  (local to host zcjubuntu-virtual-machine)
+              UUID : 03cfb72d:971a754f:8236aa23:21b23fd3
+            Events : 19
+
+    Number   Major   Minor   RaidDevice State
+       0       8       16        0      active sync   /dev/sdb
+       1       8       32        1      active sync   /dev/sdc
+       2       8       48        2      active sync   /dev/sdd
+       5       8       64        3      active sync   /dev/sde
+
+       4       8       80        -      faulty   /dev/sdf
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id=&#34;移除损坏的磁盘&#34;&gt;移除损坏的磁盘&lt;/h5&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;执行命令：mdadm /dev/md0 -r /dev/sdf&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;使用cat /proc/mdstat查看RAID5阵列状态&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;结果&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Personalities : [linear] [multipath] [raid0] [raid1] [raid6] [raid5] [raid4] [raid10] 
+md0 : active raid5 sde[5] sdd[2] sdc[1] sdb[0]
+      328704 blocks super 1.2 level 5, 64k chunk, algorithm 2 [4/4] [UUUU]
+
+unused devices: &amp;lt;none&amp;gt;
+
+/dev/md0:
+           Version : 1.2
+     Creation Time : Wed Jun  8 14:28:56 2022
+        Raid Level : raid5
+        Array Size : 328704 (321.00 MiB 336.59 MB)
+     Used Dev Size : 109568 (107.00 MiB 112.20 MB)
+      Raid Devices : 4
+     Total Devices : 4
+       Persistence : Superblock is persistent
+
+       Update Time : Wed Jun  8 14:49:13 2022
+             State : clean 
+    Active Devices : 4
+   Working Devices : 4
+    Failed Devices : 0
+     Spare Devices : 0
+
+            Layout : left-symmetric
+        Chunk Size : 64K
+
+Consistency Policy : resync
+
+              Name : zcjubuntu-virtual-machine:0  (local to host zcjubuntu-virtual-machine)
+              UUID : 03cfb72d:971a754f:8236aa23:21b23fd3
+            Events : 20
+
+    Number   Major   Minor   RaidDevice State
+       0       8       16        0      active sync   /dev/sdb
+       1       8       32        1      active sync   /dev/sdc
+       2       8       48        2      active sync   /dev/sdd
+       5       8       64        3      active sync   /dev/sde
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id=&#34;添加新的硬盘到已有阵列&#34;&gt;添加新的硬盘到已有阵列&lt;/h5&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;执行命令：mdadm /dev/md0 -a /dev/sdf&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;使用cat /proc/mdstat查看RAID5阵列状态&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;结果&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;md0 : active raid5 sdf[4](S) sde[5] sdd[2] sdc[1] sdb[0]
+      328704 blocks super 1.2 level 5, 64k chunk, algorithm 2 [4/4] [UUUU]
+
+unused devices: &amp;lt;none&amp;gt;
+
+/dev/md0:
+           Version : 1.2
+     Creation Time : Wed Jun  8 14:28:56 2022
+        Raid Level : raid5
+        Array Size : 328704 (321.00 MiB 336.59 MB)
+     Used Dev Size : 109568 (107.00 MiB 112.20 MB)
+      Raid Devices : 4
+     Total Devices : 5
+       Persistence : Superblock is persistent
+
+       Update Time : Wed Jun  8 14:53:45 2022
+             State : clean 
+    Active Devices : 4
+   Working Devices : 5
+    Failed Devices : 0
+     Spare Devices : 1
+
+            Layout : left-symmetric
+        Chunk Size : 64K
+
+Consistency Policy : resync
+
+              Name : zcjubuntu-virtual-machine:0  (local to host zcjubuntu-virtual-machine)
+              UUID : 03cfb72d:971a754f:8236aa23:21b23fd3
+            Events : 21
+
+    Number   Major   Minor   RaidDevice State
+       0       8       16        0      active sync   /dev/sdb
+       1       8       32        1      active sync   /dev/sdc
+       2       8       48        2      active sync   /dev/sdd
+       5       8       64        3      active sync   /dev/sde
+
+       4       8       80        -      spare   /dev/sdf
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        <item>
         <title>Linux-Multi-Disk (MD)模块</title>
         <link>https://zcj-git520.github.io/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/</link>
         <pubDate>Mon, 30 May 2022 22:00:38 +0800</pubDate>
@@ -350,309 +653,6 @@ chunk_offset。&lt;/p&gt;
 	
 &lt;/figure&gt;&lt;/p&gt;
 &lt;p&gt;在内核角度，装载过程中，文件系统类型中的get_sb将被调用，它将生成一个新的文件系统装载对象vfsmount，并和该文件系统类型的一个超级块实例关联起来；&lt;/p&gt;
-</description>
-        </item>
-        <item>
-        <title>Linux-文件系统简阅</title>
-        <link>https://zcj-git520.github.io/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/</link>
-        <pubDate>Thu, 12 May 2022 22:00:38 +0800</pubDate>
-        
-        <guid>https://zcj-git520.github.io/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/</guid>
-        <description>&lt;img src="https://zcj-git520.github.io/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/1.png" alt="Featured image of post Linux-文件系统简阅" /&gt;&lt;h3 id=&#34;mdadm&#34;&gt;mdadm&lt;/h3&gt;
-&lt;p&gt;mdadm是linux下的一款标准的RAID的管理工具&lt;/p&gt;
-&lt;h5 id=&#34;基本语法&#34;&gt;基本语法&lt;/h5&gt;
-&lt;p&gt;mdadm [mode] &lt;!-- raw HTML omitted --&gt; [option] &lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
-&lt;h5 id=&#34;目前支持&#34;&gt;目前支持&lt;/h5&gt;
-&lt;p&gt;RAID0(striping), RAID1(mirroring), RAID4, RAID5, RAID6, RAID10, MULTIPATH和FAULTY&lt;/p&gt;
-&lt;h5 id=&#34;模式&#34;&gt;模式&lt;/h5&gt;
-&lt;ul&gt;
-&lt;li&gt;Assemble：加入一个以前定义的阵列&lt;/li&gt;
-&lt;li&gt;Build：创建一个没有超级块的阵列&lt;/li&gt;
-&lt;li&gt;Create：创建一个新的阵列，每个设备具有超级块； -l,&amp;ndash;level: RAID级别 -n,&amp;ndash;raid-devices: 活动设备个数 -a {yes|no}: 是否自动为其创建设备文件 -c,&amp;ndash;chunk: CHUNK大小, 默认为64K，重要的参数,决定了一次向阵列中每个磁盘写入数据的大小 -x,&amp;ndash;spare-devices: 备用盘个数&lt;/li&gt;
-&lt;li&gt;Manage： 管理阵列(如添加和删除)&lt;/li&gt;
-&lt;li&gt;Misc：允许单独对阵列中的某个设备进行操作(如停止阵列)&lt;/li&gt;
-&lt;li&gt;Follow or Monitor:监控RAID的状态&lt;/li&gt;
-&lt;li&gt;Grow：改变RAID的容量或阵列中的设备数目 ；-n,&amp;ndash;raid-devices=: 活动设备个数-x,&amp;ndash;spare-devices=：备用盘个数-c,&amp;ndash;chunk=: CHUNK大小, 默认为64K，重要的参数,决定了一次向阵列中每个磁盘写入数据的大小-z,&amp;ndash;size=：阵列中从每个磁盘获取的空间总数-l,&amp;ndash;level=: RAID级别-p,&amp;ndash;layout=：设定raid5 和raid10的奇偶校验规则；并且控制故障的故障模式&amp;ndash;parity: 类似于&amp;ndash;layout&amp;ndash;assume-clean:目前仅用于 &amp;ndash;build 选项-R &amp;ndash;run: 强制激活RAID，使用这个选项，设备上有旧的元数据信息的提示会被忽略-N &amp;ndash;name=: 设定阵列的名称–-rounding：在linear array中的rounding factor，等于条带大小。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h5 id=&#34;可用的options&#34;&gt;可用的[options]&lt;/h5&gt;
-&lt;ul&gt;
-&lt;li&gt;-A，&amp;ndash;assemble：加入一个以前定义的阵列&lt;/li&gt;
-&lt;li&gt;-B,&amp;ndash;build:Build a legacy array without superblocks .&lt;/li&gt;
-&lt;li&gt;-C，&amp;ndash;create：创建一个新的阵列&lt;/li&gt;
-&lt;li&gt;-Q&amp;ndash;query：查看一个device，判断它为一个md device或是一个md阵列的一部分&lt;/li&gt;
-&lt;li&gt;-D，&amp;ndash;detail：打印一个或多个md device的详细信息&lt;/li&gt;
-&lt;li&gt;-E，&amp;ndash;examine：打印device上的md superblock 的内容&lt;/li&gt;
-&lt;li&gt;-F，&amp;ndash;follow，&amp;ndash;monitor：选择Monitor模式&lt;/li&gt;
-&lt;li&gt;-G，&amp;ndash;grow：改变在用阵列的大小或形态&lt;/li&gt;
-&lt;li&gt;-h，&amp;ndash;help：帮助信息，用在以上选项后，则显示该选项信息&amp;ndash;help-options&lt;/li&gt;
-&lt;li&gt;-V,&amp;ndash;version&lt;/li&gt;
-&lt;li&gt;-V，&amp;ndash;verbose：显示细节&lt;/li&gt;
-&lt;li&gt;-b,&amp;ndash;brief：较少的细节。用于&amp;ndash;detail和&amp;ndash;examine选项&lt;/li&gt;
-&lt;li&gt;-f,&amp;ndash;force&lt;/li&gt;
-&lt;li&gt;-c，&amp;ndash;config=：指定配置文件，缺省为/etc/mdadm/mdadm. conf&lt;/li&gt;
-&lt;li&gt;-s，&amp;ndash;scan：扫描配置文件或/proc/mdstat以搜寻丢失的信息。配置文件/etc/mdadm/mdadm. conf&lt;/li&gt;
-&lt;li&gt;create或build使用的选项：&lt;/li&gt;
-&lt;li&gt;-c,&amp;ndash;chunk=:Specify chunk size of kibibytes.缺省为64.&lt;/li&gt;
-&lt;li&gt;&amp;ndash;rounding=:Specify rounding factor for linear array(==chunk size)&lt;/li&gt;
-&lt;li&gt;-I,&amp;ndash;level=:设定raid level.&lt;/li&gt;
-&lt;li&gt;&amp;ndash;create可用：linear，raid 0，0，stripe，raid 1，1，mirror，raid 4，4，raid 5，5，raid 6，6，multipath, mp.&lt;/li&gt;
-&lt;li&gt;&amp;ndash;build可用：linear，raid 0，0，stripe.&lt;/li&gt;
-&lt;li&gt;-p，&amp;ndash;parity=：设定raid 5的奇偶校验规则：eft- asymmetric ，left-symmetric，right- asymmetric , right-symmetric, la, ra, ls, rs.缺省为left-symmetric&amp;ndash;layout=：类似于&amp;ndash;parity&lt;/li&gt;
-&lt;li&gt;-n，&amp;ndash;raid-devices=：指定阵列中可用device数目，这个数目只能由&amp;ndash;grow修改-x，&amp;ndash;spare-devices=：指定初始阵列的富余device数目&lt;/li&gt;
-&lt;li&gt;-z，&amp;ndash;size=：组建RAID1/4/5/6后从每个device获取的空间总数&amp;ndash;assume-clean:目前仅用于&amp;ndash;build选项&lt;/li&gt;
-&lt;li&gt;-R，-run：阵列中的某一部分出现在其他阵列或文件系统中时，m dadm会确认该阵列。此选项将不作确认。&lt;/li&gt;
-&lt;li&gt;-f, &amp;ndash;force:通常mdadm不允许只用一个device创建阵列，而且创建raid5时会使用一个device作为missingdrive。此选项正相反&lt;/li&gt;
-&lt;li&gt;-a, &amp;ndash;auto{=no,yes,md,mdp,part,p}{NN}&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;测试&#34;&gt;测试&lt;/h4&gt;
-&lt;h5 id=&#34;创建raid5阵列&#34;&gt;创建RAID5阵列&lt;/h5&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;执行命令: mdadm &amp;ndash;create /dev/md0 &amp;ndash;level=5 &amp;ndash;chunk=64 &amp;ndash;raid-devices=4 &amp;ndash;spare-devices=1 /dev/sd[b-f]&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;使用cat /proc/mdstat查看RAID5阵列状态&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;结果：&lt;/p&gt;
-&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Personalities : [linear] [multipath] [raid0] [raid1] [raid6] [raid5] [raid4] [raid10] 
-md0 : active raid5 sde[5] sdf[4](S) sdd[2] sdc[1] sdb[0]
-      328704 blocks super 1.2 level 5, 64k chunk, algorithm 2 [4/4] [UUUU]
-
-unused devices: &amp;lt;none&amp;gt;
-显示设备盘为sdf为热备盘， 使用fdisk –l查看磁盘阵列, 显示磁盘大小为：Disk /dev/md0: 320 MB
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h5 id=&#34;停止raid5阵列&#34;&gt;停止RAID5阵列&lt;/h5&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;执行命令: sudo mdadm -Ss 或者 mdadm &amp;ndash;stop /dev/md0&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;使用cat /proc/mdstat查看RAID5阵列状态&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;结果&lt;/p&gt;
-&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Personalities : [linear] [multipath] [raid0] [raid1] [raid6] [raid5] [raid4] [raid10] 
-unused devices: &amp;lt;none&amp;gt;
-// 磁盘已经停止 mdadm: stopped /dev/md0
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h5 id=&#34;启动raid5阵列&#34;&gt;启动RAID5阵列&lt;/h5&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;执行命令: sudo mdadm -As&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;使用cat /proc/mdstat查看RAID5阵列状态&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;结果&lt;/p&gt;
-&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;mdadm: /dev/md/0 has been started with 4 drives and 1 spare.
-
-Personalities : [linear] [multipath] [raid0] [raid1] [raid6] [raid5] [raid4] [raid10] 
-md0 : active raid5 sdb[0] sdf[4](S) sde[5] sdd[2] sdc[1]
-      328704 blocks super 1.2 level 5, 64k chunk, algorithm 2 [4/4] [UUUU]
-
-unused devices: &amp;lt;none&amp;gt;
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h5 id=&#34;查看md状态&#34;&gt;查看md状态&lt;/h5&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;执行命令：mdadm -D /dev/md0&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;结果：&lt;/p&gt;
-&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;/dev/md0:
-           Version : 1.2
-     Creation Time : Wed Jun  8 14:28:56 2022
-        Raid Level : raid5
-        Array Size : 328704 (321.00 MiB 336.59 MB)
-     Used Dev Size : 109568 (107.00 MiB 112.20 MB)
-      Raid Devices : 4
-     Total Devices : 5
-       Persistence : Superblock is persistent
-
-       Update Time : Wed Jun  8 14:28:57 2022
-             State : clean 
-    Active Devices : 4
-   Working Devices : 5
-    Failed Devices : 0
-     Spare Devices : 1
-
-            Layout : left-symmetric
-        Chunk Size : 64K
-
-Consistency Policy : resync
-
-              Name : zcjubuntu-virtual-machine:0  (local to host zcjubuntu-virtual-machine)
-              UUID : 03cfb72d:971a754f:8236aa23:21b23fd3
-            Events : 18
-
-    Number   Major   Minor   RaidDevice State
-       0       8       16        0      active sync   /dev/sdb
-       1       8       32        1      active sync   /dev/sdc
-       2       8       48        2      active sync   /dev/sdd
-       5       8       64        3      active sync   /dev/sde
-
-       4       8       80        -      spare   /dev/sdf
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h5 id=&#34;模拟损坏&#34;&gt;模拟损坏&lt;/h5&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;执行命令：mdadm /dev/md0 -f /dev/sdf&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;使用cat /proc/mdstat查看RAID5阵列状态&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;结果&lt;/p&gt;
-&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Personalities : [linear] [multipath] [raid0] [raid1] [raid6] [raid5] [raid4] [raid10] 
-md0 : active raid5 sde[5] sdf[4](F) sdd[2] sdc[1] sdb[0]
-      328704 blocks super 1.2 level 5, 64k chunk, algorithm 2 [4/4] [UUUU]
-
-unused devices: &amp;lt;none&amp;gt;
-
-/dev/md0:
-           Version : 1.2
-     Creation Time : Wed Jun  8 14:28:56 2022
-        Raid Level : raid5
-        Array Size : 328704 (321.00 MiB 336.59 MB)
-     Used Dev Size : 109568 (107.00 MiB 112.20 MB)
-      Raid Devices : 4
-     Total Devices : 5
-       Persistence : Superblock is persistent
-
-       Update Time : Wed Jun  8 14:44:51 2022
-             State : clean 
-    Active Devices : 4
-   Working Devices : 4
-    Failed Devices : 1
-     Spare Devices : 0
-
-            Layout : left-symmetric
-        Chunk Size : 64K
-
-Consistency Policy : resync
-
-              Name : zcjubuntu-virtual-machine:0  (local to host zcjubuntu-virtual-machine)
-              UUID : 03cfb72d:971a754f:8236aa23:21b23fd3
-            Events : 19
-
-    Number   Major   Minor   RaidDevice State
-       0       8       16        0      active sync   /dev/sdb
-       1       8       32        1      active sync   /dev/sdc
-       2       8       48        2      active sync   /dev/sdd
-       5       8       64        3      active sync   /dev/sde
-
-       4       8       80        -      faulty   /dev/sdf
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h5 id=&#34;移除损坏的磁盘&#34;&gt;移除损坏的磁盘&lt;/h5&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;执行命令：mdadm /dev/md0 -r /dev/sdf&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;使用cat /proc/mdstat查看RAID5阵列状态&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;结果&lt;/p&gt;
-&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Personalities : [linear] [multipath] [raid0] [raid1] [raid6] [raid5] [raid4] [raid10] 
-md0 : active raid5 sde[5] sdd[2] sdc[1] sdb[0]
-      328704 blocks super 1.2 level 5, 64k chunk, algorithm 2 [4/4] [UUUU]
-
-unused devices: &amp;lt;none&amp;gt;
-
-/dev/md0:
-           Version : 1.2
-     Creation Time : Wed Jun  8 14:28:56 2022
-        Raid Level : raid5
-        Array Size : 328704 (321.00 MiB 336.59 MB)
-     Used Dev Size : 109568 (107.00 MiB 112.20 MB)
-      Raid Devices : 4
-     Total Devices : 4
-       Persistence : Superblock is persistent
-
-       Update Time : Wed Jun  8 14:49:13 2022
-             State : clean 
-    Active Devices : 4
-   Working Devices : 4
-    Failed Devices : 0
-     Spare Devices : 0
-
-            Layout : left-symmetric
-        Chunk Size : 64K
-
-Consistency Policy : resync
-
-              Name : zcjubuntu-virtual-machine:0  (local to host zcjubuntu-virtual-machine)
-              UUID : 03cfb72d:971a754f:8236aa23:21b23fd3
-            Events : 20
-
-    Number   Major   Minor   RaidDevice State
-       0       8       16        0      active sync   /dev/sdb
-       1       8       32        1      active sync   /dev/sdc
-       2       8       48        2      active sync   /dev/sdd
-       5       8       64        3      active sync   /dev/sde
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h5 id=&#34;添加新的硬盘到已有阵列&#34;&gt;添加新的硬盘到已有阵列&lt;/h5&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;执行命令：mdadm /dev/md0 -a /dev/sdf&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;使用cat /proc/mdstat查看RAID5阵列状态&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;结果&lt;/p&gt;
-&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;md0 : active raid5 sdf[4](S) sde[5] sdd[2] sdc[1] sdb[0]
-      328704 blocks super 1.2 level 5, 64k chunk, algorithm 2 [4/4] [UUUU]
-
-unused devices: &amp;lt;none&amp;gt;
-
-/dev/md0:
-           Version : 1.2
-     Creation Time : Wed Jun  8 14:28:56 2022
-        Raid Level : raid5
-        Array Size : 328704 (321.00 MiB 336.59 MB)
-     Used Dev Size : 109568 (107.00 MiB 112.20 MB)
-      Raid Devices : 4
-     Total Devices : 5
-       Persistence : Superblock is persistent
-
-       Update Time : Wed Jun  8 14:53:45 2022
-             State : clean 
-    Active Devices : 4
-   Working Devices : 5
-    Failed Devices : 0
-     Spare Devices : 1
-
-            Layout : left-symmetric
-        Chunk Size : 64K
-
-Consistency Policy : resync
-
-              Name : zcjubuntu-virtual-machine:0  (local to host zcjubuntu-virtual-machine)
-              UUID : 03cfb72d:971a754f:8236aa23:21b23fd3
-            Events : 21
-
-    Number   Major   Minor   RaidDevice State
-       0       8       16        0      active sync   /dev/sdb
-       1       8       32        1      active sync   /dev/sdc
-       2       8       48        2      active sync   /dev/sdd
-       5       8       64        3      active sync   /dev/sde
-
-       4       8       80        -      spare   /dev/sdf
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ul&gt;
 </description>
         </item>
         <item>

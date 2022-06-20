@@ -6,7 +6,18 @@
     <description>Recent content in Posts on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Mon, 30 May 2022 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 12 Jun 2022 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Linux-mdadm工具学习</title>
+      <link>https://zcj-git520.github.io/p/linux-mdadm%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/</link>
+      <pubDate>Sun, 12 Jun 2022 22:00:38 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/linux-mdadm%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/</guid>
+      <description>mdadm mdadm是linux下的一款标准的RAID的管理工具
+基本语法 mdadm [mode] [option] 目前支持 RAID0(striping), RAID1(mirroring), RAID4, RAID5, RAID6, RAID10, MULTIPATH和FAULTY
+模式  Assemble：加入一个以前定义的阵列 Build：创建一个没有超级块的阵列 Create：创建一个新的阵列，每个设备具有超级块； -l,&amp;ndash;level: RAID级别 -n,&amp;ndash;raid-devices: 活动设备个数 -a {yes|no}: 是否自动为其创建设备文件 -c,&amp;ndash;chunk: CHUNK大小, 默认为64K，重要的参数,决定了一次向阵列中每个磁盘写入数据的大小 -x,&amp;ndash;spare-devices: 备用盘个数 Manage： 管理阵列(如添加和删除) Misc：允许单独对阵列中的某个设备进行操作(如停止阵列) Follow or Monitor:监控RAID的状态 Grow：改变RAID的容量或阵列中的设备数目 ；-n,&amp;ndash;raid-devices=: 活动设备个数-x,&amp;ndash;spare-devices=：备用盘个数-c,&amp;ndash;chunk=: CHUNK大小, 默认为64K，重要的参数,决定了一次向阵列中每个磁盘写入数据的大小-z,&amp;ndash;size=：阵列中从每个磁盘获取的空间总数-l,&amp;ndash;level=: RAID级别-p,&amp;ndash;layout=：设定raid5 和raid10的奇偶校验规则；并且控制故障的故障模式&amp;ndash;parity: 类似于&amp;ndash;layout&amp;ndash;assume-clean:目前仅用于 &amp;ndash;build 选项-R &amp;ndash;run: 强制激活RAID，使用这个选项，设备上有旧的元数据信息的提示会被忽略-N &amp;ndash;name=: 设定阵列的名称–-rounding：在linear array中的rounding factor，等于条带大小。  可用的[options]  -A，&amp;ndash;assemble：加入一个以前定义的阵列 -B,&amp;ndash;build:Build a legacy array without superblocks . -C，&amp;ndash;create：创建一个新的阵列 -Q&amp;ndash;query：查看一个device，判断它为一个md device或是一个md阵列的一部分 -D，&amp;ndash;detail：打印一个或多个md device的详细信息 -E，&amp;ndash;examine：打印device上的md superblock 的内容 -F，&amp;ndash;follow，&amp;ndash;monitor：选择Monitor模式 -G，&amp;ndash;grow：改变在用阵列的大小或形态 -h，&amp;ndash;help：帮助信息，用在以上选项后，则显示该选项信息&amp;ndash;help-options -V,&amp;ndash;version -V，&amp;ndash;verbose：显示细节 -b,&amp;ndash;brief：较少的细节。用于&amp;ndash;detail和&amp;ndash;examine选项 -f,&amp;ndash;force -c，&amp;ndash;config=：指定配置文件，缺省为/etc/mdadm/mdadm.</description>
+    </item>
+    
     <item>
       <title>Linux-Multi-Disk (MD)模块</title>
       <link>https://zcj-git520.github.io/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/</link>
@@ -69,17 +80,6 @@ Linux有一颗全局文件系统树，反映了Linux VFS对象之间的关系；
 装载文件系统 文件系统要被使用就应该被装载。体现一个文件系统装载实例要素是：vfsmount、super_block、根dentry和根inode；
 
 在内核角度，装载过程中，文件系统类型中的get_sb将被调用，它将生成一个新的文件系统装载对象vfsmount，并和该文件系统类型的一个超级块实例关联起来；</description>
-    </item>
-    
-    <item>
-      <title>Linux-文件系统简阅</title>
-      <link>https://zcj-git520.github.io/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/</link>
-      <pubDate>Thu, 12 May 2022 22:00:38 +0800</pubDate>
-      
-      <guid>https://zcj-git520.github.io/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/</guid>
-      <description>mdadm mdadm是linux下的一款标准的RAID的管理工具
-基本语法 mdadm [mode] [option] 目前支持 RAID0(striping), RAID1(mirroring), RAID4, RAID5, RAID6, RAID10, MULTIPATH和FAULTY
-模式  Assemble：加入一个以前定义的阵列 Build：创建一个没有超级块的阵列 Create：创建一个新的阵列，每个设备具有超级块； -l,&amp;ndash;level: RAID级别 -n,&amp;ndash;raid-devices: 活动设备个数 -a {yes|no}: 是否自动为其创建设备文件 -c,&amp;ndash;chunk: CHUNK大小, 默认为64K，重要的参数,决定了一次向阵列中每个磁盘写入数据的大小 -x,&amp;ndash;spare-devices: 备用盘个数 Manage： 管理阵列(如添加和删除) Misc：允许单独对阵列中的某个设备进行操作(如停止阵列) Follow or Monitor:监控RAID的状态 Grow：改变RAID的容量或阵列中的设备数目 ；-n,&amp;ndash;raid-devices=: 活动设备个数-x,&amp;ndash;spare-devices=：备用盘个数-c,&amp;ndash;chunk=: CHUNK大小, 默认为64K，重要的参数,决定了一次向阵列中每个磁盘写入数据的大小-z,&amp;ndash;size=：阵列中从每个磁盘获取的空间总数-l,&amp;ndash;level=: RAID级别-p,&amp;ndash;layout=：设定raid5 和raid10的奇偶校验规则；并且控制故障的故障模式&amp;ndash;parity: 类似于&amp;ndash;layout&amp;ndash;assume-clean:目前仅用于 &amp;ndash;build 选项-R &amp;ndash;run: 强制激活RAID，使用这个选项，设备上有旧的元数据信息的提示会被忽略-N &amp;ndash;name=: 设定阵列的名称–-rounding：在linear array中的rounding factor，等于条带大小。  可用的[options]  -A，&amp;ndash;assemble：加入一个以前定义的阵列 -B,&amp;ndash;build:Build a legacy array without superblocks . -C，&amp;ndash;create：创建一个新的阵列 -Q&amp;ndash;query：查看一个device，判断它为一个md device或是一个md阵列的一部分 -D，&amp;ndash;detail：打印一个或多个md device的详细信息 -E，&amp;ndash;examine：打印device上的md superblock 的内容 -F，&amp;ndash;follow，&amp;ndash;monitor：选择Monitor模式 -G，&amp;ndash;grow：改变在用阵列的大小或形态 -h，&amp;ndash;help：帮助信息，用在以上选项后，则显示该选项信息&amp;ndash;help-options -V,&amp;ndash;version -V，&amp;ndash;verbose：显示细节 -b,&amp;ndash;brief：较少的细节。用于&amp;ndash;detail和&amp;ndash;examine选项 -f,&amp;ndash;force -c，&amp;ndash;config=：指定配置文件，缺省为/etc/mdadm/mdadm.</description>
     </item>
     
     <item>
