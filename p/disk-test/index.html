@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='diskText  直接跳过文件系统，对磁盘数据进行读写，判断磁盘测试数据读写校验数据是否丢失  磁盘信息 type DiskSizeInfo struct { DiskPath string // 磁盘名 	SrcMap map[string]string // 测试数据集(文件夹/校验数据) 	Size int // 磁盘分组大小 	SeekSize int	// 磁盘数据偏移 	BlockSize int // 读写磁盘数据的大小 } 使用两种方式跳过文件系统直接对磁盘进行读写  直接读写磁盘  // 磁盘的写入 func (d *DiskSizeInfo)DiskWriteByFile(src string) error // 读取磁盘 func (d *DiskSizeInfo)DiskReadByFile() ([]byte, error) ​	2.通过dd命令行对磁盘进行读者
+// 通过dd命令写于磁盘 func (d *DiskSizeInfo)WriteDisk(staPos int, iFile string) error // 通过dd命令读取磁盘数据 func (d *DiskSizeInfo)ReadDisk(staPos int, oFile string) error 对磁盘已有数据进行校验 func (d *DiskSizeInfo)CheckReadDisk(src string, i int) 磁盘校验数据的类型的返回 func (d *DiskSizeInfo)DiskDatatype( i int) 循环通过数据集进行校验 func (d *DiskSizeInfo)Run() error 初始化校验集数据文件 func (d *DiskSizeInfo)initFile()error 磁盘的挂起或者卸载（针对与带文件系统）和磁盘清除 func (d *DiskSizeInfo)MountDisk(src string) error func (d *DiskSizeInfo)ClearDisk(src string) error 初始化校验集数据文件 func (d *DiskSizeInfo)initFile() 其他功能 文件通过md5校验比较 func FileCompare(src, dst string) (bool, error) 生成文件校验和函数 func fileCheckSum(fileName string) (string, error) //PathExists 判断一个文件或文件夹是否存在 //输入文件路径，根据返回的bool值来判断文件或文件夹是否存在 func PathExists(path string) (bool,error) 校验文件中是否存在校验值 func CheckFileData(data []byte, check string) bool 源码  我的github:https://github.'><title>Disk Test</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/disk-test/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Disk Test'>
+<meta property='og:description' content='diskText  直接跳过文件系统，对磁盘数据进行读写，判断磁盘测试数据读写校验数据是否丢失  磁盘信息 type DiskSizeInfo struct { DiskPath string // 磁盘名 	SrcMap map[string]string // 测试数据集(文件夹/校验数据) 	Size int // 磁盘分组大小 	SeekSize int	// 磁盘数据偏移 	BlockSize int // 读写磁盘数据的大小 } 使用两种方式跳过文件系统直接对磁盘进行读写  直接读写磁盘  // 磁盘的写入 func (d *DiskSizeInfo)DiskWriteByFile(src string) error // 读取磁盘 func (d *DiskSizeInfo)DiskReadByFile() ([]byte, error) ​	2.通过dd命令行对磁盘进行读者
+// 通过dd命令写于磁盘 func (d *DiskSizeInfo)WriteDisk(staPos int, iFile string) error // 通过dd命令读取磁盘数据 func (d *DiskSizeInfo)ReadDisk(staPos int, oFile string) error 对磁盘已有数据进行校验 func (d *DiskSizeInfo)CheckReadDisk(src string, i int) 磁盘校验数据的类型的返回 func (d *DiskSizeInfo)DiskDatatype( i int) 循环通过数据集进行校验 func (d *DiskSizeInfo)Run() error 初始化校验集数据文件 func (d *DiskSizeInfo)initFile()error 磁盘的挂起或者卸载（针对与带文件系统）和磁盘清除 func (d *DiskSizeInfo)MountDisk(src string) error func (d *DiskSizeInfo)ClearDisk(src string) error 初始化校验集数据文件 func (d *DiskSizeInfo)initFile() 其他功能 文件通过md5校验比较 func FileCompare(src, dst string) (bool, error) 生成文件校验和函数 func fileCheckSum(fileName string) (string, error) //PathExists 判断一个文件或文件夹是否存在 //输入文件路径，根据返回的bool值来判断文件或文件夹是否存在 func PathExists(path string) (bool,error) 校验文件中是否存在校验值 func CheckFileData(data []byte, check string) bool 源码  我的github:https://github.'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/disk-test/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2022-06-20T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2022-06-20T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/disk-test/1.png' />
+<meta name="twitter:title" content="Disk Test">
+<meta name="twitter:description" content="diskText  直接跳过文件系统，对磁盘数据进行读写，判断磁盘测试数据读写校验数据是否丢失  磁盘信息 type DiskSizeInfo struct { DiskPath string // 磁盘名 	SrcMap map[string]string // 测试数据集(文件夹/校验数据) 	Size int // 磁盘分组大小 	SeekSize int	// 磁盘数据偏移 	BlockSize int // 读写磁盘数据的大小 } 使用两种方式跳过文件系统直接对磁盘进行读写  直接读写磁盘  // 磁盘的写入 func (d *DiskSizeInfo)DiskWriteByFile(src string) error // 读取磁盘 func (d *DiskSizeInfo)DiskReadByFile() ([]byte, error) ​	2.通过dd命令行对磁盘进行读者
+// 通过dd命令写于磁盘 func (d *DiskSizeInfo)WriteDisk(staPos int, iFile string) error // 通过dd命令读取磁盘数据 func (d *DiskSizeInfo)ReadDisk(staPos int, oFile string) error 对磁盘已有数据进行校验 func (d *DiskSizeInfo)CheckReadDisk(src string, i int) 磁盘校验数据的类型的返回 func (d *DiskSizeInfo)DiskDatatype( i int) 循环通过数据集进行校验 func (d *DiskSizeInfo)Run() error 初始化校验集数据文件 func (d *DiskSizeInfo)initFile()error 磁盘的挂起或者卸载（针对与带文件系统）和磁盘清除 func (d *DiskSizeInfo)MountDisk(src string) error func (d *DiskSizeInfo)ClearDisk(src string) error 初始化校验集数据文件 func (d *DiskSizeInfo)initFile() 其他功能 文件通过md5校验比较 func FileCompare(src, dst string) (bool, error) 生成文件校验和函数 func fileCheckSum(fileName string) (string, error) //PathExists 判断一个文件或文件夹是否存在 //输入文件路径，根据返回的bool值来判断文件或文件夹是否存在 func PathExists(path string) (bool,error) 校验文件中是否存在校验值 func CheckFileData(data []byte, check string) bool 源码  我的github:https://github."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/disk-test/1.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/disk-test/">
+                <img src="/p/disk-test/1_hu4b9f21e0357fa4a3de89be2058c4c1e0_86402_800x0_resize_box_3.png"
+                        srcset="/p/disk-test/1_hu4b9f21e0357fa4a3de89be2058c4c1e0_86402_800x0_resize_box_3.png 800w, /p/disk-test/1_hu4b9f21e0357fa4a3de89be2058c4c1e0_86402_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="339" 
+                        loading="lazy"
+                        alt="Featured image of post Disk Test" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/language/" style="background-color: #2a9d8f; color: #fff;">
+                语言学习
+            </a>
+        
+            <a href="/categories/golang/" style="background-color: #2a9d8f; color: #fff;">
+                Golang
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/disk-test/">Disk Test</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jun 20, 2022</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 1 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h3 id="disktext">diskText</h3>
+<ul>
+<li>直接跳过文件系统，对磁盘数据进行读写，判断磁盘测试数据读写校验数据是否丢失</li>
+</ul>
+<h5 id="磁盘信息">磁盘信息</h5>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">DiskSizeInfo</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">DiskPath</span>  <span class="kt">string</span>             <span class="c1">// 磁盘名
+</span><span class="c1"></span>	<span class="nx">SrcMap</span>    <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span>  <span class="c1">// 测试数据集(文件夹/校验数据)
+</span><span class="c1"></span>	<span class="nx">Size</span>      <span class="kt">int</span>                <span class="c1">// 磁盘分组大小
+</span><span class="c1"></span>	<span class="nx">SeekSize</span>  <span class="kt">int</span>				 <span class="c1">// 磁盘数据偏移
+</span><span class="c1"></span>	<span class="nx">BlockSize</span> <span class="kt">int</span>                <span class="c1">// 读写磁盘数据的大小
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></div><h5 id="使用两种方式跳过文件系统直接对磁盘进行读写">使用两种方式跳过文件系统直接对磁盘进行读写</h5>
+<ol>
+<li>直接读写磁盘</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 磁盘的写入
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <span class="o">*</span><span class="nx">DiskSizeInfo</span><span class="p">)</span><span class="nf">DiskWriteByFile</span><span class="p">(</span><span class="nx">src</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">error</span>
+<span class="c1">// 读取磁盘
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <span class="o">*</span><span class="nx">DiskSizeInfo</span><span class="p">)</span><span class="nf">DiskReadByFile</span><span class="p">()</span> <span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</code></pre></div><p>​	2.通过dd命令行对磁盘进行读者</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 通过dd命令写于磁盘
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <span class="o">*</span><span class="nx">DiskSizeInfo</span><span class="p">)</span><span class="nf">WriteDisk</span><span class="p">(</span><span class="nx">staPos</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">iFile</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">error</span> 
+<span class="c1">// 通过dd命令读取磁盘数据
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <span class="o">*</span><span class="nx">DiskSizeInfo</span><span class="p">)</span><span class="nf">ReadDisk</span><span class="p">(</span><span class="nx">staPos</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">oFile</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">error</span>
+</code></pre></div><h5 id="对磁盘已有数据进行校验">对磁盘已有数据进行校验</h5>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <span class="o">*</span><span class="nx">DiskSizeInfo</span><span class="p">)</span><span class="nf">CheckReadDisk</span><span class="p">(</span><span class="nx">src</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">i</span> <span class="kt">int</span><span class="p">)</span>
+</code></pre></div><h5 id="磁盘校验数据的类型的返回">磁盘校验数据的类型的返回</h5>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <span class="o">*</span><span class="nx">DiskSizeInfo</span><span class="p">)</span><span class="nf">DiskDatatype</span><span class="p">(</span> <span class="nx">i</span> <span class="kt">int</span><span class="p">)</span> 
+</code></pre></div><h5 id="循环通过数据集进行校验">循环通过数据集进行校验</h5>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <span class="o">*</span><span class="nx">DiskSizeInfo</span><span class="p">)</span><span class="nf">Run</span><span class="p">()</span> <span class="kt">error</span> 
+</code></pre></div><h5 id="初始化校验集数据文件">初始化校验集数据文件</h5>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <span class="o">*</span><span class="nx">DiskSizeInfo</span><span class="p">)</span><span class="nf">initFile</span><span class="p">()</span><span class="kt">error</span>
+</code></pre></div><h5 id="磁盘的挂起或者卸载针对与带文件系统和磁盘清除">磁盘的挂起或者卸载（针对与带文件系统）和磁盘清除</h5>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <span class="o">*</span><span class="nx">DiskSizeInfo</span><span class="p">)</span><span class="nf">MountDisk</span><span class="p">(</span><span class="nx">src</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">error</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <span class="o">*</span><span class="nx">DiskSizeInfo</span><span class="p">)</span><span class="nf">ClearDisk</span><span class="p">(</span><span class="nx">src</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">error</span> 
+</code></pre></div><h5 id="初始化校验集数据文件-1">初始化校验集数据文件</h5>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <span class="o">*</span><span class="nx">DiskSizeInfo</span><span class="p">)</span><span class="nf">initFile</span><span class="p">()</span>
+</code></pre></div><h5 id="其他功能">其他功能</h5>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="nx">文件通过md5校验比较</span>
+<span class="kd">func</span> <span class="nf">FileCompare</span><span class="p">(</span><span class="nx">src</span><span class="p">,</span> <span class="nx">dst</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="kt">bool</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+<span class="nx">生成文件校验和函数</span>
+<span class="kd">func</span> <span class="nf">fileCheckSum</span><span class="p">(</span><span class="nx">fileName</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="kt">string</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+<span class="c1">//PathExists 判断一个文件或文件夹是否存在
+</span><span class="c1">//输入文件路径，根据返回的bool值来判断文件或文件夹是否存在
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">PathExists</span><span class="p">(</span><span class="nx">path</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="kt">bool</span><span class="p">,</span><span class="kt">error</span><span class="p">)</span>
+<span class="nx">校验文件中是否存在校验值</span>
+<span class="kd">func</span> <span class="nf">CheckFileData</span><span class="p">(</span><span class="nx">data</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">check</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span>
+</code></pre></div><h2 id="源码">源码</h2>
+<ul>
+<li><a class="link" href="https://github.com/zcj-git520/diskText"  target="_blank" rel="noopener"
+    >我的github:https://github.com/zcj-git520/diskText</a></li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-avl-tree-go%E5%AE%9E%E7%8E%B0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-avl-tree-go%E5%AE%9E%E7%8E%B0/1.ed1f35b2a37347732ac0274cc8b2b8b7_hu627ccad35150ba5c25206c4fe774bc3e_21463_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-7R81sqNzR3MqwCdMyLK4tw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">数据结构-AVL tree go实现</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-binary-search-tree-go%E5%AE%9E%E7%8E%B0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-binary-search-tree-go%E5%AE%9E%E7%8E%B0/1.93ea940fc2529072f0e70cb78e43eee7_hu163e0849e6d75821587eb02814146518_65785_250x150_fill_box_smart1.gif" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-k&#43;qUD8JSkHLw5wy3jkPu5w==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">数据结构-Binary search tree go实现</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E6%A0%88%E5%9F%BA%E4%BA%8E%E5%8D%95%E9%A1%B9%E9%93%BE%E8%A1%A8%E9%98%9F%E5%88%97%E5%9F%BA%E4%BA%8E%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E5%AE%9E%E7%8E%B0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E6%A0%88%E5%9F%BA%E4%BA%8E%E5%8D%95%E9%A1%B9%E9%93%BE%E8%A1%A8%E9%98%9F%E5%88%97%E5%9F%BA%E4%BA%8E%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E5%AE%9E%E7%8E%B0/1.d90a4e817af655a738f16cd6b901b471_hucc057a99640c389677e7decbd4886594_40524_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-2QpOgXr2Vac48WzWuQG0cQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">数据结构-栈(基于单项链表)&amp;&amp;队列(基于双向链表)go实现</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/1.8698f35cbd072100d008bc5611dc9311_huc216cf6486350636a2e6728955e7fc78_62516_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-hpjzXL0HIQDQCLxWEdyTEQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">数据结构-双向链表&amp;&amp;循环双向链表go语言实现</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E5%90%91%E9%93%BE%E8%A1%A8go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E5%90%91%E9%93%BE%E8%A1%A8go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/1.d4063513636ac24a26f405f7f6147e2d_huda65db0749ea5cfbe7a2aa726c042ca1_14970_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-1AY1E2Nqwkom9AX39hR&#43;LQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">数据结构-单向链表go语言实现</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#disktext">diskText</a>
+          <ol>
+            <li></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#源码">源码</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

@@ -6,7 +6,17 @@
     <description>Recent content in Golang on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Tue, 15 Feb 2022 21:00:08 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/golang/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 20 Jun 2022 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/golang/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Disk Test</title>
+      <link>https://zcj-git520.github.io/p/disk-test/</link>
+      <pubDate>Mon, 20 Jun 2022 22:00:38 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/disk-test/</guid>
+      <description>diskText  直接跳过文件系统，对磁盘数据进行读写，判断磁盘测试数据读写校验数据是否丢失  磁盘信息 type DiskSizeInfo struct { DiskPath string // 磁盘名 	SrcMap map[string]string // 测试数据集(文件夹/校验数据) 	Size int // 磁盘分组大小 	SeekSize int	// 磁盘数据偏移 	BlockSize int // 读写磁盘数据的大小 } 使用两种方式跳过文件系统直接对磁盘进行读写  直接读写磁盘  // 磁盘的写入 func (d *DiskSizeInfo)DiskWriteByFile(src string) error // 读取磁盘 func (d *DiskSizeInfo)DiskReadByFile() ([]byte, error) ​	2.通过dd命令行对磁盘进行读者
+// 通过dd命令写于磁盘 func (d *DiskSizeInfo)WriteDisk(staPos int, iFile string) error // 通过dd命令读取磁盘数据 func (d *DiskSizeInfo)ReadDisk(staPos int, oFile string) error 对磁盘已有数据进行校验 func (d *DiskSizeInfo)CheckReadDisk(src string, i int) 磁盘校验数据的类型的返回 func (d *DiskSizeInfo)DiskDatatype( i int) 循环通过数据集进行校验 func (d *DiskSizeInfo)Run() error 初始化校验集数据文件 func (d *DiskSizeInfo)initFile()error 磁盘的挂起或者卸载（针对与带文件系统）和磁盘清除 func (d *DiskSizeInfo)MountDisk(src string) error func (d *DiskSizeInfo)ClearDisk(src string) error 初始化校验集数据文件 func (d *DiskSizeInfo)initFile() 其他功能 文件通过md5校验比较 func FileCompare(src, dst string) (bool, error) 生成文件校验和函数 func fileCheckSum(fileName string) (string, error) //PathExists 判断一个文件或文件夹是否存在 //输入文件路径，根据返回的bool值来判断文件或文件夹是否存在 func PathExists(path string) (bool,error) 校验文件中是否存在校验值 func CheckFileData(data []byte, check string) bool 源码  我的github:https://github.</description>
+    </item>
+    
     <item>
       <title>数据结构-AVL tree go实现</title>
       <link>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-avl-tree-go%E5%AE%9E%E7%8E%B0/</link>
