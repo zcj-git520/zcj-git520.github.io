@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='redis 常用命令的实践 结构化与非结构化   关系型数据库
+ 结构化 关联性 sql查询 满足事务的ACID  ![](C:\Users\90953\AppData\Roaming
+  非关系型数据
+ 非结构化 无关联性 非sql base(基础性的事务)    
+redis 通用命令 通用指令是部分数据类型的，都可以使用的指令，常见的有：
+ KEYS:查看符合模板的所有key del：删除指定的key exists:判读key是否存在 expire:给一个可以设置有效期（单位时间为s），有效期到时会自动删除key ttl:查看key的有效期  
+string 类型常用命令 string类型是redis中最简单的存储类型，其value是字符串，字符串可以分为3类：
+  string:普通字符串
+  int：整数类型，可以自增或自减
+  float:浮点型，可以自增或自减
+无论是哪一种格式，底层都是字节数组形式存储，只不过是编码不同，字符串类型的最大空间不超过512M
+
+  常用的命令有：   set:添加或者修改也存在的的一个string类型的键值对
+  get:根据key获取string类型的value
+  mset:批量添加多个stingl类型的键值对
+  mget:根据多个key获取多个string类型的value
+  incr:让一个int的key自增1'><title>redis 常用命令的实践</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='redis 常用命令的实践'>
+<meta property='og:description' content='redis 常用命令的实践 结构化与非结构化   关系型数据库
+ 结构化 关联性 sql查询 满足事务的ACID  ![](C:\Users\90953\AppData\Roaming
+  非关系型数据
+ 非结构化 无关联性 非sql base(基础性的事务)    
+redis 通用命令 通用指令是部分数据类型的，都可以使用的指令，常见的有：
+ KEYS:查看符合模板的所有key del：删除指定的key exists:判读key是否存在 expire:给一个可以设置有效期（单位时间为s），有效期到时会自动删除key ttl:查看key的有效期  
+string 类型常用命令 string类型是redis中最简单的存储类型，其value是字符串，字符串可以分为3类：
+  string:普通字符串
+  int：整数类型，可以自增或自减
+  float:浮点型，可以自增或自减
+无论是哪一种格式，底层都是字节数组形式存储，只不过是编码不同，字符串类型的最大空间不超过512M
+
+  常用的命令有：   set:添加或者修改也存在的的一个string类型的键值对
+  get:根据key获取string类型的value
+  mset:批量添加多个stingl类型的键值对
+  mget:根据多个key获取多个string类型的value
+  incr:让一个int的key自增1'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2022-07-01T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2022-07-01T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703213226107.png' />
+<meta name="twitter:title" content="redis 常用命令的实践">
+<meta name="twitter:description" content="redis 常用命令的实践 结构化与非结构化   关系型数据库
+ 结构化 关联性 sql查询 满足事务的ACID  ![](C:\Users\90953\AppData\Roaming
+  非关系型数据
+ 非结构化 无关联性 非sql base(基础性的事务)    
+redis 通用命令 通用指令是部分数据类型的，都可以使用的指令，常见的有：
+ KEYS:查看符合模板的所有key del：删除指定的key exists:判读key是否存在 expire:给一个可以设置有效期（单位时间为s），有效期到时会自动删除key ttl:查看key的有效期  
+string 类型常用命令 string类型是redis中最简单的存储类型，其value是字符串，字符串可以分为3类：
+  string:普通字符串
+  int：整数类型，可以自增或自减
+  float:浮点型，可以自增或自减
+无论是哪一种格式，底层都是字节数组形式存储，只不过是编码不同，字符串类型的最大空间不超过512M
+
+  常用的命令有：   set:添加或者修改也存在的的一个string类型的键值对
+  get:根据key获取string类型的value
+  mset:批量添加多个stingl类型的键值对
+  mget:根据多个key获取多个string类型的value
+  incr:让一个int的key自增1"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703213226107.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/">
+                <img src="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703213226107_huf526acdabf778a619d0264ba73835043_26467_800x0_resize_box_3.png"
+                        srcset="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703213226107_huf526acdabf778a619d0264ba73835043_26467_800x0_resize_box_3.png 800w, /p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703213226107_huf526acdabf778a619d0264ba73835043_26467_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="134" 
+                        loading="lazy"
+                        alt="Featured image of post redis 常用命令的实践" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/computer/" style="background-color: #2a9d8f; color: #fff;">
+                知识学习
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/">redis 常用命令的实践</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jul 01, 2022</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 1 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h2 id="redis-常用命令的实践">redis 常用命令的实践</h2>
+<h3 id="结构化与非结构化">结构化与非结构化</h3>
+<ul>
+<li>
+<p>关系型数据库</p>
+<ol>
+<li>结构化</li>
+<li>关联性</li>
+<li>sql查询</li>
+<li>满足事务的ACID</li>
+</ol>
+<p>![](C:\Users\90953\AppData\Roaming</p>
+</li>
+<li>
+<p>非关系型数据</p>
+<ol>
+<li>非结构化</li>
+<li>无关联性</li>
+<li>非sql</li>
+<li>base(基础性的事务)</li>
+</ol>
+</li>
+</ul>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 211; 
+			flex-basis: 506px"
+	>
+	<a href="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220629212003780.png" data-size="707x335">
+		<img src="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220629212003780.png"
+			width="707"
+			height="335"
+			srcset="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220629212003780_hudd6e20394e366a08e69fb4c61c5734f4_96628_480x0_resize_box_3.png 480w, /p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220629212003780_hudd6e20394e366a08e69fb4c61c5734f4_96628_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<h3 id="redis-通用命令">redis 通用命令</h3>
+<p>通用指令是部分数据类型的，都可以使用的指令，常见的有：</p>
+<ol>
+<li>KEYS:查看符合模板的所有key</li>
+<li>del：删除指定的key</li>
+<li>exists:判读key是否存在</li>
+<li>expire:给一个可以设置有效期（单位时间为s），有效期到时会自动删除key</li>
+<li>ttl:查看key的有效期</li>
+</ol>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 81; 
+			flex-basis: 195px"
+	>
+	<a href="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703171413218.png" data-size="642x787">
+		<img src="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703171413218.png"
+			width="642"
+			height="787"
+			srcset="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703171413218_hu13d9b8fc245b7a270dec9132ccbfeff5_88006_480x0_resize_box_3.png 480w, /p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703171413218_hu13d9b8fc245b7a270dec9132ccbfeff5_88006_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<h3 id="string-类型常用命令">string 类型常用命令</h3>
+<p>string类型是redis中最简单的存储类型，其value是字符串，字符串可以分为3类：</p>
+<ol>
+<li>
+<p>string:普通字符串</p>
+</li>
+<li>
+<p>int：整数类型，可以自增或自减</p>
+</li>
+<li>
+<p>float:浮点型，可以自增或自减</p>
+<p>无论是哪一种格式，底层都是字节数组形式存储，只不过是编码不同，字符串类型的最大空间不超过512M</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 388; 
+			flex-basis: 931px"
+	>
+	<a href="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703173208349.png" data-size="582x150">
+		<img src="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703173208349.png"
+			width="582"
+			height="150"
+			srcset="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703173208349_hu80833848ee1f18d862e144af2d6fb085_18998_480x0_resize_box_3.png 480w, /p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703173208349_hu80833848ee1f18d862e144af2d6fb085_18998_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+</li>
+</ol>
+<h4 id="常用的命令有">常用的命令有：</h4>
+<ol>
+<li>
+<p>set:添加或者修改也存在的的一个string类型的键值对</p>
+</li>
+<li>
+<p>get:根据key获取string类型的value</p>
+</li>
+<li>
+<p>mset:批量添加多个stingl类型的键值对</p>
+</li>
+<li>
+<p>mget:根据多个key获取多个string类型的value</p>
+</li>
+<li>
+<p>incr:让一个int的key自增1</p>
+</li>
+<li>
+<p>incrby:让一个整型的key自增并指定步长</p>
+</li>
+<li>
+<p>incrbyfloat:让一个浮点数的数值自增并指定步长</p>
+</li>
+<li>
+<p>setnx:添加一个string类型的键值对，当key存在时，不执行</p>
+</li>
+<li>
+<p>setex:添加一个string类型的键值对，并且设置有效期</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 98; 
+			flex-basis: 235px"
+	>
+	<a href="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703184326525.png" data-size="879x894">
+		<img src="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703184326525.png"
+			width="879"
+			height="894"
+			srcset="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703184326525_hu8f470d54622ce88b90e96a39d1a48252_105753_480x0_resize_box_3.png 480w, /p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703184326525_hu8f470d54622ce88b90e96a39d1a48252_105753_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+</li>
+</ol>
+<h4 id="key的结构">key的结构</h4>
+<p>redis的key允许有多个单词形成层级结构，有多个单词之间用“：”隔开;</p>
+<p>格式如下：项目名：业务名：类型：id;</p>
+<ul>
+<li>例如：user相关的key:sysd:user:1</li>
+<li>例如：产品相相关的key:sysd:product:1</li>
+</ul>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 232; 
+			flex-basis: 557px"
+	>
+	<a href="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703202738042.png" data-size="917x395">
+		<img src="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703202738042.png"
+			width="917"
+			height="395"
+			srcset="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703202738042_hub708a32f854617c34a1527a420b4c843_44022_480x0_resize_box_3.png 480w, /p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703202738042_hub708a32f854617c34a1527a420b4c843_44022_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 690; 
+			flex-basis: 1657px"
+	>
+	<a href="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703203305428.png" data-size="1443x209">
+		<img src="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703203305428.png"
+			width="1443"
+			height="209"
+			srcset="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703203305428_hu354e0a36754f7c644019efa40cea065e_16638_480x0_resize_box_3.png 480w, /p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703203305428_hu354e0a36754f7c644019efa40cea065e_16638_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<h3 id="hash类型">HASH类型</h3>
+<p>hash类型是叫散列，其value是一个无序的字典，hash的结构可以将对象的每个单独的字段独立存储，可以对每个字段做CRUD;</p>
+<h4 id="常用的命令如下">常用的命令如下：</h4>
+<ol>
+<li>
+<p>hset key fileld value :添加或者修改hash类型key的fileld的值</p>
+</li>
+<li>
+<p>hget key fileld: 获取一个hash类型的fileld的值</p>
+</li>
+<li>
+<p>hmset: 批量添加多个hash类型的key的field的值</p>
+</li>
+<li>
+<p>hmget：批量获取多个hash类型的keyde fileld的值</p>
+</li>
+<li>
+<p>hgetall:获取一个hash类型的key中的所有的fileld和value</p>
+</li>
+<li>
+<p>hkeys:获取一个hash类型的key中的所有的filed</p>
+</li>
+<li>
+<p>hvale:获取一个hash类型中的key的所有value</p>
+</li>
+<li>
+<p>hincrby:让一个hash类型key的字段值自增并指定步长</p>
+</li>
+<li>
+<p>hseinx:添加一个hash类型的key的fileld值，若存在则步添加</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 104; 
+			flex-basis: 249px"
+	>
+	<a href="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703213039079.png" data-size="925x889">
+		<img src="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703213039079.png"
+			width="925"
+			height="889"
+			srcset="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703213039079_hu6765906d14cf95d3957b4c7ff09aa0f2_112773_480x0_resize_box_3.png 480w, /p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703213039079_hu6765906d14cf95d3957b4c7ff09aa0f2_112773_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+</li>
+</ol>
+<p>​		<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 598; 
+			flex-basis: 1436px"
+	>
+	<a href="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703213226107.png" data-size="1724x288">
+		<img src="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703213226107.png"
+			width="1724"
+			height="288"
+			srcset="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703213226107_huf526acdabf778a619d0264ba73835043_26467_480x0_resize_box_3.png 480w, /p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703213226107_huf526acdabf778a619d0264ba73835043_26467_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<h3 id="list类型">LIST类型</h3>
+<p>redis中的list可以看作是一个双向链表的结构，支持正向与反向的检索，有以下特征：</p>
+<ul>
+<li>有序</li>
+<li>元素可以重复</li>
+<li>插入与删除快</li>
+<li>查询速度一般</li>
+</ul>
+<h4 id="常用的命令">常用的命令</h4>
+<ol>
+<li>lpush key value…… ：向左插入一个或多个元素</li>
+<li>lpop key ：移除左边的第一个元素，没有就返回nil</li>
+<li>rpush key value……：向右插入一个或者多个元素</li>
+<li>Rrpop key:移除并返回右侧的第一个元素，没有就返回nil</li>
+<li>lrang key star end:返回一段角标范围内所有元素</li>
+<li>blpop和brpop:与lpop和rpop类似，只不过在没有元素时等待的时间，而不是直接返回nil</li>
+</ol>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 113; 
+			flex-basis: 272px"
+	>
+	<a href="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704203511492.png" data-size="890x783">
+		<img src="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704203511492.png"
+			width="890"
+			height="783"
+			srcset="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704203511492_hu7539138712abf7603ef5f7d6f9656ab7_96589_480x0_resize_box_3.png 480w, /p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704203511492_hu7539138712abf7603ef5f7d6f9656ab7_96589_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 356; 
+			flex-basis: 855px"
+	>
+	<a href="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704203540306.png" data-size="831x233">
+		<img src="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704203540306.png"
+			width="831"
+			height="233"
+			srcset="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704203540306_hu48caa2f4c84bfca2f12f5336df86867f_24159_480x0_resize_box_3.png 480w, /p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704203540306_hu48caa2f4c84bfca2f12f5336df86867f_24159_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<h3 id="set类型">set类型</h3>
+<p>redis中的set结构可以看作是一个value为nil的hashmap。具备一下特征：</p>
+<ul>
+<li>无序</li>
+<li>元素不可重复</li>
+<li>查找快</li>
+<li>支持交集/并集/差集等功能</li>
+</ul>
+<h4 id="常用的命令-1">常用的命令</h4>
+<ol>
+<li>
+<p>sadd key number ……：向set中添加一个或者多个元素</p>
+</li>
+<li>
+<p>srem key number ……：移除set中指定的元素</p>
+</li>
+<li>
+<p>scard key:返回set中的元素个数</p>
+</li>
+<li>
+<p>sismembre key member:判断一个元素是否存在与一个set中</p>
+</li>
+<li>
+<p>smembers:获取set中所有的元素</p>
+</li>
+<li>
+<p>sinter key1 key2……：求集合之间的交集</p>
+</li>
+<li>
+<p>sdiff key1 key2……：集合之间的差集</p>
+</li>
+<li>
+<p>sunion key1 key2……：集合之间的并集</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 102; 
+			flex-basis: 245px"
+	>
+	<a href="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704205647199.png" data-size="927x906">
+		<img src="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704205647199.png"
+			width="927"
+			height="906"
+			srcset="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704205647199_hu7908eaa3257c2e5b701111cc6facca2b_108226_480x0_resize_box_3.png 480w, /p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704205647199_hu7908eaa3257c2e5b701111cc6facca2b_108226_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+</li>
+</ol>
+<p>​		<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 549; 
+			flex-basis: 1319px"
+	>
+	<a href="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704205721995.png" data-size="1754x319">
+		<img src="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704205721995.png"
+			width="1754"
+			height="319"
+			srcset="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704205721995_hu175fd1dc6b96d1acd6542edd89d15ae1_33772_480x0_resize_box_3.png 480w, /p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704205721995_hu175fd1dc6b96d1acd6542edd89d15ae1_33772_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<h3 id="sortedset类型">SortedSet类型</h3>
+<p>redis的sortedset是一个有序的集合，每一个元素都带有一个score的属性，可以基于score属性对元素进行排序，其底层是一个由一个跳跃表和hash表实现，其具备一下特性：</p>
+<ul>
+<li>可排序</li>
+<li>元素不可重复</li>
+<li>查询速度快</li>
+</ul>
+<h4 id="常用命令">常用命令</h4>
+<ol>
+<li>
+<p>zadd key score member: 添加一个或者多个元素到有序集合中，如果存在则更新其score</p>
+</li>
+<li>
+<p>zrem key member:删除有序集合中的一个指定元素</p>
+</li>
+<li>
+<p>zscore key member:获取指定元素的的score值</p>
+</li>
+<li>
+<p>zrank key member:获取有序集合元素的排名</p>
+</li>
+<li>
+<p>zcard key:获取有序集合中的元素个数</p>
+</li>
+<li>
+<p>zcount key min max:统计score值在给定范围内中的所有元素和个数</p>
+</li>
+<li>
+<p>zincrby key increment member:让有序集合中的指定元素自增，步长为指定的increment值</p>
+</li>
+<li>
+<p>zrange key min max:按照score排序后，获取指定排名范围的元素</p>
+</li>
+<li>
+<p>zrangebyscore key min max:按照score排序后，获取指定的score范围的元素</p>
+</li>
+<li>
+<p>zdiff/zinter/zuninon:求差集/交集/并集</p>
+<p>注明：排名默认为升序，rev为降序</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 143; 
+			flex-basis: 343px"
+	>
+	<a href="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704214234155.png" data-size="927x647">
+		<img src="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704214234155.png"
+			width="927"
+			height="647"
+			srcset="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704214234155_hu2c3b8a6563b729b225868325472d361d_84870_480x0_resize_box_3.png 480w, /p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704214234155_hu2c3b8a6563b729b225868325472d361d_84870_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+</li>
+</ol>
+<p>​		<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 643; 
+			flex-basis: 1543px"
+	>
+	<a href="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704214303318.png" data-size="1679x261">
+		<img src="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704214303318.png"
+			width="1679"
+			height="261"
+			srcset="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704214303318_hua1377d79c8f2b8737e87df539773ac70_26135_480x0_resize_box_3.png 480w, /p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704214303318_hua1377d79c8f2b8737e87df539773ac70_26135_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/linux-mdadm%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux-mdadm%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/1.5f807745f850e4f73ffda5637371863a_hu859ea59f552859095fb986ed5a22b665_11306_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-X4B3RfhQ5Pc//aVjc3GGOg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux-mdadm工具学习</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/_huc45ff52f0cf6b2c13cf0b9e2262e1b7b_66945_00fb710e5378cc4d967388d67c9d27dc.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-Ej431j4sWI7qDLD5P2Z/PQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux-Multi-Disk (MD)模块</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/linux-raid5%E5%AD%A6%E4%B9%A0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux-raid5%E5%AD%A6%E4%B9%A0/1.686b3e94bd875a9513d4f47a48d8b455_hu7e02b142b51acc83a4bc67a855e709b3_49591_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-aGs&#43;lL2HWpUT1PR6SNi0VQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux-raid5学习</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%80%E9%98%85/1.ed89b6c78fd07949e3718faf6ec6e1fa_hudd81952809099175edb54de5cef86875_45536_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-7Ym2x4/QeUnjcY&#43;vbsbh&#43;g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux-文件系统(简阅)</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/linux-raid%E5%AD%A6%E4%B9%A0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux-raid%E5%AD%A6%E4%B9%A0/1.88ce101fba5ae1efe74c455210209183_huf00169aa6abc51faa601f0bf72d243b8_76358_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-iM4QH7pa4e/nTEVSECCRgw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux-raid学习</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#redis-常用命令的实践">redis 常用命令的实践</a>
+      <ol>
+        <li><a href="#结构化与非结构化">结构化与非结构化</a></li>
+        <li><a href="#redis-通用命令">redis 通用命令</a></li>
+        <li><a href="#string-类型常用命令">string 类型常用命令</a>
+          <ol>
+            <li><a href="#常用的命令有">常用的命令有：</a></li>
+            <li><a href="#key的结构">key的结构</a></li>
+          </ol>
+        </li>
+        <li><a href="#hash类型">HASH类型</a>
+          <ol>
+            <li><a href="#常用的命令如下">常用的命令如下：</a></li>
+          </ol>
+        </li>
+        <li><a href="#list类型">LIST类型</a>
+          <ol>
+            <li><a href="#常用的命令">常用的命令</a></li>
+          </ol>
+        </li>
+        <li><a href="#set类型">set类型</a>
+          <ol>
+            <li><a href="#常用的命令-1">常用的命令</a></li>
+          </ol>
+        </li>
+        <li><a href="#sortedset类型">SortedSet类型</a>
+          <ol>
+            <li><a href="#常用命令">常用命令</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

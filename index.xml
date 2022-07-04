@@ -6,7 +6,461 @@
         <description>Recent content on Chengji Zhao&#39;s blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Mon, 20 Jun 2022 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Fri, 01 Jul 2022 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>redis 常用命令的实践</title>
+        <link>https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/</link>
+        <pubDate>Fri, 01 Jul 2022 22:00:38 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703213226107.png" alt="Featured image of post redis 常用命令的实践" /&gt;&lt;h2 id=&#34;redis-常用命令的实践&#34;&gt;redis 常用命令的实践&lt;/h2&gt;
+&lt;h3 id=&#34;结构化与非结构化&#34;&gt;结构化与非结构化&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;关系型数据库&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;结构化&lt;/li&gt;
+&lt;li&gt;关联性&lt;/li&gt;
+&lt;li&gt;sql查询&lt;/li&gt;
+&lt;li&gt;满足事务的ACID&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;![](C:\Users\90953\AppData\Roaming&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;非关系型数据&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;非结构化&lt;/li&gt;
+&lt;li&gt;无关联性&lt;/li&gt;
+&lt;li&gt;非sql&lt;/li&gt;
+&lt;li&gt;base(基础性的事务)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 211; 
+			flex-basis: 506px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220629212003780.png&#34; data-size=&#34;707x335&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220629212003780.png&#34;
+			width=&#34;707&#34;
+			height=&#34;335&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220629212003780_hudd6e20394e366a08e69fb4c61c5734f4_96628_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220629212003780_hudd6e20394e366a08e69fb4c61c5734f4_96628_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;h3 id=&#34;redis-通用命令&#34;&gt;redis 通用命令&lt;/h3&gt;
+&lt;p&gt;通用指令是部分数据类型的，都可以使用的指令，常见的有：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;KEYS:查看符合模板的所有key&lt;/li&gt;
+&lt;li&gt;del：删除指定的key&lt;/li&gt;
+&lt;li&gt;exists:判读key是否存在&lt;/li&gt;
+&lt;li&gt;expire:给一个可以设置有效期（单位时间为s），有效期到时会自动删除key&lt;/li&gt;
+&lt;li&gt;ttl:查看key的有效期&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 81; 
+			flex-basis: 195px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703171413218.png&#34; data-size=&#34;642x787&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703171413218.png&#34;
+			width=&#34;642&#34;
+			height=&#34;787&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703171413218_hu13d9b8fc245b7a270dec9132ccbfeff5_88006_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703171413218_hu13d9b8fc245b7a270dec9132ccbfeff5_88006_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;h3 id=&#34;string-类型常用命令&#34;&gt;string 类型常用命令&lt;/h3&gt;
+&lt;p&gt;string类型是redis中最简单的存储类型，其value是字符串，字符串可以分为3类：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;string:普通字符串&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;int：整数类型，可以自增或自减&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;float:浮点型，可以自增或自减&lt;/p&gt;
+&lt;p&gt;无论是哪一种格式，底层都是字节数组形式存储，只不过是编码不同，字符串类型的最大空间不超过512M&lt;/p&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 388; 
+			flex-basis: 931px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703173208349.png&#34; data-size=&#34;582x150&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703173208349.png&#34;
+			width=&#34;582&#34;
+			height=&#34;150&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703173208349_hu80833848ee1f18d862e144af2d6fb085_18998_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703173208349_hu80833848ee1f18d862e144af2d6fb085_18998_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;常用的命令有&#34;&gt;常用的命令有：&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;set:添加或者修改也存在的的一个string类型的键值对&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;get:根据key获取string类型的value&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;mset:批量添加多个stingl类型的键值对&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;mget:根据多个key获取多个string类型的value&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;incr:让一个int的key自增1&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;incrby:让一个整型的key自增并指定步长&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;incrbyfloat:让一个浮点数的数值自增并指定步长&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;setnx:添加一个string类型的键值对，当key存在时，不执行&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;setex:添加一个string类型的键值对，并且设置有效期&lt;/p&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 98; 
+			flex-basis: 235px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703184326525.png&#34; data-size=&#34;879x894&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703184326525.png&#34;
+			width=&#34;879&#34;
+			height=&#34;894&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703184326525_hu8f470d54622ce88b90e96a39d1a48252_105753_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703184326525_hu8f470d54622ce88b90e96a39d1a48252_105753_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;key的结构&#34;&gt;key的结构&lt;/h4&gt;
+&lt;p&gt;redis的key允许有多个单词形成层级结构，有多个单词之间用“：”隔开;&lt;/p&gt;
+&lt;p&gt;格式如下：项目名：业务名：类型：id;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;例如：user相关的key:sysd:user:1&lt;/li&gt;
+&lt;li&gt;例如：产品相相关的key:sysd:product:1&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 232; 
+			flex-basis: 557px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703202738042.png&#34; data-size=&#34;917x395&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703202738042.png&#34;
+			width=&#34;917&#34;
+			height=&#34;395&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703202738042_hub708a32f854617c34a1527a420b4c843_44022_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703202738042_hub708a32f854617c34a1527a420b4c843_44022_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 690; 
+			flex-basis: 1657px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703203305428.png&#34; data-size=&#34;1443x209&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703203305428.png&#34;
+			width=&#34;1443&#34;
+			height=&#34;209&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703203305428_hu354e0a36754f7c644019efa40cea065e_16638_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703203305428_hu354e0a36754f7c644019efa40cea065e_16638_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;h3 id=&#34;hash类型&#34;&gt;HASH类型&lt;/h3&gt;
+&lt;p&gt;hash类型是叫散列，其value是一个无序的字典，hash的结构可以将对象的每个单独的字段独立存储，可以对每个字段做CRUD;&lt;/p&gt;
+&lt;h4 id=&#34;常用的命令如下&#34;&gt;常用的命令如下：&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;hset key fileld value :添加或者修改hash类型key的fileld的值&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;hget key fileld: 获取一个hash类型的fileld的值&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;hmset: 批量添加多个hash类型的key的field的值&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;hmget：批量获取多个hash类型的keyde fileld的值&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;hgetall:获取一个hash类型的key中的所有的fileld和value&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;hkeys:获取一个hash类型的key中的所有的filed&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;hvale:获取一个hash类型中的key的所有value&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;hincrby:让一个hash类型key的字段值自增并指定步长&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;hseinx:添加一个hash类型的key的fileld值，若存在则步添加&lt;/p&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 104; 
+			flex-basis: 249px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703213039079.png&#34; data-size=&#34;925x889&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703213039079.png&#34;
+			width=&#34;925&#34;
+			height=&#34;889&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703213039079_hu6765906d14cf95d3957b4c7ff09aa0f2_112773_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703213039079_hu6765906d14cf95d3957b4c7ff09aa0f2_112773_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;​		&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 598; 
+			flex-basis: 1436px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703213226107.png&#34; data-size=&#34;1724x288&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703213226107.png&#34;
+			width=&#34;1724&#34;
+			height=&#34;288&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703213226107_huf526acdabf778a619d0264ba73835043_26467_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220703213226107_huf526acdabf778a619d0264ba73835043_26467_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;h3 id=&#34;list类型&#34;&gt;LIST类型&lt;/h3&gt;
+&lt;p&gt;redis中的list可以看作是一个双向链表的结构，支持正向与反向的检索，有以下特征：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;有序&lt;/li&gt;
+&lt;li&gt;元素可以重复&lt;/li&gt;
+&lt;li&gt;插入与删除快&lt;/li&gt;
+&lt;li&gt;查询速度一般&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;常用的命令&#34;&gt;常用的命令&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;lpush key value…… ：向左插入一个或多个元素&lt;/li&gt;
+&lt;li&gt;lpop key ：移除左边的第一个元素，没有就返回nil&lt;/li&gt;
+&lt;li&gt;rpush key value……：向右插入一个或者多个元素&lt;/li&gt;
+&lt;li&gt;Rrpop key:移除并返回右侧的第一个元素，没有就返回nil&lt;/li&gt;
+&lt;li&gt;lrang key star end:返回一段角标范围内所有元素&lt;/li&gt;
+&lt;li&gt;blpop和brpop:与lpop和rpop类似，只不过在没有元素时等待的时间，而不是直接返回nil&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 113; 
+			flex-basis: 272px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704203511492.png&#34; data-size=&#34;890x783&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704203511492.png&#34;
+			width=&#34;890&#34;
+			height=&#34;783&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704203511492_hu7539138712abf7603ef5f7d6f9656ab7_96589_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704203511492_hu7539138712abf7603ef5f7d6f9656ab7_96589_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 356; 
+			flex-basis: 855px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704203540306.png&#34; data-size=&#34;831x233&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704203540306.png&#34;
+			width=&#34;831&#34;
+			height=&#34;233&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704203540306_hu48caa2f4c84bfca2f12f5336df86867f_24159_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704203540306_hu48caa2f4c84bfca2f12f5336df86867f_24159_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;h3 id=&#34;set类型&#34;&gt;set类型&lt;/h3&gt;
+&lt;p&gt;redis中的set结构可以看作是一个value为nil的hashmap。具备一下特征：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;无序&lt;/li&gt;
+&lt;li&gt;元素不可重复&lt;/li&gt;
+&lt;li&gt;查找快&lt;/li&gt;
+&lt;li&gt;支持交集/并集/差集等功能&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;常用的命令-1&#34;&gt;常用的命令&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;sadd key number ……：向set中添加一个或者多个元素&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;srem key number ……：移除set中指定的元素&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;scard key:返回set中的元素个数&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;sismembre key member:判断一个元素是否存在与一个set中&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;smembers:获取set中所有的元素&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;sinter key1 key2……：求集合之间的交集&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;sdiff key1 key2……：集合之间的差集&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;sunion key1 key2……：集合之间的并集&lt;/p&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 102; 
+			flex-basis: 245px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704205647199.png&#34; data-size=&#34;927x906&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704205647199.png&#34;
+			width=&#34;927&#34;
+			height=&#34;906&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704205647199_hu7908eaa3257c2e5b701111cc6facca2b_108226_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704205647199_hu7908eaa3257c2e5b701111cc6facca2b_108226_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;​		&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 549; 
+			flex-basis: 1319px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704205721995.png&#34; data-size=&#34;1754x319&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704205721995.png&#34;
+			width=&#34;1754&#34;
+			height=&#34;319&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704205721995_hu175fd1dc6b96d1acd6542edd89d15ae1_33772_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704205721995_hu175fd1dc6b96d1acd6542edd89d15ae1_33772_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;h3 id=&#34;sortedset类型&#34;&gt;SortedSet类型&lt;/h3&gt;
+&lt;p&gt;redis的sortedset是一个有序的集合，每一个元素都带有一个score的属性，可以基于score属性对元素进行排序，其底层是一个由一个跳跃表和hash表实现，其具备一下特性：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;可排序&lt;/li&gt;
+&lt;li&gt;元素不可重复&lt;/li&gt;
+&lt;li&gt;查询速度快&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;常用命令&#34;&gt;常用命令&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;zadd key score member: 添加一个或者多个元素到有序集合中，如果存在则更新其score&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;zrem key member:删除有序集合中的一个指定元素&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;zscore key member:获取指定元素的的score值&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;zrank key member:获取有序集合元素的排名&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;zcard key:获取有序集合中的元素个数&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;zcount key min max:统计score值在给定范围内中的所有元素和个数&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;zincrby key increment member:让有序集合中的指定元素自增，步长为指定的increment值&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;zrange key min max:按照score排序后，获取指定排名范围的元素&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;zrangebyscore key min max:按照score排序后，获取指定的score范围的元素&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;zdiff/zinter/zuninon:求差集/交集/并集&lt;/p&gt;
+&lt;p&gt;注明：排名默认为升序，rev为降序&lt;/p&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 143; 
+			flex-basis: 343px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704214234155.png&#34; data-size=&#34;927x647&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704214234155.png&#34;
+			width=&#34;927&#34;
+			height=&#34;647&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704214234155_hu2c3b8a6563b729b225868325472d361d_84870_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704214234155_hu2c3b8a6563b729b225868325472d361d_84870_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;​		&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 643; 
+			flex-basis: 1543px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704214303318.png&#34; data-size=&#34;1679x261&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704214303318.png&#34;
+			width=&#34;1679&#34;
+			height=&#34;261&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704214303318_hua1377d79c8f2b8737e87df539773ac70_26135_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/image-20220704214303318_hua1377d79c8f2b8737e87df539773ac70_26135_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>Disk Test</title>
         <link>https://zcj-git520.github.io/p/disk-test/</link>
         <pubDate>Mon, 20 Jun 2022 22:00:38 +0800</pubDate>
@@ -16,7 +470,7 @@
 &lt;ul&gt;
 &lt;li&gt;直接跳过文件系统，对磁盘数据进行读写，判断磁盘测试数据读写校验数据是否丢失&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h5 id=&#34;磁盘信息&#34;&gt;磁盘信息&lt;/h5&gt;
+&lt;h4 id=&#34;磁盘信息&#34;&gt;磁盘信息&lt;/h4&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;kd&#34;&gt;type&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;DiskSizeInfo&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
 	&lt;span class=&#34;nx&#34;&gt;DiskPath&lt;/span&gt;  &lt;span class=&#34;kt&#34;&gt;string&lt;/span&gt;             &lt;span class=&#34;c1&#34;&gt;// 磁盘名
 &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;nx&#34;&gt;SrcMap&lt;/span&gt;    &lt;span class=&#34;kd&#34;&gt;map&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;string&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;string&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;// 测试数据集(文件夹/校验数据)
@@ -24,7 +478,7 @@
 &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;nx&#34;&gt;SeekSize&lt;/span&gt;  &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;				 &lt;span class=&#34;c1&#34;&gt;// 磁盘数据偏移
 &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;nx&#34;&gt;BlockSize&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;                &lt;span class=&#34;c1&#34;&gt;// 读写磁盘数据的大小
 &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h5 id=&#34;使用两种方式跳过文件系统直接对磁盘进行读写&#34;&gt;使用两种方式跳过文件系统直接对磁盘进行读写&lt;/h5&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;使用两种方式跳过文件系统直接对磁盘进行读写&#34;&gt;使用两种方式跳过文件系统直接对磁盘进行读写&lt;/h4&gt;
 &lt;ol&gt;
 &lt;li&gt;直接读写磁盘&lt;/li&gt;
 &lt;/ol&gt;
@@ -37,20 +491,20 @@
 &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;func&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;d&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;DiskSizeInfo&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;WriteDisk&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;staPos&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;iFile&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;string&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;error&lt;/span&gt; 
 &lt;span class=&#34;c1&#34;&gt;// 通过dd命令读取磁盘数据
 &lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;func&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;d&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;DiskSizeInfo&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;ReadDisk&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;staPos&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;oFile&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;string&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;error&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h5 id=&#34;对磁盘已有数据进行校验&#34;&gt;对磁盘已有数据进行校验&lt;/h5&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;对磁盘已有数据进行校验&#34;&gt;对磁盘已有数据进行校验&lt;/h4&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;kd&#34;&gt;func&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;d&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;DiskSizeInfo&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;CheckReadDisk&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;src&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;string&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h5 id=&#34;磁盘校验数据的类型的返回&#34;&gt;磁盘校验数据的类型的返回&lt;/h5&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;磁盘校验数据的类型的返回&#34;&gt;磁盘校验数据的类型的返回&lt;/h4&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;kd&#34;&gt;func&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;d&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;DiskSizeInfo&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;DiskDatatype&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h5 id=&#34;循环通过数据集进行校验&#34;&gt;循环通过数据集进行校验&lt;/h5&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;循环通过数据集进行校验&#34;&gt;循环通过数据集进行校验&lt;/h4&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;kd&#34;&gt;func&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;d&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;DiskSizeInfo&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;Run&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;error&lt;/span&gt; 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h5 id=&#34;初始化校验集数据文件&#34;&gt;初始化校验集数据文件&lt;/h5&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;初始化校验集数据文件&#34;&gt;初始化校验集数据文件&lt;/h4&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;kd&#34;&gt;func&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;d&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;DiskSizeInfo&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;initFile&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;error&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h5 id=&#34;磁盘的挂起或者卸载针对与带文件系统和磁盘清除&#34;&gt;磁盘的挂起或者卸载（针对与带文件系统）和磁盘清除&lt;/h5&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;磁盘的挂起或者卸载针对与带文件系统和磁盘清除&#34;&gt;磁盘的挂起或者卸载（针对与带文件系统）和磁盘清除&lt;/h4&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;kd&#34;&gt;func&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;d&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;DiskSizeInfo&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;MountDisk&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;src&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;string&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;error&lt;/span&gt;
 &lt;span class=&#34;kd&#34;&gt;func&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;d&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;DiskSizeInfo&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;ClearDisk&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;src&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;string&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;error&lt;/span&gt; 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h5 id=&#34;初始化校验集数据文件-1&#34;&gt;初始化校验集数据文件&lt;/h5&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;初始化校验集数据文件-1&#34;&gt;初始化校验集数据文件&lt;/h4&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;kd&#34;&gt;func&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;d&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;DiskSizeInfo&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;initFile&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h5 id=&#34;其他功能&#34;&gt;其他功能&lt;/h5&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;其他功能&#34;&gt;其他功能&lt;/h4&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;nx&#34;&gt;文件通过md5校验比较&lt;/span&gt;
 &lt;span class=&#34;kd&#34;&gt;func&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;FileCompare&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;src&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;dst&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;string&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;bool&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;error&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
 &lt;span class=&#34;nx&#34;&gt;生成文件校验和函数&lt;/span&gt;
@@ -75,11 +529,11 @@
         <guid>https://zcj-git520.github.io/p/linux-mdadm%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/</guid>
         <description>&lt;img src="https://zcj-git520.github.io/p/linux-mdadm%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/1.png" alt="Featured image of post Linux-mdadm工具学习" /&gt;&lt;h3 id=&#34;mdadm&#34;&gt;mdadm&lt;/h3&gt;
 &lt;p&gt;mdadm是linux下的一款标准的RAID的管理工具&lt;/p&gt;
-&lt;h5 id=&#34;基本语法&#34;&gt;基本语法&lt;/h5&gt;
+&lt;h4 id=&#34;基本语法&#34;&gt;基本语法&lt;/h4&gt;
 &lt;p&gt;mdadm [mode] &lt;!-- raw HTML omitted --&gt; [option] &lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
-&lt;h5 id=&#34;目前支持&#34;&gt;目前支持&lt;/h5&gt;
+&lt;h4 id=&#34;目前支持&#34;&gt;目前支持&lt;/h4&gt;
 &lt;p&gt;RAID0(striping), RAID1(mirroring), RAID4, RAID5, RAID6, RAID10, MULTIPATH和FAULTY&lt;/p&gt;
-&lt;h5 id=&#34;模式&#34;&gt;模式&lt;/h5&gt;
+&lt;h4 id=&#34;模式&#34;&gt;模式&lt;/h4&gt;
 &lt;ul&gt;
 &lt;li&gt;Assemble：加入一个以前定义的阵列&lt;/li&gt;
 &lt;li&gt;Build：创建一个没有超级块的阵列&lt;/li&gt;
@@ -89,7 +543,7 @@
 &lt;li&gt;Follow or Monitor:监控RAID的状态&lt;/li&gt;
 &lt;li&gt;Grow：改变RAID的容量或阵列中的设备数目 ；-n,&amp;ndash;raid-devices=: 活动设备个数-x,&amp;ndash;spare-devices=：备用盘个数-c,&amp;ndash;chunk=: CHUNK大小, 默认为64K，重要的参数,决定了一次向阵列中每个磁盘写入数据的大小-z,&amp;ndash;size=：阵列中从每个磁盘获取的空间总数-l,&amp;ndash;level=: RAID级别-p,&amp;ndash;layout=：设定raid5 和raid10的奇偶校验规则；并且控制故障的故障模式&amp;ndash;parity: 类似于&amp;ndash;layout&amp;ndash;assume-clean:目前仅用于 &amp;ndash;build 选项-R &amp;ndash;run: 强制激活RAID，使用这个选项，设备上有旧的元数据信息的提示会被忽略-N &amp;ndash;name=: 设定阵列的名称–-rounding：在linear array中的rounding factor，等于条带大小。&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h5 id=&#34;可用的options&#34;&gt;可用的[options]&lt;/h5&gt;
+&lt;h4 id=&#34;可用的options&#34;&gt;可用的[options]&lt;/h4&gt;
 &lt;ul&gt;
 &lt;li&gt;-A，&amp;ndash;assemble：加入一个以前定义的阵列&lt;/li&gt;
 &lt;li&gt;-B,&amp;ndash;build:Build a legacy array without superblocks .&lt;/li&gt;
@@ -119,8 +573,8 @@
 &lt;li&gt;-f, &amp;ndash;force:通常mdadm不允许只用一个device创建阵列，而且创建raid5时会使用一个device作为missingdrive。此选项正相反&lt;/li&gt;
 &lt;li&gt;-a, &amp;ndash;auto{=no,yes,md,mdp,part,p}{NN}&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h4 id=&#34;测试&#34;&gt;测试&lt;/h4&gt;
-&lt;h5 id=&#34;创建raid5阵列&#34;&gt;创建RAID5阵列&lt;/h5&gt;
+&lt;h3 id=&#34;测试&#34;&gt;测试&lt;/h3&gt;
+&lt;h4 id=&#34;创建raid5阵列&#34;&gt;创建RAID5阵列&lt;/h4&gt;
 &lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;执行命令: mdadm &amp;ndash;create /dev/md0 &amp;ndash;level=5 &amp;ndash;chunk=64 &amp;ndash;raid-devices=4 &amp;ndash;spare-devices=1 /dev/sd[b-f]&lt;/p&gt;
@@ -138,7 +592,7 @@ unused devices: &amp;lt;none&amp;gt;
 显示设备盘为sdf为热备盘， 使用fdisk –l查看磁盘阵列, 显示磁盘大小为：Disk /dev/md0: 320 MB
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h5 id=&#34;停止raid5阵列&#34;&gt;停止RAID5阵列&lt;/h5&gt;
+&lt;h4 id=&#34;停止raid5阵列&#34;&gt;停止RAID5阵列&lt;/h4&gt;
 &lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;执行命令: sudo mdadm -Ss 或者 mdadm &amp;ndash;stop /dev/md0&lt;/p&gt;
@@ -153,7 +607,7 @@ unused devices: &amp;lt;none&amp;gt;
 // 磁盘已经停止 mdadm: stopped /dev/md0
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h5 id=&#34;启动raid5阵列&#34;&gt;启动RAID5阵列&lt;/h5&gt;
+&lt;h4 id=&#34;启动raid5阵列&#34;&gt;启动RAID5阵列&lt;/h4&gt;
 &lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;执行命令: sudo mdadm -As&lt;/p&gt;
@@ -173,7 +627,7 @@ unused devices: &amp;lt;none&amp;gt;
 
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h5 id=&#34;查看md状态&#34;&gt;查看md状态&lt;/h5&gt;
+&lt;h4 id=&#34;查看md状态&#34;&gt;查看md状态&lt;/h4&gt;
 &lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;执行命令：mdadm -D /dev/md0&lt;/p&gt;
@@ -216,7 +670,7 @@ Consistency Policy : resync
 
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h5 id=&#34;模拟损坏&#34;&gt;模拟损坏&lt;/h5&gt;
+&lt;h4 id=&#34;模拟损坏&#34;&gt;模拟损坏&lt;/h4&gt;
 &lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;执行命令：mdadm /dev/md0 -f /dev/sdf&lt;/p&gt;
@@ -267,7 +721,7 @@ Consistency Policy : resync
        4       8       80        -      faulty   /dev/sdf
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h5 id=&#34;移除损坏的磁盘&#34;&gt;移除损坏的磁盘&lt;/h5&gt;
+&lt;h4 id=&#34;移除损坏的磁盘&#34;&gt;移除损坏的磁盘&lt;/h4&gt;
 &lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;执行命令：mdadm /dev/md0 -r /dev/sdf&lt;/p&gt;
@@ -317,7 +771,7 @@ Consistency Policy : resync
 
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h5 id=&#34;添加新的硬盘到已有阵列&#34;&gt;添加新的硬盘到已有阵列&lt;/h5&gt;
+&lt;h4 id=&#34;添加新的硬盘到已有阵列&#34;&gt;添加新的硬盘到已有阵列&lt;/h4&gt;
 &lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;执行命令：mdadm /dev/md0 -a /dev/sdf&lt;/p&gt;

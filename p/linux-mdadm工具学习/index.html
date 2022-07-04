@@ -137,11 +137,11 @@
     <section class="article-content">
     <h3 id="mdadm">mdadm</h3>
 <p>mdadm是linux下的一款标准的RAID的管理工具</p>
-<h5 id="基本语法">基本语法</h5>
+<h4 id="基本语法">基本语法</h4>
 <p>mdadm [mode] <!-- raw HTML omitted --> [option] <!-- raw HTML omitted --></p>
-<h5 id="目前支持">目前支持</h5>
+<h4 id="目前支持">目前支持</h4>
 <p>RAID0(striping), RAID1(mirroring), RAID4, RAID5, RAID6, RAID10, MULTIPATH和FAULTY</p>
-<h5 id="模式">模式</h5>
+<h4 id="模式">模式</h4>
 <ul>
 <li>Assemble：加入一个以前定义的阵列</li>
 <li>Build：创建一个没有超级块的阵列</li>
@@ -151,7 +151,7 @@
 <li>Follow or Monitor:监控RAID的状态</li>
 <li>Grow：改变RAID的容量或阵列中的设备数目 ；-n,&ndash;raid-devices=: 活动设备个数-x,&ndash;spare-devices=：备用盘个数-c,&ndash;chunk=: CHUNK大小, 默认为64K，重要的参数,决定了一次向阵列中每个磁盘写入数据的大小-z,&ndash;size=：阵列中从每个磁盘获取的空间总数-l,&ndash;level=: RAID级别-p,&ndash;layout=：设定raid5 和raid10的奇偶校验规则；并且控制故障的故障模式&ndash;parity: 类似于&ndash;layout&ndash;assume-clean:目前仅用于 &ndash;build 选项-R &ndash;run: 强制激活RAID，使用这个选项，设备上有旧的元数据信息的提示会被忽略-N &ndash;name=: 设定阵列的名称–-rounding：在linear array中的rounding factor，等于条带大小。</li>
 </ul>
-<h5 id="可用的options">可用的[options]</h5>
+<h4 id="可用的options">可用的[options]</h4>
 <ul>
 <li>-A，&ndash;assemble：加入一个以前定义的阵列</li>
 <li>-B,&ndash;build:Build a legacy array without superblocks .</li>
@@ -181,8 +181,8 @@
 <li>-f, &ndash;force:通常mdadm不允许只用一个device创建阵列，而且创建raid5时会使用一个device作为missingdrive。此选项正相反</li>
 <li>-a, &ndash;auto{=no,yes,md,mdp,part,p}{NN}</li>
 </ul>
-<h4 id="测试">测试</h4>
-<h5 id="创建raid5阵列">创建RAID5阵列</h5>
+<h3 id="测试">测试</h3>
+<h4 id="创建raid5阵列">创建RAID5阵列</h4>
 <ul>
 <li>
 <p>执行命令: mdadm &ndash;create /dev/md0 &ndash;level=5 &ndash;chunk=64 &ndash;raid-devices=4 &ndash;spare-devices=1 /dev/sd[b-f]</p>
@@ -200,7 +200,7 @@ unused devices: &lt;none&gt;
 显示设备盘为sdf为热备盘， 使用fdisk –l查看磁盘阵列, 显示磁盘大小为：Disk /dev/md0: 320 MB
 </code></pre></li>
 </ul>
-<h5 id="停止raid5阵列">停止RAID5阵列</h5>
+<h4 id="停止raid5阵列">停止RAID5阵列</h4>
 <ul>
 <li>
 <p>执行命令: sudo mdadm -Ss 或者 mdadm &ndash;stop /dev/md0</p>
@@ -215,7 +215,7 @@ unused devices: &lt;none&gt;
 // 磁盘已经停止 mdadm: stopped /dev/md0
 </code></pre></li>
 </ul>
-<h5 id="启动raid5阵列">启动RAID5阵列</h5>
+<h4 id="启动raid5阵列">启动RAID5阵列</h4>
 <ul>
 <li>
 <p>执行命令: sudo mdadm -As</p>
@@ -235,7 +235,7 @@ unused devices: &lt;none&gt;
 
 </code></pre></li>
 </ul>
-<h5 id="查看md状态">查看md状态</h5>
+<h4 id="查看md状态">查看md状态</h4>
 <ul>
 <li>
 <p>执行命令：mdadm -D /dev/md0</p>
@@ -278,7 +278,7 @@ Consistency Policy : resync
 
 </code></pre></li>
 </ul>
-<h5 id="模拟损坏">模拟损坏</h5>
+<h4 id="模拟损坏">模拟损坏</h4>
 <ul>
 <li>
 <p>执行命令：mdadm /dev/md0 -f /dev/sdf</p>
@@ -329,7 +329,7 @@ Consistency Policy : resync
        4       8       80        -      faulty   /dev/sdf
 </code></pre></li>
 </ul>
-<h5 id="移除损坏的磁盘">移除损坏的磁盘</h5>
+<h4 id="移除损坏的磁盘">移除损坏的磁盘</h4>
 <ul>
 <li>
 <p>执行命令：mdadm /dev/md0 -r /dev/sdf</p>
@@ -379,7 +379,7 @@ Consistency Policy : resync
 
 </code></pre></li>
 </ul>
-<h5 id="添加新的硬盘到已有阵列">添加新的硬盘到已有阵列</h5>
+<h4 id="添加新的硬盘到已有阵列">添加新的硬盘到已有阵列</h4>
 <ul>
 <li>
 <p>执行命令：mdadm /dev/md0 -a /dev/sdf</p>
@@ -461,6 +461,28 @@ Consistency Policy : resync
         <h2 class="section-title">相关文章</h2>
         <div class="related-contents">
             <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/">
+        
+        
+            <div class="article-image">
+                <img src="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/_huf526acdabf778a619d0264ba73835043_26467_bb792ebed6f9f38f37e764f988a34d5f.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-lxfLbC97QNytFfiJIQJuVQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">redis 常用命令的实践</h2>
+        </div>
+    </a>
+</article>
                 
                     
 <article class="has-image">
@@ -546,28 +568,6 @@ Consistency Policy : resync
 
         <div class="article-details">
             <h2 class="article-title">Linux-raid学习</h2>
-        </div>
-    </a>
-</article>
-                
-                    
-<article class="has-image">
-    <a href="/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
-        
-        
-            <div class="article-image">
-                <img src="/p/linux%E5%AD%98%E5%82%A8%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/1.326ee6a4fbef335065f5784cfffb098a_hub95fcc2a246a65208e8832126d70bee7_36058_250x150_fill_box_smart1_3.png" 
-                        width="250" 
-                        height="150" 
-                        loading="lazy" 
-                        data-key="" 
-                        data-hash="md5-Mm7mpPvvM1Bl9XhM//sJig==">
-                
-            </div>
-        
-
-        <div class="article-details">
-            <h2 class="article-title">Linux存储技术学习笔记</h2>
         </div>
     </a>
 </article>
@@ -701,8 +701,21 @@ Consistency Policy : resync
       <ol>
         <li><a href="#mdadm">mdadm</a>
           <ol>
-            <li></li>
-            <li><a href="#测试">测试</a></li>
+            <li><a href="#基本语法">基本语法</a></li>
+            <li><a href="#目前支持">目前支持</a></li>
+            <li><a href="#模式">模式</a></li>
+            <li><a href="#可用的options">可用的[options]</a></li>
+          </ol>
+        </li>
+        <li><a href="#测试">测试</a>
+          <ol>
+            <li><a href="#创建raid5阵列">创建RAID5阵列</a></li>
+            <li><a href="#停止raid5阵列">停止RAID5阵列</a></li>
+            <li><a href="#启动raid5阵列">启动RAID5阵列</a></li>
+            <li><a href="#查看md状态">查看md状态</a></li>
+            <li><a href="#模拟损坏">模拟损坏</a></li>
+            <li><a href="#移除损坏的磁盘">移除损坏的磁盘</a></li>
+            <li><a href="#添加新的硬盘到已有阵列">添加新的硬盘到已有阵列</a></li>
           </ol>
         </li>
       </ol>

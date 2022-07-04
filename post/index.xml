@@ -6,7 +6,32 @@
     <description>Recent content in Posts on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Mon, 20 Jun 2022 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 01 Jul 2022 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>redis 常用命令的实践</title>
+      <link>https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/</link>
+      <pubDate>Fri, 01 Jul 2022 22:00:38 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/</guid>
+      <description>redis 常用命令的实践 结构化与非结构化   关系型数据库
+ 结构化 关联性 sql查询 满足事务的ACID  ![](C:\Users\90953\AppData\Roaming
+  非关系型数据
+ 非结构化 无关联性 非sql base(基础性的事务)    
+redis 通用命令 通用指令是部分数据类型的，都可以使用的指令，常见的有：
+ KEYS:查看符合模板的所有key del：删除指定的key exists:判读key是否存在 expire:给一个可以设置有效期（单位时间为s），有效期到时会自动删除key ttl:查看key的有效期  
+string 类型常用命令 string类型是redis中最简单的存储类型，其value是字符串，字符串可以分为3类：
+  string:普通字符串
+  int：整数类型，可以自增或自减
+  float:浮点型，可以自增或自减
+无论是哪一种格式，底层都是字节数组形式存储，只不过是编码不同，字符串类型的最大空间不超过512M
+
+  常用的命令有：   set:添加或者修改也存在的的一个string类型的键值对
+  get:根据key获取string类型的value
+  mset:批量添加多个stingl类型的键值对
+  mget:根据多个key获取多个string类型的value
+  incr:让一个int的key自增1</description>
+    </item>
+    
     <item>
       <title>Disk Test</title>
       <link>https://zcj-git520.github.io/p/disk-test/</link>

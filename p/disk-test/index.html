@@ -140,7 +140,7 @@
 <ul>
 <li>直接跳过文件系统，对磁盘数据进行读写，判断磁盘测试数据读写校验数据是否丢失</li>
 </ul>
-<h5 id="磁盘信息">磁盘信息</h5>
+<h4 id="磁盘信息">磁盘信息</h4>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">DiskSizeInfo</span> <span class="kd">struct</span> <span class="p">{</span>
 	<span class="nx">DiskPath</span>  <span class="kt">string</span>             <span class="c1">// 磁盘名
 </span><span class="c1"></span>	<span class="nx">SrcMap</span>    <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span>  <span class="c1">// 测试数据集(文件夹/校验数据)
@@ -148,7 +148,7 @@
 </span><span class="c1"></span>	<span class="nx">SeekSize</span>  <span class="kt">int</span>				 <span class="c1">// 磁盘数据偏移
 </span><span class="c1"></span>	<span class="nx">BlockSize</span> <span class="kt">int</span>                <span class="c1">// 读写磁盘数据的大小
 </span><span class="c1"></span><span class="p">}</span>
-</code></pre></div><h5 id="使用两种方式跳过文件系统直接对磁盘进行读写">使用两种方式跳过文件系统直接对磁盘进行读写</h5>
+</code></pre></div><h4 id="使用两种方式跳过文件系统直接对磁盘进行读写">使用两种方式跳过文件系统直接对磁盘进行读写</h4>
 <ol>
 <li>直接读写磁盘</li>
 </ol>
@@ -161,20 +161,20 @@
 </span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <span class="o">*</span><span class="nx">DiskSizeInfo</span><span class="p">)</span><span class="nf">WriteDisk</span><span class="p">(</span><span class="nx">staPos</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">iFile</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">error</span> 
 <span class="c1">// 通过dd命令读取磁盘数据
 </span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <span class="o">*</span><span class="nx">DiskSizeInfo</span><span class="p">)</span><span class="nf">ReadDisk</span><span class="p">(</span><span class="nx">staPos</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">oFile</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">error</span>
-</code></pre></div><h5 id="对磁盘已有数据进行校验">对磁盘已有数据进行校验</h5>
+</code></pre></div><h4 id="对磁盘已有数据进行校验">对磁盘已有数据进行校验</h4>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <span class="o">*</span><span class="nx">DiskSizeInfo</span><span class="p">)</span><span class="nf">CheckReadDisk</span><span class="p">(</span><span class="nx">src</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">i</span> <span class="kt">int</span><span class="p">)</span>
-</code></pre></div><h5 id="磁盘校验数据的类型的返回">磁盘校验数据的类型的返回</h5>
+</code></pre></div><h4 id="磁盘校验数据的类型的返回">磁盘校验数据的类型的返回</h4>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <span class="o">*</span><span class="nx">DiskSizeInfo</span><span class="p">)</span><span class="nf">DiskDatatype</span><span class="p">(</span> <span class="nx">i</span> <span class="kt">int</span><span class="p">)</span> 
-</code></pre></div><h5 id="循环通过数据集进行校验">循环通过数据集进行校验</h5>
+</code></pre></div><h4 id="循环通过数据集进行校验">循环通过数据集进行校验</h4>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <span class="o">*</span><span class="nx">DiskSizeInfo</span><span class="p">)</span><span class="nf">Run</span><span class="p">()</span> <span class="kt">error</span> 
-</code></pre></div><h5 id="初始化校验集数据文件">初始化校验集数据文件</h5>
+</code></pre></div><h4 id="初始化校验集数据文件">初始化校验集数据文件</h4>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <span class="o">*</span><span class="nx">DiskSizeInfo</span><span class="p">)</span><span class="nf">initFile</span><span class="p">()</span><span class="kt">error</span>
-</code></pre></div><h5 id="磁盘的挂起或者卸载针对与带文件系统和磁盘清除">磁盘的挂起或者卸载（针对与带文件系统）和磁盘清除</h5>
+</code></pre></div><h4 id="磁盘的挂起或者卸载针对与带文件系统和磁盘清除">磁盘的挂起或者卸载（针对与带文件系统）和磁盘清除</h4>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <span class="o">*</span><span class="nx">DiskSizeInfo</span><span class="p">)</span><span class="nf">MountDisk</span><span class="p">(</span><span class="nx">src</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">error</span>
 <span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <span class="o">*</span><span class="nx">DiskSizeInfo</span><span class="p">)</span><span class="nf">ClearDisk</span><span class="p">(</span><span class="nx">src</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">error</span> 
-</code></pre></div><h5 id="初始化校验集数据文件-1">初始化校验集数据文件</h5>
+</code></pre></div><h4 id="初始化校验集数据文件-1">初始化校验集数据文件</h4>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">d</span> <span class="o">*</span><span class="nx">DiskSizeInfo</span><span class="p">)</span><span class="nf">initFile</span><span class="p">()</span>
-</code></pre></div><h5 id="其他功能">其他功能</h5>
+</code></pre></div><h4 id="其他功能">其他功能</h4>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="nx">文件通过md5校验比较</span>
 <span class="kd">func</span> <span class="nf">FileCompare</span><span class="p">(</span><span class="nx">src</span><span class="p">,</span> <span class="nx">dst</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="kt">bool</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
 <span class="nx">生成文件校验和函数</span>
@@ -460,7 +460,15 @@
       <ol>
         <li><a href="#disktext">diskText</a>
           <ol>
-            <li></li>
+            <li><a href="#磁盘信息">磁盘信息</a></li>
+            <li><a href="#使用两种方式跳过文件系统直接对磁盘进行读写">使用两种方式跳过文件系统直接对磁盘进行读写</a></li>
+            <li><a href="#对磁盘已有数据进行校验">对磁盘已有数据进行校验</a></li>
+            <li><a href="#磁盘校验数据的类型的返回">磁盘校验数据的类型的返回</a></li>
+            <li><a href="#循环通过数据集进行校验">循环通过数据集进行校验</a></li>
+            <li><a href="#初始化校验集数据文件">初始化校验集数据文件</a></li>
+            <li><a href="#磁盘的挂起或者卸载针对与带文件系统和磁盘清除">磁盘的挂起或者卸载（针对与带文件系统）和磁盘清除</a></li>
+            <li><a href="#初始化校验集数据文件-1">初始化校验集数据文件</a></li>
+            <li><a href="#其他功能">其他功能</a></li>
           </ol>
         </li>
       </ol>
