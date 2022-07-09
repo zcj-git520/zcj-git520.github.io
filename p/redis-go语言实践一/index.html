@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='redis GO语言实践一 简单介绍  使用go 语言操作redis数据库 使用的库为：go get -u github.com/go-redis/redis 对redis数据库的连接，对字符串和列表的操作  代码如下 package main import ( &amp;#34;fmt&amp;#34; &amp;#34;github.com/go-redis/redis&amp;#34; &amp;#34;log&amp;#34; &amp;#34;time&amp;#34; ) const ( ADDR = &amp;#34;192.168.1.128:6379&amp;#34; PASSWORD = &amp;#34;&amp;#34; DB = 0 ) type RedisInfo struct { Option *redis.Options RedisDb *redis.Client } // 连接redis数据库 func (r *RedisInfo)ConnRedis() error{ redisDb := redis.NewClient(r.Option) // 判断是否成功连接数据库 	_, err := redisDb.Ping().Result() if err != nil { return err } r.RedisDb = redisDb return nil } /* 操作字符串类型 */ // 操作set/get func (r *RedisInfo)OperaStringSGet() { // 添加key/value 可设置过期时间 	err := r.'><title>redis GO语言实践一</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/redis-go%E8%AF%AD%E8%A8%80%E5%AE%9E%E8%B7%B5%E4%B8%80/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='redis GO语言实践一'>
+<meta property='og:description' content='redis GO语言实践一 简单介绍  使用go 语言操作redis数据库 使用的库为：go get -u github.com/go-redis/redis 对redis数据库的连接，对字符串和列表的操作  代码如下 package main import ( &amp;#34;fmt&amp;#34; &amp;#34;github.com/go-redis/redis&amp;#34; &amp;#34;log&amp;#34; &amp;#34;time&amp;#34; ) const ( ADDR = &amp;#34;192.168.1.128:6379&amp;#34; PASSWORD = &amp;#34;&amp;#34; DB = 0 ) type RedisInfo struct { Option *redis.Options RedisDb *redis.Client } // 连接redis数据库 func (r *RedisInfo)ConnRedis() error{ redisDb := redis.NewClient(r.Option) // 判断是否成功连接数据库 	_, err := redisDb.Ping().Result() if err != nil { return err } r.RedisDb = redisDb return nil } /* 操作字符串类型 */ // 操作set/get func (r *RedisInfo)OperaStringSGet() { // 添加key/value 可设置过期时间 	err := r.'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/redis-go%E8%AF%AD%E8%A8%80%E5%AE%9E%E8%B7%B5%E4%B8%80/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2022-07-08T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2022-07-08T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/redis-go%E8%AF%AD%E8%A8%80%E5%AE%9E%E8%B7%B5%E4%B8%80/1.png' />
+<meta name="twitter:title" content="redis GO语言实践一">
+<meta name="twitter:description" content="redis GO语言实践一 简单介绍  使用go 语言操作redis数据库 使用的库为：go get -u github.com/go-redis/redis 对redis数据库的连接，对字符串和列表的操作  代码如下 package main import ( &amp;#34;fmt&amp;#34; &amp;#34;github.com/go-redis/redis&amp;#34; &amp;#34;log&amp;#34; &amp;#34;time&amp;#34; ) const ( ADDR = &amp;#34;192.168.1.128:6379&amp;#34; PASSWORD = &amp;#34;&amp;#34; DB = 0 ) type RedisInfo struct { Option *redis.Options RedisDb *redis.Client } // 连接redis数据库 func (r *RedisInfo)ConnRedis() error{ redisDb := redis.NewClient(r.Option) // 判断是否成功连接数据库 	_, err := redisDb.Ping().Result() if err != nil { return err } r.RedisDb = redisDb return nil } /* 操作字符串类型 */ // 操作set/get func (r *RedisInfo)OperaStringSGet() { // 添加key/value 可设置过期时间 	err := r."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/redis-go%E8%AF%AD%E8%A8%80%E5%AE%9E%E8%B7%B5%E4%B8%80/1.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/redis-go%E8%AF%AD%E8%A8%80%E5%AE%9E%E8%B7%B5%E4%B8%80/">
+                <img src="/p/redis-go%E8%AF%AD%E8%A8%80%E5%AE%9E%E8%B7%B5%E4%B8%80/1_hu92e993ca1384cf9d7fc0be4e9454fb8f_41826_800x0_resize_box_3.png"
+                        srcset="/p/redis-go%E8%AF%AD%E8%A8%80%E5%AE%9E%E8%B7%B5%E4%B8%80/1_hu92e993ca1384cf9d7fc0be4e9454fb8f_41826_800x0_resize_box_3.png 800w, /p/redis-go%E8%AF%AD%E8%A8%80%E5%AE%9E%E8%B7%B5%E4%B8%80/1_hu92e993ca1384cf9d7fc0be4e9454fb8f_41826_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="475" 
+                        loading="lazy"
+                        alt="Featured image of post redis GO语言实践一" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/language/" style="background-color: #2a9d8f; color: #fff;">
+                语言学习
+            </a>
+        
+            <a href="/categories/golang/" style="background-color: #2a9d8f; color: #fff;">
+                Golang
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/redis-go%E8%AF%AD%E8%A8%80%E5%AE%9E%E8%B7%B5%E4%B8%80/">redis GO语言实践一</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jul 08, 2022</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 4 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h2 id="redis-go语言实践一">redis GO语言实践一</h2>
+<h3 id="简单介绍">简单介绍</h3>
+<ul>
+<li>使用go 语言操作redis数据库</li>
+<li>使用的库为：go get -u github.com/go-redis/redis</li>
+<li>对redis数据库的连接，对字符串和列表的操作</li>
+</ul>
+<h3 id="代码如下">代码如下</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&#34;fmt&#34;</span>
+	<span class="s">&#34;github.com/go-redis/redis&#34;</span>
+	<span class="s">&#34;log&#34;</span>
+	<span class="s">&#34;time&#34;</span>
+<span class="p">)</span>
+
+<span class="kd">const</span> <span class="p">(</span>
+	<span class="nx">ADDR</span> <span class="p">=</span> <span class="s">&#34;192.168.1.128:6379&#34;</span>
+	<span class="nx">PASSWORD</span> <span class="p">=</span> <span class="s">&#34;&#34;</span>
+	<span class="nx">DB</span> <span class="p">=</span> <span class="mi">0</span>
+<span class="p">)</span>
+
+<span class="kd">type</span> <span class="nx">RedisInfo</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Option</span>    <span class="o">*</span><span class="nx">redis</span><span class="p">.</span><span class="nx">Options</span>
+	<span class="nx">RedisDb</span>   <span class="o">*</span><span class="nx">redis</span><span class="p">.</span><span class="nx">Client</span>
+<span class="p">}</span>
+
+
+<span class="c1">// 连接redis数据库
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">RedisInfo</span><span class="p">)</span><span class="nf">ConnRedis</span><span class="p">()</span> <span class="kt">error</span><span class="p">{</span>
+	<span class="nx">redisDb</span> <span class="o">:=</span> <span class="nx">redis</span><span class="p">.</span><span class="nf">NewClient</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">Option</span><span class="p">)</span>
+	<span class="c1">// 判断是否成功连接数据库
+</span><span class="c1"></span>	<span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">redisDb</span><span class="p">.</span><span class="nf">Ping</span><span class="p">().</span><span class="nf">Result</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">err</span>
+	<span class="p">}</span>
+	<span class="nx">r</span><span class="p">.</span><span class="nx">RedisDb</span> <span class="p">=</span> <span class="nx">redisDb</span>
+	<span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span>
+
+<span class="cm">/* 操作字符串类型 */</span>
+<span class="c1">// 操作set/get
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">RedisInfo</span><span class="p">)</span><span class="nf">OperaStringSGet</span><span class="p">()</span>  <span class="p">{</span>
+	<span class="c1">// 添加key/value 可设置过期时间
+</span><span class="c1"></span>	<span class="nx">err</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">RedisDb</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;Key1&#34;</span><span class="p">,</span> <span class="s">&#34;value1&#34;</span><span class="p">,</span> <span class="mi">4</span><span class="o">*</span><span class="nx">time</span><span class="p">.</span><span class="nx">Millisecond</span><span class="p">).</span><span class="nf">Err</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;添加key失败&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+	<span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="nx">time</span><span class="p">.</span><span class="nx">Millisecond</span><span class="p">)</span>
+	<span class="c1">// 获取key的值
+</span><span class="c1"></span>	<span class="nx">value</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">RedisDb</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;Key1&#34;</span><span class="p">).</span><span class="nf">Result</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;获取key的值失败&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+	<span class="k">if</span> <span class="nx">value</span> <span class="o">==</span> <span class="s">&#34;&#34;</span><span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;key 不存在&#34;</span><span class="p">)</span>
+		<span class="c1">// 如果不存在则就添加, 不设置过期时间
+</span><span class="c1"></span>		<span class="nx">r</span><span class="p">.</span><span class="nx">RedisDb</span><span class="p">.</span><span class="nf">SetNX</span><span class="p">(</span><span class="s">&#34;Key1&#34;</span><span class="p">,</span> <span class="s">&#34;setnx value&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="p">}</span><span class="k">else</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;获得value：%v \n&#34;</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 操作mset/mget
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">RedisInfo</span><span class="p">)</span><span class="nf">OperaStringMSGet</span><span class="p">()</span>  <span class="p">{</span>
+	<span class="c1">// 批量添加key-value
+</span><span class="c1"></span>	<span class="nx">err</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">RedisDb</span><span class="p">.</span><span class="nf">MSet</span><span class="p">(</span><span class="s">&#34;key0&#34;</span><span class="p">,</span> <span class="s">&#34;value0&#34;</span><span class="p">,</span> <span class="s">&#34;key2&#34;</span><span class="p">,</span> <span class="s">&#34;value2&#34;</span><span class="p">,</span> <span class="s">&#34;key3&#34;</span><span class="p">,</span> <span class="s">&#34;value3&#34;</span><span class="p">,</span><span class="s">&#34;key4&#34;</span><span class="p">,</span> <span class="s">&#34;value4&#34;</span><span class="p">).</span><span class="nf">Err</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;批量添加key-value 失败 %v \n&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+	<span class="c1">// 批量获取value
+</span><span class="c1"></span>	<span class="nx">values</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">RedisDb</span><span class="p">.</span><span class="nf">MGet</span><span class="p">(</span><span class="s">&#34;key0&#34;</span><span class="p">,</span><span class="s">&#34;key1&#34;</span><span class="p">,</span><span class="s">&#34;key2&#34;</span><span class="p">,</span><span class="s">&#34;key3&#34;</span><span class="p">,</span> <span class="s">&#34;key4&#34;</span><span class="p">).</span><span class="nf">Result</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;批量获取value 失败：%v \n&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;values is : %v\n&#34;</span><span class="p">,</span> <span class="nx">values</span><span class="p">)</span>
+	<span class="c1">// 删除keys
+</span><span class="c1"></span>	<span class="nx">err</span> <span class="p">=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">RedisDb</span><span class="p">.</span><span class="nf">Del</span><span class="p">(</span><span class="s">&#34;key0&#34;</span><span class="p">).</span><span class="nf">Err</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;删除keys 失败 %v\n&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+	<span class="c1">// 获得指定的keys
+</span><span class="c1"></span>	<span class="nx">keys</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">RedisDb</span><span class="p">.</span><span class="nf">Keys</span><span class="p">(</span><span class="s">&#34;k*&#34;</span><span class="p">).</span><span class="nf">Result</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34; 获得指定的keys 失败 %v\n&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span><span class="k">else</span><span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;keys is :%v\n&#34;</span><span class="p">,</span> <span class="nx">keys</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 操作自增自减
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">RedisInfo</span><span class="p">)</span><span class="nf">OperaStringNcr</span><span class="p">(){</span>
+	<span class="c1">// 增加数据
+</span><span class="c1"></span>	<span class="nx">err</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">RedisDb</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;score&#34;</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">0</span><span class="p">).</span><span class="nf">Err</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;增加数据失败&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+	<span class="c1">//自增操作
+</span><span class="c1"></span>	<span class="nx">err</span> <span class="p">=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">RedisDb</span><span class="p">.</span><span class="nf">Incr</span><span class="p">(</span><span class="s">&#34;score&#34;</span><span class="p">).</span><span class="nf">Err</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;自增失败&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+	<span class="nx">value</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">RedisDb</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;score&#34;</span><span class="p">).</span><span class="nf">Result</span><span class="p">()</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;成绩为:%v\n&#34;</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+	<span class="c1">// 步长增加
+</span><span class="c1"></span>	<span class="nx">err</span> <span class="p">=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">RedisDb</span><span class="p">.</span><span class="nf">IncrBy</span><span class="p">(</span><span class="s">&#34;score&#34;</span><span class="p">,</span> <span class="mi">10</span><span class="p">).</span><span class="nf">Err</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;步长增加失败&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+	<span class="nx">value</span><span class="p">,</span> <span class="nx">_</span> <span class="p">=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">RedisDb</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;score&#34;</span><span class="p">).</span><span class="nf">Result</span><span class="p">()</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;成绩为:%v\n&#34;</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+	<span class="c1">// 自减
+</span><span class="c1"></span>	<span class="nx">err</span> <span class="p">=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">RedisDb</span><span class="p">.</span><span class="nf">Decr</span><span class="p">(</span><span class="s">&#34;score&#34;</span><span class="p">).</span><span class="nf">Err</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;自减失败&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+	<span class="nx">value</span><span class="p">,</span> <span class="nx">_</span> <span class="p">=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">RedisDb</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;score&#34;</span><span class="p">).</span><span class="nf">Result</span><span class="p">()</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;成绩为:%v\n&#34;</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+	<span class="c1">// 步长减少
+</span><span class="c1"></span>	<span class="nx">err</span> <span class="p">=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">RedisDb</span><span class="p">.</span><span class="nf">DecrBy</span><span class="p">(</span><span class="s">&#34;score&#34;</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span><span class="p">).</span><span class="nf">Err</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;步长减少失败&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+	<span class="nx">value</span><span class="p">,</span> <span class="nx">_</span> <span class="p">=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">RedisDb</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;score&#34;</span><span class="p">).</span><span class="nf">Result</span><span class="p">()</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;成绩为:%v\n&#34;</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+	<span class="c1">// 浮点数的自增/自减
+</span><span class="c1"></span>	<span class="nx">err</span> <span class="p">=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">RedisDb</span><span class="p">.</span><span class="nf">IncrByFloat</span><span class="p">(</span><span class="s">&#34;score&#34;</span><span class="p">,</span> <span class="o">-</span><span class="mf">20.5</span><span class="p">).</span><span class="nf">Err</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;浮点数的自增/自减失败&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+	<span class="nx">value</span><span class="p">,</span> <span class="nx">_</span> <span class="p">=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">RedisDb</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;score&#34;</span><span class="p">).</span><span class="nf">Result</span><span class="p">()</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;成绩为:%v\n&#34;</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="cm">/* list类型的操作*/</span>
+<span class="c1">//
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">RedisInfo</span><span class="p">)</span><span class="nf">OperaListLData</span><span class="p">()</span> <span class="p">{</span>
+	<span class="c1">// 左边Push任意增加key-value
+</span><span class="c1"></span>	<span class="nx">err</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">RedisDb</span><span class="p">.</span><span class="nf">LPush</span><span class="p">(</span><span class="s">&#34;Lkey1&#34;</span><span class="p">,</span> <span class="s">&#34;Lvalue1&#34;</span><span class="p">,</span> <span class="s">&#34;Lvalue2&#34;</span><span class="p">,</span> <span class="s">&#34;Lvalue3&#34;</span><span class="p">).</span><span class="nf">Err</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;左边Push增加key失败：&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+	<span class="c1">// 左边增加数据，当list不存在时，不能增加
+</span><span class="c1"></span>	<span class="nx">err</span> <span class="p">=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">RedisDb</span><span class="p">.</span><span class="nf">LPushX</span><span class="p">(</span><span class="s">&#34;LXkey&#34;</span><span class="p">,</span> <span class="s">&#34;LXValue&#34;</span><span class="p">).</span><span class="nf">Err</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;左边Push增加key失败：&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+	<span class="c1">// 获得list长度
+</span><span class="c1"></span>	<span class="nx">LLen</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">RedisDb</span><span class="p">.</span><span class="nf">LLen</span><span class="p">(</span><span class="s">&#34;Lkey1&#34;</span><span class="p">).</span><span class="nf">Result</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;获得list长度失败：&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Lkey1 list len is :&#34;</span><span class="p">,</span> <span class="nx">LLen</span><span class="p">)</span>
+	<span class="c1">// 获取列表数据
+</span><span class="c1"></span>	<span class="nx">LData</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">RedisDb</span><span class="p">.</span><span class="nf">LRange</span><span class="p">(</span><span class="s">&#34;Lkey1&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">).</span><span class="nf">Result</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;获取列表数据失败&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;列表数据为：&#34;</span><span class="p">,</span> <span class="nx">LData</span><span class="p">)</span>
+	<span class="c1">// 修改list中存在的value
+</span><span class="c1"></span>	<span class="nx">err</span> <span class="p">=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">RedisDb</span><span class="p">.</span><span class="nf">LSet</span><span class="p">(</span><span class="s">&#34;Lkey1&#34;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&#34;updateValue&#34;</span><span class="p">).</span><span class="nf">Err</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;修改值失败&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+	<span class="c1">// 移除并返回list左边第一个数据
+</span><span class="c1"></span>	<span class="nx">PData</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">RedisDb</span><span class="p">.</span><span class="nf">LPop</span><span class="p">(</span><span class="s">&#34;Lkey1&#34;</span><span class="p">).</span><span class="nf">Result</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;移除数据失败&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;PData is :&#34;</span><span class="p">,</span> <span class="nx">PData</span><span class="p">)</span>
+	<span class="c1">// 移除list中重复的value,count为1时，移除一个
+</span><span class="c1"></span>	<span class="nx">count</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">RedisDb</span><span class="p">.</span><span class="nf">LRem</span><span class="p">(</span><span class="s">&#34;Lkey1&#34;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span><span class="s">&#34;Lvalue1&#34;</span><span class="p">).</span><span class="nf">Result</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;移除多个重读的value值失败&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;count is&#34;</span><span class="p">,</span> <span class="nx">count</span><span class="p">)</span>
+	<span class="c1">// 列表索引获得数据
+</span><span class="c1"></span>	<span class="nx">data</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">RedisDb</span><span class="p">.</span><span class="nf">LIndex</span><span class="p">(</span><span class="s">&#34;Lkey1&#34;</span><span class="p">,</span> <span class="mi">1</span><span class="p">).</span><span class="nf">Result</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;获得数据失败&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;data is &#34;</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span>
+	<span class="c1">// 将某个数据插入到某个值前(before)插入到某个值之后(after)
+</span><span class="c1"></span>	<span class="nx">err</span> <span class="p">=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">RedisDb</span><span class="p">.</span><span class="nf">LInsert</span><span class="p">(</span><span class="s">&#34;Lkey1&#34;</span><span class="p">,</span> <span class="s">&#34;before&#34;</span><span class="p">,</span> <span class="s">&#34;updateValue&#34;</span><span class="p">,</span> <span class="s">&#34;insetData&#34;</span><span class="p">).</span><span class="nf">Err</span><span class="p">()</span>
+	<span class="c1">//err := r.RedisDb.LInsertBefore(&#34;Lkey1&#34;, &#34;updateValue&#34;, &#34;insetData&#34;).Err()
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;插入数据失败&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+	<span class="c1">// 截取名称为key的list
+</span><span class="c1"></span>	<span class="nx">ok</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">RedisDb</span><span class="p">.</span><span class="nf">LTrim</span><span class="p">(</span><span class="s">&#34;Lkey1&#34;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">).</span><span class="nf">Result</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;获取新的list失败&#34;</span><span class="p">)</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span> <span class="nx">ok</span><span class="p">)</span>
+	<span class="nx">LData</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">RedisDb</span><span class="p">.</span><span class="nf">LRange</span><span class="p">(</span><span class="s">&#34;Lkey1&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">).</span><span class="nf">Result</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;获取列表数据失败&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;列表数据为：&#34;</span><span class="p">,</span> <span class="nx">LData</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">opt</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">redis</span><span class="p">.</span><span class="nx">Options</span><span class="p">{</span>
+		<span class="nx">Network</span><span class="p">:</span>            <span class="s">&#34;tcp&#34;</span><span class="p">,</span>    <span class="c1">// 网络类型 tcp 或者 unix.
+</span><span class="c1"></span>		<span class="nx">Addr</span><span class="p">:</span>               <span class="nx">ADDR</span><span class="p">,</span>
+		<span class="nx">OnConnect</span><span class="p">:</span>          <span class="kc">nil</span><span class="p">,</span>      <span class="c1">// 新建一个redis连接的时候，会回调这个函数
+</span><span class="c1"></span>		<span class="nx">Password</span><span class="p">:</span>           <span class="nx">PASSWORD</span><span class="p">,</span> <span class="c1">// redis数据库连接的密码
+</span><span class="c1"></span>		<span class="nx">DB</span><span class="p">:</span>                 <span class="nx">DB</span><span class="p">,</span>       <span class="c1">// redis数据库，序号从0开始，默认是0，可以不用设置
+</span><span class="c1"></span>		<span class="nx">MaxRetries</span><span class="p">:</span>         <span class="mi">5</span><span class="p">,</span>        <span class="c1">//  redis操作失败最大重试次数，默认不重试。
+</span><span class="c1"></span>		<span class="cm">/*
+</span><span class="cm">			MinRetryBackoff:    0,        // 最小重试时间间隔  默认是 8ms ; -1 表示关闭
+</span><span class="cm">			MaxRetryBackoff:    0,        // 最小重试时间间隔  默认是 512ms ; -1 表示关闭
+</span><span class="cm">			DialTimeout:        0,        // redis连接超时时间. 默认为5秒
+</span><span class="cm">			ReadTimeout:        0,        // socket读取超时时间 默认时间为3秒
+</span><span class="cm">			WriteTimeout:       0,        // socket写超时时间
+</span><span class="cm">			PoolSize:           0,        // redis连接池的最大连接数.默认连接池大小等于 cpu个数 * 10
+</span><span class="cm">			MinIdleConns:       0,        //redis连接池最小空闲连接数.
+</span><span class="cm">			MaxConnAge:         0,        // redis连接最大的存活时间，默认不会关闭过时的连接.
+</span><span class="cm">			PoolTimeout:        0,        // 当你从redis连接池获取一个连接之后，连接池最多等待这个拿出去的连接多长时间。  默认是等待 ReadTimeout + 1 秒.
+</span><span class="cm">			IdleTimeout:        0,        // redis连接池多久会关闭一个空闲连接. 默认是 5 分钟. -1 则表示关闭这个配置项
+</span><span class="cm">			IdleCheckFrequency: 0,        // 多长时间检测一下，空闲连接  默认是 1 分钟. -1 表示关闭空闲连接检测
+</span><span class="cm">			TLSConfig:          nil,      // 要使用的TLS配置。设置TLS时将进行协商
+</span><span class="cm">		*/</span>
+	<span class="p">}</span>
+	<span class="nx">redisClient</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">RedisInfo</span><span class="p">{</span>
+		<span class="nx">Option</span><span class="p">:</span>  <span class="nx">opt</span><span class="p">,</span>
+		<span class="nx">RedisDb</span><span class="p">:</span> <span class="kc">nil</span><span class="p">,</span>
+	<span class="p">}</span>
+	<span class="nx">err</span> <span class="o">:=</span> <span class="nx">redisClient</span><span class="p">.</span><span class="nf">ConnRedis</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;redis 数据库连接失败！！！&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;数据库连接成功&#34;</span><span class="p">)</span>
+	<span class="nx">redisClient</span><span class="p">.</span><span class="nf">OperaStringSGet</span><span class="p">()</span>
+	<span class="nx">redisClient</span><span class="p">.</span><span class="nf">OperaStringMSGet</span><span class="p">()</span>
+	<span class="nx">redisClient</span><span class="p">.</span><span class="nf">OperaStringNcr</span><span class="p">()</span>
+	<span class="nx">redisClient</span><span class="p">.</span><span class="nf">OperaListLData</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/disk-test/">
+        
+        
+            <div class="article-image">
+                <img src="/p/disk-test/1.de91ce03f087ea28aedd9232dee697aa_hu4b9f21e0357fa4a3de89be2058c4c1e0_86402_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-3pHOA/CH6iiu3ZIy3uaXqg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Disk Test</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-avl-tree-go%E5%AE%9E%E7%8E%B0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-avl-tree-go%E5%AE%9E%E7%8E%B0/1.ed1f35b2a37347732ac0274cc8b2b8b7_hu627ccad35150ba5c25206c4fe774bc3e_21463_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-7R81sqNzR3MqwCdMyLK4tw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">数据结构-AVL tree go实现</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-binary-search-tree-go%E5%AE%9E%E7%8E%B0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-binary-search-tree-go%E5%AE%9E%E7%8E%B0/1.93ea940fc2529072f0e70cb78e43eee7_hu163e0849e6d75821587eb02814146518_65785_250x150_fill_box_smart1.gif" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-k&#43;qUD8JSkHLw5wy3jkPu5w==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">数据结构-Binary search tree go实现</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E6%A0%88%E5%9F%BA%E4%BA%8E%E5%8D%95%E9%A1%B9%E9%93%BE%E8%A1%A8%E9%98%9F%E5%88%97%E5%9F%BA%E4%BA%8E%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E5%AE%9E%E7%8E%B0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E6%A0%88%E5%9F%BA%E4%BA%8E%E5%8D%95%E9%A1%B9%E9%93%BE%E8%A1%A8%E9%98%9F%E5%88%97%E5%9F%BA%E4%BA%8E%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E5%AE%9E%E7%8E%B0/1.d90a4e817af655a738f16cd6b901b471_hucc057a99640c389677e7decbd4886594_40524_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-2QpOgXr2Vac48WzWuQG0cQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">数据结构-栈(基于单项链表)&amp;&amp;队列(基于双向链表)go实现</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E5%BE%AA%E7%8E%AF%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/1.8698f35cbd072100d008bc5611dc9311_huc216cf6486350636a2e6728955e7fc78_62516_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-hpjzXL0HIQDQCLxWEdyTEQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">数据结构-双向链表&amp;&amp;循环双向链表go语言实现</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#redis-go语言实践一">redis GO语言实践一</a>
+      <ol>
+        <li><a href="#简单介绍">简单介绍</a></li>
+        <li><a href="#代码如下">代码如下</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
