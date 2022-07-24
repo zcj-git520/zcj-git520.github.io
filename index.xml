@@ -33,7 +33,7 @@ Plugin &#39;dense-analysis/ale&#39;
 Plugin &#39;preservim/nerdtree&#39;
 Plugin &#39;preservim/nerdcommenter&#39;
 Plugin &#39;ludovicchabant/vim-gutentags&#39;
-&amp;quot;Plugin &#39;Valloric/YouCompleteMe&#39;
+Plugin &#39;Valloric/YouCompleteMe&#39;
 Plugin &#39;Shougo/neocomplete.vim&#39;
 Plugin &#39;vim-scripts/taglist.vim&#39;
 &amp;quot; Plugin &#39;rstacruz/sparkup&#39;, {&#39;rtp&#39;: &#39;vim/&#39;}
