@@ -6,10 +6,548 @@
         <description>Recent content on Chengji Zhao&#39;s blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Sun, 10 Jul 2022 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sat, 23 Jul 2022 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>设置自己的编辑器</title>
+        <link>https://zcj-git520.github.io/p/%E8%AE%BE%E7%BD%AE%E8%87%AA%E5%B7%B1%E7%9A%84%E7%BC%96%E8%BE%91%E5%99%A8/</link>
+        <pubDate>Sat, 23 Jul 2022 22:00:38 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/%E8%AE%BE%E7%BD%AE%E8%87%AA%E5%B7%B1%E7%9A%84%E7%BC%96%E8%BE%91%E5%99%A8/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/%E8%AE%BE%E7%BD%AE%E8%87%AA%E5%B7%B1%E7%9A%84%E7%BC%96%E8%BE%91%E5%99%A8/1.png" alt="Featured image of post 设置自己的编辑器" /&gt;&lt;h2 id=&#34;设置自己的编辑器&#34;&gt;设置自己的编辑器&lt;/h2&gt;
+&lt;h3 id=&#34;简单介绍&#34;&gt;简单介绍&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;基于vim 设计自己的编辑器&lt;/li&gt;
+&lt;li&gt;使用vim插件&lt;/li&gt;
+&lt;li&gt;以下是编辑器的.vimrc&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;配置如下&#34;&gt;配置如下&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;set nocompatible              &amp;quot; be iMproved, required
+filetype off                  &amp;quot; required
+&amp;quot; set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+&amp;quot; alternatively, pass a path where Vundle should install plugins
+&amp;quot;call vundle#begin(&#39;~/some/path/here&#39;)
+&amp;quot; let Vundle manage Vundle, required
+Plugin &#39;VundleVim/Vundle.vim&#39; 
+Plugin &#39;dense-analysis/ale&#39;
+Plugin &#39;preservim/nerdtree&#39;
+Plugin &#39;preservim/nerdcommenter&#39;
+Plugin &#39;ludovicchabant/vim-gutentags&#39;
+&amp;quot;Plugin &#39;Valloric/YouCompleteMe&#39;
+Plugin &#39;Shougo/neocomplete.vim&#39;
+Plugin &#39;vim-scripts/taglist.vim&#39;
+&amp;quot; Plugin &#39;rstacruz/sparkup&#39;, {&#39;rtp&#39;: &#39;vim/&#39;}
+call vundle#end()            &amp;quot; required
+filetype plugin indent on    &amp;quot; required
+
+set sw=4
+set ts=4  
+set et
+set smarttab
+set smartindent
+set lbr
+set fo+=mB
+set sm
+set selection=inclusive
+set wildmenu
+set mousemodel=popup
+
+&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;
+&amp;quot;ale
+&amp;quot;始终开启标志列
+let g:ale_sign_column_always = 1
+let g:ale_set_highlights = 0
+&amp;quot;自定义error和warning图标
+let g:ale_sign_error = &#39;✗&#39;
+let g:ale_sign_warning = &#39;⚡&#39;
+&amp;quot;在vim自带的状态栏中整合ale
+let g:ale_statusline_format = [&#39;✗ %d&#39;, &#39;⚡ %d&#39;, &#39;✔ OK&#39;]
+&amp;quot;显示Linter名称,出错或警告等相关信息
+let g:ale_echo_msg_error_str = &#39;E&#39;
+let g:ale_echo_msg_warning_str = &#39;W&#39;
+let g:ale_echo_msg_format = &#39;[%linter%] %s [%severity%]&#39;
+&amp;quot;普通模式下，sp前往上一个错误或警告，sn前往下一个错误或警告
+nmap sp (ale_previous_wrap)
+nmap sn (ale_next_wrap)
+&amp;quot;s触发/关闭语法检查
+nmap s :ALEToggle
+&amp;quot;a查看错误或警告的详细信息
+nmap a :ALEDetail
+let g:ale_linters = {
+\ &#39;c++&#39;: [&#39;clang&#39;],
+\ &#39;c&#39;: [&#39;clang&#39;],
+\ &#39;python&#39;: [&#39;pylint&#39;],
+\ &#39;golang&#39;:[&#39;golangci-lint&#39;],
+\}
+&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;
+&amp;quot;将该配置写进.vimrc文件中&amp;quot;
+nnoremap &amp;lt;C-n&amp;gt; :NERDTreeToggle&amp;lt;CR&amp;gt; 
+&amp;quot;打开NERDTree,在node中选中当前文件&amp;quot;
+nnoremap &amp;lt;C-f&amp;gt; :NERDTreeFind&amp;lt;CR&amp;gt; 
+&amp;quot;vim打开时，自动打开NERDTree,并且将光标放在文件窗口&amp;quot;
+&amp;quot;autocmd VimEnter * NERDTree | wincmd p 
+&amp;quot;当NERDTree是唯一的窗口时退出vim&amp;quot;
+autocmd BufEnter * if tabpagenr(&#39;$&#39;) == 1 &amp;amp;&amp;amp; winnr(&#39;$&#39;) == 1 &amp;amp;&amp;amp; exists(&#39;b:NERDTree&#39;) &amp;amp;&amp;amp; b:NERDTree.isTabTree() | quit | endif  
+&amp;quot;在每一个新的new tab打开存在的NERDTree&amp;quot;
+autocmd BufWinEnter * silent NERDTreeMirror
+
+&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;
+&amp;quot; Add spaces after comment delimiters by default
+let g:NERDSpaceDelims = 1
+&amp;quot; Use compact syntax for prettified multi-line comments
+let g:NERDCompactSexyComs = 1
+&amp;quot; Align line-wise comment delimiters flush left instead of following code indentation
+let g:NERDDefaultAlign = &#39;left&#39;
+&amp;quot; Set a language to use its alternate delimiters by default
+let g:NERDAltDelims_java = 1
+&amp;quot; Add your own custom formats or override the defaults
+let g:NERDCommentEmptyLines = 1
+&amp;quot; Enable trimming of trailing whitespace when uncommenting
+let g:NERDTrimTrailingWhitespace = 1
+&amp;quot; Enable NERDCommenterToggle to check all selected lines is commented or not
+let g:NERDToggleCheckAllLines = 1
+&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;
+&amp;quot; gutentags搜索工程目录的标志，碰到这些文件/目录名就停止向上一级目录递归 &amp;quot;
+let g:gutentags_project_root = [&#39;.root&#39;, &#39;.svn&#39;, &#39;.git&#39;, &#39;.project&#39;]
+
+&amp;quot; 所生成的数据文件的名称 &amp;quot;
+let g:gutentags_ctags_tagfile = &#39;.tags&#39;
+
+&amp;quot; 将自动生成的 tags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录 &amp;quot;
+let s:vim_tags = expand(&#39;~/.cache/tags&#39;)
+let g:gutentags_cache_dir = s:vim_tags
+&amp;quot; 检测 ~/.cache/tags 不存在就新建 &amp;quot;
+if !isdirectory(s:vim_tags)
+   silent! call mkdir(s:vim_tags, &#39;p&#39;)
+endif
+
+&amp;quot; 配置 ctags 的参数 &amp;quot;
+let g:gutentags_ctags_extra_args = [&#39;--fields=+niazS&#39;, &#39;--extra=+q&#39;]
+let g:gutentags_ctags_extra_args += [&#39;--c++-kinds=+pxI&#39;]
+let g:gutentags_ctags_extra_args += [&#39;--c-kinds=+px&#39;]
+&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;
+&amp;quot; Use neocomplete.
+let g:neocomplete#enable_at_startup = 1
+&amp;quot; Use smartcase.
+let g:neocomplete#enable_smart_case = 1
+&amp;quot; Set minimum syntax keyword length.
+let g:neocomplete#sources#syntax#min_keyword_length = 3
+let g:neocomplete#lock_buffer_name_pattern = &#39;\*ku\*&#39;
+
+&amp;quot; Define dictionary.
+let g:neocomplete#sources#dictionary#dictionaries = {
+    \ &#39;default&#39; : &#39;&#39;,
+    \ &#39;vimshell&#39; : $HOME.&#39;/.vimshell_hist&#39;,
+    \ &#39;scheme&#39; : $HOME.&#39;/.gosh_completions&#39;
+        \ }
+
+&amp;quot; Define keyword.
+if !exists(&#39;g:neocomplete#keyword_patterns&#39;)
+    let g:neocomplete#keyword_patterns = {}
+endif
+let g:neocomplete#keyword_patterns[&#39;default&#39;] = &#39;\h\w*&#39;
+
+&amp;quot; Plugin key-mappings.
+inoremap &amp;lt;expr&amp;gt;&amp;lt;C-g&amp;gt;     neocomplete#undo_completion()
+inoremap &amp;lt;expr&amp;gt;&amp;lt;C-l&amp;gt;     neocomplete#complete_common_string()
+
+&amp;quot; Recommended key-mappings.
+&amp;quot; &amp;lt;CR&amp;gt;: close popup and save indent.
+inoremap &amp;lt;silent&amp;gt; &amp;lt;CR&amp;gt; &amp;lt;C-r&amp;gt;=&amp;lt;SID&amp;gt;my_cr_function()&amp;lt;CR&amp;gt;
+function! s:my_cr_function()
+  return neocomplete#close_popup() . &amp;quot;\&amp;lt;CR&amp;gt;&amp;quot;
+  &amp;quot; For no inserting &amp;lt;CR&amp;gt; key.
+  &amp;quot;return pumvisible() ? neocomplete#close_popup() : &amp;quot;\&amp;lt;CR&amp;gt;&amp;quot;
+endfunction
+&amp;quot; &amp;lt;TAB&amp;gt;: completion.
+inoremap &amp;lt;expr&amp;gt;&amp;lt;TAB&amp;gt;  pumvisible() ? &amp;quot;\&amp;lt;C-n&amp;gt;&amp;quot; : &amp;quot;\&amp;lt;TAB&amp;gt;&amp;quot;
+&amp;quot; &amp;lt;C-h&amp;gt;, &amp;lt;BS&amp;gt;: close popup and delete backword char.
+inoremap &amp;lt;expr&amp;gt;&amp;lt;C-h&amp;gt; neocomplete#smart_close_popup().&amp;quot;\&amp;lt;C-h&amp;gt;&amp;quot;
+inoremap &amp;lt;expr&amp;gt;&amp;lt;BS&amp;gt; neocomplete#smart_close_popup().&amp;quot;\&amp;lt;C-h&amp;gt;&amp;quot;
+inoremap &amp;lt;expr&amp;gt;&amp;lt;C-y&amp;gt;  neocomplete#close_popup()
+inoremap &amp;lt;expr&amp;gt;&amp;lt;C-e&amp;gt;  neocomplete#cancel_popup()
+
+&amp;quot; Enable omni completion.
+autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+
+&amp;quot; Enable heavy omni completion.
+if !exists(&#39;g:neocomplete#sources#omni#input_patterns&#39;)
+  let g:neocomplete#sources#omni#input_patterns = {}
+endif
+
+&amp;quot; For perlomni.vim setting.
+&amp;quot; https://github.com/c9s/perlomni.vim
+let g:neocomplete#sources#omni#input_patterns.perl = &#39;\h\w*-&amp;gt;\h\w*\|\h\w*::&#39;
+
+&amp;quot; 显示相关  
+&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;
+syntax on
+set nobackup    &amp;quot;取消自动备份，禁止生成临时文件
+set noswapfile
+set nocompatible &amp;quot;关闭兼容模式
+set incsearch &amp;quot;开启实时搜索功能
+set ignorecase &amp;quot;搜索忽略大小写
+set wildmenu &amp;quot;vim命令自动补全
+set autoread &amp;quot;文件自动更新
+set gcr=a:block-blinkon0 &amp;quot;禁止关闭闪烁
+set laststatus=2 &amp;quot;总是显示状态栏
+set ruler &amp;quot;显示光标位置
+set nu &amp;quot;显示行号
+&amp;quot; set relativenumber &amp;quot;显示相对行号
+set cuc &amp;quot;浅色显示当前行
+set cul &amp;quot;浅色显示当前行
+set showcmd &amp;quot;输入的命令显示出来
+set cmdheight=2 &amp;quot;命令行高度
+set nofoldenable
+set foldmethod=manual &amp;quot;允许手动折叠
+set cul &amp;quot;高亮光标所在行
+set cuc
+set shortmess=atI   &amp;quot; 启动的时候不显示那个援助乌干达儿童的提示  
+set go=             &amp;quot; 不要图形按钮  
+&amp;quot;color desert     &amp;quot; 设置背景主题  
+color ron     &amp;quot; 设置背景主题  
+autocmd InsertEnter * se cul    &amp;quot; 用浅色高亮当前行  
+set ruler           &amp;quot; 显示标尺  
+set showcmd         &amp;quot; 输入的命令显示出来，看的清楚些  
+set scrolloff=3     &amp;quot; 光标移动到buffer的顶部和底部时保持3行距离  
+set statusline=%F%m%r%h%w\ [FORMAT=%{&amp;amp;ff}]\ [TYPE=%Y]\ [POS=%l,%v][%p%%]\ %{strftime(\&amp;quot;%d/%m/%y\ -\ %H:%M\&amp;quot;)}   &amp;quot;状态行显示的内容  
+set laststatus=2    &amp;quot; 启动显示状态行(1),总是显示状态行(2)  
+set nocompatible  &amp;quot;去掉讨厌的有关vi一致性模式，避免以前版本的一些bug和局限  
+&amp;quot; 显示中文帮助
+if version &amp;gt;= 603
+        set helplang=cn
+        set encoding=utf-8
+endif
+&amp;quot; 自动缩进
+set autoindent
+set cindent
+&amp;quot; Tab键的宽度
+set tabstop=4
+&amp;quot; 统一缩进为4
+set softtabstop=4
+set shiftwidth=4
+&amp;quot; 使用空格代替制表符
+set expandtab
+&amp;quot; 在行和段开始处使用制表符
+set smarttab
+&amp;quot; 显示行号
+set number
+&amp;quot; 历史记录数
+set history=1000
+&amp;quot;搜索逐字符高亮
+set hlsearch
+set incsearch
+&amp;quot;语言设置
+set langmenu=zh_CN.UTF-8
+set helplang=cn
+&amp;quot; 总是显示状态行
+set cmdheight=2
+&amp;quot; 侦测文件类型
+filetype on
+&amp;quot; 载入文件类型插件
+filetype plugin on
+&amp;quot; 为特定文件类型载入相关缩进文件
+filetype indent on
+&amp;quot; 保存全局变量
+set viminfo+=!
+&amp;quot; 带有如下符号的单词不要被换行分割
+set iskeyword+=_,$,@,%,#,-
+&amp;quot; 字符间插入的像素行数目
+
+&amp;quot;markdown配置
+au BufRead,BufNewFile *.{md,mdown,mkd,mkdn,markdown,mdwn}   set filetype=mkd
+au BufRead,BufNewFile *.{go}   set filetype=go
+au BufRead,BufNewFile *.{js}   set filetype=javascript
+&amp;quot;rkdown to HTML  
+nmap md :!~/.vim/markdown.pl % &amp;gt; %.html &amp;lt;CR&amp;gt;&amp;lt;CR&amp;gt;
+nmap fi :!firefox %.html &amp;amp; &amp;lt;CR&amp;gt;&amp;lt;CR&amp;gt;
+nmap \ \cc
+vmap \ \cc
+
+&amp;quot;将tab替换为空格
+nmap tt :%s/\t/    /g&amp;lt;CR&amp;gt;
+
+
+
+&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;
+&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;新文件标题
+&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;
+&amp;quot;新建.c,.h,.sh,.java文件，自动插入文件头 
+autocmd BufNewFile *.cpp,*.[ch],*.sh,*.rb,*.java,*.py exec &amp;quot;:call SetTitle()&amp;quot; 
+&amp;quot;&amp;quot;定义函数SetTitle，自动插入文件头 
+func SetTitle() 
+        &amp;quot;如果文件类型为.sh文件 
+        if &amp;amp;filetype == &#39;sh&#39; 
+                call setline(1,&amp;quot;\#!/bin/bash&amp;quot;) 
+                call append(line(&amp;quot;.&amp;quot;), &amp;quot;&amp;quot;) 
+    elseif &amp;amp;filetype == &#39;python&#39;
+        call setline(1,&amp;quot;#!/usr/bin/env python&amp;quot;)
+        call append(line(&amp;quot;.&amp;quot;),&amp;quot;# coding=utf-8&amp;quot;)
+            call append(line(&amp;quot;.&amp;quot;)+1, &amp;quot;&amp;quot;) 
+
+    elseif &amp;amp;filetype == &#39;ruby&#39;
+        call setline(1,&amp;quot;#!/usr/bin/env ruby&amp;quot;)
+        call append(line(&amp;quot;.&amp;quot;),&amp;quot;# encoding: utf-8&amp;quot;)
+            call append(line(&amp;quot;.&amp;quot;)+1, &amp;quot;&amp;quot;)
+
+&amp;quot;    elseif &amp;amp;filetype == &#39;mkd&#39;
+&amp;quot;        call setline(1,&amp;quot;&amp;lt;head&amp;gt;&amp;lt;meta charset=\&amp;quot;UTF-8\&amp;quot;&amp;gt;&amp;lt;/head&amp;gt;&amp;quot;)
+        else 
+                call setline(1, &amp;quot;/*************************************************************************&amp;quot;) 
+                call append(line(&amp;quot;.&amp;quot;), &amp;quot;        &amp;gt; File Name: &amp;quot;.expand(&amp;quot;%&amp;quot;)) 
+                call append(line(&amp;quot;.&amp;quot;)+1, &amp;quot;        &amp;gt; Author: username&amp;quot;) 
+                call append(line(&amp;quot;.&amp;quot;)+2, &amp;quot;        &amp;gt; Mail: 111111111@qq.com&amp;quot;) 
+                call append(line(&amp;quot;.&amp;quot;)+3, &amp;quot;        &amp;gt; Created Time: &amp;quot;.strftime(&amp;quot;%c&amp;quot;)) 
+                call append(line(&amp;quot;.&amp;quot;)+4, &amp;quot; ************************************************************************/&amp;quot;) 
+                call append(line(&amp;quot;.&amp;quot;)+5, &amp;quot;&amp;quot;)
+        endif
+        if expand(&amp;quot;%:e&amp;quot;) == &#39;cpp&#39;
+                call append(line(&amp;quot;.&amp;quot;)+6, &amp;quot;#include &amp;lt;iostream&amp;gt;&amp;quot;)
+        call append(line(&amp;quot;.&amp;quot;)+7, &amp;quot;using std::cin;&amp;quot;)
+        call append(line(&amp;quot;.&amp;quot;)+8, &amp;quot;using std::cout;&amp;quot;)
+        call append(line(&amp;quot;.&amp;quot;)+9, &amp;quot;using std::endl;&amp;quot;)
+                call append(line(&amp;quot;.&amp;quot;)+10, &amp;quot;using namespace std;&amp;quot;)
+                call append(line(&amp;quot;.&amp;quot;)+11, &amp;quot;&amp;quot;)
+        endif
+        if &amp;amp;filetype == &#39;c&#39;
+                call append(line(&amp;quot;.&amp;quot;)+6, &amp;quot;#include &amp;lt;stdio.h&amp;gt;&amp;quot;)
+                call append(line(&amp;quot;.&amp;quot;)+7, &amp;quot;&amp;quot;)
+        endif
+        if expand(&amp;quot;%:e&amp;quot;) == &#39;h&#39;
+                call append(line(&amp;quot;.&amp;quot;)+6, &amp;quot;#ifndef _&amp;quot;.toupper(expand(&amp;quot;%:r&amp;quot;)).&amp;quot;_H&amp;quot;)
+                call append(line(&amp;quot;.&amp;quot;)+7, &amp;quot;#define _&amp;quot;.toupper(expand(&amp;quot;%:r&amp;quot;)).&amp;quot;_H&amp;quot;)
+                call append(line(&amp;quot;.&amp;quot;)+8, &amp;quot;#endif&amp;quot;)
+        endif
+        if &amp;amp;filetype == &#39;java&#39;
+                call append(line(&amp;quot;.&amp;quot;)+6,&amp;quot;public class &amp;quot;.expand(&amp;quot;%:r&amp;quot;))
+                call append(line(&amp;quot;.&amp;quot;)+7,&amp;quot;&amp;quot;)
+        if &amp;amp;filetype == &#39;go&#39;
+                call append(line(&amp;quot;.&amp;quot;)+6,&amp;quot;package main&amp;quot;)
+                call append(line(&amp;quot;.&amp;quot;)+7,&amp;quot;&amp;quot;)
+                call append(line(&amp;quot;.&amp;quot;)+8,&amp;quot;func main() {&amp;quot;)
+                call append(line(&amp;quot;.&amp;quot;)+9,&amp;quot;}&amp;quot;)
+        endif
+        &amp;quot;新建文件后，自动定位到文件末尾
+endfunc 
+autocmd BufNewFile * normal G
+command WQ wq 
+command Wq wq 
+&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;
+&amp;quot;键盘命令
+&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;
+:nmap &amp;lt;silent&amp;gt; &amp;lt;F9&amp;gt; &amp;lt;ESC&amp;gt;:Tlist&amp;lt;RETURN&amp;gt;
+&amp;quot; shift tab pages
+map &amp;lt;S-Left&amp;gt; :tabp&amp;lt;CR&amp;gt;
+map &amp;lt;S-Right&amp;gt; :tabn&amp;lt;CR&amp;gt;
+map! &amp;lt;C-Z&amp;gt; &amp;lt;Esc&amp;gt;zzi
+map! &amp;lt;C-O&amp;gt; &amp;lt;C-Y&amp;gt;,
+map &amp;lt;C-A&amp;gt; ggVG$&amp;quot;+y
+map &amp;lt;Esc&amp;gt;&amp;lt;Esc&amp;gt; :w&amp;lt;CR&amp;gt;
+map &amp;lt;F12&amp;gt; gg=G
+map &amp;lt;C-w&amp;gt; &amp;lt;C-w&amp;gt;w
+imap &amp;lt;C-k&amp;gt; &amp;lt;C-y&amp;gt;,
+imap &amp;lt;C-t&amp;gt; &amp;lt;C-q&amp;gt;&amp;lt;TAB&amp;gt;
+imap &amp;lt;C-j&amp;gt; &amp;lt;ESC&amp;gt;
+&amp;quot; 选中状态下 Ctrl+c 复制
+&amp;quot;map &amp;lt;C-v&amp;gt; &amp;quot;*pa
+imap &amp;lt;C-v&amp;gt; &amp;lt;Esc&amp;gt;&amp;quot;*pa
+imap &amp;lt;C-a&amp;gt; &amp;lt;Esc&amp;gt;^
+imap &amp;lt;C-e&amp;gt; &amp;lt;Esc&amp;gt;$
+vmap &amp;lt;C-c&amp;gt; &amp;quot;+y
+&amp;quot;set mouse=v
+&amp;quot;set clipboard=unnamed
+&amp;quot;去注释  
+nnoremap &amp;lt;F1&amp;gt; :g/^\s*#/d&amp;lt;CR&amp;gt;
+&amp;quot;去空行  
+nnoremap &amp;lt;F2&amp;gt; :g/^\s*$/d&amp;lt;CR&amp;gt;
+&amp;quot;比较文件  
+nnoremap &amp;lt;C-F2&amp;gt; :vert diffsplit 
+&amp;quot;nnoremap &amp;lt;Leader&amp;gt;fu :CtrlPFunky&amp;lt;Cr&amp;gt;
+&amp;quot;nnoremap &amp;lt;C-n&amp;gt; :CtrlPFunky&amp;lt;Cr&amp;gt;
+&amp;quot;C，C++ 按F5编译运行
+map &amp;lt;F5&amp;gt; :call CompileRunGcc()&amp;lt;CR&amp;gt;
+func! CompileRunGcc()
+        exec &amp;quot;w&amp;quot;
+        if &amp;amp;filetype == &#39;c&#39;
+                exec &amp;quot;!g++ % -o %&amp;lt;&amp;quot;
+                exec &amp;quot;!time ./%&amp;lt;&amp;quot;
+        elseif &amp;amp;filetype == &#39;cpp&#39;
+                exec &amp;quot;!g++ % -std=c++11 -o %&amp;lt;&amp;quot;
+                exec &amp;quot;!time ./%&amp;lt;&amp;quot;
+        elseif &amp;amp;filetype == &#39;java&#39; 
+                exec &amp;quot;!javac %&amp;quot; 
+                exec &amp;quot;!time java %&amp;lt;&amp;quot;
+        elseif &amp;amp;filetype == &#39;sh&#39;
+                :!time bash %
+        elseif &amp;amp;filetype == &#39;python&#39;
+                exec &amp;quot;!time python2.7 %&amp;quot;
+    elseif &amp;amp;filetype == &#39;html&#39;
+        exec &amp;quot;!firefox % &amp;amp;&amp;quot;
+    elseif &amp;amp;filetype == &#39;go&#39;
+&amp;quot;        exec &amp;quot;!go build %&amp;lt;&amp;quot;
+        exec &amp;quot;!time go run %&amp;quot;
+    elseif &amp;amp;filetype == &#39;mkd&#39;
+        exec &amp;quot;!~/.vim/markdown.pl % &amp;gt; %.html &amp;amp;&amp;quot;
+        exec &amp;quot;!firefox %.html &amp;amp;&amp;quot;
+        endif
+endfunc
+&amp;quot;C,C++的调试
+map &amp;lt;F8&amp;gt; :call Rungdb()&amp;lt;CR&amp;gt;
+func! Rungdb()
+        exec &amp;quot;w&amp;quot;
+        exec &amp;quot;!g++ % -std=c++11 -g -o %&amp;lt;&amp;quot;
+        exec &amp;quot;!gdb ./%&amp;lt;&amp;quot;
+endfunc
+
+
+&amp;quot;代码格式优化化
+
+map &amp;lt;F6&amp;gt; :call FormartSrc()&amp;lt;CR&amp;gt;&amp;lt;CR&amp;gt;
+
+&amp;quot;定义FormartSrc()
+func FormartSrc()
+    exec &amp;quot;w&amp;quot;
+    if &amp;amp;filetype == &#39;c&#39;
+        exec &amp;quot;!astyle --style=ansi -a --suffix=none %&amp;quot;
+    elseif &amp;amp;filetype == &#39;cpp&#39; || &amp;amp;filetype == &#39;hpp&#39;
+        exec &amp;quot;r !astyle --style=ansi --one-line=keep-statements -a --suffix=none %&amp;gt; /dev/null 2&amp;gt;&amp;amp;1&amp;quot;
+    elseif &amp;amp;filetype == &#39;perl&#39;
+        exec &amp;quot;!astyle --style=gnu --suffix=none %&amp;quot;
+    elseif &amp;amp;filetype == &#39;py&#39;||&amp;amp;filetype == &#39;python&#39;
+        exec &amp;quot;r !autopep8 -i --aggressive %&amp;quot;
+    elseif &amp;amp;filetype == &#39;java&#39;
+        exec &amp;quot;!astyle --style=java --suffix=none %&amp;quot;
+    elseif &amp;amp;filetype == &#39;jsp&#39;
+        exec &amp;quot;!astyle --style=gnu --suffix=none %&amp;quot;
+    elseif &amp;amp;filetype == &#39;xml&#39;
+        exec &amp;quot;!astyle --style=gnu --suffix=none %&amp;quot;
+    else
+        exec &amp;quot;normal gg=G&amp;quot;
+        return
+    endif
+    exec &amp;quot;e! %&amp;quot;
+endfunc
+&amp;quot;结束定义FormartSrc
+
+
+&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;
+&amp;quot;&amp;quot;实用设置
+&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;
+if has(&amp;quot;autocmd&amp;quot;)
+      autocmd BufReadPost *
+          \ if line(&amp;quot;&#39;\&amp;quot;&amp;quot;) &amp;gt; 0 &amp;amp;&amp;amp; line(&amp;quot;&#39;\&amp;quot;&amp;quot;) &amp;lt;= line(&amp;quot;$&amp;quot;) |
+          \   exe &amp;quot;normal g`\&amp;quot;&amp;quot; |
+          \ endif
+endif
+&amp;quot;当打开vim且没有文件时自动打开NERDTree
+autocmd vimenter * if !argc() | NERDTree | endif
+&amp;quot; 只剩 NERDTree时自动关闭
+autocmd bufenter * if (winnr(&amp;quot;$&amp;quot;) == 1 &amp;amp;&amp;amp; exists(&amp;quot;b:NERDTreeType&amp;quot;) &amp;amp;&amp;amp; b:NERDTreeType == &amp;quot;primary&amp;quot;) | q | endif
+
+&amp;quot; 设置当文件被改动时自动载入
+set autoread
+&amp;quot; quickfix模式
+autocmd FileType c,cpp map &amp;lt;buffer&amp;gt; &amp;lt;leader&amp;gt;&amp;lt;space&amp;gt; :w&amp;lt;cr&amp;gt;:make&amp;lt;cr&amp;gt;
+&amp;quot;自动保存
+set autowrite
+&amp;quot;set ruler                   &amp;quot; 打开状态栏标尺
+&amp;quot;set cursorline              &amp;quot; 突出显示当前行
+set magic                   &amp;quot; 设置魔术
+set guioptions-=T           &amp;quot; 隐藏工具栏
+set guioptions-=m           &amp;quot; 隐藏菜单栏
+&amp;quot; 不要使用vi的键盘模式，而是vim自己的
+set nocompatible
+&amp;quot; 去掉输入错误的提示声音
+set noeb
+&amp;quot; 在处理未保存或只读文件的时候，弹出确认
+set confirm
+&amp;quot;禁止生成临时文件
+set nobackup
+set noswapfile
+&amp;quot;搜索忽略大小写
+set ignorecase
+set linespace=0
+&amp;quot; 增强模式中的命令行自动完成操作
+set wildmenu
+&amp;quot; 使回格键（backspace）正常处理indent, eol, start等
+set backspace=2
+&amp;quot; 允许backspace和光标键跨越行边界
+set whichwrap+=&amp;lt;,&amp;gt;,h,l
+&amp;quot; 可以在buffer的任何地方使用鼠标（类似office中在工作区双击鼠标定位）
+&amp;quot;set mouse=a
+set selection=exclusive
+set selectmode=mouse,key
+&amp;quot; 通过使用: commands命令，告诉我们文件的哪一行被改变过
+set report=0
+&amp;quot; 在被分割的窗口间显示空白，便于阅读
+set fillchars=vert:\ ,stl:\ ,stlnc:\
+&amp;quot; 高亮显示匹配的括号
+set showmatch
+&amp;quot; 匹配括号高亮的时间（单位是十分之一秒）
+set matchtime=1
+&amp;quot; 光标移动到buffer的顶部和底部时保持3行距离
+set scrolloff=3
+filetype plugin indent on 
+&amp;quot;打开文件类型检测, 加了这句才可以用智能补全
+set completeopt=longest,menu
+&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;
+&amp;quot; CTags的设定  
+&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;
+let Tlist_Sort_Type = &amp;quot;name&amp;quot;    &amp;quot; 按照名称排序  
+let Tlist_Use_Right_Window = 1  &amp;quot; 在右侧显示窗口  
+let Tlist_Compart_Format = 1    &amp;quot; 压缩方式  
+let Tlist_Exist_OnlyWindow = 1  &amp;quot; 如果只有一个buffer，kill窗口也kill掉buffer  
+&amp;quot;&amp;quot;let Tlist_File_Fold_Auto_Close = 0  &amp;quot; 不要关闭其他文件的tags  
+&amp;quot;&amp;quot;let Tlist_Enable_Fold_Column = 0    &amp;quot; 不要显示折叠树  
+&amp;quot;let Tlist_Show_One_File=1            &amp;quot;不同时显示多个文件的tag，只显示当前文件的
+&amp;quot;设置tags  
+set tags=tags;  
+&amp;quot;set autochdir 
+
+
+&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;
+&amp;quot;默认打开Taglist 
+let Tlist_Auto_Open=0 
+&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot; 
+&amp;quot; Tag list (ctags) 
+&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot; 
+let Tlist_Ctags_Cmd = &#39;/usr/local/bin/ctags&#39; 
+let Tlist_Show_One_File = 1 &amp;quot;不同时显示多个文件的tag，只显示当前文件的 
+let Tlist_File_Fold_Auto_Close = 1
+let Tlist_Exit_OnlyWindow = 1 &amp;quot;如果taglist窗口是最后一个窗口，则退出vim 
+let Tlist_Use_Right_Window = 1 &amp;quot;在右侧窗口中显示taglist窗口
+&amp;quot; minibufexpl插件的一般设置
+let g:miniBufExplMapWindowNavVim = 1
+let g:miniBufExplMapWindowNavArrows = 1
+let g:miniBufExplMapCTabSwitchBufs = 1
+let g:miniBufExplModSelTarget = 1  
+nmap tl :Tlist&amp;lt;cr&amp;gt;
+set rtp+=~/.vim/bundle/vundle/
+let g:indentLine_char = &#39;┊&#39;
+&amp;quot;
+&amp;quot;ctrlp设置
+&amp;quot;
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.png,*.jpg,*.gif     &amp;quot; MacOSX/Linux
+set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe,*.pyc,*.png,*.jpg,*.gif  &amp;quot; Windows
+
+let g:ctrlp_custom_ignore = &#39;\v[\/]\.(git|hg|svn)$&#39;
+let g:ctrlp_custom_ignore = &#39;\v\.(exe|so|dll)$&#39;
+let g:ctrlp_extensions = [&#39;funky&#39;]
+
+let NERDTreeIgnore=[&#39;\.pyc&#39;]
+
+&amp;quot;, &amp;quot;JavaScript&amp;quot;)
+}
+&lt;/code&gt;&lt;/pre&gt;</description>
+        </item>
+        <item>
         <title>redis GO语言实践二</title>
         <link>https://zcj-git520.github.io/p/redis-go%E8%AF%AD%E8%A8%80%E5%AE%9E%E8%B7%B5%E4%BA%8C/</link>
-        <pubDate>Sun, 10 Jul 2022 22:00:38 +0800</pubDate>
+        <pubDate>Fri, 15 Jul 2022 22:00:38 +0800</pubDate>
         
         <guid>https://zcj-git520.github.io/p/redis-go%E8%AF%AD%E8%A8%80%E5%AE%9E%E8%B7%B5%E4%BA%8C/</guid>
         <description>&lt;img src="https://zcj-git520.github.io/p/redis-go%E8%AF%AD%E8%A8%80%E5%AE%9E%E8%B7%B5%E4%BA%8C/1.png" alt="Featured image of post redis GO语言实践二" /&gt;&lt;h2 id=&#34;redis-go语言实践二&#34;&gt;redis GO语言实践二&lt;/h2&gt;

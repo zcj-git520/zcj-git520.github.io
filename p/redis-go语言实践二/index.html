@@ -9,7 +9,7 @@
 <meta property='og:description' content='redis GO语言实践二 简单介绍  使用go 语言操作redis数据库 使用的库为：go get -u github.com/go-redis/redis 对redis数据库的map，集合和有序集合的操作  代码如下 /*操作hash Map数据类型*/ func (r *RedisInfo)OperaHashMap(){ //添加单个数据 	err := r.RedisDb.HSet(&amp;#34;hKey&amp;#34;,&amp;#34;filed0&amp;#34;, &amp;#34;value0&amp;#34;).Err() if err != nil { fmt.Println(&amp;#34;添加单个数据失败&amp;#34;, err) return } // 批量添加数据 	hData := make(map[string]interface{}) hData[&amp;#34;filed1&amp;#34;] = &amp;#34;value1&amp;#34; hData[&amp;#34;filed2&amp;#34;] = &amp;#34;value2&amp;#34; hData[&amp;#34;filed3&amp;#34;] = &amp;#34;value3&amp;#34; hData[&amp;#34;filed4&amp;#34;] = 20 hData[&amp;#34;filed5&amp;#34;] = 12.5 err = r.RedisDb.HMSet(&amp;#34;hKey&amp;#34;, hData).Err() if err != nil { fmt.Println(&amp;#34;批量添加数据失败&amp;#34;,err) return } // 单个获取数据 	value, err := r.'>
 <meta property='og:url' content='https://zcj-git520.github.io/p/redis-go%E8%AF%AD%E8%A8%80%E5%AE%9E%E8%B7%B5%E4%BA%8C/'>
 <meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2022-07-10T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2022-07-10T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/redis-go%E8%AF%AD%E8%A8%80%E5%AE%9E%E8%B7%B5%E4%BA%8C/1.png' />
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2022-07-15T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2022-07-15T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/redis-go%E8%AF%AD%E8%A8%80%E5%AE%9E%E8%B7%B5%E4%BA%8C/1.png' />
 <meta name="twitter:title" content="redis GO语言实践二">
 <meta name="twitter:description" content="redis GO语言实践二 简单介绍  使用go 语言操作redis数据库 使用的库为：go get -u github.com/go-redis/redis 对redis数据库的map，集合和有序集合的操作  代码如下 /*操作hash Map数据类型*/ func (r *RedisInfo)OperaHashMap(){ //添加单个数据 	err := r.RedisDb.HSet(&amp;#34;hKey&amp;#34;,&amp;#34;filed0&amp;#34;, &amp;#34;value0&amp;#34;).Err() if err != nil { fmt.Println(&amp;#34;添加单个数据失败&amp;#34;, err) return } // 批量添加数据 	hData := make(map[string]interface{}) hData[&amp;#34;filed1&amp;#34;] = &amp;#34;value1&amp;#34; hData[&amp;#34;filed2&amp;#34;] = &amp;#34;value2&amp;#34; hData[&amp;#34;filed3&amp;#34;] = &amp;#34;value3&amp;#34; hData[&amp;#34;filed4&amp;#34;] = 20 hData[&amp;#34;filed5&amp;#34;] = 12.5 err = r.RedisDb.HMSet(&amp;#34;hKey&amp;#34;, hData).Err() if err != nil { fmt.Println(&amp;#34;批量添加数据失败&amp;#34;,err) return } // 单个获取数据 	value, err := r."><meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content='https://zcj-git520.github.io/p/redis-go%E8%AF%AD%E8%A8%80%E5%AE%9E%E8%B7%B5%E4%BA%8C/1.png' />
@@ -108,7 +108,7 @@
   <path d="M3 11h16" />
   <path d="M18 16.496v1.504l1 1" />
 </svg>
-                <time class="article-time--published">Jul 10, 2022</time>
+                <time class="article-time--published">Jul 15, 2022</time>
             </div>
         
 
