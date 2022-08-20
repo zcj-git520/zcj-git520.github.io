@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='proto3 语法学习 基本规范   文件以.proto为文件后缀，除了结构体外，其他语句以分号结束
+  结构定义可以包含：message、service、enum
+  rpc方法定义结尾的分号可有可无
+  Message命名采用驼峰命名方式，字段命名采用小写字母加下划线分隔方式；举例：
+message ServerMessage{	required string server_name = server1;}  Enums类型名采用驼峰命名方式，字段名采用带大写字母加下划线分隔方式；举例：
+enum Sought{	FIRST_VALUE = 100;	SECONED_VALUE = 1200;}  Service类型采用驼峰命名方式；举例：
+service UserService{ rpc Login(LoginRequest)return(LoginResponse);}字段规则   字段格式：限定修饰符|数据类型|字段名称|=|字段编码值|[字段默认值]
+  限定修饰符号 required\optional\repeated
+ required:表示是一个必须的字段，必须要发送给对方，在发送之前必须设置该字段的值，对于接收方，必须能够识别该字段的意思，在发送之前没有设置required字段或者无法识别该字段都会引起编码异常，导致消息被丢弃 optional:表示为可选字段，对于发送方，在发送消息时，可以选择性设置或者不设置该字段值，对于接收方，如果能够识别可选字段就进行相应的处理，如果无法识别，则就忽略该字段，消息中的其他字段正常处理。因为optional字段的特性，很多接口在升级版本中把后面添加大的字段都统一设置为optional字段，这样在老版本无法升级的时，也能正常于新的软件进行通信，只不过新的字段无法识别而已，因为并不是每个节点都需要新的功能，因此可以做到按需升级和平滑过渡 repeated:表示该字段可以包含0-n个元素，其特性和optional一样，但是每一次可以包含个多个值，可以看作是在传递一个数组的值    数据类型：protobuf定义了一套基本的数据类型，几乎可以映射到c&#43;&#43;\java等语言的基础数据类型
+
+    字段名称
+ 字段名称的命名与c、c&#43;&#43;、java等语言的变量命名方式几乎相同 protobuf建议字段的命名采用采用下滑线分割的驼峰式    字段编码值
+ 有了字段编码值，通信双方才能互相识别对方的字段，相同的编码值，其限定修饰符和数据类型必须相同，编码值的范围为：1-2^32 其中1-15的编码时间和空间效率都很高，编码值越大，其编码的是时间和空间效率就越低，所以建议把经常要传递的值把其字段编码设置为1-15之前的值 1900-2000编码值为Google protobuf系统内部保留值，建议不要使用    字段默认值'><title>proto3 语法学习</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/proto3-%E8%AF%AD%E6%B3%95%E5%AD%A6%E4%B9%A0/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='proto3 语法学习'>
+<meta property='og:description' content='proto3 语法学习 基本规范   文件以.proto为文件后缀，除了结构体外，其他语句以分号结束
+  结构定义可以包含：message、service、enum
+  rpc方法定义结尾的分号可有可无
+  Message命名采用驼峰命名方式，字段命名采用小写字母加下划线分隔方式；举例：
+message ServerMessage{	required string server_name = server1;}  Enums类型名采用驼峰命名方式，字段名采用带大写字母加下划线分隔方式；举例：
+enum Sought{	FIRST_VALUE = 100;	SECONED_VALUE = 1200;}  Service类型采用驼峰命名方式；举例：
+service UserService{ rpc Login(LoginRequest)return(LoginResponse);}字段规则   字段格式：限定修饰符|数据类型|字段名称|=|字段编码值|[字段默认值]
+  限定修饰符号 required\optional\repeated
+ required:表示是一个必须的字段，必须要发送给对方，在发送之前必须设置该字段的值，对于接收方，必须能够识别该字段的意思，在发送之前没有设置required字段或者无法识别该字段都会引起编码异常，导致消息被丢弃 optional:表示为可选字段，对于发送方，在发送消息时，可以选择性设置或者不设置该字段值，对于接收方，如果能够识别可选字段就进行相应的处理，如果无法识别，则就忽略该字段，消息中的其他字段正常处理。因为optional字段的特性，很多接口在升级版本中把后面添加大的字段都统一设置为optional字段，这样在老版本无法升级的时，也能正常于新的软件进行通信，只不过新的字段无法识别而已，因为并不是每个节点都需要新的功能，因此可以做到按需升级和平滑过渡 repeated:表示该字段可以包含0-n个元素，其特性和optional一样，但是每一次可以包含个多个值，可以看作是在传递一个数组的值    数据类型：protobuf定义了一套基本的数据类型，几乎可以映射到c&#43;&#43;\java等语言的基础数据类型
+
+    字段名称
+ 字段名称的命名与c、c&#43;&#43;、java等语言的变量命名方式几乎相同 protobuf建议字段的命名采用采用下滑线分割的驼峰式    字段编码值
+ 有了字段编码值，通信双方才能互相识别对方的字段，相同的编码值，其限定修饰符和数据类型必须相同，编码值的范围为：1-2^32 其中1-15的编码时间和空间效率都很高，编码值越大，其编码的是时间和空间效率就越低，所以建议把经常要传递的值把其字段编码设置为1-15之前的值 1900-2000编码值为Google protobuf系统内部保留值，建议不要使用    字段默认值'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/proto3-%E8%AF%AD%E6%B3%95%E5%AD%A6%E4%B9%A0/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2022-08-05T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2022-08-05T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/proto3-%E8%AF%AD%E6%B3%95%E5%AD%A6%E4%B9%A0/1.png' />
+<meta name="twitter:title" content="proto3 语法学习">
+<meta name="twitter:description" content="proto3 语法学习 基本规范   文件以.proto为文件后缀，除了结构体外，其他语句以分号结束
+  结构定义可以包含：message、service、enum
+  rpc方法定义结尾的分号可有可无
+  Message命名采用驼峰命名方式，字段命名采用小写字母加下划线分隔方式；举例：
+message ServerMessage{	required string server_name = server1;}  Enums类型名采用驼峰命名方式，字段名采用带大写字母加下划线分隔方式；举例：
+enum Sought{	FIRST_VALUE = 100;	SECONED_VALUE = 1200;}  Service类型采用驼峰命名方式；举例：
+service UserService{ rpc Login(LoginRequest)return(LoginResponse);}字段规则   字段格式：限定修饰符|数据类型|字段名称|=|字段编码值|[字段默认值]
+  限定修饰符号 required\optional\repeated
+ required:表示是一个必须的字段，必须要发送给对方，在发送之前必须设置该字段的值，对于接收方，必须能够识别该字段的意思，在发送之前没有设置required字段或者无法识别该字段都会引起编码异常，导致消息被丢弃 optional:表示为可选字段，对于发送方，在发送消息时，可以选择性设置或者不设置该字段值，对于接收方，如果能够识别可选字段就进行相应的处理，如果无法识别，则就忽略该字段，消息中的其他字段正常处理。因为optional字段的特性，很多接口在升级版本中把后面添加大的字段都统一设置为optional字段，这样在老版本无法升级的时，也能正常于新的软件进行通信，只不过新的字段无法识别而已，因为并不是每个节点都需要新的功能，因此可以做到按需升级和平滑过渡 repeated:表示该字段可以包含0-n个元素，其特性和optional一样，但是每一次可以包含个多个值，可以看作是在传递一个数组的值    数据类型：protobuf定义了一套基本的数据类型，几乎可以映射到c&#43;&#43;\java等语言的基础数据类型
+
+    字段名称
+ 字段名称的命名与c、c&#43;&#43;、java等语言的变量命名方式几乎相同 protobuf建议字段的命名采用采用下滑线分割的驼峰式    字段编码值
+ 有了字段编码值，通信双方才能互相识别对方的字段，相同的编码值，其限定修饰符和数据类型必须相同，编码值的范围为：1-2^32 其中1-15的编码时间和空间效率都很高，编码值越大，其编码的是时间和空间效率就越低，所以建议把经常要传递的值把其字段编码设置为1-15之前的值 1900-2000编码值为Google protobuf系统内部保留值，建议不要使用    字段默认值"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/proto3-%E8%AF%AD%E6%B3%95%E5%AD%A6%E4%B9%A0/1.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/proto3-%E8%AF%AD%E6%B3%95%E5%AD%A6%E4%B9%A0/">
+                <img src="/p/proto3-%E8%AF%AD%E6%B3%95%E5%AD%A6%E4%B9%A0/1_hud944d25af46653be6ac685099ccea094_87560_800x0_resize_box_3.png"
+                        srcset="/p/proto3-%E8%AF%AD%E6%B3%95%E5%AD%A6%E4%B9%A0/1_hud944d25af46653be6ac685099ccea094_87560_800x0_resize_box_3.png 800w, /p/proto3-%E8%AF%AD%E6%B3%95%E5%AD%A6%E4%B9%A0/1_hud944d25af46653be6ac685099ccea094_87560_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="675" 
+                        loading="lazy"
+                        alt="Featured image of post proto3 语法学习" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/computer/" style="background-color: #2a9d8f; color: #fff;">
+                知识学习
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/proto3-%E8%AF%AD%E6%B3%95%E5%AD%A6%E4%B9%A0/">proto3 语法学习</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Aug 05, 2022</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 1 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h2 id="proto3-语法学习">proto3 语法学习</h2>
+<h4 id="基本规范">基本规范</h4>
+<ul>
+<li>
+<p>文件以.proto为文件后缀，除了结构体外，其他语句以分号结束</p>
+</li>
+<li>
+<p>结构定义可以包含：message、service、enum</p>
+</li>
+<li>
+<p>rpc方法定义结尾的分号可有可无</p>
+</li>
+<li>
+<p>Message命名采用驼峰命名方式，字段命名采用小写字母加下划线分隔方式；举例：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-protobuf" data-lang="protobuf"><span class="kd">message</span> <span class="nc">ServerMessage</span><span class="p">{</span><span class="err">
+</span><span class="err"></span>	<span class="k">required</span> <span class="kt">string</span> <span class="n">server_name</span> <span class="o">=</span> <span class="n">server1</span><span class="p">;</span><span class="err">
+</span><span class="err"></span><span class="p">}</span><span class="err">
+</span></code></pre></div></li>
+<li>
+<p>Enums类型名采用驼峰命名方式，字段名采用带大写字母加下划线分隔方式；举例：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-protobuf" data-lang="protobuf"><span class="kd">enum</span> <span class="n">Sought</span><span class="p">{</span><span class="err">
+</span><span class="err"></span>	<span class="n">FIRST_VALUE</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span><span class="err">
+</span><span class="err"></span>	<span class="n">SECONED_VALUE</span> <span class="o">=</span> <span class="mi">1200</span><span class="p">;</span><span class="err">
+</span><span class="err"></span><span class="p">}</span><span class="err">
+</span></code></pre></div></li>
+<li>
+<p>Service类型采用驼峰命名方式；举例：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-protobuf" data-lang="protobuf"><span class="kd">service</span> <span class="n">UserService</span><span class="err">
+</span><span class="err"></span><span class="p">{</span><span class="err">
+</span><span class="err"></span> <span class="k">rpc</span> <span class="n">Login</span><span class="p">(</span><span class="n">LoginRequest</span><span class="p">)</span><span class="n">return</span><span class="p">(</span><span class="n">LoginResponse</span><span class="p">);</span><span class="err">
+</span><span class="err"></span><span class="p">}</span><span class="err">
+</span></code></pre></div><h4 id="字段规则">字段规则</h4>
+<ul>
+<li>
+<p>字段格式：限定修饰符|数据类型|字段名称|=|字段编码值|[字段默认值]</p>
+</li>
+<li>
+<p>限定修饰符号 required\optional\repeated</p>
+<ul>
+<li>required:表示是一个必须的字段，必须要发送给对方，在发送之前必须设置该字段的值，对于接收方，必须能够识别该字段的意思，在发送之前没有设置required字段或者无法识别该字段都会引起编码异常，导致消息被丢弃</li>
+<li>optional:表示为可选字段，对于发送方，在发送消息时，可以选择性设置或者不设置该字段值，对于接收方，如果能够识别可选字段就进行相应的处理，如果无法识别，则就忽略该字段，消息中的其他字段正常处理。因为optional字段的特性，很多接口在升级版本中把后面添加大的字段都统一设置为optional字段，这样在老版本无法升级的时，也能正常于新的软件进行通信，只不过新的字段无法识别而已，因为并不是每个节点都需要新的功能，因此可以做到按需升级和平滑过渡</li>
+<li>repeated:表示该字段可以包含0-n个元素，其特性和optional一样，但是每一次可以包含个多个值，可以看作是在传递一个数组的值</li>
+</ul>
+</li>
+<li>
+<p>数据类型：protobuf定义了一套基本的数据类型，几乎可以映射到c++\java等语言的基础数据类型</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 118; 
+			flex-basis: 284px"
+	>
+	<a href="/p/proto3-%E8%AF%AD%E6%B3%95%E5%AD%A6%E4%B9%A0/1.png" data-size="963x813">
+		<img src="/p/proto3-%E8%AF%AD%E6%B3%95%E5%AD%A6%E4%B9%A0/1.png"
+			width="963"
+			height="813"
+			srcset="/p/proto3-%E8%AF%AD%E6%B3%95%E5%AD%A6%E4%B9%A0/1_hud944d25af46653be6ac685099ccea094_87560_480x0_resize_box_3.png 480w, /p/proto3-%E8%AF%AD%E6%B3%95%E5%AD%A6%E4%B9%A0/1_hud944d25af46653be6ac685099ccea094_87560_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+</li>
+</ul>
+</li>
+<li>
+<p>字段名称</p>
+<ul>
+<li>字段名称的命名与c、c++、java等语言的变量命名方式几乎相同</li>
+<li>protobuf建议字段的命名采用采用下滑线分割的驼峰式</li>
+</ul>
+</li>
+<li>
+<p>字段编码值</p>
+<ul>
+<li>有了字段编码值，通信双方才能互相识别对方的字段，相同的编码值，其限定修饰符和数据类型必须相同，编码值的范围为：1-2^32</li>
+<li>其中1-15的编码时间和空间效率都很高，编码值越大，其编码的是时间和空间效率就越低，所以建议把经常要传递的值把其字段编码设置为1-15之前的值</li>
+<li>1900-2000编码值为Google protobuf系统内部保留值，建议不要使用</li>
+</ul>
+</li>
+<li>
+<p>字段默认值</p>
+<ul>
+<li>当在传递数据时，对于required数据类型，如果用户没有设置值，则使用默认值传递到对端</li>
+</ul>
+</li>
+</ul>
+<h4 id="service定义">service定义</h4>
+<ul>
+<li>
+<p>如果想要将消息类型用在rpc系统中，可以在.proto文件中定义一个RPC服务接口， protocol buffer 编译器会根据所选择的不同语言生成对应的服务器接口代码</p>
+</li>
+<li>
+<p>例如，想要定义一个RPC服务并具有一个方法，该方法接收SearchRequest并返回一个SearchResponse，此时可以在.proto文件中进行如下定义：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-protobuf" data-lang="protobuf"> <span class="kd">service</span> <span class="n">SearchService</span> <span class="p">{</span><span class="err">
+</span><span class="err"></span>        <span class="k">rpc</span> <span class="n">Search</span> <span class="p">(</span><span class="n">SearchRequest</span><span class="p">)</span> <span class="k">returns</span> <span class="p">(</span><span class="n">SearchResponse</span><span class="p">)</span> <span class="p">{}</span><span class="err">
+</span><span class="err"></span>    <span class="p">}</span><span class="err">
+</span></code></pre></div></li>
+<li>
+<p>生成的接口代码作为客户端与服务器的约定。服务端必须实现定义的所有接口方法，客户端直接调用同名方法向服务端发送请求，值得一提的是，即使业务上不需要参数也必须指定一个请求消息，一般会定义空的message</p>
+</li>
+</ul>
+<h4 id="message定义">Message定义</h4>
+<ul>
+<li>
+<p>一个message类型定义了一个请求或者响应的消息格式，可以包含多种类型的字段</p>
+</li>
+<li>
+<p>字段名用小写，转为go文件时会自动转为大写，message就相当于结构体</p>
+</li>
+<li>
+<p>首行声明使用的protobuf版本为proto3</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-protobuf" data-lang="protobuf"><span class="n">syntax</span> <span class="o">=</span> <span class="s">&#34;proto3&#34;</span><span class="err">
+</span><span class="err"></span><span class="n">massage</span> <span class="n">SearchRequest</span><span class="p">{</span><span class="err">
+</span><span class="err"></span>      <span class="kt">string</span> <span class="n">name</span> <span class="o">=</span> <span class="s">&#34;zcj&#34;</span><span class="p">;</span>  <span class="c1">// 查询的名字
+</span><span class="c1"></span>      <span class="kt">int32</span>  <span class="n">pirce</span><span class="o">=</span> <span class="mi">600</span><span class="p">;</span>    <span class="c1">//价格
+</span><span class="c1"></span>      <span class="kt">int32</span> <span class="n">producet_num</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// 产品编号
+</span><span class="c1"></span><span class="p">}</span><span class="err">
+</span></code></pre></div></li>
+<li>
+<p>一个.proto文件中可以定义多个消息类型，一般用于同时定义的多个相关的信息</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-protobuf" data-lang="protobuf"><span class="n">syntax</span> <span class="o">=</span> <span class="s">&#34;proto3&#34;</span><span class="err">
+</span><span class="err"></span><span class="n">massage</span> <span class="n">SearchRequest</span><span class="p">{</span><span class="err">
+</span><span class="err"></span>      <span class="kt">string</span> <span class="n">name</span> <span class="o">=</span> <span class="s">&#34;zcj&#34;</span><span class="p">;</span>  <span class="c1">// 查询的名字
+</span><span class="c1"></span>      <span class="kt">int32</span>  <span class="n">pirce</span><span class="o">=</span> <span class="mi">600</span><span class="p">;</span>    <span class="c1">//价格
+</span><span class="c1"></span>      <span class="kt">int32</span> <span class="n">producet_num</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// 产品编号
+</span><span class="c1"></span><span class="p">}</span><span class="err">
+</span><span class="err"></span><span class="c1">// 响应
+</span><span class="c1"></span><span class="kd">message</span> <span class="nc">SearchResponse</span><span class="p">{</span><span class="err">
+</span><span class="err"></span><span class="c1">// 响应信息
+</span><span class="c1"></span><span class="p">}</span><span class="err">
+</span></code></pre></div></li>
+<li>
+<p>message 支持嵌套使用，作为另一个message中的字段类型</p>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-protobuf" data-lang="protobuf"><span class="kd">message</span> <span class="nc">Result</span><span class="p">{</span><span class="err">
+</span><span class="err"></span>	<span class="kt">string</span> <span class="n">name</span> <span class="o">=</span> <span class="s">&#34;zcj&#34;</span><span class="p">;</span><span class="err">
+</span><span class="err"></span>	<span class="kt">string</span> <span class="n">title</span> <span class="o">=</span> <span class="s">&#34;proto3&#34;</span><span class="p">;</span><span class="err">
+</span><span class="err"></span>	<span class="kt">int32</span> <span class="n">price</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span><span class="err">
+</span><span class="err"></span><span class="p">}</span><span class="err">
+</span><span class="err"></span><span class="kd">message</span> <span class="nc">SearchResponse</span><span class="p">{</span><span class="err">
+</span><span class="err"></span>	<span class="k">repeated</span> <span class="n">Result</span> <span class="n">result</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span><span class="err">
+</span><span class="err"></span><span class="p">}</span><span class="err">
+</span></code></pre></div><ul>
+<li>
+<p>支持嵌套信息，消息可以包含另一个消息作为字段，也可以在消息内定义一个新的消息</p>
+</li>
+<li>
+<p>内部声明的message类型明显可以在内部直接使用</p>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-protobuf" data-lang="protobuf"><span class="kd">message</span> <span class="nc">SearchReponse</span><span class="p">{</span><span class="err">
+</span><span class="err"></span>	<span class="kd">message</span> <span class="nc">Resylt</span><span class="p">{</span><span class="err">
+</span><span class="err"></span>	<span class="kt">string</span> <span class="n">name</span> <span class="o">=</span> <span class="s">&#34;zcj&#34;</span><span class="p">;</span><span class="err">
+</span><span class="err"></span>	<span class="kt">string</span> <span class="n">title</span> <span class="o">=</span> <span class="s">&#34;proto3&#34;</span><span class="p">;</span><span class="err">
+</span><span class="err"></span>	<span class="kt">int32</span> <span class="n">price</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span><span class="err">
+</span><span class="err"></span>	<span class="p">}</span><span class="err">
+</span><span class="err"></span>	<span class="k">repeated</span> <span class="n">Resylt</span> <span class="n">re</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span><span class="err">
+</span><span class="err"></span><span class="p">}</span><span class="err">
+</span></code></pre></div><h4 id="proto3的map类型">proto3的Map类型</h4>
+<ul>
+<li>
+<p>proto3支持map类型声明</p>
+</li>
+<li>
+<p>键、值类型可以是内置的类型，也可以是自定义的message类型</p>
+</li>
+<li>
+<p>字段不支持repeated属性</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-protobuf" data-lang="protobuf"><span class="n">map</span><span class="p">&lt;</span><span class="n">key_type</span><span class="p">,</span> <span class="n">value_type</span><span class="p">&gt;</span><span class="n">map_filed</span> <span class="o">=</span> <span class="n">N</span><span class="p">;</span><span class="err">
+</span><span class="err"></span><span class="c1">//支持定义的类型
+</span><span class="c1"></span><span class="kd">message</span> <span class="nc">Produce</span><span class="p">{</span><span class="err">
+</span><span class="err"></span>	<span class="kt">string</span> <span class="n">name</span> <span class="o">=</span> <span class="s">&#34;zcj&#34;</span><span class="p">;</span><span class="err">
+</span><span class="err"></span><span class="p">}</span><span class="err">
+</span><span class="err"></span><span class="n">map</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="n">Product</span><span class="p">&gt;</span> <span class="n">pro</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span><span class="err">
+</span></code></pre></div><h4 id="proto3文件编译">proto3文件编译</h4>
+<ul>
+<li>通过定义好的.proto文件生成的Java，python，c/c++， GO等语言的代码，需要安装编译器protoc</li>
+<li>当使用protocol buffer 编译器允许.proto文件时，编译器生成所选择语言的代码，用于使用在.proto文件中定义的消息类型，服务接口约定等，不同的语言生成代码格式不同：
+<ul>
+<li>c++:每个.proto文件生成一个.h和一个.cc文件，每一个消息类型对应一个类</li>
+<li>Java：生成一个.Java文件，同样每个消息对应一个类，同时还有一个特殊的Builder类用于创建信息接口</li>
+<li>Go：生成一个.pb.go文件，每一个消息类型对应这一个结构体</li>
+<li>Python: 姿势不太一样，每个.proto文件中的消息类型生成一个含有静态描述符的模块，该模块与一个元类metaclass在运行时创建需要的Python数据访问类</li>
+</ul>
+</li>
+</ul>
+<h4 id="import导入定义">import导入定义</h4>
+<ul>
+<li>可以使用import 接口语句导入使用其他描述文件中的声明的类型</li>
+<li>protobuf 接口文件可以像C语言的#include或者Java的import的行为大致一致</li>
+<li>protocol buffer编译器会在-I /&ndash;proto_path参数指定的目录中查找导入的文件，如果没有指定该参数，默认使用当前的目录查找</li>
+</ul>
+<h4 id="包的使用">包的使用</h4>
+<ul>
+<li>在proto文件中使用package声明包，避免命名冲突</li>
+<li>在其他的消息格式定义中可以使用包名+消息名的方式使用类型</li>
+<li>在不同语言中，包含定义对编译后生成的代码影响不同：
+<ul>
+<li>C++：对应C++命令空间</li>
+<li>Java 中：package会作为Java包名，除非指定了option jave_package选项</li>
+<li>Python 中：package被忽略</li>
+<li>Go 中：默认使用package名作为包名，除非指定了option go_package选项</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/%E8%AE%BE%E7%BD%AE%E8%87%AA%E5%B7%B1%E7%9A%84%E7%BC%96%E8%BE%91%E5%99%A8/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E8%AE%BE%E7%BD%AE%E8%87%AA%E5%B7%B1%E7%9A%84%E7%BC%96%E8%BE%91%E5%99%A8/1.34ded2474304ba1de2223379243bc5ed_hu3b1364509ee92ba594c04f8ddadc5a1f_100499_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-NN7SR0MEuh3iIjN5JDvF7Q==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">设置自己的编辑器</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/">
+        
+        
+            <div class="article-image">
+                <img src="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/_hu8f470d54622ce88b90e96a39d1a48252_105753_89206ea8193e700a8857b4b864406cba.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-o8Bw0dFZ/S4R0kO&#43;D3tuGA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">redis 常用命令的实践</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/linux-mdadm%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux-mdadm%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/1.5f807745f850e4f73ffda5637371863a_hu859ea59f552859095fb986ed5a22b665_11306_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-X4B3RfhQ5Pc//aVjc3GGOg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux-mdadm工具学习</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/_huc45ff52f0cf6b2c13cf0b9e2262e1b7b_66945_00fb710e5378cc4d967388d67c9d27dc.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-Ej431j4sWI7qDLD5P2Z/PQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux-Multi-Disk (MD)模块</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/linux-raid5%E5%AD%A6%E4%B9%A0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux-raid5%E5%AD%A6%E4%B9%A0/1.686b3e94bd875a9513d4f47a48d8b455_hu7e02b142b51acc83a4bc67a855e709b3_49591_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-aGs&#43;lL2HWpUT1PR6SNi0VQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux-raid5学习</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#proto3-语法学习">proto3 语法学习</a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#基本规范">基本规范</a></li>
+            <li><a href="#字段规则">字段规则</a></li>
+            <li><a href="#service定义">service定义</a></li>
+            <li><a href="#message定义">Message定义</a></li>
+            <li><a href="#proto3的map类型">proto3的Map类型</a></li>
+            <li><a href="#proto3文件编译">proto3文件编译</a></li>
+            <li><a href="#import导入定义">import导入定义</a></li>
+            <li><a href="#包的使用">包的使用</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

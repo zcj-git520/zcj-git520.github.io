@@ -6,7 +6,28 @@
     <description>Recent content in 知识学习 on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 23 Jul 2022 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/computer/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 05 Aug 2022 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/computer/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>proto3 语法学习</title>
+      <link>https://zcj-git520.github.io/p/proto3-%E8%AF%AD%E6%B3%95%E5%AD%A6%E4%B9%A0/</link>
+      <pubDate>Fri, 05 Aug 2022 22:00:38 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/proto3-%E8%AF%AD%E6%B3%95%E5%AD%A6%E4%B9%A0/</guid>
+      <description>proto3 语法学习 基本规范   文件以.proto为文件后缀，除了结构体外，其他语句以分号结束
+  结构定义可以包含：message、service、enum
+  rpc方法定义结尾的分号可有可无
+  Message命名采用驼峰命名方式，字段命名采用小写字母加下划线分隔方式；举例：
+message ServerMessage{	required string server_name = server1;}  Enums类型名采用驼峰命名方式，字段名采用带大写字母加下划线分隔方式；举例：
+enum Sought{	FIRST_VALUE = 100;	SECONED_VALUE = 1200;}  Service类型采用驼峰命名方式；举例：
+service UserService{ rpc Login(LoginRequest)return(LoginResponse);}字段规则   字段格式：限定修饰符|数据类型|字段名称|=|字段编码值|[字段默认值]
+  限定修饰符号 required\optional\repeated
+ required:表示是一个必须的字段，必须要发送给对方，在发送之前必须设置该字段的值，对于接收方，必须能够识别该字段的意思，在发送之前没有设置required字段或者无法识别该字段都会引起编码异常，导致消息被丢弃 optional:表示为可选字段，对于发送方，在发送消息时，可以选择性设置或者不设置该字段值，对于接收方，如果能够识别可选字段就进行相应的处理，如果无法识别，则就忽略该字段，消息中的其他字段正常处理。因为optional字段的特性，很多接口在升级版本中把后面添加大的字段都统一设置为optional字段，这样在老版本无法升级的时，也能正常于新的软件进行通信，只不过新的字段无法识别而已，因为并不是每个节点都需要新的功能，因此可以做到按需升级和平滑过渡 repeated:表示该字段可以包含0-n个元素，其特性和optional一样，但是每一次可以包含个多个值，可以看作是在传递一个数组的值    数据类型：protobuf定义了一套基本的数据类型，几乎可以映射到c++\java等语言的基础数据类型
+
+    字段名称
+ 字段名称的命名与c、c++、java等语言的变量命名方式几乎相同 protobuf建议字段的命名采用采用下滑线分割的驼峰式    字段编码值
+ 有了字段编码值，通信双方才能互相识别对方的字段，相同的编码值，其限定修饰符和数据类型必须相同，编码值的范围为：1-2^32 其中1-15的编码时间和空间效率都很高，编码值越大，其编码的是时间和空间效率就越低，所以建议把经常要传递的值把其字段编码设置为1-15之前的值 1900-2000编码值为Google protobuf系统内部保留值，建议不要使用    字段默认值</description>
+    </item>
+    
     <item>
       <title>设置自己的编辑器</title>
       <link>https://zcj-git520.github.io/p/%E8%AE%BE%E7%BD%AE%E8%87%AA%E5%B7%B1%E7%9A%84%E7%BC%96%E8%BE%91%E5%99%A8/</link>
