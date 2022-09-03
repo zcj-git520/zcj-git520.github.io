@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='RSA加密算法的使用  生成公私钥 保存文件或者保存在内存中 设置时间有效期，长期有效或者超时重创建公私钥  代码如下 package zcj_rsa import ( &amp;#34;crypto/rand&amp;#34; &amp;#34;crypto/rsa&amp;#34; &amp;#34;crypto/x509&amp;#34; &amp;#34;encoding/base64&amp;#34; &amp;#34;encoding/pem&amp;#34; &amp;#34;fmt&amp;#34; &amp;#34;os&amp;#34; &amp;#34;path&amp;#34; &amp;#34;time&amp;#34; ) const ( BITS = 2048 // 证书大小  SAVEKEYPATH = &amp;#34;./&amp;#34; // 默认保存公私钥的路径  ) type signData struct { publicKey string // 公钥  privateKey string // 私钥  generateTime time.Time // 生成时间  isCreate bool // 是否创建公私钥  Timeout int // 证书超时时间 单位时间为分钟 &amp;lt;= 0 表示永久有效  SaveMode bool // true 保存为文件，False保存在内存中  PublicKeyPath string // 保存公钥的路径  PrivateKeyPath string // 保存私钥的路径  } // 创建公私钥对  func (s *signData)creatKey() error { if s.'><title>RSA加密算法的使用</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/rsa%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E7%9A%84%E4%BD%BF%E7%94%A8/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='RSA加密算法的使用'>
+<meta property='og:description' content='RSA加密算法的使用  生成公私钥 保存文件或者保存在内存中 设置时间有效期，长期有效或者超时重创建公私钥  代码如下 package zcj_rsa import ( &amp;#34;crypto/rand&amp;#34; &amp;#34;crypto/rsa&amp;#34; &amp;#34;crypto/x509&amp;#34; &amp;#34;encoding/base64&amp;#34; &amp;#34;encoding/pem&amp;#34; &amp;#34;fmt&amp;#34; &amp;#34;os&amp;#34; &amp;#34;path&amp;#34; &amp;#34;time&amp;#34; ) const ( BITS = 2048 // 证书大小  SAVEKEYPATH = &amp;#34;./&amp;#34; // 默认保存公私钥的路径  ) type signData struct { publicKey string // 公钥  privateKey string // 私钥  generateTime time.Time // 生成时间  isCreate bool // 是否创建公私钥  Timeout int // 证书超时时间 单位时间为分钟 &amp;lt;= 0 表示永久有效  SaveMode bool // true 保存为文件，False保存在内存中  PublicKeyPath string // 保存公钥的路径  PrivateKeyPath string // 保存私钥的路径  } // 创建公私钥对  func (s *signData)creatKey() error { if s.'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/rsa%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E7%9A%84%E4%BD%BF%E7%94%A8/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2022-08-15T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2022-08-15T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/rsa%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E7%9A%84%E4%BD%BF%E7%94%A8/1.jpg' />
+<meta name="twitter:title" content="RSA加密算法的使用">
+<meta name="twitter:description" content="RSA加密算法的使用  生成公私钥 保存文件或者保存在内存中 设置时间有效期，长期有效或者超时重创建公私钥  代码如下 package zcj_rsa import ( &amp;#34;crypto/rand&amp;#34; &amp;#34;crypto/rsa&amp;#34; &amp;#34;crypto/x509&amp;#34; &amp;#34;encoding/base64&amp;#34; &amp;#34;encoding/pem&amp;#34; &amp;#34;fmt&amp;#34; &amp;#34;os&amp;#34; &amp;#34;path&amp;#34; &amp;#34;time&amp;#34; ) const ( BITS = 2048 // 证书大小  SAVEKEYPATH = &amp;#34;./&amp;#34; // 默认保存公私钥的路径  ) type signData struct { publicKey string // 公钥  privateKey string // 私钥  generateTime time.Time // 生成时间  isCreate bool // 是否创建公私钥  Timeout int // 证书超时时间 单位时间为分钟 &amp;lt;= 0 表示永久有效  SaveMode bool // true 保存为文件，False保存在内存中  PublicKeyPath string // 保存公钥的路径  PrivateKeyPath string // 保存私钥的路径  } // 创建公私钥对  func (s *signData)creatKey() error { if s."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/rsa%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E7%9A%84%E4%BD%BF%E7%94%A8/1.jpg' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/rsa%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E7%9A%84%E4%BD%BF%E7%94%A8/">
+                <img src="/p/rsa%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E7%9A%84%E4%BD%BF%E7%94%A8/1_hu90b9af4bc0d9f7c3043b63f92872793b_76034_800x0_resize_q75_box.jpg"
+                        srcset="/p/rsa%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E7%9A%84%E4%BD%BF%E7%94%A8/1_hu90b9af4bc0d9f7c3043b63f92872793b_76034_800x0_resize_q75_box.jpg 800w, /p/rsa%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E7%9A%84%E4%BD%BF%E7%94%A8/1_hu90b9af4bc0d9f7c3043b63f92872793b_76034_1600x0_resize_q75_box.jpg 1600w"
+                        width="800" 
+                        height="533" 
+                        loading="lazy"
+                        alt="Featured image of post RSA加密算法的使用" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/language/" style="background-color: #2a9d8f; color: #fff;">
+                语言学习
+            </a>
+        
+            <a href="/categories/golang/" style="background-color: #2a9d8f; color: #fff;">
+                Golang
+            </a>
+        
+            <a href="/categories/bug/" style="background-color: #2a9d8f; color: #fff;">
+                Bug修复
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/rsa%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E7%9A%84%E4%BD%BF%E7%94%A8/">RSA加密算法的使用</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Aug 15, 2022</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 3 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h2 id="rsa加密算法的使用">RSA加密算法的使用</h2>
+<ul>
+<li>生成公私钥</li>
+<li>保存文件或者保存在内存中</li>
+<li>设置时间有效期，长期有效或者超时重创建公私钥</li>
+</ul>
+<h4 id="代码如下">代码如下</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">    <span class="kn">package</span> <span class="nx">zcj_rsa</span>
+    
+    <span class="kn">import</span> <span class="p">(</span>
+    	<span class="s">&#34;crypto/rand&#34;</span>
+    	<span class="s">&#34;crypto/rsa&#34;</span>
+    	<span class="s">&#34;crypto/x509&#34;</span>
+    	<span class="s">&#34;encoding/base64&#34;</span>
+    	<span class="s">&#34;encoding/pem&#34;</span>
+    	<span class="s">&#34;fmt&#34;</span>
+    	<span class="s">&#34;os&#34;</span>
+    	<span class="s">&#34;path&#34;</span>
+    	<span class="s">&#34;time&#34;</span>
+    <span class="p">)</span>
+    
+    <span class="kd">const</span> <span class="p">(</span>
+    	<span class="nx">BITS</span>  <span class="p">=</span> <span class="mi">2048</span>        <span class="c1">// 证书大小
+</span><span class="c1"></span>    	<span class="nx">SAVEKEYPATH</span> <span class="p">=</span> <span class="s">&#34;./&#34;</span>  <span class="c1">// 默认保存公私钥的路径
+</span><span class="c1"></span>    <span class="p">)</span>
+    
+    <span class="kd">type</span> <span class="nx">signData</span> <span class="kd">struct</span> <span class="p">{</span>
+    	<span class="nx">publicKey</span>  		<span class="kt">string</span>    <span class="c1">// 公钥
+</span><span class="c1"></span>    	<span class="nx">privateKey</span> 		<span class="kt">string</span>    <span class="c1">// 私钥
+</span><span class="c1"></span>    	<span class="nx">generateTime</span>    <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span> <span class="c1">// 生成时间
+</span><span class="c1"></span>    	<span class="nx">isCreate</span>        <span class="kt">bool</span>      <span class="c1">// 是否创建公私钥
+</span><span class="c1"></span>    	<span class="nx">Timeout</span>         <span class="kt">int</span>       <span class="c1">// 证书超时时间 单位时间为分钟 &lt;= 0 表示永久有效
+</span><span class="c1"></span>    	<span class="nx">SaveMode</span>        <span class="kt">bool</span>      <span class="c1">// true 保存为文件，False保存在内存中
+</span><span class="c1"></span>    	<span class="nx">PublicKeyPath</span>   <span class="kt">string</span>    <span class="c1">// 保存公钥的路径
+</span><span class="c1"></span>    	<span class="nx">PrivateKeyPath</span>  <span class="kt">string</span>    <span class="c1">// 保存私钥的路径
+</span><span class="c1"></span>    <span class="p">}</span>
+    
+    <span class="c1">// 创建公私钥对
+</span><span class="c1"></span>    <span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">signData</span><span class="p">)</span><span class="nf">creatKey</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+    	<span class="k">if</span> <span class="nx">s</span><span class="p">.</span><span class="nf">isEffectiveKey</span><span class="p">(){</span>
+    		<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;公私钥已存在&#34;</span><span class="p">)</span>
+    	<span class="p">}</span>
+    	<span class="c1">// 创建私钥
+</span><span class="c1"></span>    	<span class="nx">prvKey</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">rsa</span><span class="p">.</span><span class="nf">GenerateKey</span><span class="p">(</span><span class="nx">rand</span><span class="p">.</span><span class="nx">Reader</span><span class="p">,</span> <span class="nx">BITS</span><span class="p">)</span>
+    	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    		<span class="k">return</span> <span class="nx">err</span>
+    	<span class="p">}</span>
+    	<span class="c1">//通过x509标准将得到的ras私钥序列化为ASN.1 的 DER编码字符串
+</span><span class="c1"></span>    	<span class="nx">x509PrivateKey</span> <span class="o">:=</span> <span class="nx">x509</span><span class="p">.</span><span class="nf">MarshalPKCS1PrivateKey</span><span class="p">(</span><span class="nx">prvKey</span><span class="p">)</span>
+    	<span class="nx">privateKeyBlock</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">pem</span><span class="p">.</span><span class="nx">Block</span><span class="p">{</span>
+    		<span class="nx">Type</span><span class="p">:</span><span class="s">&#34;RSA Private key&#34;</span><span class="p">,</span>
+    		<span class="nx">Bytes</span><span class="p">:</span> <span class="nx">x509PrivateKey</span><span class="p">,</span>
+    	<span class="p">}</span>
+    	<span class="c1">//处理公钥,公钥包含在私钥中
+</span><span class="c1"></span>    	<span class="nx">pubKey</span> <span class="o">:=</span> <span class="nx">prvKey</span><span class="p">.</span><span class="nx">PublicKey</span>
+    	<span class="c1">//通过x509标准将得到的ras公钥序列化为ASN.1 的 DER编码字符串
+</span><span class="c1"></span>    	<span class="nx">x509PublicKey</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">x509</span><span class="p">.</span><span class="nf">MarshalPKIXPublicKey</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">pubKey</span><span class="p">)</span>
+    	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    		<span class="k">return</span> <span class="nx">err</span>
+    	<span class="p">}</span>
+    	<span class="nx">publicKeyBlock</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">pem</span><span class="p">.</span><span class="nx">Block</span><span class="p">{</span>
+    		<span class="nx">Type</span><span class="p">:</span><span class="s">&#34;RSA Public key&#34;</span><span class="p">,</span>
+    		<span class="nx">Bytes</span><span class="p">:</span> <span class="nx">x509PublicKey</span><span class="p">,</span>
+    	<span class="p">}</span>
+    	<span class="k">if</span> <span class="nx">s</span><span class="p">.</span><span class="nx">SaveMode</span><span class="p">{</span>
+    		<span class="nx">publicFile</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="nx">path</span><span class="p">.</span><span class="nf">Join</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">PublicKeyPath</span><span class="p">,</span> <span class="s">&#34;public.pem&#34;</span><span class="p">))</span>
+    		<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+    			<span class="k">return</span> <span class="nx">err</span>
+    		<span class="p">}</span>
+    		<span class="nx">privateKeyFile</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="nx">path</span><span class="p">.</span><span class="nf">Join</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">PrivateKeyPath</span><span class="p">,</span> <span class="s">&#34;privateKey.pem&#34;</span><span class="p">))</span>
+    		<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+    			<span class="k">return</span> <span class="nx">err</span>
+    		<span class="p">}</span>
+    		<span class="k">defer</span> <span class="nx">publicFile</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+    		<span class="k">defer</span> <span class="nx">privateKeyFile</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+    		<span class="c1">//保存到文件
+</span><span class="c1"></span>    		<span class="nx">err</span> <span class="p">=</span> <span class="nx">pem</span><span class="p">.</span><span class="nf">Encode</span><span class="p">(</span><span class="nx">privateKeyFile</span><span class="p">,</span><span class="nx">privateKeyBlock</span><span class="p">)</span>
+    		<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+    			<span class="k">return</span> <span class="nx">err</span>
+    		<span class="p">}</span>
+    		<span class="nx">err</span> <span class="p">=</span> <span class="nx">pem</span><span class="p">.</span><span class="nf">Encode</span><span class="p">(</span><span class="nx">publicFile</span><span class="p">,</span><span class="nx">publicKeyBlock</span><span class="p">)</span>
+    		<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+    			<span class="k">return</span> <span class="nx">err</span>
+    		<span class="p">}</span>
+    	<span class="p">}</span><span class="k">else</span><span class="p">{</span>
+    		<span class="nx">s</span><span class="p">.</span><span class="nx">publicKey</span> <span class="p">=</span> <span class="nb">string</span><span class="p">(</span><span class="nx">pem</span><span class="p">.</span><span class="nf">EncodeToMemory</span><span class="p">(</span><span class="nx">publicKeyBlock</span><span class="p">))</span>
+    		<span class="nx">s</span><span class="p">.</span><span class="nx">privateKey</span> <span class="p">=</span> <span class="nb">string</span><span class="p">(</span><span class="nx">pem</span><span class="p">.</span><span class="nf">EncodeToMemory</span><span class="p">(</span><span class="nx">privateKeyBlock</span><span class="p">))</span>
+    	<span class="p">}</span>
+    	<span class="nx">s</span><span class="p">.</span><span class="nx">generateTime</span> <span class="p">=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">()</span>
+    	<span class="nx">s</span><span class="p">.</span><span class="nx">isCreate</span> <span class="p">=</span> <span class="kc">true</span>
+    	<span class="k">return</span> <span class="kc">nil</span>
+    <span class="p">}</span>
+    
+    <span class="c1">// 判断公私钥是否有效
+</span><span class="c1"></span>    <span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">signData</span><span class="p">)</span><span class="nf">isEffectiveKey</span><span class="p">()</span><span class="kt">bool</span><span class="p">{</span>
+    	<span class="k">if</span> <span class="nx">s</span><span class="p">.</span><span class="nx">isCreate</span><span class="p">{</span>
+    		<span class="k">if</span> <span class="nx">s</span><span class="p">.</span><span class="nx">Timeout</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">{</span>
+    			<span class="c1">//log.Info(&#34;公私钥创建，且永久有效&#34;)
+</span><span class="c1"></span>    			<span class="k">return</span> <span class="kc">true</span>
+    		<span class="p">}</span>
+    		<span class="nx">duration</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Sub</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">generateTime</span><span class="p">).</span><span class="nf">Minutes</span><span class="p">()</span>
+    		<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="nx">duration</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">Timeout</span><span class="p">{</span>
+    			<span class="c1">//log.Info(&#34;公私钥创建，且在有效期&#34;)
+</span><span class="c1"></span>    			<span class="k">return</span> <span class="kc">true</span>
+    		<span class="p">}</span>
+    	<span class="p">}</span>
+    	<span class="k">return</span> <span class="kc">false</span>
+    <span class="p">}</span>
+    
+    <span class="c1">// 使用私钥进行解密
+</span><span class="c1"></span>    <span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">signData</span><span class="p">)</span><span class="nf">RSADecryption</span><span class="p">(</span><span class="nx">cipherText</span> <span class="kt">string</span><span class="p">)(</span><span class="kt">string</span><span class="p">,</span> <span class="kt">error</span><span class="p">){</span>
+    	<span class="c1">// 保存在内存中进行判断
+</span><span class="c1"></span>    	<span class="k">if</span> <span class="p">!</span><span class="nx">s</span><span class="p">.</span><span class="nx">SaveMode</span> <span class="o">&amp;&amp;</span> <span class="p">!</span><span class="nx">s</span><span class="p">.</span><span class="nf">isEffectiveKey</span><span class="p">(){</span>
+    		<span class="k">return</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;公私钥未创建&#34;</span><span class="p">)</span>
+    	<span class="p">}</span>
+    	<span class="nx">cipherBuf</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">base64</span><span class="p">.</span><span class="nx">StdEncoding</span><span class="p">.</span><span class="nf">DecodeString</span><span class="p">(</span><span class="nx">cipherText</span><span class="p">)</span>
+    	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    		<span class="k">return</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">err</span>
+    	<span class="p">}</span>
+    	<span class="kd">var</span> <span class="nx">buf</span> <span class="p">[]</span><span class="kt">byte</span>
+    	<span class="k">if</span> <span class="nx">s</span><span class="p">.</span><span class="nx">SaveMode</span><span class="p">{</span>
+    		<span class="nx">file</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">os</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="nx">path</span><span class="p">.</span><span class="nf">Join</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">PrivateKeyPath</span><span class="p">,</span> <span class="s">&#34;privateKey.pem&#34;</span><span class="p">))</span>
+    		<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+    			<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+    		<span class="p">}</span>
+    		<span class="k">defer</span> <span class="nx">file</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+    		<span class="c1">//读取文件的内容
+</span><span class="c1"></span>    		<span class="nx">info</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">file</span><span class="p">.</span><span class="nf">Stat</span><span class="p">()</span>
+    		<span class="nx">buf</span> <span class="p">=</span><span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span><span class="nx">info</span><span class="p">.</span><span class="nf">Size</span><span class="p">())</span>
+    		<span class="nx">file</span><span class="p">.</span><span class="nf">Read</span><span class="p">(</span><span class="nx">buf</span><span class="p">)</span>
+    	<span class="p">}</span><span class="k">else</span><span class="p">{</span>
+    		<span class="nx">buf</span> <span class="p">=</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">privateKey</span><span class="p">)</span>
+    	<span class="p">}</span>
+    	<span class="nx">block</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">pem</span><span class="p">.</span><span class="nf">Decode</span><span class="p">(</span><span class="nx">buf</span><span class="p">)</span>
+    	<span class="k">if</span> <span class="nx">block</span> <span class="o">==</span> <span class="kc">nil</span><span class="p">{</span>
+    		<span class="k">return</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;pem decode fild&#34;</span><span class="p">)</span>
+    	<span class="p">}</span>
+    	<span class="nx">privateKey</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">x509</span><span class="p">.</span><span class="nf">ParsePKCS1PrivateKey</span><span class="p">(</span><span class="nx">block</span><span class="p">.</span><span class="nx">Bytes</span><span class="p">)</span>
+    	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    		<span class="k">return</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">err</span>
+    	<span class="p">}</span>
+    	<span class="nx">plainText</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">rsa</span><span class="p">.</span><span class="nf">DecryptPKCS1v15</span><span class="p">(</span><span class="nx">rand</span><span class="p">.</span><span class="nx">Reader</span><span class="p">,</span> <span class="nx">privateKey</span><span class="p">,</span> <span class="nx">cipherBuf</span><span class="p">)</span>
+    	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    		<span class="k">return</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">err</span>
+    	<span class="p">}</span>
+    	<span class="k">return</span> <span class="nb">string</span><span class="p">(</span><span class="nx">plainText</span><span class="p">),</span> <span class="nx">err</span>
+    <span class="p">}</span>
+    
+    <span class="c1">// 使用公钥加密
+</span><span class="c1"></span>    <span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">signData</span><span class="p">)</span><span class="nf">RSAEncryption</span><span class="p">(</span><span class="nx">plainText</span> <span class="kt">string</span><span class="p">)(</span><span class="kt">string</span><span class="p">,</span> <span class="kt">error</span><span class="p">){</span>
+    	<span class="c1">// 保存在内存中进行判断
+</span><span class="c1"></span>    	<span class="k">if</span> <span class="p">!</span><span class="nx">s</span><span class="p">.</span><span class="nx">SaveMode</span> <span class="o">&amp;&amp;</span> <span class="p">!</span><span class="nx">s</span><span class="p">.</span><span class="nf">isEffectiveKey</span><span class="p">(){</span>
+    		<span class="k">return</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;公私钥未创建&#34;</span><span class="p">)</span>
+    	<span class="p">}</span>
+    	<span class="kd">var</span> <span class="nx">buf</span> <span class="p">[]</span><span class="kt">byte</span>
+    	<span class="k">if</span> <span class="nx">s</span><span class="p">.</span><span class="nx">SaveMode</span><span class="p">{</span>
+    		<span class="nx">file</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">os</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="nx">path</span><span class="p">.</span><span class="nf">Join</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">PrivateKeyPath</span><span class="p">,</span> <span class="s">&#34;public.pem&#34;</span><span class="p">))</span>
+    		<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+    			<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+    		<span class="p">}</span>
+    		<span class="k">defer</span> <span class="nx">file</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+    		<span class="c1">//读取文件的内容
+</span><span class="c1"></span>    		<span class="nx">info</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">file</span><span class="p">.</span><span class="nf">Stat</span><span class="p">()</span>
+    		<span class="nx">buf</span> <span class="p">=</span><span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span><span class="nx">info</span><span class="p">.</span><span class="nf">Size</span><span class="p">())</span>
+    		<span class="nx">file</span><span class="p">.</span><span class="nf">Read</span><span class="p">(</span><span class="nx">buf</span><span class="p">)</span>
+    	<span class="p">}</span><span class="k">else</span><span class="p">{</span>
+    		<span class="nx">buf</span> <span class="p">=</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">s</span><span class="p">.</span><span class="nx">publicKey</span><span class="p">)</span>
+    	<span class="p">}</span>
+    	<span class="nx">block</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">pem</span><span class="p">.</span><span class="nf">Decode</span><span class="p">(</span><span class="nx">buf</span><span class="p">)</span>
+    	<span class="k">if</span> <span class="nx">block</span> <span class="o">==</span> <span class="kc">nil</span><span class="p">{</span>
+    		<span class="k">return</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;pem decode fild&#34;</span><span class="p">)</span>
+    	<span class="p">}</span>
+    	<span class="c1">//x509解码
+</span><span class="c1"></span>    	<span class="nx">publicKeyInterface</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">x509</span><span class="p">.</span><span class="nf">ParsePKIXPublicKey</span><span class="p">(</span><span class="nx">block</span><span class="p">.</span><span class="nx">Bytes</span><span class="p">)</span>
+    	<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+    		<span class="k">return</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="kc">nil</span>
+    	<span class="p">}</span>
+    	<span class="c1">//类型断言
+</span><span class="c1"></span>    	<span class="nx">publicKey</span><span class="o">:=</span><span class="nx">publicKeyInterface</span><span class="p">.(</span><span class="o">*</span><span class="nx">rsa</span><span class="p">.</span><span class="nx">PublicKey</span><span class="p">)</span>
+    	<span class="c1">//对明文进行加密
+</span><span class="c1"></span>    	<span class="nx">cipherText</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">rsa</span><span class="p">.</span><span class="nf">EncryptPKCS1v15</span><span class="p">(</span><span class="nx">rand</span><span class="p">.</span><span class="nx">Reader</span><span class="p">,</span> <span class="nx">publicKey</span><span class="p">,</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">plainText</span><span class="p">))</span>
+    	<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+    		<span class="k">return</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="kc">nil</span>
+    	<span class="p">}</span>
+    	<span class="nx">strCipher</span> <span class="o">:=</span> <span class="nx">base64</span><span class="p">.</span><span class="nx">StdEncoding</span><span class="p">.</span><span class="nf">EncodeToString</span><span class="p">(</span><span class="nx">cipherText</span><span class="p">)</span>
+    	<span class="k">return</span> <span class="nx">strCipher</span><span class="p">,</span> <span class="kc">nil</span>
+    
+    <span class="p">}</span>
+    
+    <span class="kd">func</span> <span class="nf">RsaInit</span><span class="p">(</span><span class="nx">saveMode</span> <span class="kt">bool</span><span class="p">,</span> <span class="nx">timeOut</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">publicKeyPath</span><span class="p">,</span> <span class="nx">privateKeyPath</span> <span class="kt">string</span><span class="p">)</span> <span class="o">*</span><span class="nx">signData</span> <span class="p">{</span>
+    	<span class="k">if</span> <span class="nx">publicKeyPath</span> <span class="o">==</span> <span class="s">&#34;&#34;</span><span class="p">{</span>
+    		<span class="nx">publicKeyPath</span> <span class="p">=</span> <span class="nx">SAVEKEYPATH</span>
+    	<span class="p">}</span>
+    	<span class="k">if</span> <span class="nx">privateKeyPath</span> <span class="o">==</span> <span class="s">&#34;&#34;</span><span class="p">{</span>
+    		<span class="nx">privateKeyPath</span> <span class="p">=</span> <span class="nx">SAVEKEYPATH</span>
+    	<span class="p">}</span>
+    	<span class="k">return</span> <span class="o">&amp;</span><span class="nx">signData</span><span class="p">{</span>
+    		<span class="nx">isCreate</span><span class="p">:</span>		<span class="kc">false</span><span class="p">,</span>
+    		<span class="nx">Timeout</span><span class="p">:</span>        <span class="nx">timeOut</span><span class="p">,</span>
+    		<span class="nx">SaveMode</span><span class="p">:</span>       <span class="nx">saveMode</span><span class="p">,</span>
+    		<span class="nx">PublicKeyPath</span><span class="p">:</span>  <span class="nx">publicKeyPath</span><span class="p">,</span>
+    		<span class="nx">PrivateKeyPath</span><span class="p">:</span> <span class="nx">privateKeyPath</span><span class="p">,</span>
+    	<span class="p">}</span>
+    <span class="p">}</span>
+</code></pre></div><h4 id="测试如下">测试如下</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go">    <span class="kn">package</span> <span class="nx">zcj_rsa</span>
+    
+    <span class="kn">import</span> <span class="p">(</span>
+    	<span class="s">&#34;fmt&#34;</span>
+    	<span class="s">&#34;testing&#34;</span>
+    <span class="p">)</span>
+    
+    <span class="c1">// 创建rsa保存在文件
+</span><span class="c1"></span>    <span class="kd">func</span> <span class="nf">TestRsaFile</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
+    	<span class="nx">rsa</span> <span class="o">:=</span> <span class="nf">RsaInit</span><span class="p">(</span><span class="kc">true</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&#34;./&#34;</span><span class="p">,</span> <span class="s">&#34;./&#34;</span><span class="p">)</span>
+    	<span class="nx">err</span> <span class="o">:=</span> <span class="nx">rsa</span><span class="p">.</span><span class="nf">creatKey</span><span class="p">()</span>
+    	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    		<span class="nx">t</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;公私钥创建失败: %v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+    	<span class="p">}</span>
+    	<span class="c1">// 加密
+</span><span class="c1"></span>    	<span class="nx">cipherText</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">rsa</span><span class="p">.</span><span class="nf">RSAEncryption</span><span class="p">(</span><span class="s">&#34;zcj&#34;</span><span class="p">)</span>
+    	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    		<span class="nx">t</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;加密失败：%v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+    	<span class="p">}</span>
+    	<span class="c1">// 解密
+</span><span class="c1"></span>    	<span class="nx">planinText</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">rsa</span><span class="p">.</span><span class="nf">RSADecryption</span><span class="p">(</span><span class="nx">cipherText</span><span class="p">)</span>
+    	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    		<span class="nx">t</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;解密失败：%v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+    	<span class="p">}</span>
+    	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;密文：%v \n&#34;</span><span class="p">,</span> <span class="nx">cipherText</span><span class="p">)</span>
+    	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;原码：%v \n&#34;</span><span class="p">,</span> <span class="nx">planinText</span><span class="p">)</span>
+    <span class="p">}</span>
+    
+    <span class="c1">// 保存rsa在内存
+</span><span class="c1"></span>    <span class="kd">func</span> <span class="nf">TestRsa</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
+    	<span class="nx">rsa</span> <span class="o">:=</span> <span class="nf">RsaInit</span><span class="p">(</span><span class="kc">false</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">)</span>
+    	<span class="nx">err</span> <span class="o">:=</span> <span class="nx">rsa</span><span class="p">.</span><span class="nf">creatKey</span><span class="p">()</span>
+    	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    		<span class="nx">t</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;公私钥创建失败: %v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+    	<span class="p">}</span>
+    	<span class="c1">// 加密
+</span><span class="c1"></span>    	<span class="nx">cipherText</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">rsa</span><span class="p">.</span><span class="nf">RSAEncryption</span><span class="p">(</span><span class="s">&#34;zcj&#34;</span><span class="p">)</span>
+    	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    		<span class="nx">t</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;加密失败：%v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+    	<span class="p">}</span>
+    	<span class="c1">// 解密
+</span><span class="c1"></span>    	<span class="nx">planinText</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">rsa</span><span class="p">.</span><span class="nf">RSADecryption</span><span class="p">(</span><span class="nx">cipherText</span><span class="p">)</span>
+    	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    		<span class="nx">t</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;解密失败：%v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+    	<span class="p">}</span>
+    	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;密文：%v \n&#34;</span><span class="p">,</span> <span class="nx">cipherText</span><span class="p">)</span>
+    	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;原码：%v \n&#34;</span><span class="p">,</span> <span class="nx">planinText</span><span class="p">)</span>
+    <span class="p">}</span>
+</code></pre></div><h4 id="源码仓库">源码仓库</h4>
+<ul>
+<li><a class="link" href="https://github.com/zcj-git520/zcj_rsa"  target="_blank" rel="noopener"
+    >我的github:https://github.com/zcj-git520/zcj_rsa</a></li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/%E8%B6%85%E6%97%B6%E9%87%8D%E8%AF%95%E6%9C%BA%E5%88%B6-host_try/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E8%B6%85%E6%97%B6%E9%87%8D%E8%AF%95%E6%9C%BA%E5%88%B6-host_try/1.1931b402306b88ed6a8349fa8f6192cf_huc278944164dd3ada59be56854851c305_117502_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-GTG0AjBriO1qg0n6j2GSzw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">超时重试机制-host_try</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/timertask-%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%8C%85/">
+        
+        
+            <div class="article-image">
+                <img src="/p/timertask-%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E5%8C%85/1.327cf6058a6103ca13390923e6164970_hu8e77554b4f75574526b9eba572e1dcc7_37690_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-Mnz2BYphA8oTOQkj5hZJcA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">timerTask 定时任务包</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/prc-go-%E8%AF%AD%E8%A8%80%E5%AE%9E%E8%B7%B5%E4%B8%80/">
+        
+        
+            <div class="article-image">
+                <img src="/p/prc-go-%E8%AF%AD%E8%A8%80%E5%AE%9E%E8%B7%B5%E4%B8%80/2.7a753b5d6f830fcff1461f4335565018_hu9db44f85261860f0cd6b40f5490959f6_304073_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-enU7XW&#43;DD8/xRh9DNVZQGA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">PRC go 语言实践一</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/redis-go%E8%AF%AD%E8%A8%80%E5%AE%9E%E8%B7%B5%E4%BA%8C/">
+        
+        
+            <div class="article-image">
+                <img src="/p/redis-go%E8%AF%AD%E8%A8%80%E5%AE%9E%E8%B7%B5%E4%BA%8C/1.e1b66f52c28f363857e7ea09f5a6f6ef_hu38514b36fb33d89c48254822293248c6_47054_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-4bZvUsKPNjhX5&#43;oJ9ab27w==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">redis GO语言实践二</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/redis-go%E8%AF%AD%E8%A8%80%E5%AE%9E%E8%B7%B5%E4%B8%80/">
+        
+        
+            <div class="article-image">
+                <img src="/p/redis-go%E8%AF%AD%E8%A8%80%E5%AE%9E%E8%B7%B5%E4%B8%80/1.3b6d4b99c260135e7e8a370546fb9447_hu92e993ca1384cf9d7fc0be4e9454fb8f_41826_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-O21LmcJgE15&#43;ijcFRvuURw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">redis GO语言实践一</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#rsa加密算法的使用">RSA加密算法的使用</a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#代码如下">代码如下</a></li>
+            <li><a href="#测试如下">测试如下</a></li>
+            <li><a href="#源码仓库">源码仓库</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

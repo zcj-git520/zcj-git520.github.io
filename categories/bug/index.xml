@@ -6,7 +6,16 @@
     <description>Recent content in Bug修复 on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Mon, 20 Dec 2021 22:00:08 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/bug/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 15 Aug 2022 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/bug/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>RSA加密算法的使用</title>
+      <link>https://zcj-git520.github.io/p/rsa%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E7%9A%84%E4%BD%BF%E7%94%A8/</link>
+      <pubDate>Mon, 15 Aug 2022 22:00:38 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/rsa%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E7%9A%84%E4%BD%BF%E7%94%A8/</guid>
+      <description>RSA加密算法的使用  生成公私钥 保存文件或者保存在内存中 设置时间有效期，长期有效或者超时重创建公私钥  代码如下 package zcj_rsa import ( &amp;#34;crypto/rand&amp;#34; &amp;#34;crypto/rsa&amp;#34; &amp;#34;crypto/x509&amp;#34; &amp;#34;encoding/base64&amp;#34; &amp;#34;encoding/pem&amp;#34; &amp;#34;fmt&amp;#34; &amp;#34;os&amp;#34; &amp;#34;path&amp;#34; &amp;#34;time&amp;#34; ) const ( BITS = 2048 // 证书大小  SAVEKEYPATH = &amp;#34;./&amp;#34; // 默认保存公私钥的路径  ) type signData struct { publicKey string // 公钥  privateKey string // 私钥  generateTime time.Time // 生成时间  isCreate bool // 是否创建公私钥  Timeout int // 证书超时时间 单位时间为分钟 &amp;lt;= 0 表示永久有效  SaveMode bool // true 保存为文件，False保存在内存中  PublicKeyPath string // 保存公钥的路径  PrivateKeyPath string // 保存私钥的路径  } // 创建公私钥对  func (s *signData)creatKey() error { if s.</description>
+    </item>
+    
     <item>
       <title>超时重试机制-host_try</title>
       <link>https://zcj-git520.github.io/p/%E8%B6%85%E6%97%B6%E9%87%8D%E8%AF%95%E6%9C%BA%E5%88%B6-host_try/</link>
