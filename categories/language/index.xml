@@ -6,7 +6,16 @@
     <description>Recent content in 语言学习 on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Mon, 15 Aug 2022 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/language/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 25 Aug 2022 21:00:08 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/language/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>数据结构-Trie tree go实现</title>
+      <link>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-trie-tree-go%E5%AE%9E%E7%8E%B0/</link>
+      <pubDate>Thu, 25 Aug 2022 21:00:08 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-trie-tree-go%E5%AE%9E%E7%8E%B0/</guid>
+      <description>前缀树、也称字典树（Trie） for go  前缀树是一种多叉树结构，经常用来做快速检索 前缀树（Trie树），即字典树，又称单词查找树或键树， 它是一种专门处理字符串匹配的数据结构。 前缀树可以最大限度地减少无谓的字符串比较（空间换时间），提高查询效率。 特点：  根节点不包含任何key 每个子节点包含的key都不相同    代码实现如下 package Trie import ( &amp;#34;fmt&amp;#34; ) // 定义前缀树的节点 通过map  type trieNode struct { ChildNodes map[rune]*trieNode // 定义子节点  //CharCount int // 字符统计  EndNode bool // 是否为子节点  StrData string // 最后节点时，该数据  } // 前缀树的定义  type trieTree struct { root *trieNode // 根节点  WordCount int // 词数的数量  } // 创建节点  func creatNode() *trieNode{ node := make(map[rune]*trieNode) return &amp;amp;trieNode{ ChildNodes: node, //CharCount: 0,  EndNode: false, StrData: &amp;#34;&amp;#34;, } } // 词数的数量  func (t *trieTree)len() int{ return t.</description>
+    </item>
+    
     <item>
       <title>RSA加密算法的使用</title>
       <link>https://zcj-git520.github.io/p/rsa%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E7%9A%84%E4%BD%BF%E7%94%A8/</link>
