@@ -6,7 +6,19 @@
     <description>Recent content in 知识学习 on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Thu, 01 Sep 2022 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/computer/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 15 Sep 2022 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/computer/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>linux 性能调试技术</title>
+      <link>https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/</link>
+      <pubDate>Thu, 15 Sep 2022 22:00:38 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/</guid>
+      <description>linux 常用查看可执行工具   readelf：可以查看可执行文件相关信息
+ readif -h 查看头信息  readelf –d 查看动态库依赖     File:
+ file [可行政文件] 执行文件架构信息、动态、静态  ldd 查看动态库     Strip
+ -I &amp;ndash;input-target= 假定输入文件的格式为 -O &amp;ndash;output-target= 以格式创建输出文件 -F &amp;ndash;target= 设置输入、输出的文件格式为 -p &amp;ndash;preserve-dates 复制上次修改或者操作的时间到输出文件中 -R &amp;ndash;remove-section= 删除输出文件中段信息 -s &amp;ndash;strip-all 删除所有符号信息和重定位信息 -g -S -d &amp;ndash;strip-debug 删除所有调试信息和段信息 &amp;ndash;strip-unneeded 删除所有重定位中不需要的符号信息 &amp;ndash;only-keep-debug 删除调试信息以外的其他所有信息 -N &amp;ndash;strip-symbol= 不拷贝符号信息 -K &amp;ndash;keep-symbol= 不去除符号信息 -w &amp;ndash;wildcard 在符号中使用通配符 -x &amp;ndash;discard-all 去除所有非全局符号    Linux 进程调试工具  pidof 查命令对应的进程编号 (pidof bash)  Ps  基础参数  -A, -e 选择所有进程 -a 选择除了会话领导和与终端无关的进程以外的所有进程。 a BSD格式，通常与x同时出现，显示所有进程   选择性参数  -C 根据cmdlist中的命令 输出 -p, &amp;ndash;pid 根据进程id进行选择输出 &amp;ndash;ppid 根据父进程ID选择输出 -U, &amp;ndash;User 根据真实用户ID(RUID)或用户名选择   显示线程  -L 显示线程相关信息   杂项  L 列出所以支持的格式（应用与-o中的输出格式） e 输出环境变量（在指令后面）   得到线程信息  ps -eLf      Pstree  查看进程之间的父子关系    top    第一行显示的是系统的概况：</description>
+    </item>
+    
     <item>
       <title>mysql 常用命令使用</title>
       <link>https://zcj-git520.github.io/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/</link>

@@ -6,7 +6,541 @@
         <description>Recent content on Chengji Zhao&#39;s blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Thu, 01 Sep 2022 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Thu, 15 Sep 2022 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>linux 性能调试技术</title>
+        <link>https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/</link>
+        <pubDate>Thu, 15 Sep 2022 22:00:38 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/3.png" alt="Featured image of post linux 性能调试技术" /&gt;&lt;h2 id=&#34;linux-常用查看可执行工具&#34;&gt;linux 常用查看可执行工具&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;readelf：可以查看可执行文件相关信息&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;readif -h 查看头信息
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 175; 
+			flex-basis: 420px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/1.png&#34; data-size=&#34;1093x624&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/1.png&#34;
+			width=&#34;1093&#34;
+			height=&#34;624&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/1_hu6c80a05083265fe3bf32ef09c14e5fd7_55575_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/1_hu6c80a05083265fe3bf32ef09c14e5fd7_55575_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;li&gt;readelf –d 查看动态库依赖
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 142; 
+			flex-basis: 340px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/2.png&#34; data-size=&#34;1014x714&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/2.png&#34;
+			width=&#34;1014&#34;
+			height=&#34;714&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/2_hua790ee7389155d85ac51b10348dec754_59067_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/2_hua790ee7389155d85ac51b10348dec754_59067_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;File:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;file [可行政文件] 执行文件架构信息、动态、静态
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 686; 
+			flex-basis: 1647px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/3.png&#34; data-size=&#34;1661x242&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/3.png&#34;
+			width=&#34;1661&#34;
+			height=&#34;242&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/3_hu5bc4d06a19d5d5d7b7fe871d036ee380_38629_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/3_hu5bc4d06a19d5d5d7b7fe871d036ee380_38629_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;li&gt;ldd 查看动态库
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 442; 
+			flex-basis: 1061px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/4.png&#34; data-size=&#34;1314x297&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/4.png&#34;
+			width=&#34;1314&#34;
+			height=&#34;297&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/4_huff18233e0ef2fb35471161819a03274a_32752_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/4_huff18233e0ef2fb35471161819a03274a_32752_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Strip&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;-I &amp;ndash;input-target= 假定输入文件的格式为&lt;/li&gt;
+&lt;li&gt;-O &amp;ndash;output-target= 以格式创建输出文件&lt;/li&gt;
+&lt;li&gt;-F &amp;ndash;target= 设置输入、输出的文件格式为&lt;/li&gt;
+&lt;li&gt;-p &amp;ndash;preserve-dates 复制上次修改或者操作的时间到输出文件中&lt;/li&gt;
+&lt;li&gt;-R &amp;ndash;remove-section= 删除输出文件中段信息&lt;/li&gt;
+&lt;li&gt;-s &amp;ndash;strip-all 删除所有符号信息和重定位信息&lt;/li&gt;
+&lt;li&gt;-g -S -d &amp;ndash;strip-debug 删除所有调试信息和段信息&lt;/li&gt;
+&lt;li&gt;&amp;ndash;strip-unneeded 删除所有重定位中不需要的符号信息&lt;/li&gt;
+&lt;li&gt;&amp;ndash;only-keep-debug 删除调试信息以外的其他所有信息&lt;/li&gt;
+&lt;li&gt;-N &amp;ndash;strip-symbol= 不拷贝符号信息&lt;/li&gt;
+&lt;li&gt;-K &amp;ndash;keep-symbol= 不去除符号信息&lt;/li&gt;
+&lt;li&gt;-w &amp;ndash;wildcard 在符号中使用通配符&lt;/li&gt;
+&lt;li&gt;-x &amp;ndash;discard-all 去除所有非全局符号&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;linux-进程调试工具&#34;&gt;Linux 进程调试工具&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;pidof 查命令对应的进程编号  (pidof bash)
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 847; 
+			flex-basis: 2033px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/5.png&#34; data-size=&#34;1144x135&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/5.png&#34;
+			width=&#34;1144&#34;
+			height=&#34;135&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/5_hu45e59e163f3490f8a9d4d6396abaadcf_9365_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/5_hu45e59e163f3490f8a9d4d6396abaadcf_9365_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;li&gt;Ps
+&lt;ul&gt;
+&lt;li&gt;基础参数
+&lt;ul&gt;
+&lt;li&gt;-A, -e     选择所有进程&lt;/li&gt;
+&lt;li&gt;-a           选择除了会话领导和与终端无关的进程以外的所有进程。&lt;/li&gt;
+&lt;li&gt;a            BSD格式，通常与x同时出现，显示所有进程&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;选择性参数
+&lt;ul&gt;
+&lt;li&gt;-C &lt;!-- raw HTML omitted --&gt;      根据cmdlist中的命令 输出&lt;/li&gt;
+&lt;li&gt;-p, &amp;ndash;pid &lt;!-- raw HTML omitted --&gt;      根据进程id进行选择输出&lt;/li&gt;
+&lt;li&gt;&amp;ndash;ppid &lt;!-- raw HTML omitted --&gt;     根据父进程ID选择输出&lt;/li&gt;
+&lt;li&gt;-U, &amp;ndash;User &lt;!-- raw HTML omitted --&gt;    根据真实用户ID(RUID)或用户名选择&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;显示线程
+&lt;ul&gt;
+&lt;li&gt;-L                   显示线程相关信息&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;杂项
+&lt;ul&gt;
+&lt;li&gt;L                   列出所以支持的格式（应用与-o中的输出格式）&lt;/li&gt;
+&lt;li&gt;e                    输出环境变量（在指令后面）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;得到线程信息
+&lt;ul&gt;
+&lt;li&gt;ps -eLf
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 206; 
+			flex-basis: 495px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/6.png&#34; data-size=&#34;1657x802&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/6.png&#34;
+			width=&#34;1657&#34;
+			height=&#34;802&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/6_hue285c36cce32d1a4b5719aff250ed1b0_102964_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/6_hue285c36cce32d1a4b5719aff250ed1b0_102964_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Pstree
+&lt;ul&gt;
+&lt;li&gt;查看进程之间的父子关系
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 159; 
+			flex-basis: 382px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/7.png&#34; data-size=&#34;1137x713&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/7.png&#34;
+			width=&#34;1137&#34;
+			height=&#34;713&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/7_huf3dcaafe881598efc7a7598241a5fe12_58043_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/7_huf3dcaafe881598efc7a7598241a5fe12_58043_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;top
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 179; 
+			flex-basis: 430px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/8.png&#34; data-size=&#34;1536x856&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/8.png&#34;
+			width=&#34;1536&#34;
+			height=&#34;856&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/8_huae354f519533d2733ded7fd55dde7436_88980_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/8_huae354f519533d2733ded7fd55dde7436_88980_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;第一行显示的是系统的概况：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;当前时间、系统的运行时间、登录的用户数以及系统的平均负载。&lt;/li&gt;
+&lt;li&gt;平均负载有3个值：最近1分钟的，最近5分钟的，最近15分钟的平均负载。&lt;/li&gt;
+&lt;li&gt;load average 数据每隔5秒钟检查一次活跃的进程数，可以看出点问题。
+太高肯定不行了。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;第二行显示了进程:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;top命令的输出中将进程叫作任务（task）：
+总进程，运行、休眠、停止或是僵化状态（僵化状态是指进程完成了，但父进程没有响应）。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;第三行显示CPU信息:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;top根据进程的属主（用户还是系统）和进程的状态（运行、 空闲还是等待）将CPU利用率分成几类输出。&lt;/li&gt;
+&lt;li&gt;0.0%us【user space】— 用户空间占用CPU的百分比。&lt;/li&gt;
+&lt;li&gt;1.5%sy【sysctl】— 内核空间占用CPU的百分比。&lt;/li&gt;
+&lt;li&gt;0.0%ni【】— 改变过优先级的进程占用CPU的百分比&lt;/li&gt;
+&lt;li&gt;98.5%id【idolt】— 空闲CPU百分比&lt;/li&gt;
+&lt;li&gt;0.0%wa【wait】— IO等待占用CPU的百分比&lt;/li&gt;
+&lt;li&gt;0.0%hi【Hardware IRQ】— 硬中断占用CPU的百分比&lt;/li&gt;
+&lt;li&gt;0.0%si【Software Interrupts】— 软中断占用CPU的百分比&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;第四行显示内存信息：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;total 总内存&lt;/li&gt;
+&lt;li&gt;free 空闲内存&lt;/li&gt;
+&lt;li&gt;used 已使用&lt;/li&gt;
+&lt;li&gt;buff/cache 缓存的内存量&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;第五行显示swap交换分区信息：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;total总大小&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;free空闲&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;used 已使用&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;avail Mem 缓冲的交换区总量&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;可用内存=free + buffer + cached&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;PID：进程的ID。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;USER：进程属主的名字。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;PR：进程的优先级。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;NI：进程的谦让度值。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;VIRT：进程占用的虚拟内存总量。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;RES：进程占用的物理内存总量。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;SHR：进程和其他进程共享的内存总量。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;S：进程的状态（D代表可中断的休眠状态，R代表在运行状态，S代表休眠状态，T代表跟踪状态或停止状态，Z代表僵化状态）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;%CPU：进程使用的CPU时间比例。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;%MEM：进程使用的内存占可用内存的比例。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;TIME+：自进程启动到目前为止的CPU时间总量。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;COMMAND：进程所对应的命令行名称，也就是启动的程序名。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;m：显示内存&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;H: 显示线程&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;其他&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;M 根据驻留内存大小进行排序&lt;/li&gt;
+&lt;li&gt;P 根据CPU使用百分比大小进行排序&lt;/li&gt;
+&lt;li&gt;T 根据时间/累计时间进行排序&lt;/li&gt;
+&lt;li&gt;q:退出&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;linux进程proc详解&#34;&gt;linux进程proc详解&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;进程的完整命令行
+&lt;ul&gt;
+&lt;li&gt;/proc/[pid]/cmdline&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;进程名
+&lt;ul&gt;
+&lt;li&gt;/proc/[pid]/comm&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;进程环境变量
+&lt;ul&gt;
+&lt;li&gt;/proc/[pid]/environ&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;进程可执行文件
+&lt;ul&gt;
+&lt;li&gt;/proc/[pid]/exe&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;打开文件描述符
+&lt;ul&gt;
+&lt;li&gt;/proc/[pid]/fd&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;打开文件信息
+&lt;ul&gt;
+&lt;li&gt;/proc/pid/fdinfo&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;内存映射文件
+&lt;ul&gt;
+&lt;li&gt;/proc/[pid]/map_files/&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;IO文件
+&lt;ul&gt;
+&lt;li&gt;/proc/[pid]/io&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;易于阅读的进程状态信息
+&lt;ul&gt;
+&lt;li&gt;/proc/[pid]/status&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;进程状态信息，用于ps指令
+&lt;ul&gt;
+&lt;li&gt;/proc/[pid]/stat&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;进程内存使用信息
+&lt;ul&gt;
+&lt;li&gt;/proc/pid/statm&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;linux-内存检测工具&#34;&gt;linux 内存检测工具&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Memwatch
+&lt;ul&gt;
+&lt;li&gt;双重释放&lt;/li&gt;
+&lt;li&gt;错误释放&lt;/li&gt;
+&lt;li&gt;没有释放的内存&lt;/li&gt;
+&lt;li&gt;溢出和下溢&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Yamd
+&lt;ul&gt;
+&lt;li&gt;内存泄漏&lt;/li&gt;
+&lt;li&gt;双重释放&lt;/li&gt;
+&lt;li&gt;错误释放&lt;/li&gt;
+&lt;li&gt;越界访问&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;linux-性能检测工具&#34;&gt;linux 性能检测工具&lt;/h2&gt;
+&lt;h3 id=&#34;进程相关优化工具&#34;&gt;进程相关优化工具&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;ltrace
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 126; 
+			flex-basis: 303px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/10.png&#34; data-size=&#34;799x632&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/10.png&#34;
+			width=&#34;799&#34;
+			height=&#34;632&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/10_hud9c9b2dadd20040ee0fde8619af7d338_231181_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/10_hud9c9b2dadd20040ee0fde8619af7d338_231181_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;虚拟文件系统相关优化工具&#34;&gt;虚拟文件系统相关优化工具&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;lsof
+&lt;ul&gt;
+&lt;li&gt;-a 列出打开文件存在的进程&lt;/li&gt;
+&lt;li&gt;-c&amp;lt;进程名&amp;gt; 列出指定进程所打开的文件&lt;/li&gt;
+&lt;li&gt;-g 列出GID号进程详情&lt;/li&gt;
+&lt;li&gt;-d&amp;lt;文件号&amp;gt; 列出占用该文件号的进程&lt;/li&gt;
+&lt;li&gt;+d&amp;lt;目录&amp;gt; 列出目录下被打开的文件&lt;/li&gt;
+&lt;li&gt;+D&amp;lt;目录&amp;gt; 递归列出目录下被打开的文件&lt;/li&gt;
+&lt;li&gt;-n&amp;lt;目录&amp;gt; 列出使用NFS的文件&lt;/li&gt;
+&lt;li&gt;-i&amp;lt;条件&amp;gt; 列出符合条件的进程。（4、6、协议、:端口、 @ip ）&lt;/li&gt;
+&lt;li&gt;-p&amp;lt;进程号&amp;gt; 列出指定进程号所打开的文件&lt;/li&gt;
+&lt;li&gt;-u 列出UID号进程详情&lt;/li&gt;
+&lt;li&gt;-h 显示帮助信息&lt;/li&gt;
+&lt;li&gt;-v 显示版本信息
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 163; 
+			flex-basis: 392px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/11.png&#34; data-size=&#34;1244x761&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/11.png&#34;
+			width=&#34;1244&#34;
+			height=&#34;761&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/11_hu169dbe7051ec282808580c97afbe6d1f_86233_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/11_hu169dbe7051ec282808580c97afbe6d1f_86233_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;网络相关优化工具&#34;&gt;网络相关优化工具&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;netstat
+&lt;ul&gt;
+&lt;li&gt;-a 显示所有活动的连接以及本机侦听的TCP、UDP端口&lt;/li&gt;
+&lt;li&gt;-l 显示监听的server port&lt;/li&gt;
+&lt;li&gt;-n 直接使用IP地址，不通过域名服务器&lt;/li&gt;
+&lt;li&gt;-p 正在使用Socket的程序PID和程序名称&lt;/li&gt;
+&lt;li&gt;-r 显示路由表&lt;/li&gt;
+&lt;li&gt;-t 显示TCP传输协议的连线状况&lt;/li&gt;
+&lt;li&gt;-u 显示UDP传输协议的连线状况&lt;/li&gt;
+&lt;li&gt;-w 显示RAW传输协议的连线状况
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 180; 
+			flex-basis: 432px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/12.png&#34; data-size=&#34;1327x736&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/12.png&#34;
+			width=&#34;1327&#34;
+			height=&#34;736&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/12_huf2f3c7ced5e06d85c642721fc4f50aa8_92681_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/12_huf2f3c7ced5e06d85c642721fc4f50aa8_92681_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;ss
+&lt;ul&gt;
+&lt;li&gt;-a显示所有的sockets-l显示正在监听的&lt;/li&gt;
+&lt;li&gt;-n显示数字IP和端口，不通过域名服务器&lt;/li&gt;
+&lt;li&gt;-p显示使用socket的对应的程序&lt;/li&gt;
+&lt;li&gt;-t只显示TCP sockets-u只显示UDP sockets&lt;/li&gt;
+&lt;li&gt;-4 -6 只显示v4或v6V版本的sockets&lt;/li&gt;
+&lt;li&gt;-s打印出统计信息。&lt;/li&gt;
+&lt;li&gt;-0 显示PACKET sockets&lt;/li&gt;
+&lt;li&gt;-w 只显示RAW sockets&lt;/li&gt;
+&lt;li&gt;-x只显示UNIX域sockets&lt;/li&gt;
+&lt;li&gt;-r尝试进行域名解析，地址/端口
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 191; 
+			flex-basis: 460px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/13.png&#34; data-size=&#34;1683x877&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/13.png&#34;
+			width=&#34;1683&#34;
+			height=&#34;877&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/13_hu5149288d79730de5ff9a67c7c329d619_111334_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/13_hu5149288d79730de5ff9a67c7c329d619_111334_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        <item>
         <title>mysql 常用命令使用</title>
         <link>https://zcj-git520.github.io/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/</link>
         <pubDate>Thu, 01 Sep 2022 22:00:38 +0800</pubDate>
