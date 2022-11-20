@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='查询命令（select）  查看表结构：desc 或则show columns from tables; 查询特定的列：select column, another_column,…… FROM table; 查询所有*：select *from table; 带约束查询：SELECT column, another_column, … FROM table WHERE *condition* AND/OR *another_condition* AND/OR …**;  image-20221023144431347  对查询结果进行筛选和排序：   SQL 提供了一种使用关键字丢弃具有重复列值的行的便捷方法(DISTINCT):
+SELECT**DISTINCT**column,another_column,…FROMmytableWHERE*condition(s)*;  SQL 提供了一种使用子句按给定列按升序或降序对结果进行排序的方法(ORDER BY):
+SELECTcolumn,another_column,…FROMmytableWHERE*condition(s)***ORDERBYcolumnASC/DESC**;  将结果限制为子集(ORDER BYLIMITOFFSETLIMITOFFSET):
+SELECTcolumn,another_column,…FROMmytableWHERE*condition(s)*ORDERBYcolumnASC/DESC**LIMITnum_limitOFFSETnum_offset**;  修改表名：alter table old_table_name rename to new_name_name;
+  增加表注释：alter table table_name comment &amp;ldquo;注释&amp;rdquo;；
+  增加表字段注释：alter table table_name colunm modify 字段名 类型 comment &amp;ldquo;注释&amp;rdquo;；'><title>mysql 常用命令使用</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='mysql 常用命令使用'>
+<meta property='og:description' content='查询命令（select）  查看表结构：desc 或则show columns from tables; 查询特定的列：select column, another_column,…… FROM table; 查询所有*：select *from table; 带约束查询：SELECT column, another_column, … FROM table WHERE *condition* AND/OR *another_condition* AND/OR …**;  image-20221023144431347  对查询结果进行筛选和排序：   SQL 提供了一种使用关键字丢弃具有重复列值的行的便捷方法(DISTINCT):
+SELECT**DISTINCT**column,another_column,…FROMmytableWHERE*condition(s)*;  SQL 提供了一种使用子句按给定列按升序或降序对结果进行排序的方法(ORDER BY):
+SELECTcolumn,another_column,…FROMmytableWHERE*condition(s)***ORDERBYcolumnASC/DESC**;  将结果限制为子集(ORDER BYLIMITOFFSETLIMITOFFSET):
+SELECTcolumn,another_column,…FROMmytableWHERE*condition(s)*ORDERBYcolumnASC/DESC**LIMITnum_limitOFFSETnum_offset**;  修改表名：alter table old_table_name rename to new_name_name;
+  增加表注释：alter table table_name comment &amp;ldquo;注释&amp;rdquo;；
+  增加表字段注释：alter table table_name colunm modify 字段名 类型 comment &amp;ldquo;注释&amp;rdquo;；'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2022-09-01T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2022-09-01T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221113154558884.png' />
+<meta name="twitter:title" content="mysql 常用命令使用">
+<meta name="twitter:description" content="查询命令（select）  查看表结构：desc 或则show columns from tables; 查询特定的列：select column, another_column,…… FROM table; 查询所有*：select *from table; 带约束查询：SELECT column, another_column, … FROM table WHERE *condition* AND/OR *another_condition* AND/OR …**;  image-20221023144431347  对查询结果进行筛选和排序：   SQL 提供了一种使用关键字丢弃具有重复列值的行的便捷方法(DISTINCT):
+SELECT**DISTINCT**column,another_column,…FROMmytableWHERE*condition(s)*;  SQL 提供了一种使用子句按给定列按升序或降序对结果进行排序的方法(ORDER BY):
+SELECTcolumn,another_column,…FROMmytableWHERE*condition(s)***ORDERBYcolumnASC/DESC**;  将结果限制为子集(ORDER BYLIMITOFFSETLIMITOFFSET):
+SELECTcolumn,another_column,…FROMmytableWHERE*condition(s)*ORDERBYcolumnASC/DESC**LIMITnum_limitOFFSETnum_offset**;  修改表名：alter table old_table_name rename to new_name_name;
+  增加表注释：alter table table_name comment &amp;ldquo;注释&amp;rdquo;；
+  增加表字段注释：alter table table_name colunm modify 字段名 类型 comment &amp;ldquo;注释&amp;rdquo;；"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221113154558884.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/">
+                <img src="/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221113154558884_hue265424d23ed96ee9701c444ec0fad6e_286244_800x0_resize_box_3.png"
+                        srcset="/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221113154558884_hue265424d23ed96ee9701c444ec0fad6e_286244_800x0_resize_box_3.png 800w, /p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221113154558884_hue265424d23ed96ee9701c444ec0fad6e_286244_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="839" 
+                        loading="lazy"
+                        alt="Featured image of post mysql 常用命令使用" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/computer/" style="background-color: #2a9d8f; color: #fff;">
+                知识学习
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/">mysql 常用命令使用</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Sep 01, 2022</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 2 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h2 id="查询命令select">查询命令（select）</h2>
+<ul>
+<li>查看表结构：desc 或则show columns from tables;</li>
+<li>查询特定的列：select column, another_column,…… FROM table;</li>
+<li>查询所有*：select *from table;</li>
+<li>带约束查询：SELECT column, another_column, … FROM table WHERE *condition*    AND/OR *another_condition*    AND/OR …**;
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 362; 
+			flex-basis: 870px"
+	>
+	<a href="/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221023142018786.png" data-size="990x273">
+		<img src="/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221023142018786.png"
+			width="990"
+			height="273"
+			srcset="/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221023142018786_hu9eeb9cc60318b4b018a1c8e327de9f3c_23097_480x0_resize_box_3.png 480w, /p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221023142018786_hu9eeb9cc60318b4b018a1c8e327de9f3c_23097_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure>
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 200; 
+			flex-basis: 480px"
+	>
+	<a href="/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221023144431347.png" data-size="992x496">
+		<img src="/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221023144431347.png"
+			width="992"
+			height="496"
+			srcset="/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221023144431347_hu66461813d320504eb271cd6668d670f9_42202_480x0_resize_box_3.png 480w, /p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221023144431347_hu66461813d320504eb271cd6668d670f9_42202_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			alt="image-20221023144431347">
+	</a>
+	
+	<figcaption>image-20221023144431347</figcaption>
+	
+</figure></li>
+</ul>
+<h2 id="对查询结果进行筛选和排序">对查询结果进行筛选和排序：</h2>
+<ul>
+<li>
+<p>SQL 提供了一种使用关键字丢弃具有重复列值的行的便捷方法(DISTINCT):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="w">  </span><span class="k">SELECT</span><span class="w"> </span><span class="o">**</span><span class="k">DISTINCT</span><span class="o">**</span><span class="w"> </span><span class="k">column</span><span class="p">,</span><span class="w"> </span><span class="n">another_column</span><span class="p">,</span><span class="w"> </span><span class="err">…</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">mytable</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="o">*</span><span class="n">condition</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">*</span><span class="p">;</span><span class="w">
+</span></code></pre></div></li>
+<li>
+<p>SQL 提供了一种使用子句按给定列按升序或降序对结果进行排序的方法(<code>ORDER BY</code>):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="k">SELECT</span><span class="w"> </span><span class="k">column</span><span class="p">,</span><span class="w"> </span><span class="n">another_column</span><span class="p">,</span><span class="w"> </span><span class="err">…</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">mytable</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="o">*</span><span class="n">condition</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">*</span><span class="w"> </span><span class="o">**</span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">column</span><span class="w"> </span><span class="k">ASC</span><span class="o">/</span><span class="k">DESC</span><span class="o">**</span><span class="p">;</span><span class="w">
+</span></code></pre></div></li>
+<li>
+<p>将结果限制为子集(ORDER BY<code>LIMIT</code>OFFSET<code>LIMIT</code>OFFSET):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="k">SELECT</span><span class="w"> </span><span class="k">column</span><span class="p">,</span><span class="w"> </span><span class="n">another_column</span><span class="p">,</span><span class="w"> </span><span class="err">…</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">mytable</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="o">*</span><span class="n">condition</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">*</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">column</span><span class="w"> </span><span class="k">ASC</span><span class="o">/</span><span class="k">DESC</span><span class="w"> </span><span class="o">**</span><span class="k">LIMIT</span><span class="w"> </span><span class="n">num_limit</span><span class="w"> </span><span class="k">OFFSET</span><span class="w"> </span><span class="n">num_offset</span><span class="o">**</span><span class="p">;</span><span class="w">
+</span></code></pre></div></li>
+<li>
+<p>修改表名：alter table old_table_name rename to new_name_name;</p>
+</li>
+<li>
+<p>增加表注释：alter table table_name comment &ldquo;注释&rdquo;；</p>
+</li>
+<li>
+<p>增加表字段注释：alter table table_name colunm modify 字段名 类型 comment &ldquo;注释&rdquo;；</p>
+</li>
+<li>
+<p>使用 JOIN 的多表查询：共享有关单个实体的信息的表需要具有一个主键，用于在数据库中唯一标识该实体。一种常见的主键类型是自动递增的整数（因为它们节省空间），但它也可以是字符串，散列值，只要它是唯一的。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="k">column</span><span class="p">,</span><span class="w"> </span><span class="n">another_table_column</span><span class="p">,</span><span class="w"> </span><span class="err">…</span><span class="w">
+</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">mytable</span><span class="w">
+</span><span class="w"> </span><span class="k">INNER</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">another_table</span><span class="w"> 
+</span><span class="w">   </span><span class="k">ON</span><span class="w"> </span><span class="n">mytable</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">another_table</span><span class="p">.</span><span class="n">id</span><span class="w">
+</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">condition</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="w">
+</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">column</span><span class="p">,</span><span class="w"> </span><span class="err">…</span><span class="w"> </span><span class="k">ASC</span><span class="o">/</span><span class="k">DESC</span><span class="w">
+</span><span class="w"> </span><span class="k">LIMIT</span><span class="w"> </span><span class="n">num_limit</span><span class="w"> </span><span class="k">OFFSET</span><span class="w"> </span><span class="n">num_offset</span><span class="p">;</span><span class="w">
+</span></code></pre></div></li>
+<li>
+<p>外部连接：在多个表上使用左/右/全联名选择查询：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="k">column</span><span class="p">,</span><span class="w"> </span><span class="n">another_column</span><span class="p">,</span><span class="w"> </span><span class="err">…</span><span class="w">
+</span><span class="w">   </span><span class="k">FROM</span><span class="w"> </span><span class="n">mytable</span><span class="w">
+</span><span class="w">   </span><span class="k">INNER</span><span class="o">/</span><span class="k">LEFT</span><span class="o">/</span><span class="k">RIGHT</span><span class="o">/</span><span class="k">FULL</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">another_table</span><span class="w"> 
+</span><span class="w">     </span><span class="k">ON</span><span class="w"> </span><span class="n">mytable</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">another_table</span><span class="p">.</span><span class="n">matching_id</span><span class="w">
+</span><span class="w">   </span><span class="k">WHERE</span><span class="w"> </span><span class="n">condition</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="w">
+</span><span class="w">   </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">column</span><span class="p">,</span><span class="w"> </span><span class="err">…</span><span class="w"> </span><span class="k">ASC</span><span class="o">/</span><span class="k">DESC</span><span class="w">
+</span><span class="w">   </span><span class="k">LIMIT</span><span class="w"> </span><span class="n">num_limit</span><span class="w"> </span><span class="k">OFFSET</span><span class="w"> </span><span class="n">num_offset</span><span class="p">;</span><span class="w">
+</span></code></pre></div></li>
+<li>
+<p>使用表达式进行查询：</p>
+<ul>
+<li>
+<p>除了使用 SQL 查询和引用原始列数据外，还可以使用<em>表达式</em>对查询中的列值编写更复杂的逻辑。这些表达式可以使用数学 字符串函数以及基本算术，用于在执行查询时转换值</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="k">SELECT</span><span class="w"> </span><span class="n">particle_speed</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">2</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">half_particle_speed</span><span class="w">
+</span><span class="w"></span><span class="k">FROM</span><span class="w"> </span><span class="n">physics_data</span><span class="w">
+</span><span class="w"></span><span class="k">WHERE</span><span class="w"> </span><span class="k">ABS</span><span class="p">(</span><span class="n">particle_position</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">10</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">500</span><span class="p">;</span><span class="w">	
+</span></code></pre></div></li>
+<li>
+<p>选择具有表达式别名的查询</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="k">SELECT</span><span class="w"> </span><span class="n">col_expression</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">expr_description</span><span class="p">,</span><span class="w"> </span><span class="err">…</span><span class="w">
+</span><span class="w"></span><span class="k">FROM</span><span class="w"> </span><span class="n">mytable</span><span class="p">;</span><span class="w">
+</span></code></pre></div></li>
+</ul>
+</li>
+<li>
+<p>使用聚合的查询：SQL 还支持使用 允许您汇总有关一组行的信息的聚合表达式（或函数） 的数据</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="k">SELECT</span><span class="w"> </span><span class="n">AGG_FUNC</span><span class="p">(</span><span class="n">column_or_expression</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">aggregate_description</span><span class="p">,</span><span class="w"> </span><span class="err">…</span><span class="w">
+</span><span class="w"></span><span class="k">FROM</span><span class="w"> </span><span class="n">mytable</span><span class="w">
+</span><span class="w"></span><span class="k">WHERE</span><span class="w"> </span><span class="n">constraint_expression</span><span class="p">;</span><span class="w">
+</span></code></pre></div><p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 339; 
+			flex-basis: 815px"
+	>
+	<a href="/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221106152937279.png" data-size="985x290">
+		<img src="/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221106152937279.png"
+			width="985"
+			height="290"
+			srcset="/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221106152937279_hu65ecc664107ff7c09bff5498e9922f27_30449_480x0_resize_box_3.png 480w, /p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221106152937279_hu65ecc664107ff7c09bff5498e9922f27_30449_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+</li>
+<li>
+<p>GROUP BY：指定列中具有相同值的行进行分组</p>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="w">   </span><span class="k">SELECT</span><span class="w"> </span><span class="n">AGG_FUNC</span><span class="p">(</span><span class="n">column_or_expression</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">aggregate_description</span><span class="p">,</span><span class="w"> </span><span class="err">…</span><span class="w">
+</span><span class="w">   </span><span class="k">FROM</span><span class="w"> </span><span class="n">mytable</span><span class="w">
+</span><span class="w">   </span><span class="k">WHERE</span><span class="w"> </span><span class="n">constraint_expression</span><span class="w">
+</span><span class="w">   </span><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">column</span><span class="p">;</span><span class="w">
+</span></code></pre></div><ul>
+<li>
+<p>HAVING GROUP BY:子句约束的编写方式与子句约束相同，并且 应用于分组行</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="k">SELECT</span><span class="w"> </span><span class="n">group_by_column</span><span class="p">,</span><span class="w"> </span><span class="n">AGG_FUNC</span><span class="p">(</span><span class="n">column_expression</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">aggregate_result_alias</span><span class="p">,</span><span class="w"> </span><span class="err">…</span><span class="w">
+</span><span class="w"></span><span class="k">FROM</span><span class="w"> </span><span class="n">mytable</span><span class="w">
+</span><span class="w"></span><span class="k">WHERE</span><span class="w"> </span><span class="n">condition</span><span class="w">
+</span><span class="w"></span><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">column</span><span class="w">
+</span><span class="w"></span><span class="k">HAVING</span><span class="w"> </span><span class="n">group_condition</span><span class="p">;</span><span class="w">
+</span></code></pre></div></li>
+</ul>
+<h2 id="插入数据">插入数据</h2>
+<p>插入数据：将数据插入数据库时，我们需要使用 anstatement，它声明哪个表 要写入的，我们正在填充的数据列，以及要插入的一行或多行数据。在 通常，插入的每一行数据都应包含表中每个相应列的值。 您可以通过按顺序列出来一次插入多行。<code>INSERT</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="w">     </span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">mytable</span><span class="w">
+</span><span class="w">     </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="n">value_or_expr</span><span class="p">,</span><span class="w"> </span><span class="n">another_value_or_expr</span><span class="p">,</span><span class="w"> </span><span class="err">…</span><span class="p">),</span><span class="w">
+</span><span class="w">      </span><span class="p">(</span><span class="n">value_or_expr_2</span><span class="p">,</span><span class="w"> </span><span class="n">another_value_or_expr_2</span><span class="p">,</span><span class="w"> </span><span class="err">…</span><span class="p">),</span><span class="w">
+</span><span class="w">      </span><span class="err">…</span><span class="p">;</span><span class="w">
+</span><span class="w">     </span><span class="c1">-- 插入具有特定列的语句
+</span><span class="c1"></span><span class="w">     </span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">mytable</span><span class="w">
+</span><span class="w">     </span><span class="p">(</span><span class="k">column</span><span class="p">,</span><span class="w"> </span><span class="n">another_column</span><span class="p">,</span><span class="w"> </span><span class="err">…</span><span class="p">)</span><span class="w">
+</span><span class="w">     </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="n">value_or_expr</span><span class="p">,</span><span class="w"> </span><span class="n">another_value_or_expr</span><span class="p">,</span><span class="w"> </span><span class="err">…</span><span class="p">),</span><span class="w">
+</span><span class="w">         </span><span class="p">(</span><span class="n">value_or_expr_2</span><span class="p">,</span><span class="w"> </span><span class="n">another_value_or_expr_2</span><span class="p">,</span><span class="w"> </span><span class="err">…</span><span class="p">),</span><span class="w">
+</span><span class="w">      </span><span class="err">…</span><span class="p">;</span><span class="w">
+</span><span class="w"> 
+</span></code></pre></div><h2 id="更新数据update">更新数据：UPDATE</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="w">      </span><span class="k">UPDATE</span><span class="w"> </span><span class="n">mytable</span><span class="w">
+</span><span class="w">      </span><span class="k">SET</span><span class="w"> </span><span class="k">column</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">value_or_expr</span><span class="p">,</span><span class="w"> 
+</span><span class="w">      </span><span class="n">other_column</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">another_value_or_expr</span><span class="p">,</span><span class="w"> 
+</span><span class="w">      </span><span class="err">…</span><span class="w">
+</span><span class="w">      </span><span class="k">WHERE</span><span class="w"> </span><span class="n">condition</span><span class="p">;</span><span class="w">
+</span></code></pre></div><h2 id="删除行deletewhere">删除行:DELETE,WHERE</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="w">      </span><span class="k">DELETE</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">mytable</span><span class="w">
+</span><span class="w">      </span><span class="k">WHERE</span><span class="w"> </span><span class="n">condition</span><span class="p">;</span><span class="w">
+</span></code></pre></div><h2 id="主键与外键">主键与外键</h2>
+<ul>
+<li>
+<p>主键(primary key)：表中唯一标识的一条记录，不能重复，不能为null, 用来保证数据的完整性</p>
+</li>
+<li>
+<p>外键(FOREIGN KEY)：是另一张表中的主键，外键可以重复，可以为null,用来和其他表建立联系，存储引擎为：innodb</p>
+<ul>
+<li>外键数据类型必须要与父表中的主键的类型完全一致</li>
+<li>一张表中的外键名字不能重复</li>
+<li>增加外键字段（数据存在），必须保证数据与父表中的主键要求对应</li>
+</ul>
+</li>
+<li>
+<p>外键的作用：对子表和父表的约束</p>
+<ul>
+<li>对子表的约束：在子表进行插入（增和修改）操作时，如果对应的外键字段在父表找不到对应的匹配，那么插入会失败</li>
+<li>对父表的约束：在父表中进行插入(删和修改：必须是涉及到主键）操作时，如果对应的主键在子表中也被数据所引用，那么插入操作就会失败；</li>
+</ul>
+</li>
+<li>
+<p>外键的约束，都是针对父表：</p>
+<ol>
+<li>distrist:严格模式（默认）：父表不能进行插入操作时（增加或修改，针对着主键），对应主键在子表中被引用的记录</li>
+<li>cascade:级联模式：父表操作后，对应的子表也会跟着删除</li>
+<li>set null:置空模式：父表操作后，对应的子表的外键字段也会被设置为空</li>
+<li>合理的外键约束模式为：删除时子表设置为空（置空模式），更新时子表级联模式</li>
+<li>语法：foreign key(外键字段) references 父表（主键字段）on delete set null on update cascade;</li>
+</ol>
+</li>
+</ul>
+<h2 id="联合查询与子查询">联合查询与子查询</h2>
+<ul>
+<li>
+<p>联合查询：将多次查询，在记录上进行拼接（字段不会增加），每一次select 语句获取的字段数必须严格一致（但是字段类型无关）</p>
+<ul>
+<li>语法：select 语句1 union [union 选项] select 语句 ……</li>
+<li>union 选项：select选项一样：
+<ul>
+<li>All 保留所有（不管重复）</li>
+<li>distinct 去重（整个重复），默认</li>
+</ul>
+</li>
+<li>意义：
+<ul>
+<li>单表查询：查询同一张表，但需求不同</li>
+<li>多表查询：多张表的结构和数据（结构）完全是一致</li>
+</ul>
+</li>
+<li>在联合查询中使用order by 时，需要对查询语句使用括号，且需要使用limit</li>
+</ul>
+</li>
+<li>
+<p>子查询：查询的结构是在某一个查询之上（一天select语句中包含另一条select）</p>
+<ul>
+<li>子查询分类：
+<ul>
+<li>按位置分类：子查询语句（select）在外部查询语句（select）的位置：
+<ul>
+<li>from 子查询：子查询跟在from之后</li>
+<li>where 子查询：子查询跟在where条件中</li>
+<li>exists 子查询：子查询是在exists中</li>
+</ul>
+</li>
+<li>按照结果分类：按照子查询的数据进行分类（查询的结构都可以理解为二维表）
+<ul>
+<li>标量子查询：子查询查询的结果为一行一列</li>
+<li>列子查询：子查询查询的结构为一列多行</li>
+<li>行子查询：子查询查询的结构为一行多列（多行多列），需要够着行元素（多个字段构成：eg(id,  name)=(select )），</li>
+<li>以上位置都是在where条件语句中</li>
+<li>表子查询：子查询查询的结果为多行多列（位置在from之后）</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="视图">视图</h2>
+<ul>
+<li>
+<p>视图view ：是一种有结构（二维表）但是没结果（结构中不真实存放数据）的虚拟表，结构来源于对应的基表（视图的数据来源）；</p>
+<ul>
+<li>创建视图：create view view_name as select 语句，创建完成后很生成对应的frm结构文件；
+<ul>
+<li>单表视图：基表来源只有一个</li>
+<li>多表视图：基表来源至少两个，字段名不能重复；</li>
+</ul>
+</li>
+<li>查看视图：所有查看表的方式都适用于视图</li>
+<li>使用视图：主要是查询使用，将视图当作表一样查询即可，本质是执行分装的select语句；</li>
+<li>修改视图：视图本身不可修改，但是可以修改视图的来源(select)；alter view view_name as 新的select 语句；</li>
+<li>删除视图：drop view view_name;</li>
+<li>视图的意义：
+<ol>
+<li>节省sql语句，将复杂的sql语句保存为视图，可以直接对视图进行操作</li>
+<li>数据安全（相对）：视图操作主要是查询使用，删除视图只是删除结构，不会影响基表的数据；，可以对外提供有用数据，隐藏无用的数据</li>
+<li>通常在大项目中使用，而且是在多系统中使用；</li>
+<li>视图可以对外友好型，不同的用户使用不同的视图,提供不同的数据；</li>
+<li>视图更容易进行权限控制；</li>
+</ol>
+</li>
+<li>视图数据操作：视图可以进行写操作，但是存在限制，数据在视图中进行操作
+<ul>
+<li>视图新增数据：直接对视图数据进行新增
+<ul>
+<li>多表视图不能新增，删除数据，可更新数据；</li>
+<li>可以向单表中插入，更新，删除数据，但是试图中包含的字段必须在基表中所有不能为null或者没有默认值的字段</li>
+<li>更新视图限制：with check option,如果对视图更新的时候， 限定了某个字段，那么在视图更新数据的时，系统会进行验证，保证数据在更新之后，数据依然能被实体查询出来，否则不能更新</li>
+<li>视图算法：系统对视图以及外部查询视图的select语句的一种解析方式
+<ul>
+<li>undefined：未定义（默认）</li>
+<li>temptable:临时表算法，系统先执行视图的select 语句，然后在执行外部查询语句select</li>
+<li>merge:合并算法，系统将视图的select语句和外部的查询语句select合并在执行，效率高；</li>
+<li>算法指定：在创建视图的时指定create algorithm=指定算法 view view_name as select;</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="数据的备份与还原">数据的备份与还原</h2>
+<ul>
+<li>
+<p>单表备份：每次只能备份一张表，只能备份数据（不能备份表结构），通常将表数据导出到文件；</p>
+<ul>
+<li>
+<p>外部导出：select 字段名 into outfile 路径（文件不存在） from 数据源</p>
+</li>
+<li>
+<p>数据导入：load data infile 路径 into table table_name；&ndash; 怎么备份怎么还原</p>
+</li>
+</ul>
+</li>
+<li>
+<p>sql的备份与还原：系统会对表结构和数据进行处理成sql语句，然后进行备份；还原：执行sql语句即可（主要是备份表结构）；</p>
+<ul>
+<li>
+<p>备份：</p>
+<ul>
+<li>
+<p>没有对应的指令，需要mysqldump.exe;</p>
+</li>
+<li>
+<p>mysqldump -hPup 数据库名字 [数据表名字 ……] &gt;外部文件目录</p>
+</li>
+<li>
+<p>整个库备份：mysqldump -hPup 数据库名字</p>
+</li>
+</ul>
+</li>
+<li>
+<p>还原：</p>
+<ul>
+<li>
+<p>mysql -hPup 数据库名字 &lt;备份原件；</p>
+</li>
+<li>
+<p>使用sql 指令；source 备份原件;</p>
+</li>
+</ul>
+</li>
+<li>
+<p>优缺点</p>
+<ul>
+<li>可以备份结构</li>
+<li>浪费空间</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>增量备份：指定时间段开始备份，备份数据不重复，并且所有的操作都会被备份；</p>
+</li>
+</ul>
+<h2 id="索引">索引</h2>
+<ul>
+<li>
+<p>索引是数据库中常用来提高查询性能的工具</p>
+</li>
+<li>
+<p>索引是在存储引擎中实现，而不是在服务层中实现，每种引擎的索引并不相同</p>
+</li>
+<li>
+<p>普通索引normal:</p>
+<ul>
+<li>直接创建索引：create index index_name on table_name (列名[len()]……)</li>
+<li>修改表时创建：alter table table_name add index index_name (列名[len()……])</li>
+<li>创建表时创建：create table table_name (……，index index_name (列名[(len)]……)</li>
+</ul>
+</li>
+<li>
+<p>唯一索引 unique:创建方式和上方的普通索引类似。即：将普通索引的“index”改为“unique index,区别在：索引的所有列的所有值都必须是唯一</p>
+</li>
+<li>
+<p>主键索引：主键是一种特殊的唯一索引，一般在创建表的时候指定</p>
+</li>
+<li>
+<p>全文索引fulltext:创建方式和上方的普通索引类似。即：将普通索引的“index”改为“fulltext index”。</p>
+</li>
+<li>
+<p>查看索引：show index from table_name;</p>
+</li>
+<li>
+<p>删除索引：drop index index_name on table_name 或者alter table table_name drop index index_name;</p>
+</li>
+<li>
+<p>禁用索引：alter table table_name disable kyes;</p>
+</li>
+<li>
+<p>启用索引：alter table table_name enable keys;</p>
+</li>
+</ul>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 133; 
+			flex-basis: 319px"
+	>
+	<a href="/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221113154139517.png" data-size="1280x962">
+		<img src="/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221113154139517.png"
+			width="1280"
+			height="962"
+			srcset="/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221113154139517_huf11334933f40890e56287cde8fbffbd0_459007_480x0_resize_box_3.png 480w, /p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221113154139517_huf11334933f40890e56287cde8fbffbd0_459007_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			alt="image-20221113154139517">
+	</a>
+	
+	<figcaption>image-20221113154139517</figcaption>
+	
+</figure></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 126; 
+			flex-basis: 302px"
+	>
+	<a href="/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221113154151478.png" data-size="720x571">
+		<img src="/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221113154151478.png"
+			width="720"
+			height="571"
+			srcset="/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221113154151478_huf08aa61d8405519a9abe32444fa2018b_211372_480x0_resize_box_3.png 480w, /p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221113154151478_huf08aa61d8405519a9abe32444fa2018b_211372_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			alt="image-20221113154151478">
+	</a>
+	
+	<figcaption>image-20221113154151478</figcaption>
+	
+</figure></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 166; 
+			flex-basis: 400px"
+	>
+	<a href="/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221113154538952.png" data-size="720x432">
+		<img src="/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221113154538952.png"
+			width="720"
+			height="432"
+			srcset="/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221113154538952_huea80993641134d80fba52c00d35dcc7d_154109_480x0_resize_box_3.png 480w, /p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221113154538952_huea80993641134d80fba52c00d35dcc7d_154109_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			alt="image-20221113154538952">
+	</a>
+	
+	<figcaption>image-20221113154538952</figcaption>
+	
+</figure></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 95; 
+			flex-basis: 228px"
+	>
+	<a href="/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221113154558884.png" data-size="720x755">
+		<img src="/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221113154558884.png"
+			width="720"
+			height="755"
+			srcset="/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221113154558884_hue265424d23ed96ee9701c444ec0fad6e_286244_480x0_resize_box_3.png 480w, /p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/image-20221113154558884_hue265424d23ed96ee9701c444ec0fad6e_286244_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			alt="image-20221113154558884">
+	</a>
+	
+	<figcaption>image-20221113154558884</figcaption>
+	
+</figure></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/proto3-%E8%AF%AD%E6%B3%95%E5%AD%A6%E4%B9%A0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/proto3-%E8%AF%AD%E6%B3%95%E5%AD%A6%E4%B9%A0/1.9f296f82f53b05ca4ee7dd598bb7e5b7_hud944d25af46653be6ac685099ccea094_87560_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-nylvgvU7BcpO591Zi7fltw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">proto3 语法学习</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E8%AE%BE%E7%BD%AE%E8%87%AA%E5%B7%B1%E7%9A%84%E7%BC%96%E8%BE%91%E5%99%A8/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E8%AE%BE%E7%BD%AE%E8%87%AA%E5%B7%B1%E7%9A%84%E7%BC%96%E8%BE%91%E5%99%A8/1.34ded2474304ba1de2223379243bc5ed_hu3b1364509ee92ba594c04f8ddadc5a1f_100499_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-NN7SR0MEuh3iIjN5JDvF7Q==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">设置自己的编辑器</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/">
+        
+        
+            <div class="article-image">
+                <img src="/p/redis-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E7%9A%84%E5%AE%9E%E8%B7%B5/_hu8f470d54622ce88b90e96a39d1a48252_105753_89206ea8193e700a8857b4b864406cba.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-o8Bw0dFZ/S4R0kO&#43;D3tuGA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">redis 常用命令的实践</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/linux-mdadm%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux-mdadm%E5%B7%A5%E5%85%B7%E5%AD%A6%E4%B9%A0/1.5f807745f850e4f73ffda5637371863a_hu859ea59f552859095fb986ed5a22b665_11306_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-X4B3RfhQ5Pc//aVjc3GGOg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux-mdadm工具学习</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux-multi-disk-md%E6%A8%A1%E5%9D%97/_huc45ff52f0cf6b2c13cf0b9e2262e1b7b_66945_00fb710e5378cc4d967388d67c9d27dc.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-Ej431j4sWI7qDLD5P2Z/PQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Linux-Multi-Disk (MD)模块</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#查询命令select">查询命令（select）</a></li>
+    <li><a href="#对查询结果进行筛选和排序">对查询结果进行筛选和排序：</a></li>
+    <li><a href="#插入数据">插入数据</a></li>
+    <li><a href="#更新数据update">更新数据：UPDATE</a></li>
+    <li><a href="#删除行deletewhere">删除行:DELETE,WHERE</a></li>
+    <li><a href="#主键与外键">主键与外键</a></li>
+    <li><a href="#联合查询与子查询">联合查询与子查询</a></li>
+    <li><a href="#视图">视图</a></li>
+    <li><a href="#数据的备份与还原">数据的备份与还原</a></li>
+    <li><a href="#索引">索引</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

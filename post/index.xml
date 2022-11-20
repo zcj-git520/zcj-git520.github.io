@@ -6,7 +6,21 @@
     <description>Recent content in Posts on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Thu, 25 Aug 2022 21:00:08 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 01 Sep 2022 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>mysql 常用命令使用</title>
+      <link>https://zcj-git520.github.io/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/</link>
+      <pubDate>Thu, 01 Sep 2022 22:00:38 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/</guid>
+      <description>查询命令（select）  查看表结构：desc 或则show columns from tables; 查询特定的列：select column, another_column,…… FROM table; 查询所有*：select *from table; 带约束查询：SELECT column, another_column, … FROM table WHERE *condition* AND/OR *another_condition* AND/OR …**;  image-20221023144431347  对查询结果进行筛选和排序：   SQL 提供了一种使用关键字丢弃具有重复列值的行的便捷方法(DISTINCT):
+SELECT**DISTINCT**column,another_column,…FROMmytableWHERE*condition(s)*;  SQL 提供了一种使用子句按给定列按升序或降序对结果进行排序的方法(ORDER BY):
+SELECTcolumn,another_column,…FROMmytableWHERE*condition(s)***ORDERBYcolumnASC/DESC**;  将结果限制为子集(ORDER BYLIMITOFFSETLIMITOFFSET):
+SELECTcolumn,another_column,…FROMmytableWHERE*condition(s)*ORDERBYcolumnASC/DESC**LIMITnum_limitOFFSETnum_offset**;  修改表名：alter table old_table_name rename to new_name_name;
+  增加表注释：alter table table_name comment &amp;ldquo;注释&amp;rdquo;；
+  增加表字段注释：alter table table_name colunm modify 字段名 类型 comment &amp;ldquo;注释&amp;rdquo;；</description>
+    </item>
+    
     <item>
       <title>数据结构-Trie tree go实现</title>
       <link>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-trie-tree-go%E5%AE%9E%E7%8E%B0/</link>
