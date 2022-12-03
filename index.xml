@@ -889,6 +889,42 @@
 &lt;p&gt;增量备份：指定时间段开始备份，备份数据不重复，并且所有的操作都会被备份；&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
+&lt;h2 id=&#34;事务&#34;&gt;事务&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;事务是一系列要发生的操作&lt;/li&gt;
+&lt;li&gt;事务安全是保护连续操作同时满足的一种机制&lt;/li&gt;
+&lt;li&gt;事务安全的意义：保证数据安全的完整性&lt;/li&gt;
+&lt;li&gt;事务的操作：
+&lt;ul&gt;
+&lt;li&gt;自动事务
+&lt;ul&gt;
+&lt;li&gt;用户操作完，会自动同步到数据表中；&lt;/li&gt;
+&lt;li&gt;系统通过：autocommit 变量控制&lt;/li&gt;
+&lt;li&gt;开启或者关闭：set autocommit = on/1 or off /0&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;手动事务
+&lt;ul&gt;
+&lt;li&gt;开启事务： 所有的事务操作先保存在日志（redo.log）命令：start transaction begin&lt;/li&gt;
+&lt;li&gt;执行事务：一些列写操作&lt;/li&gt;
+&lt;li&gt;关闭事务：选择性的将日志文件中的结果同步到数据表或者清空日志文件中的操作
+&lt;ul&gt;
+&lt;li&gt;同步事务：同步数据到数据表，命令：commit;&lt;/li&gt;
+&lt;li&gt;回滚事务：直接清空日志，rollback;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;事务原理：开启事务之后，所有的操作都会临时保存在日志文件中，只有在commit 之后才能同步到数据表，其他情况会清空日志&lt;/li&gt;
+&lt;li&gt;回滚点：当事务开启之后，在某一个操作成功之后，可以设置成功的位置，可以提供后续操作失败后，返回该位置，而非全部回滚，
+&lt;ul&gt;
+&lt;li&gt;设置回滚点：savepoint 回滚点名字；&lt;/li&gt;
+&lt;li&gt;回滚到回滚点：rollback 回滚点名字；&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
 &lt;h2 id=&#34;索引&#34;&gt;索引&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;
@@ -925,8 +961,6 @@
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;启用索引：alter table table_name enable keys;&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
 &lt;p&gt;&lt;figure 
 	
 		class=&#34;gallery-image&#34; 
@@ -946,6 +980,8 @@
 	&lt;figcaption&gt;image-20221113154139517&lt;/figcaption&gt;
 	
 &lt;/figure&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
 &lt;p&gt;&lt;figure 
 	
 		class=&#34;gallery-image&#34; 

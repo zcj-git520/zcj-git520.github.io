@@ -487,6 +487,42 @@ SELECTcolumn,another_column,…FROMmytableWHERE*condition(s)*ORDERBYcolumnASC/DE
 <p>增量备份：指定时间段开始备份，备份数据不重复，并且所有的操作都会被备份；</p>
 </li>
 </ul>
+<h2 id="事务">事务</h2>
+<ul>
+<li>事务是一系列要发生的操作</li>
+<li>事务安全是保护连续操作同时满足的一种机制</li>
+<li>事务安全的意义：保证数据安全的完整性</li>
+<li>事务的操作：
+<ul>
+<li>自动事务
+<ul>
+<li>用户操作完，会自动同步到数据表中；</li>
+<li>系统通过：autocommit 变量控制</li>
+<li>开启或者关闭：set autocommit = on/1 or off /0</li>
+</ul>
+</li>
+<li>手动事务
+<ul>
+<li>开启事务： 所有的事务操作先保存在日志（redo.log）命令：start transaction begin</li>
+<li>执行事务：一些列写操作</li>
+<li>关闭事务：选择性的将日志文件中的结果同步到数据表或者清空日志文件中的操作
+<ul>
+<li>同步事务：同步数据到数据表，命令：commit;</li>
+<li>回滚事务：直接清空日志，rollback;</li>
+</ul>
+</li>
+<li>事务原理：开启事务之后，所有的操作都会临时保存在日志文件中，只有在commit 之后才能同步到数据表，其他情况会清空日志</li>
+<li>回滚点：当事务开启之后，在某一个操作成功之后，可以设置成功的位置，可以提供后续操作失败后，返回该位置，而非全部回滚，
+<ul>
+<li>设置回滚点：savepoint 回滚点名字；</li>
+<li>回滚到回滚点：rollback 回滚点名字；</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 <h2 id="索引">索引</h2>
 <ul>
 <li>
@@ -523,8 +559,6 @@ SELECTcolumn,another_column,…FROMmytableWHERE*condition(s)*ORDERBYcolumnASC/DE
 </li>
 <li>
 <p>启用索引：alter table table_name enable keys;</p>
-</li>
-</ul>
 <p><figure 
 	
 		class="gallery-image" 
@@ -544,6 +578,8 @@ SELECTcolumn,another_column,…FROMmytableWHERE*condition(s)*ORDERBYcolumnASC/DE
 	<figcaption>image-20221113154139517</figcaption>
 	
 </figure></p>
+</li>
+</ul>
 <p><figure 
 	
 		class="gallery-image" 
@@ -877,6 +913,7 @@ SELECTcolumn,another_column,…FROMmytableWHERE*condition(s)*ORDERBYcolumnASC/DE
     <li><a href="#联合查询与子查询">联合查询与子查询</a></li>
     <li><a href="#视图">视图</a></li>
     <li><a href="#数据的备份与还原">数据的备份与还原</a></li>
+    <li><a href="#事务">事务</a></li>
     <li><a href="#索引">索引</a></li>
   </ol>
 </nav>
