@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='多表查询  多表一般是主表，主要存储数据的地方，每一个字段都可以重复，没有主键， 无法根据某个字段定位到准确的记录 一表一般是从表，主要存储辅助数据，通过主键与主表连接，存储的记录是不可重复的，可以通过主键定位到记录 左连接：左连接是以左表取出所有记录与右表匹配，如果没有匹配以null值代表右边的列 右连接：右连接是以右表取出所有的记录，与左表进行匹配，如果没有匹配以null值代表左边的列 内连接：等值连接，是多表的交集 交叉连接：返回两表的笛卡尔乘积，作用是计算两个表之间可能的存在的组合，结果是集中的记录等于两张各自记录数的乘积  数据库范式  范式：范式是值在设计数据库表时，需要遵循的一些原则，目的是让设计的数据库表结构更为合理和优雅，常见的数据库范式为：数据库三大范式（1NF、2NF、3NF） 和巴斯-科德范式（BCNF）  数据库的三大范式  三大范式为递进关系，即后续范式是前范式为基础上优化或者后续范式是前范式的优化  第一范式  第一范式：确保数据的原子性，也就是存储的数据具备不可在分性 原子性：原子性规定一个字段是原子，不能在进行拆分成多个字段 第一范式除了对列级别的数据生效外，对行级数据处理一样，即行数据之间相不影响，都是独立的整体 若数据库满足第一范式的影响如下：  客户端语言与表之间无法很好的生成映射关系 查询得到的数据在进行数据处理时，需要对字段数据进行额外的拆分 插入数据时，需要对字段值进行额外拼接后才能写入到数据库     第二范式  第二范式：在第一范式的基础上，要求所有的表中的所有列，其数据都需要依赖于主键，也就是一张表只存储同类型的数据，不能存在同张表中存在与主键没有关系的数据 由于数据存在与主键数据之间没有关联性，导致表中的数据存在冗余的情况 第二范式要求：每张表的业务属性具备“唯一性”，避免存在一张表存在多种业务属性的情况，即“一张表只描述一件事情”   第三范式  第三范式：在第一，第二范式的基础上，要求表中的每一列数据不能与主键外的字段存在关系 第三范式满足：表中的每个非主键字段与其他非主键字段之间，都是相互独立的，之间不存在相互依赖的关系，所有字段都依赖主键 在设计表结构中，如不满足第三范式，在操作表时就会出现异常，使得表难以维护，相反通过第三范式优化后，表结构会更加优雅灵活，也容易 维护   巴斯-科德范式  在表中除了主键外，还有联合主键，也就是有多个列组成的主键 巴斯-科德范式也称为：3.5范式，它是第三范式的补充，第三范式要求是：任何非主键字段与其他非主键字段之间存在依赖关系，即 要求非主键之间具备独立性，巴斯-科德范式要求：任何主属性不能对其他主键子集存在关系，即联合主键中的某列值，不能与联合主键的 其他列存在依赖关系 巴斯-科德范式规定联合主键之间的不存在依赖，即满足主键的独立性 例如：以classes班级字段、class_adviser班主任字段、name学生姓名字段，组合成一个联合主键，就不符合巴斯-科德范式   范式总结  第一范式：确保原子性，即保证表中的每一列数据都是不可在分的字段 第二范式：确保唯一性，即保证每张表只描述一种义务，一张表只描述一件事情 第三范式：确保非主键字段的独立性，即表中除主键外，每个字段之间不存在任何的依赖性，字段之间是独立的 巴斯-科德范式：确保主键字段(联合字段)的独立性,即任何主属性不能对其它主键存在依赖关系，联合主键之间相互独立  数据库锁机制 数据库锁机制 数据库锁分类  按照颗粒度分类：  表级锁：共享读锁和独占写锁 行级锁：共享锁(s)和排他锁(x) 页级锁   按照使用方式分类：  乐观锁 悲观锁    表级锁  开销小，加锁快，不会发生死锁，锁定颗粒度大，发生锁冲突概率高，并发度最低，mylsam和innoDB都是支持的， 读读不阻，写写阻，读写互斥，读写锁是串行的，写锁优于读锁  行级锁  开销大，加锁慢，会发生死锁，锁定颗粒度小，发生锁冲突概率低，并发度高。innoDB支持，因innodb 的行锁是基于索引的 共享锁(s锁)也叫读锁，允许多个事务读取同一个资源，不允许修改 排他锁(x锁)允许获取排他锁的事务更新数据，阻止其他事务获取相同数据的读锁和排他锁；  乐观锁  不采用数据库自身加锁的方式，通过用户程序来实现，一般采用版本号机制或者时间蹉的机制  悲观锁  对数据被其他事务的修改保持保守状态，会通过数据库自身加锁的机制实现，从而保证数据操作的排他性  间隙锁  使用范围查询而非等值查询时，并请求共享或者排他锁时，会给符合范围条件的已有数据记录的索引加锁，对于键值 在条件范围内，但不存在的记录叫做间隙锁（pap锁） 间隙锁可防止幻读和满足恢复和复制的需要  防止死锁  以固定的顺序访问表和行 大事务进行拆分 同一事务，尽可能的一次锁定 降低隔离级别 为表添加合理的索引   '><title>数据库之基础知识</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='数据库之基础知识'>
+<meta property='og:description' content='多表查询  多表一般是主表，主要存储数据的地方，每一个字段都可以重复，没有主键， 无法根据某个字段定位到准确的记录 一表一般是从表，主要存储辅助数据，通过主键与主表连接，存储的记录是不可重复的，可以通过主键定位到记录 左连接：左连接是以左表取出所有记录与右表匹配，如果没有匹配以null值代表右边的列 右连接：右连接是以右表取出所有的记录，与左表进行匹配，如果没有匹配以null值代表左边的列 内连接：等值连接，是多表的交集 交叉连接：返回两表的笛卡尔乘积，作用是计算两个表之间可能的存在的组合，结果是集中的记录等于两张各自记录数的乘积  数据库范式  范式：范式是值在设计数据库表时，需要遵循的一些原则，目的是让设计的数据库表结构更为合理和优雅，常见的数据库范式为：数据库三大范式（1NF、2NF、3NF） 和巴斯-科德范式（BCNF）  数据库的三大范式  三大范式为递进关系，即后续范式是前范式为基础上优化或者后续范式是前范式的优化  第一范式  第一范式：确保数据的原子性，也就是存储的数据具备不可在分性 原子性：原子性规定一个字段是原子，不能在进行拆分成多个字段 第一范式除了对列级别的数据生效外，对行级数据处理一样，即行数据之间相不影响，都是独立的整体 若数据库满足第一范式的影响如下：  客户端语言与表之间无法很好的生成映射关系 查询得到的数据在进行数据处理时，需要对字段数据进行额外的拆分 插入数据时，需要对字段值进行额外拼接后才能写入到数据库     第二范式  第二范式：在第一范式的基础上，要求所有的表中的所有列，其数据都需要依赖于主键，也就是一张表只存储同类型的数据，不能存在同张表中存在与主键没有关系的数据 由于数据存在与主键数据之间没有关联性，导致表中的数据存在冗余的情况 第二范式要求：每张表的业务属性具备“唯一性”，避免存在一张表存在多种业务属性的情况，即“一张表只描述一件事情”   第三范式  第三范式：在第一，第二范式的基础上，要求表中的每一列数据不能与主键外的字段存在关系 第三范式满足：表中的每个非主键字段与其他非主键字段之间，都是相互独立的，之间不存在相互依赖的关系，所有字段都依赖主键 在设计表结构中，如不满足第三范式，在操作表时就会出现异常，使得表难以维护，相反通过第三范式优化后，表结构会更加优雅灵活，也容易 维护   巴斯-科德范式  在表中除了主键外，还有联合主键，也就是有多个列组成的主键 巴斯-科德范式也称为：3.5范式，它是第三范式的补充，第三范式要求是：任何非主键字段与其他非主键字段之间存在依赖关系，即 要求非主键之间具备独立性，巴斯-科德范式要求：任何主属性不能对其他主键子集存在关系，即联合主键中的某列值，不能与联合主键的 其他列存在依赖关系 巴斯-科德范式规定联合主键之间的不存在依赖，即满足主键的独立性 例如：以classes班级字段、class_adviser班主任字段、name学生姓名字段，组合成一个联合主键，就不符合巴斯-科德范式   范式总结  第一范式：确保原子性，即保证表中的每一列数据都是不可在分的字段 第二范式：确保唯一性，即保证每张表只描述一种义务，一张表只描述一件事情 第三范式：确保非主键字段的独立性，即表中除主键外，每个字段之间不存在任何的依赖性，字段之间是独立的 巴斯-科德范式：确保主键字段(联合字段)的独立性,即任何主属性不能对其它主键存在依赖关系，联合主键之间相互独立  数据库锁机制 数据库锁机制 数据库锁分类  按照颗粒度分类：  表级锁：共享读锁和独占写锁 行级锁：共享锁(s)和排他锁(x) 页级锁   按照使用方式分类：  乐观锁 悲观锁    表级锁  开销小，加锁快，不会发生死锁，锁定颗粒度大，发生锁冲突概率高，并发度最低，mylsam和innoDB都是支持的， 读读不阻，写写阻，读写互斥，读写锁是串行的，写锁优于读锁  行级锁  开销大，加锁慢，会发生死锁，锁定颗粒度小，发生锁冲突概率低，并发度高。innoDB支持，因innodb 的行锁是基于索引的 共享锁(s锁)也叫读锁，允许多个事务读取同一个资源，不允许修改 排他锁(x锁)允许获取排他锁的事务更新数据，阻止其他事务获取相同数据的读锁和排他锁；  乐观锁  不采用数据库自身加锁的方式，通过用户程序来实现，一般采用版本号机制或者时间蹉的机制  悲观锁  对数据被其他事务的修改保持保守状态，会通过数据库自身加锁的机制实现，从而保证数据操作的排他性  间隙锁  使用范围查询而非等值查询时，并请求共享或者排他锁时，会给符合范围条件的已有数据记录的索引加锁，对于键值 在条件范围内，但不存在的记录叫做间隙锁（pap锁） 间隙锁可防止幻读和满足恢复和复制的需要  防止死锁  以固定的顺序访问表和行 大事务进行拆分 同一事务，尽可能的一次锁定 降低隔离级别 为表添加合理的索引   '>
+<meta property='og:url' content='https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2022-09-21T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2022-09-21T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/5.png' />
+<meta name="twitter:title" content="数据库之基础知识">
+<meta name="twitter:description" content="多表查询  多表一般是主表，主要存储数据的地方，每一个字段都可以重复，没有主键， 无法根据某个字段定位到准确的记录 一表一般是从表，主要存储辅助数据，通过主键与主表连接，存储的记录是不可重复的，可以通过主键定位到记录 左连接：左连接是以左表取出所有记录与右表匹配，如果没有匹配以null值代表右边的列 右连接：右连接是以右表取出所有的记录，与左表进行匹配，如果没有匹配以null值代表左边的列 内连接：等值连接，是多表的交集 交叉连接：返回两表的笛卡尔乘积，作用是计算两个表之间可能的存在的组合，结果是集中的记录等于两张各自记录数的乘积  数据库范式  范式：范式是值在设计数据库表时，需要遵循的一些原则，目的是让设计的数据库表结构更为合理和优雅，常见的数据库范式为：数据库三大范式（1NF、2NF、3NF） 和巴斯-科德范式（BCNF）  数据库的三大范式  三大范式为递进关系，即后续范式是前范式为基础上优化或者后续范式是前范式的优化  第一范式  第一范式：确保数据的原子性，也就是存储的数据具备不可在分性 原子性：原子性规定一个字段是原子，不能在进行拆分成多个字段 第一范式除了对列级别的数据生效外，对行级数据处理一样，即行数据之间相不影响，都是独立的整体 若数据库满足第一范式的影响如下：  客户端语言与表之间无法很好的生成映射关系 查询得到的数据在进行数据处理时，需要对字段数据进行额外的拆分 插入数据时，需要对字段值进行额外拼接后才能写入到数据库     第二范式  第二范式：在第一范式的基础上，要求所有的表中的所有列，其数据都需要依赖于主键，也就是一张表只存储同类型的数据，不能存在同张表中存在与主键没有关系的数据 由于数据存在与主键数据之间没有关联性，导致表中的数据存在冗余的情况 第二范式要求：每张表的业务属性具备“唯一性”，避免存在一张表存在多种业务属性的情况，即“一张表只描述一件事情”   第三范式  第三范式：在第一，第二范式的基础上，要求表中的每一列数据不能与主键外的字段存在关系 第三范式满足：表中的每个非主键字段与其他非主键字段之间，都是相互独立的，之间不存在相互依赖的关系，所有字段都依赖主键 在设计表结构中，如不满足第三范式，在操作表时就会出现异常，使得表难以维护，相反通过第三范式优化后，表结构会更加优雅灵活，也容易 维护   巴斯-科德范式  在表中除了主键外，还有联合主键，也就是有多个列组成的主键 巴斯-科德范式也称为：3.5范式，它是第三范式的补充，第三范式要求是：任何非主键字段与其他非主键字段之间存在依赖关系，即 要求非主键之间具备独立性，巴斯-科德范式要求：任何主属性不能对其他主键子集存在关系，即联合主键中的某列值，不能与联合主键的 其他列存在依赖关系 巴斯-科德范式规定联合主键之间的不存在依赖，即满足主键的独立性 例如：以classes班级字段、class_adviser班主任字段、name学生姓名字段，组合成一个联合主键，就不符合巴斯-科德范式   范式总结  第一范式：确保原子性，即保证表中的每一列数据都是不可在分的字段 第二范式：确保唯一性，即保证每张表只描述一种义务，一张表只描述一件事情 第三范式：确保非主键字段的独立性，即表中除主键外，每个字段之间不存在任何的依赖性，字段之间是独立的 巴斯-科德范式：确保主键字段(联合字段)的独立性,即任何主属性不能对其它主键存在依赖关系，联合主键之间相互独立  数据库锁机制 数据库锁机制 数据库锁分类  按照颗粒度分类：  表级锁：共享读锁和独占写锁 行级锁：共享锁(s)和排他锁(x) 页级锁   按照使用方式分类：  乐观锁 悲观锁    表级锁  开销小，加锁快，不会发生死锁，锁定颗粒度大，发生锁冲突概率高，并发度最低，mylsam和innoDB都是支持的， 读读不阻，写写阻，读写互斥，读写锁是串行的，写锁优于读锁  行级锁  开销大，加锁慢，会发生死锁，锁定颗粒度小，发生锁冲突概率低，并发度高。innoDB支持，因innodb 的行锁是基于索引的 共享锁(s锁)也叫读锁，允许多个事务读取同一个资源，不允许修改 排他锁(x锁)允许获取排他锁的事务更新数据，阻止其他事务获取相同数据的读锁和排他锁；  乐观锁  不采用数据库自身加锁的方式，通过用户程序来实现，一般采用版本号机制或者时间蹉的机制  悲观锁  对数据被其他事务的修改保持保守状态，会通过数据库自身加锁的机制实现，从而保证数据操作的排他性  间隙锁  使用范围查询而非等值查询时，并请求共享或者排他锁时，会给符合范围条件的已有数据记录的索引加锁，对于键值 在条件范围内，但不存在的记录叫做间隙锁（pap锁） 间隙锁可防止幻读和满足恢复和复制的需要  防止死锁  以固定的顺序访问表和行 大事务进行拆分 同一事务，尽可能的一次锁定 降低隔离级别 为表添加合理的索引   "><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/5.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
+                <img src="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/5_hu897c59d3d00f9ccd7837ef1ecd5c493a_1058366_800x0_resize_box_3.png"
+                        srcset="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/5_hu897c59d3d00f9ccd7837ef1ecd5c493a_1058366_800x0_resize_box_3.png 800w, /p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/5_hu897c59d3d00f9ccd7837ef1ecd5c493a_1058366_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="2519" 
+                        loading="lazy"
+                        alt="Featured image of post 数据库之基础知识" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/mysql/" style="background-color: #2a9d8f; color: #fff;">
+                数据库
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">数据库之基础知识</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Sep 21, 2022</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 1 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h2 id="多表查询">多表查询</h2>
+<ul>
+<li>多表一般是主表，主要存储数据的地方，每一个字段都可以重复，没有主键，
+无法根据某个字段定位到准确的记录</li>
+<li>一表一般是从表，主要存储辅助数据，通过主键与主表连接，存储的记录是不可重复的，可以通过主键定位到记录</li>
+<li>左连接：左连接是以左表取出所有记录与右表匹配，如果没有匹配以null值代表右边的列</li>
+<li>右连接：右连接是以右表取出所有的记录，与左表进行匹配，如果没有匹配以null值代表左边的列</li>
+<li>内连接：等值连接，是多表的交集</li>
+<li>交叉连接：返回两表的笛卡尔乘积，作用是计算两个表之间可能的存在的组合，结果是集中的记录等于两张各自记录数的乘积</li>
+</ul>
+<h2 id="数据库范式">数据库范式</h2>
+<ul>
+<li>范式：范式是值在设计数据库表时，需要遵循的一些原则，目的是让设计的数据库表结构更为合理和优雅，常见的数据库范式为：数据库三大范式（1NF、2NF、3NF）
+和巴斯-科德范式（BCNF）</li>
+</ul>
+<h3 id="数据库的三大范式">数据库的三大范式</h3>
+<ul>
+<li>三大范式为递进关系，即后续范式是前范式为基础上优化或者后续范式是前范式的优化</li>
+</ul>
+<h4 id="第一范式">第一范式</h4>
+<ul>
+<li>第一范式：确保数据的原子性，也就是存储的数据具备不可在分性</li>
+<li>原子性：原子性规定一个字段是原子，不能在进行拆分成多个字段</li>
+<li>第一范式除了对列级别的数据生效外，对行级数据处理一样，即行数据之间相不影响，都是独立的整体</li>
+<li>若数据库满足第一范式的影响如下：
+<ol>
+<li>客户端语言与表之间无法很好的生成映射关系</li>
+<li>查询得到的数据在进行数据处理时，需要对字段数据进行额外的拆分</li>
+<li>插入数据时，需要对字段值进行额外拼接后才能写入到数据库
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 139; 
+			flex-basis: 333px"
+	>
+	<a href="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/1.png" data-size="459x330">
+		<img src="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/1.png"
+			width="459"
+			height="330"
+			srcset="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/1_hufe8748ffa1856cb489830b5bd46884bc_6717_480x0_resize_box_3.png 480w, /p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/1_hufe8748ffa1856cb489830b5bd46884bc_6717_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></li>
+</ol>
+</li>
+</ul>
+<h4 id="第二范式">第二范式</h4>
+<ul>
+<li>第二范式：在第一范式的基础上，要求所有的表中的所有列，其数据都需要依赖于主键，也就是一张表只存储同类型的数据，不能存在同张表中存在与主键没有关系的数据</li>
+<li>由于数据存在与主键数据之间没有关联性，导致表中的数据存在冗余的情况</li>
+<li>第二范式要求：每张表的业务属性具备“唯一性”，避免存在一张表存在多种业务属性的情况，即“一张表只描述一件事情”
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 223; 
+			flex-basis: 535px"
+	>
+	<a href="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/2.png" data-size="558x250">
+		<img src="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/2.png"
+			width="558"
+			height="250"
+			srcset="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/2_hude7d2d1c9cb0f9ab9922058bdc89455a_5246_480x0_resize_box_3.png 480w, /p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/2_hude7d2d1c9cb0f9ab9922058bdc89455a_5246_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></li>
+</ul>
+<h4 id="第三范式">第三范式</h4>
+<ul>
+<li>第三范式：在第一，第二范式的基础上，要求表中的每一列数据不能与主键外的字段存在关系</li>
+<li>第三范式满足：表中的每个非主键字段与其他非主键字段之间，都是相互独立的，之间不存在相互依赖的关系，所有字段都依赖主键</li>
+<li>在设计表结构中，如不满足第三范式，在操作表时就会出现异常，使得表难以维护，相反通过第三范式优化后，表结构会更加优雅灵活，也容易
+维护
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 361; 
+			flex-basis: 867px"
+	>
+	<a href="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/3.png" data-size="571x158">
+		<img src="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/3.png"
+			width="571"
+			height="158"
+			srcset="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/3_hud5dd100324bab0f865389ce6548614bc_3240_480x0_resize_box_3.png 480w, /p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/3_hud5dd100324bab0f865389ce6548614bc_3240_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></li>
+</ul>
+<h3 id="巴斯-科德范式">巴斯-科德范式</h3>
+<ul>
+<li>在表中除了主键外，还有联合主键，也就是有多个列组成的主键</li>
+<li>巴斯-科德范式也称为：3.5范式，它是第三范式的补充，第三范式要求是：任何非主键字段与其他非主键字段之间存在依赖关系，即
+要求非主键之间具备独立性，巴斯-科德范式要求：任何主属性不能对其他主键子集存在关系，即联合主键中的某列值，不能与联合主键的
+其他列存在依赖关系</li>
+<li>巴斯-科德范式规定联合主键之间的不存在依赖，即满足主键的独立性</li>
+<li>例如：以classes班级字段、class_adviser班主任字段、name学生姓名字段，组合成一个联合主键，就不符合巴斯-科德范式
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 291; 
+			flex-basis: 699px"
+	>
+	<a href="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/4.png" data-size="536x184">
+		<img src="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/4.png"
+			width="536"
+			height="184"
+			srcset="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/4_hu833b201c7f9addeaedfc9666789d465e_4366_480x0_resize_box_3.png 480w, /p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/4_hu833b201c7f9addeaedfc9666789d465e_4366_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></li>
+</ul>
+<h3 id="范式总结">范式总结</h3>
+<ul>
+<li>第一范式：确保原子性，即保证表中的每一列数据都是不可在分的字段</li>
+<li>第二范式：确保唯一性，即保证每张表只描述一种义务，一张表只描述一件事情</li>
+<li>第三范式：确保非主键字段的独立性，即表中除主键外，每个字段之间不存在任何的依赖性，字段之间是独立的</li>
+<li>巴斯-科德范式：确保主键字段(联合字段)的独立性,即任何主属性不能对其它主键存在依赖关系，联合主键之间相互独立</li>
+</ul>
+<h2 id="数据库锁机制">数据库锁机制</h2>
+<h2 id="数据库锁机制-1">数据库锁机制</h2>
+<h3 id="数据库锁分类">数据库锁分类</h3>
+<ol>
+<li>按照颗粒度分类：
+<ol>
+<li>表级锁：共享读锁和独占写锁</li>
+<li>行级锁：共享锁(s)和排他锁(x)</li>
+<li>页级锁</li>
+</ol>
+</li>
+<li>按照使用方式分类：
+<ol>
+<li>乐观锁</li>
+<li>悲观锁</li>
+</ol>
+</li>
+</ol>
+<h4 id="表级锁">表级锁</h4>
+<ul>
+<li>开销小，加锁快，不会发生死锁，锁定颗粒度大，发生锁冲突概率高，并发度最低，mylsam和innoDB都是支持的，</li>
+<li>读读不阻，写写阻，读写互斥，读写锁是串行的，写锁优于读锁</li>
+</ul>
+<h3 id="行级锁">行级锁</h3>
+<ul>
+<li>开销大，加锁慢，会发生死锁，锁定颗粒度小，发生锁冲突概率低，并发度高。innoDB支持，因innodb
+的行锁是基于索引的</li>
+<li>共享锁(s锁)也叫读锁，允许多个事务读取同一个资源，不允许修改</li>
+<li>排他锁(x锁)允许获取排他锁的事务更新数据，阻止其他事务获取相同数据的读锁和排他锁；</li>
+</ul>
+<h3 id="乐观锁">乐观锁</h3>
+<ul>
+<li>不采用数据库自身加锁的方式，通过用户程序来实现，一般采用版本号机制或者时间蹉的机制</li>
+</ul>
+<h3 id="悲观锁">悲观锁</h3>
+<ul>
+<li>对数据被其他事务的修改保持保守状态，会通过数据库自身加锁的机制实现，从而保证数据操作的排他性</li>
+</ul>
+<h3 id="间隙锁">间隙锁</h3>
+<ul>
+<li>使用范围查询而非等值查询时，并请求共享或者排他锁时，会给符合范围条件的已有数据记录的索引加锁，对于键值
+在条件范围内，但不存在的记录叫做间隙锁（pap锁）</li>
+<li>间隙锁可防止幻读和满足恢复和复制的需要</li>
+</ul>
+<h3 id="防止死锁">防止死锁</h3>
+<ol>
+<li>以固定的顺序访问表和行</li>
+<li>大事务进行拆分</li>
+<li>同一事务，尽可能的一次锁定</li>
+<li>降低隔离级别</li>
+<li>为表添加合理的索引
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 31; 
+			flex-basis: 76px"
+	>
+	<a href="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/5.png" data-size="1680x5289">
+		<img src="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/5.png"
+			width="1680"
+			height="5289"
+			srcset="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/5_hu897c59d3d00f9ccd7837ef1ecd5c493a_1058366_480x0_resize_box_3.png 480w, /p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/5_hu897c59d3d00f9ccd7837ef1ecd5c493a_1058366_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></li>
+</ol>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/">
+        
+        
+            <div class="article-image">
+                <img src="/p/mysql-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8/_hue265424d23ed96ee9701c444ec0fad6e_286244_23980696371de0cd8dd420d6b1a4141b.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-RBwMNx0Fat4hPR4RXfJ9Ug==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">mysql 常用命令使用</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/mysql%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/">
+        
+        
+            <div class="article-image">
+                <img src="/p/mysql%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98-%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8/3.117842f1f408b0c348e681ab68c9fa7c_hu5261706da37be2572fd4622db307b63b_273707_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-EXhC8fQIsMNI5oGraMn6fA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">mysql性能调优-分库分表</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/mysql%E4%BA%8B%E5%8A%A1%E5%AE%9E%E7%8E%B0%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/">
+        
+        
+            <div class="article-image">
+                <img src="/p/mysql%E4%BA%8B%E5%8A%A1%E5%AE%9E%E7%8E%B0%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/1.a6a89cd5fadeab0f03d10b534bbcd0ac_hub1d649ce0ea89887083315ebed128a77_18394_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-pqic1freqw8D0QtTS7zQrA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">mysql事务实现基本原理</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/mysql%E5%BA%95%E5%B1%82%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/">
+        
+        
+            <div class="article-image">
+                <img src="/p/mysql%E5%BA%95%E5%B1%82%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/1.923fdda1d7a4767f5b07e09a53cd77fc_huc45b7cee299d4b0bd96f8dd390c7ebfb_163533_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-kj/dodekdn9bB&#43;CaU813/A==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">mysql底层基本原理</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2023 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#多表查询">多表查询</a></li>
+    <li><a href="#数据库范式">数据库范式</a>
+      <ol>
+        <li><a href="#数据库的三大范式">数据库的三大范式</a>
+          <ol>
+            <li><a href="#第一范式">第一范式</a></li>
+            <li><a href="#第二范式">第二范式</a></li>
+            <li><a href="#第三范式">第三范式</a></li>
+          </ol>
+        </li>
+        <li><a href="#巴斯-科德范式">巴斯-科德范式</a></li>
+        <li><a href="#范式总结">范式总结</a></li>
+      </ol>
+    </li>
+    <li><a href="#数据库锁机制">数据库锁机制</a></li>
+    <li><a href="#数据库锁机制-1">数据库锁机制</a>
+      <ol>
+        <li><a href="#数据库锁分类">数据库锁分类</a>
+          <ol>
+            <li><a href="#表级锁">表级锁</a></li>
+          </ol>
+        </li>
+        <li><a href="#行级锁">行级锁</a></li>
+        <li><a href="#乐观锁">乐观锁</a></li>
+        <li><a href="#悲观锁">悲观锁</a></li>
+        <li><a href="#间隙锁">间隙锁</a></li>
+        <li><a href="#防止死锁">防止死锁</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
