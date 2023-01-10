@@ -6,7 +6,16 @@
     <description>Recent content in Posts on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Wed, 21 Sep 2022 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 30 Sep 2022 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>数据库之事务机制原理</title>
+      <link>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E4%BA%8B%E5%8A%A1%E6%9C%BA%E5%88%B6%E5%8E%9F%E7%90%86/</link>
+      <pubDate>Fri, 30 Sep 2022 22:00:38 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E4%BA%8B%E5%8A%A1%E6%9C%BA%E5%88%B6%E5%8E%9F%E7%90%86/</guid>
+      <description>事务的ACID原则  事务一般要满足ACID原则：  A(atomicity): 原子性 C(consistency): 一致性 I(isolation): 独立性/隔离性 D(Durability): 持久性   原子性：指一个事务组成的一组sql要么全部执行成功，要么全部执行失败 一致性：不管事务发生前后，原本的数据变化都是一致的，也就是数据库中的数据只允许从一个一致性 状态变化为另一个一致性状态，即一个事务中的所有操作，要么一起改变数据库中的数据，要么都不变，对于其他事务而言，数据 变化是一致的 独立性/隔离性: 多个事务之间都是独立的，互不影响，是基于锁的机制和mvcc机制实现的 持久性：指一个事务一旦提交，它会保持永久性，即所有更改数据库中的数据都会被写入磁盘做持久化处理 相关命令：  开启一个事务：start transaction| begin | begin work 回滚事务：rollback 提交事务：commit 关闭或开启自动提交: SET autocommit = 0|1|ON|OFF   事务回滚点：当后续操作失败时，就会回滚到该位置（当前成功的位置）  相关命令：  添加事务回滚点: savepoint point_name 回滚到指定的回滚点：rollback point_name      mysql事务隔离机制  事务隔离机制可分为四个级别：  RU(read uncommitted): 读未提交 RC(read committed): 读已提交 RR(repeatable read): 可重复读 serializable: 序列化/串行化   默认隔离级别为：可重复读 -脏读、幻读、不可重复读、脏写问题  脏读：脏读是指一个事务读到其他事务还没提交的数据，即当前事务读到的数据是其他事务未提交的数据 幻读：指同一个事务内多次查询返回的结果集不一样。比如同一个事务A，在第一次查询表的数据行数时，发现表中有n条行记录，但是第二次以同等条件查询时，却发现有n+1条记录，这就好像产生了幻觉 不可重复读: 是指一个事务中，多次读取同一个数据，先后读取数据不一致 脏写：指同一个事务同时操作同一条数据   事务隔离机制实现  读未提交  处于该级别的数据库，脏读、幻读、不可重复读都可能发生 实现机制：该级别是基于写互斥锁实现的，这个级别在写数据时，采用了互斥锁，解决脏写的问题 但是读操作不是互斥的，导致其他事务可以读到该事务未提交的数据，从而导致了脏读、幻读、不可重复读的发生   读已提交  处于该级别的数据库，解决了脏读的问题，不可重复的和幻读的问题同样存在 实现机制：该级别在基于写互斥锁的基础上，才采用了mvcc多版本并发控制即使进行读操作处理， 即mvcc版本控制不会让另一个事务读取另一个正在修改（未提交）的数据，而是返回修改之间的数据（老版本的数据） 即没有读取数据的时候，mvcc版本机制会根据事务中的查询命令快速创建一个新的readView,读取到的数据就是新的数据   可重读读  处于该级别的数据库，解决了脏读、不可重读读的问题，幻读的问题同样存在 实现机制：级别在基于读已体提交的基础上，对mvcc进行了优化，即在同一个事务中不会根据每一次查询都生成一个新的readView 而是在一个事务中只有第一次查询才创建一个readView,后续查询都使用这个readView的数据,解决了不可重读读的问题   序列化/串行化级别  处于该级别的数据库，解决了脏读、不可重复读、幻读问题 实现机制：序列化意思是将所有的事务按序排队后串行化处理，也就是操作同一张表的事务只能一个一个执行，事务在执行前需要先获取表级别的锁资源，拿到锁资源的事务才能执行，其余事务则陷入阻塞，等待当前事务释放锁     事务隔离机制的命令  查询当前数据库的隔离级别:  SELECT @@tx_isolation; show variables like &amp;lsquo;%tx_isolation%&#39;;   设置隔离级别为RU级别（当前连接生效）  set transaction isolation level read uncommitted;   设置隔离级别为RC级别（全局生效）  set global transaction isolation level read committed;   设置隔离级别为RR级别（当前连接生效）  set tx_isolation = &amp;lsquo;repeatable-read&amp;rsquo;;   设置隔离级别为最高的serializable级别（全局生效）  set global.</description>
+    </item>
+    
     <item>
       <title>数据库之基础知识</title>
       <link>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/</link>
