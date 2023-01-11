@@ -599,7 +599,46 @@ mysql崩溃时可以通过日志来快速恢复数据，确保所有的数据都
 在条件范围内，但不存在的记录叫做间隙锁（pap锁）&lt;/li&gt;
 &lt;li&gt;间隙锁可防止幻读和满足恢复和复制的需要&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3 id=&#34;防止死锁&#34;&gt;防止死锁&lt;/h3&gt;
+&lt;h3 id=&#34;数据库死锁&#34;&gt;数据库死锁&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;死锁现象: 并发事务，本质是数据库多条线程并发执行，需要具备完善的锁机制来避免线程的不安全
+但是也会造成死锁的现象&lt;/li&gt;
+&lt;li&gt;解决死锁问题
+&lt;ol&gt;
+&lt;li&gt;锁超时机制：事务/线程在等待资源时，超过一定时间后自动放弃等待并返回&lt;/li&gt;
+&lt;li&gt;外力介入：外部接入，将死锁情况中的某个事务/线程强制结束，让其他事务继续执行&lt;/li&gt;
+&lt;li&gt;mysql的锁超时机制：一个事务在长时间内无法获取到锁时，就主动放弃等待，默认锁超时时间为50S&lt;/li&gt;
+&lt;li&gt;mysql死锁检测算法：
+&lt;ul&gt;
+&lt;li&gt;wait-for graph,启动后会收集两个信息，一个是锁的信息链表：目前持每个锁的事务是谁，
+另一个是等待链表：阻塞的事务要等待的锁是谁&lt;/li&gt;
+&lt;li&gt;算法会从之前的事务作为起点，然后从锁的信息链表中找到对应锁的信息，然后根据锁的的持有着，
+在事务等待链表中进行查找，看持有着的事务是否在等待获取其他锁，如果是则看另一个持有锁的事务是否在等待其他锁……
+直到锁的信息链表中后，是否存在闭环，若出现则介入（强制回滚其中的一个事务来达到解除死锁的问题）
+&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 363; 
+			flex-basis: 872px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/6.png&#34; data-size=&#34;749x206&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/6.png&#34;
+			width=&#34;749&#34;
+			height=&#34;206&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/6_huf732841b43d33870f52bb044f37d06d3_83470_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B9%8B%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/6_huf732841b43d33870f52bb044f37d06d3_83470_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/li&gt;
+&lt;li&gt;回滚事务时，一般会在undo-log日志中回滚undo量少的事务，回滚代价少&lt;/li&gt;
+&lt;li&gt;通过innodb_deadlock_detect=on/off来控制是否开启了死锁检测机制&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;防止死锁
 &lt;ol&gt;
 &lt;li&gt;以固定的顺序访问表和行&lt;/li&gt;
 &lt;li&gt;大事务进行拆分&lt;/li&gt;
@@ -624,6 +663,8 @@ mysql崩溃时可以通过日志来快速恢复数据，确保所有的数据都
 	
 &lt;/figure&gt;&lt;/li&gt;
 &lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
 </description>
         </item>
         <item>
@@ -20089,6 +20130,22 @@ go_guide_cn)&lt;/p&gt;
 	&lt;/a&gt;
 	
 &lt;/figure&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;内存逃逸&#34;&gt;内存逃逸&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;悬挂指针：因内存回收错误导致
+&lt;ul&gt;
+&lt;li&gt;例如：int *suspend_pointer{int i= 2; return &amp;amp;i;}&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;内存逃逸分析：程序在编译阶段根据代码中的数据流，对代码中的那些变量需要在栈中分配
+那些在堆上分配进行静态分配的方法&lt;/li&gt;
+&lt;li&gt;逃逸分析的两个原则：
+&lt;ul&gt;
+&lt;li&gt;指向栈对象的指针不能存活在堆中&lt;/li&gt;
+&lt;li&gt;指向栈对象的指针不能在栈对象回收后存活&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;参考文献&#34;&gt;参考文献&lt;/h2&gt;
 &lt;p&gt;1.&lt;a class=&#34;link&#34; href=&#34;https://www.zhihu.com/people/kylin-lab&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
