@@ -6,7 +6,164 @@
         <description>Recent content on Chengji Zhao&#39;s blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Mon, 10 Oct 2022 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sun, 15 Jan 2023 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>后端的安全和加密</title>
+        <link>https://zcj-git520.github.io/p/%E5%90%8E%E7%AB%AF%E7%9A%84%E5%AE%89%E5%85%A8%E5%92%8C%E5%8A%A0%E5%AF%86/</link>
+        <pubDate>Sun, 15 Jan 2023 22:00:38 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/%E5%90%8E%E7%AB%AF%E7%9A%84%E5%AE%89%E5%85%A8%E5%92%8C%E5%8A%A0%E5%AF%86/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/%E5%90%8E%E7%AB%AF%E7%9A%84%E5%AE%89%E5%85%A8%E5%92%8C%E5%8A%A0%E5%AF%86/1.png" alt="Featured image of post 后端的安全和加密" /&gt;&lt;h2 id=&#34;后端的安全&#34;&gt;后端的安全&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;在后端的应用程序中的安全问题都是亲信了第三方提供的数据造成的，例如：对于用户输入的数据。在对其进行验证之前都应该视为不安全的数据，把不安全的数据用于数据库的查询就可能会造成sql注入的问题&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;预防csrf攻击&#34;&gt;预防CSRF攻击&lt;/h3&gt;
+&lt;p&gt;CSRF(跨站请求伪造)：攻击者可以盗用你的登录信息，以你的身份模拟发送各种请求，所以遇到CSRF攻击时，将对终端用户数据和操作指令构成严重的威胁，当受攻击的终端具备管理账号时，CSRF攻击都会危及整个后端的应用&lt;/p&gt;
+&lt;p&gt;​	&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 177; 
+			flex-basis: 425px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/%E5%90%8E%E7%AB%AF%E7%9A%84%E5%AE%89%E5%85%A8%E5%92%8C%E5%8A%A0%E5%AF%86/1.png&#34; data-size=&#34;1052x593&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/%E5%90%8E%E7%AB%AF%E7%9A%84%E5%AE%89%E5%85%A8%E5%92%8C%E5%8A%A0%E5%AF%86/1.png&#34;
+			width=&#34;1052&#34;
+			height=&#34;593&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/%E5%90%8E%E7%AB%AF%E7%9A%84%E5%AE%89%E5%85%A8%E5%92%8C%E5%8A%A0%E5%AF%86/1_hu87659f1a5244bdf4eaa7c124361acc46_915216_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/%E5%90%8E%E7%AB%AF%E7%9A%84%E5%AE%89%E5%85%A8%E5%92%8C%E5%8A%A0%E5%AF%86/1_hu87659f1a5244bdf4eaa7c124361acc46_915216_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;h4 id=&#34;csrf的工作原理&#34;&gt;CSRF的工作原理：&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;CSRF攻击主要是因为web的隐式身份验证机制，web的身份验证机制可以保证一个请求是来自某一个服务器。但却无法保证该请求是用户批准发送的&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;CSRF的攻击过程可分为：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;登录受信任的网站A,并在本地生成cookie&lt;/li&gt;
+&lt;li&gt;在不退出A的情况下，访问了危险的网站B&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;csrf的预防&#34;&gt;CSRF的预防&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;可以从服务端和客户端两个方向入手
+&lt;ul&gt;
+&lt;li&gt;服务端的预防：
+&lt;ol&gt;
+&lt;li&gt;正确的使用GET,POST,和COOKie&lt;/li&gt;
+&lt;li&gt;在非GET请求中增加伪随机数
+在非GET方式的请求中增加伪随机数有三种方式：&lt;/li&gt;
+&lt;li&gt;为每一个用户生成唯一的cookie token，所有的表单都包含同一个伪随机数&lt;/li&gt;
+&lt;li&gt;每一个请求使用的验证码&lt;/li&gt;
+&lt;li&gt;在不同表单包含一个不同的伪随机数&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;确保输入的过滤：过滤用户数据是后后端的基础，它是验证数据的合法性的过程：
+&lt;ol&gt;
+&lt;li&gt;识别数据，即确定数据的来源&lt;/li&gt;
+&lt;li&gt;过滤数据，即确保需要的数据入库&lt;/li&gt;
+&lt;li&gt;确定数据，即确定数据的安全&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;避免xss的攻击&#34;&gt;避免XSS的攻击&lt;/h3&gt;
+&lt;p&gt;​	xss(跨站脚本攻击)：是一种常见的web安全漏洞，它允许攻击者将恶意代码植入到提供给其他用户使用的页面中，不同于大多数攻击一般只涉及攻击者和受害者，xss涉及到三方，即攻击者，客户端和后端服务器，xss攻击目标为盗取存储在客户端的cookie或者其他网站用户识别客户端身份的敏感信息，一旦获取到合法的用户信息后，攻击者甚至可以假冒合法于网站进行交互&lt;/p&gt;
+&lt;h4 id=&#34;xss-分类&#34;&gt;xss 分类&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;存储型xss:主要是出现让用户输入数据，应用程序从数据库查数据，在页面中显示，攻击者在相关页面中输入恶意的脚本数据后，用户浏览时，就可能会受到攻击&lt;/p&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 132; 
+			flex-basis: 317px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/%E5%90%8E%E7%AB%AF%E7%9A%84%E5%AE%89%E5%85%A8%E5%92%8C%E5%8A%A0%E5%AF%86/3.png&#34; data-size=&#34;948x716&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/%E5%90%8E%E7%AB%AF%E7%9A%84%E5%AE%89%E5%85%A8%E5%92%8C%E5%8A%A0%E5%AF%86/3.png&#34;
+			width=&#34;948&#34;
+			height=&#34;716&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/%E5%90%8E%E7%AB%AF%E7%9A%84%E5%AE%89%E5%85%A8%E5%92%8C%E5%8A%A0%E5%AF%86/3_hu1545ed1adfa073e5dd37a25c338c69e2_153820_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/%E5%90%8E%E7%AB%AF%E7%9A%84%E5%AE%89%E5%85%A8%E5%92%8C%E5%8A%A0%E5%AF%86/3_hu1545ed1adfa073e5dd37a25c338c69e2_153820_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;反射性xss:主要做法是将脚本代码加入url地址的请求参数中，请求参数进入程序后在页面直接输出，用户点击类似链接可能会受到攻击&lt;/p&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 128; 
+			flex-basis: 309px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/%E5%90%8E%E7%AB%AF%E7%9A%84%E5%AE%89%E5%85%A8%E5%92%8C%E5%8A%A0%E5%AF%86/2.png&#34; data-size=&#34;930x722&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/%E5%90%8E%E7%AB%AF%E7%9A%84%E5%AE%89%E5%85%A8%E5%92%8C%E5%8A%A0%E5%AF%86/2.png&#34;
+			width=&#34;930&#34;
+			height=&#34;722&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/%E5%90%8E%E7%AB%AF%E7%9A%84%E5%AE%89%E5%85%A8%E5%92%8C%E5%8A%A0%E5%AF%86/2_hue5fb697bafb9f1fd607ee96fd66e6ea4_137160_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/%E5%90%8E%E7%AB%AF%E7%9A%84%E5%AE%89%E5%85%A8%E5%92%8C%E5%8A%A0%E5%AF%86/2_hue5fb697bafb9f1fd607ee96fd66e6ea4_137160_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;xss原理&#34;&gt;xss原理&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;后端应用在未对用户提交请求的数据做充分的检查过滤，允许用户在提交数据中参入html代码，并将未经过转义的恶意的代码输出到第三方的应用的浏览器解释执行，是导致xss漏洞的主要产生原因&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;预防xss&#34;&gt;预防xss&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;坚决不要相信用户的任何输入并过滤输入中的所有特殊字符，目前有两种方法：
+&lt;ul&gt;
+&lt;li&gt;过滤特殊字符&lt;/li&gt;
+&lt;li&gt;使用http头指定类型&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;避免sql注入&#34;&gt;避免sql注入&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;sql注入是后端开发中最常见的一种安全漏洞，可以使用它获取数据库中的获取敏感的信息，或者利用数据库的热特性执行添加用户，导出文件等一系列恶意，操作甚至可能获取数据库或者系统的用户的最高权限&lt;/li&gt;
+&lt;li&gt;造成sql注入的原因是因为程序没有有效的过滤，用户输入时攻击者成功向服务器提交恶意代码的sql查询代码，程序在接收到错误后的将攻击者的输入作为查询语句的一部分，导致原始查询逻辑被迫改变。额外执行供攻击者精心构造的恶意代码&lt;/li&gt;
+&lt;li&gt;sql查询是可以被修改，sql查询是可以绕开访问的控制，从而绕过身份验证和权限检查，有可能sql查询去与运行主机系统级别的命令&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;预防sql&#34;&gt;预防sql&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;严格限制后端应用的数据库的权限，给用户提供满足功能即可&lt;/li&gt;
+&lt;li&gt;检查输入的数据是否具有所有的期望格式。严格控制变量类型&lt;/li&gt;
+&lt;li&gt;对数据库的特殊字符进行转义处理，或者编码转换&lt;/li&gt;
+&lt;li&gt;所有的查询语句，建议使用数据库提供哦那个的参数化的接口。而不是将输入的变量嵌入到sql语句中，即不要拼接sql语句&lt;/li&gt;
+&lt;li&gt;在应用发布前，建议使用专业的sql注入检查工具进行检测以及时修补并发现sql注入的漏洞&lt;/li&gt;
+&lt;li&gt;避免前端打印sql错误，比如类型错误，子段不匹配等暴露sql语句&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;存储密码&#34;&gt;存储密码&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;普通方案：常用的密码存储方案是将明文密码做单向的哈希后存错，单向哈希算法有一特征：无法通过哈希后的摘要恢复出原始数据，常用的额单向哈希算法包括：SHA-256,SHA-1
+&lt;ul&gt;
+&lt;li&gt;单向哈希的两大特性：
+&lt;ul&gt;
+&lt;li&gt;同一密码进行哈希后，得到的唯一确定的摘要&lt;/li&gt;
+&lt;li&gt;计算速度快&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;结合单向哈希的两大特性：攻击者可以将所有的密码常见的组合进行单向哈希，得到一个摘要组合(rainbow table), 然后于数据库中的进行对比即可得到密码&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;进阶方案：先将用户输入的密码进行单向哈希加密，在将获取的摘要的前后加上只有管理员知道的随机数，在进行单向哈希&lt;/li&gt;
+&lt;li&gt;专家方案：故意增加密码计算所消耗的资源和时间，使得任何人都不可能获取到相同的资源，建立所需要的(rainbow table)&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        <item>
         <title>mysql之数据库索引机制与MVCC机制</title>
         <link>https://zcj-git520.github.io/p/mysql%E4%B9%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B4%A2%E5%BC%95%E6%9C%BA%E5%88%B6%E4%B8%8Emvcc%E6%9C%BA%E5%88%B6/</link>
         <pubDate>Mon, 10 Oct 2022 22:00:38 +0800</pubDate>
