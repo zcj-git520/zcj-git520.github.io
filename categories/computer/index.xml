@@ -6,7 +6,17 @@
     <description>Recent content in 知识学习 on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sun, 15 Jan 2023 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/computer/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 18 Jan 2025 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/computer/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>LangChain 框架解析</title>
+      <link>https://zcj-git520.github.io/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/</link>
+      <pubDate>Sat, 18 Jan 2025 22:00:38 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/</guid>
+      <description>LangChain 框架解析 一、简介  定义：开源Python AI应用开发框架 核心价值：降低基于LLM的AI应用开发门槛 核心功能：  LLM集成（文本生成/问答/翻译/对话） 创意应用构建 标准化AI工作流    二、核心特性    特性 功能描述 应用场景     LLM &amp;amp; 提示管理 统一API抽象层 + 提示模板 标准化模型调用   链(Chain) 预封装任务工作流 问答系统/SQL生成   LCEL 表达式语言编排任务流 自定义AI流程   RAG 外部数据增强生成 知识库问答   Agents LLM决策+外部系统调用 自动化任务执行   模型记忆 对话历史记忆 多轮对话系统    LangChain 特性：
+● LLM 和提示（Prompt）：LangChain 对所有 LLM 大模型进行了 API 抽象，统一了大模型访问 API，同时提供了 Prompt 提示模板管理机制。</description>
+    </item>
+    
     <item>
       <title>后端的安全和加密</title>
       <link>https://zcj-git520.github.io/p/%E5%90%8E%E7%AB%AF%E7%9A%84%E5%AE%89%E5%85%A8%E5%92%8C%E5%8A%A0%E5%AF%86/</link>

@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='title: &amp;ldquo;LangChain 框架解析&amp;rdquo; date: 2025-01-15T22:00:38&#43;08:00 draft: true image: 5.svg categories:
+ AI computer  LangChain 框架解析 一、简介  定义：开源Python AI应用开发框架 核心价值：降低基于LLM的AI应用开发门槛 核心功能：  LLM集成（文本生成/问答/翻译/对话） 创意应用构建 标准化AI工作流    二、核心特性    特性 功能描述 应用场景     LLM &amp;amp; 提示管理 统一API抽象层 &#43; 提示模板 标准化模型调用   链(Chain) 预封装任务工作流 问答系统/SQL生成   LCEL 表达式语言编排任务流 自定义AI流程   RAG 外部数据增强生成 知识库问答   Agents LLM决策&#43;外部系统调用 自动化任务执行   模型记忆 对话历史记忆 多轮对话系统    LangChain 特性： ●LLM 和提示（Prompt）：LangChain 对所有 LLM 大模型进行了 API 抽象，统一了大模型访问 API，同时提供了 Prompt 提示模板管理机制。 ●链 (Chain)：Langchain 对一些常见的场景封装了一些现成的模块，例如：基于上下文信息的问答系统，自然语言生成 SQL 查询等等，因为实现这些任务的过程就像工作流一样，一步一步的执行，所以叫链 (chain)。 ●LCEL：LangChain Expression Language (LCEL)， langchain 新版本的核心特性，用于解决工作流编排问题，通过 LCEL 表达式，我们可以灵活的自定义 AI 任务处理流程，也就是灵活自定义链 (Chain)。 ●数据增强生成 (RAG)：因为大模型 (LLM) 不了解新的信息，无法回答新的问题，所以我们可以将新的信息导入到 LLM，用于增强 LLM 生成内容的质量，这种模式叫做 RAG 模式(Retrieval Augmented Generation)。 ●Agents：是一种基于大模型（LLM）的应用设计模式，利用 LLM 的自然语言理解和推理能力（LLM 作为大脑)），根据用户的需求自动调用外部系统、设备共同去完成任务，例如：用户输入 “明天请假一天”， 大模型（LLM）自动调用请假系统，发起一个请假申请。 ●模型记忆（memory）：让大模型 (llm) 记住之前的对话内容，这种能力成为模型记忆（memory）。'><title></title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content=''>
+<meta property='og:description' content='title: &amp;ldquo;LangChain 框架解析&amp;rdquo; date: 2025-01-15T22:00:38&#43;08:00 draft: true image: 5.svg categories:
+ AI computer  LangChain 框架解析 一、简介  定义：开源Python AI应用开发框架 核心价值：降低基于LLM的AI应用开发门槛 核心功能：  LLM集成（文本生成/问答/翻译/对话） 创意应用构建 标准化AI工作流    二、核心特性    特性 功能描述 应用场景     LLM &amp;amp; 提示管理 统一API抽象层 &#43; 提示模板 标准化模型调用   链(Chain) 预封装任务工作流 问答系统/SQL生成   LCEL 表达式语言编排任务流 自定义AI流程   RAG 外部数据增强生成 知识库问答   Agents LLM决策&#43;外部系统调用 自动化任务执行   模型记忆 对话历史记忆 多轮对话系统    LangChain 特性： ●LLM 和提示（Prompt）：LangChain 对所有 LLM 大模型进行了 API 抽象，统一了大模型访问 API，同时提供了 Prompt 提示模板管理机制。 ●链 (Chain)：Langchain 对一些常见的场景封装了一些现成的模块，例如：基于上下文信息的问答系统，自然语言生成 SQL 查询等等，因为实现这些任务的过程就像工作流一样，一步一步的执行，所以叫链 (chain)。 ●LCEL：LangChain Expression Language (LCEL)， langchain 新版本的核心特性，用于解决工作流编排问题，通过 LCEL 表达式，我们可以灵活的自定义 AI 任务处理流程，也就是灵活自定义链 (Chain)。 ●数据增强生成 (RAG)：因为大模型 (LLM) 不了解新的信息，无法回答新的问题，所以我们可以将新的信息导入到 LLM，用于增强 LLM 生成内容的质量，这种模式叫做 RAG 模式(Retrieval Augmented Generation)。 ●Agents：是一种基于大模型（LLM）的应用设计模式，利用 LLM 的自然语言理解和推理能力（LLM 作为大脑)），根据用户的需求自动调用外部系统、设备共同去完成任务，例如：用户输入 “明天请假一天”， 大模型（LLM）自动调用请假系统，发起一个请假申请。 ●模型记忆（memory）：让大模型 (llm) 记住之前的对话内容，这种能力成为模型记忆（memory）。'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' />
+<meta name="twitter:title" content="">
+<meta name="twitter:description" content="title: &amp;ldquo;LangChain 框架解析&amp;rdquo; date: 2025-01-15T22:00:38&#43;08:00 draft: true image: 5.svg categories:
+ AI computer  LangChain 框架解析 一、简介  定义：开源Python AI应用开发框架 核心价值：降低基于LLM的AI应用开发门槛 核心功能：  LLM集成（文本生成/问答/翻译/对话） 创意应用构建 标准化AI工作流    二、核心特性    特性 功能描述 应用场景     LLM &amp;amp; 提示管理 统一API抽象层 &#43; 提示模板 标准化模型调用   链(Chain) 预封装任务工作流 问答系统/SQL生成   LCEL 表达式语言编排任务流 自定义AI流程   RAG 外部数据增强生成 知识库问答   Agents LLM决策&#43;外部系统调用 自动化任务执行   模型记忆 对话历史记忆 多轮对话系统    LangChain 特性： ●LLM 和提示（Prompt）：LangChain 对所有 LLM 大模型进行了 API 抽象，统一了大模型访问 API，同时提供了 Prompt 提示模板管理机制。 ●链 (Chain)：Langchain 对一些常见的场景封装了一些现成的模块，例如：基于上下文信息的问答系统，自然语言生成 SQL 查询等等，因为实现这些任务的过程就像工作流一样，一步一步的执行，所以叫链 (chain)。 ●LCEL：LangChain Expression Language (LCEL)， langchain 新版本的核心特性，用于解决工作流编排问题，通过 LCEL 表达式，我们可以灵活的自定义 AI 任务处理流程，也就是灵活自定义链 (Chain)。 ●数据增强生成 (RAG)：因为大模型 (LLM) 不了解新的信息，无法回答新的问题，所以我们可以将新的信息导入到 LLM，用于增强 LLM 生成内容的质量，这种模式叫做 RAG 模式(Retrieval Augmented Generation)。 ●Agents：是一种基于大模型（LLM）的应用设计模式，利用 LLM 的自然语言理解和推理能力（LLM 作为大脑)），根据用户的需求自动调用外部系统、设备共同去完成任务，例如：用户输入 “明天请假一天”， 大模型（LLM）自动调用请假系统，发起一个请假申请。 ●模型记忆（memory）：让大模型 (llm) 记住之前的对话内容，这种能力成为模型记忆（memory）。">
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <h2 class="article-title">
+        <a href="/p/"></a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 2 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <p>title: &ldquo;LangChain 框架解析&rdquo;
+date: 2025-01-15T22:00:38+08:00
+draft: true
+image: 5.svg
+categories:</p>
+<ul>
+<li>AI</li>
+<li>computer</li>
+</ul>
+<h1 id="langchain-框架解析">LangChain 框架解析</h1>
+<h2 id="一简介">一、简介</h2>
+<ul>
+<li><strong>定义</strong>：开源Python AI应用开发框架</li>
+<li><strong>核心价值</strong>：降低基于LLM的AI应用开发门槛</li>
+<li><strong>核心功能</strong>：
+<ul>
+<li>LLM集成（文本生成/问答/翻译/对话）</li>
+<li>创意应用构建</li>
+<li>标准化AI工作流</li>
+</ul>
+</li>
+</ul>
+<h2 id="二核心特性">二、核心特性</h2>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>功能描述</th>
+<th>应用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>LLM &amp; 提示管理</strong></td>
+<td>统一API抽象层 + 提示模板</td>
+<td>标准化模型调用</td>
+</tr>
+<tr>
+<td><strong>链(Chain)</strong></td>
+<td>预封装任务工作流</td>
+<td>问答系统/SQL生成</td>
+</tr>
+<tr>
+<td><strong>LCEL</strong></td>
+<td>表达式语言编排任务流</td>
+<td>自定义AI流程</td>
+</tr>
+<tr>
+<td><strong>RAG</strong></td>
+<td>外部数据增强生成</td>
+<td>知识库问答</td>
+</tr>
+<tr>
+<td><strong>Agents</strong></td>
+<td>LLM决策+外部系统调用</td>
+<td>自动化任务执行</td>
+</tr>
+<tr>
+<td><strong>模型记忆</strong></td>
+<td>对话历史记忆</td>
+<td>多轮对话系统</td>
+</tr>
+</tbody>
+</table>
+<p>LangChain 特性：
+●LLM 和提示（Prompt）：LangChain 对所有 LLM 大模型进行了 API 抽象，统一了大模型访问 API，同时提供了 Prompt 提示模板管理机制。
+●链 (Chain)：Langchain 对一些常见的场景封装了一些现成的模块，例如：基于上下文信息的问答系统，自然语言生成 SQL 查询等等，因为实现这些任务的过程就像工作流一样，一步一步的执行，所以叫链 (chain)。
+●LCEL：LangChain Expression Language (LCEL)， langchain 新版本的核心特性，用于解决工作流编排问题，通过 LCEL 表达式，我们可以灵活的自定义 AI 任务处理流程，也就是灵活自定义链 (Chain)。
+●数据增强生成 (RAG)：因为大模型 (LLM) 不了解新的信息，无法回答新的问题，所以我们可以将新的信息导入到 LLM，用于增强 LLM 生成内容的质量，这种模式叫做 RAG 模式(Retrieval Augmented Generation)。
+●Agents：是一种基于大模型（LLM）的应用设计模式，利用 LLM 的自然语言理解和推理能力（LLM 作为大脑)），根据用户的需求自动调用外部系统、设备共同去完成任务，例如：用户输入 “明天请假一天”， 大模型（LLM）自动调用请假系统，发起一个请假申请。
+●模型记忆（memory）：让大模型 (llm) 记住之前的对话内容，这种能力成为模型记忆（memory）。</p>
+<h2 id="三框架组成">三、框架组成</h2>
+<h3 id="1-核心组件">1. 核心组件</h3>
+<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">graph TD
+A[LangChain生态] --&gt; B[LangChain库]
+A --&gt; C[LangChain模板]
+A --&gt; D[LangServe]
+A --&gt; E[LangSmith]
+</code></pre><p><figure 
+	>
+	<a href="/p/5.svg" >
+		<img src="/p/5.svg"
+			
+			
+			
+			loading="lazy"
+			alt="img">
+	</a>
+	
+	<figcaption>img</figcaption>
+	
+</figure></p>
+<h3 id="2-库结构">2. 库结构</h3>
+<ul>
+<li><strong>langchain-core</strong>：基础抽象/表达式语言</li>
+<li><strong>langchain-community</strong>：第三方集成</li>
+<li><strong>langchain</strong>：链/代理/检索实现</li>
+</ul>
+<h3 id="3-支持工具">3. 支持工具</h3>
+<ul>
+<li><strong>LangServe</strong>：将链发布为REST API</li>
+<li><strong>LangSmith</strong>：云平台(调试/监控)</li>
+</ul>
+<h2 id="四任务处理流程">四、任务处理流程</h2>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 260; 
+			flex-basis: 625px"
+	>
+	<a href="/p/1.jpeg" data-size="4000x1536">
+		<img src="/p/1.jpeg"
+			width="4000"
+			height="1536"
+			srcset="/p/1_hu97073836f6ba778688a6bd5e1d1fbe55_58268_480x0_resize_q75_box.jpeg 480w, /p/1_hu97073836f6ba778688a6bd5e1d1fbe55_58268_1024x0_resize_q75_box.jpeg 1024w"
+			loading="lazy"
+			alt="368630f893b7ef3c3224d33e9ef165b664c12bf4a0075">
+	</a>
+	
+	<figcaption>368630f893b7ef3c3224d33e9ef165b664c12bf4a0075</figcaption>
+	
+</figure></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 229; 
+			flex-basis: 549px"
+	>
+	<a href="/p/2.png" data-size="2550x1113">
+		<img src="/p/2.png"
+			width="2550"
+			height="1113"
+			srcset="/p/2_hu5ce32b48f6b0b2a32f0dbe69eefd8b16_144111_480x0_resize_box_3.png 480w, /p/2_hu5ce32b48f6b0b2a32f0dbe69eefd8b16_144111_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			alt="deepseek_mermaid_20250713_09947e">
+	</a>
+	
+	<figcaption>deepseek_mermaid_20250713_09947e</figcaption>
+	
+</figure></p>
+<h3 id="模型封装类型">模型封装类型</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">类型</th>
+<th style="text-align:left">输入</th>
+<th style="text-align:left">输出</th>
+<th style="text-align:left">典型场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>LLM</strong></td>
+<td style="text-align:left">文本</td>
+<td style="text-align:left">文本</td>
+<td style="text-align:left">基础问答</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Chat Model</strong></td>
+<td style="text-align:left">消息列表</td>
+<td style="text-align:left">消息</td>
+<td style="text-align:left">对话系统</td>
+</tr>
+</tbody>
+</table>
+<h2 id="五核心概念">五、核心概念</h2>
+<h3 id="1-llms-大语言模型">1. LLMs (大语言模型)</h3>
+<ul>
+<li><strong>定义</strong>：LangChain封装的基础文本处理模型</li>
+<li><strong>输入/输出</strong>：接收文本输入 → 返回文本结果</li>
+<li><strong>特点</strong>：通用问答模型，适合基础文本生成任务</li>
+</ul>
+<h3 id="2-chat-models-对话模型">2. Chat Models (对话模型)</h3>
+<ul>
+<li><strong>定义</strong>：专为对话场景设计的模型</li>
+<li><strong>输入/输出</strong>：接收消息列表 → 返回对话消息</li>
+<li><strong>特点</strong>：支持多轮对话上下文理解</li>
+</ul>
+<h3 id="3-消息-message">3. 消息 (Message)</h3>
+<ul>
+<li><strong>定义</strong>：对话模型的消息内容载体</li>
+<li><strong>消息类型</strong>：
+<ul>
+<li><code>HumanMessage</code>：用户输入消息</li>
+<li><code>AIMessage</code>：AI生成的回复消息</li>
+<li><code>SystemMessage</code>：系统级指令消息</li>
+<li><code>FunctionMessage</code>：函数调用消息</li>
+<li><code>ToolMessage</code>：工具调用消息</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-提示-prompts">4. 提示 (Prompts)</h3>
+<ul>
+<li><strong>功能</strong>：提示词管理工具</li>
+<li><strong>核心能力</strong>：
+<ul>
+<li>提示模板创建与管理</li>
+<li>动态内容格式化</li>
+<li>多变量插值支持</li>
+</ul>
+</li>
+</ul>
+<h3 id="5-输出解析器-output-parsers">5. 输出解析器 (Output Parsers)</h3>
+<ul>
+<li><strong>作用</strong>：处理LLM返回的文本内容</li>
+<li><strong>转换能力</strong>：
+<ul>
+<li>文本 → JSON格式</li>
+<li>文本 → Python对象</li>
+<li>结构化数据提取</li>
+</ul>
+</li>
+</ul>
+<h3 id="6-retrievers-检索器">6. Retrievers (检索器)</h3>
+<ul>
+<li><strong>目的</strong>：增强LLM私有数据处理能力</li>
+<li><strong>功能</strong>：
+<ul>
+<li>文档数据加载</li>
+<li>文本切割分块</li>
+<li>数据存储与检索</li>
+</ul>
+</li>
+<li><strong>应用场景</strong>：RAG(检索增强生成)架构核心组件</li>
+</ul>
+<h3 id="7-向量存储-vector-stores">7. 向量存储 (Vector Stores)</h3>
+<ul>
+<li><strong>作用</strong>：支持语义相似搜索</li>
+<li><strong>特点</strong>：
+<ul>
+<li>多种向量数据库集成</li>
+<li>高维向量空间数据管理</li>
+<li>相似内容检索优化</li>
+</ul>
+</li>
+</ul>
+<h3 id="8-agents-智能体">8. Agents (智能体)</h3>
+<ul>
+<li><strong>定义</strong>：LLM驱动的应用设计模式</li>
+<li><strong>核心架构</strong>：
+<ul>
+<li><strong>决策引擎</strong>：LLM作为&quot;大脑&quot;</li>
+<li><strong>执行系统</strong>：自动调用外部设备/API</li>
+</ul>
+</li>
+<li><strong>工作流程</strong>：
+<ol>
+<li>接收用户任务</li>
+<li>LLM分析决策</li>
+<li>调用外部系统执行</li>
+<li>返回综合结果</li>
+</ol>
+</li>
+</ul>
+<h2 id="六应用场景">六、应用场景</h2>
+<ul>
+<li><strong>对话机器人</strong>：客服/聊天助手</li>
+<li><strong>知识库问答</strong>：开放域问题解答</li>
+<li><strong>智能写作</strong>：
+<ul>
+<li>创意写作</li>
+<li>文本摘要</li>
+<li>内容生成</li>
+</ul>
+</li>
+</ul>
+<h2 id="七快速入门">七、快速入门</h2>
+<h3 id="安装步骤">安装步骤</h3>
+<pre tabindex="0"><code># Pip安装
+pip install langchain-openai
+
+# 设置API密钥
+export OPENAI_API_KEY=&quot;sk-...&quot;
+</code></pre><h3 id="基础使用">基础使用</h3>
+<pre tabindex="0"><code>from langchain_openai import OpenAI
+
+# 初始化模型
+llm = OpenAI()
+
+# 直接调用
+response = llm.invoke(&quot;解释量子力学&quot;)
+
+# 链式调用
+from langchain.prompts import PromptTemplate
+prompt = PromptTemplate.from_template(&quot;{topic}是什么？&quot;)
+chain = prompt | llm 
+result = chain.invoke({&quot;topic&quot;: &quot;RAG&quot;})
+
+# 输出处理
+str(response)  # 消息转字符串
+</code></pre><h2 id="langchain-思维导图">LangChain 思维导图</h2>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 163; 
+			flex-basis: 392px"
+	>
+	<a href="/p/3.png" data-size="3299x2015">
+		<img src="/p/3.png"
+			width="3299"
+			height="2015"
+			srcset="/p/3_hud2fc26f07bb0da703052ea50948fff98_578884_480x0_resize_box_3.png 480w, /p/3_hud2fc26f07bb0da703052ea50948fff98_578884_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			alt="deepseek_mermaid_20250713_10ffde">
+	</a>
+	
+	<figcaption>deepseek_mermaid_20250713_10ffde</figcaption>
+	
+</figure></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#一简介">一、简介</a></li>
+    <li><a href="#二核心特性">二、核心特性</a></li>
+    <li><a href="#三框架组成">三、框架组成</a>
+      <ol>
+        <li><a href="#1-核心组件">1. 核心组件</a></li>
+        <li><a href="#2-库结构">2. 库结构</a></li>
+        <li><a href="#3-支持工具">3. 支持工具</a></li>
+      </ol>
+    </li>
+    <li><a href="#四任务处理流程">四、任务处理流程</a>
+      <ol>
+        <li><a href="#模型封装类型">模型封装类型</a></li>
+      </ol>
+    </li>
+    <li><a href="#五核心概念">五、核心概念</a>
+      <ol>
+        <li><a href="#1-llms-大语言模型">1. LLMs (大语言模型)</a></li>
+        <li><a href="#2-chat-models-对话模型">2. Chat Models (对话模型)</a></li>
+        <li><a href="#3-消息-message">3. 消息 (Message)</a></li>
+        <li><a href="#4-提示-prompts">4. 提示 (Prompts)</a></li>
+        <li><a href="#5-输出解析器-output-parsers">5. 输出解析器 (Output Parsers)</a></li>
+        <li><a href="#6-retrievers-检索器">6. Retrievers (检索器)</a></li>
+        <li><a href="#7-向量存储-vector-stores">7. 向量存储 (Vector Stores)</a></li>
+        <li><a href="#8-agents-智能体">8. Agents (智能体)</a></li>
+      </ol>
+    </li>
+    <li><a href="#六应用场景">六、应用场景</a></li>
+    <li><a href="#七快速入门">七、快速入门</a>
+      <ol>
+        <li><a href="#安装步骤">安装步骤</a></li>
+        <li><a href="#基础使用">基础使用</a></li>
+      </ol>
+    </li>
+    <li><a href="#langchain-思维导图">LangChain 思维导图</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

@@ -6,7 +6,318 @@
         <description>Recent content on Chengji Zhao&#39;s blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Sun, 15 Jan 2023 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sat, 18 Jan 2025 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>LangChain 框架解析</title>
+        <link>https://zcj-git520.github.io/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/</link>
+        <pubDate>Sat, 18 Jan 2025 22:00:38 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/5.svg" alt="Featured image of post LangChain 框架解析" /&gt;&lt;h1 id=&#34;langchain-框架解析&#34;&gt;LangChain 框架解析&lt;/h1&gt;
+&lt;h2 id=&#34;一简介&#34;&gt;一、简介&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;定义&lt;/strong&gt;：开源Python AI应用开发框架&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;核心价值&lt;/strong&gt;：降低基于LLM的AI应用开发门槛&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;核心功能&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;LLM集成（文本生成/问答/翻译/对话）&lt;/li&gt;
+&lt;li&gt;创意应用构建&lt;/li&gt;
+&lt;li&gt;标准化AI工作流&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;二核心特性&#34;&gt;二、核心特性&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;特性&lt;/th&gt;
+&lt;th&gt;功能描述&lt;/th&gt;
+&lt;th&gt;应用场景&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;LLM &amp;amp; 提示管理&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;统一API抽象层 + 提示模板&lt;/td&gt;
+&lt;td&gt;标准化模型调用&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;链(Chain)&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;预封装任务工作流&lt;/td&gt;
+&lt;td&gt;问答系统/SQL生成&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;LCEL&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;表达式语言编排任务流&lt;/td&gt;
+&lt;td&gt;自定义AI流程&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;RAG&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;外部数据增强生成&lt;/td&gt;
+&lt;td&gt;知识库问答&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Agents&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;LLM决策+外部系统调用&lt;/td&gt;
+&lt;td&gt;自动化任务执行&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;模型记忆&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;对话历史记忆&lt;/td&gt;
+&lt;td&gt;多轮对话系统&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;LangChain 特性：&lt;/p&gt;
+&lt;p&gt;● LLM 和提示（Prompt）：LangChain 对所有 LLM 大模型进行了 API 抽象，统一了大模型访问 API，同时提供了 Prompt 提示模板管理机制。&lt;/p&gt;
+&lt;p&gt;● 链 (Chain)：Langchain 对一些常见的场景封装了一些现成的模块，例如：基于上下文信息的问答系统，自然语言生成 SQL 查询等等，因为实现这些任务的过程就像工作流一样，一步一步的执行，所以叫链 (chain)。&lt;/p&gt;
+&lt;p&gt;● LCEL：LangChain Expression Language (LCEL)， langchain 新版本的核心特性，用于解决工作流编排问题，通过 LCEL 表达式，我们可以灵活的自定义 AI 任务处理流程，也就是灵活自定义链 (Chain)。&lt;/p&gt;
+&lt;p&gt;● 数据增强生成 (RAG)：因为大模型 (LLM) 不了解新的信息，无法回答新的问题，所以我们可以将新的信息导入到 LLM，用于增强 LLM 生成内容的质量，这种模式叫做 RAG 模式(Retrieval Augmented Generation)。&lt;/p&gt;
+&lt;p&gt;● Agents：是一种基于大模型（LLM）的应用设计模式，利用 LLM 的自然语言理解和推理能力（LLM 作为大脑)），根据用户的需求自动调用外部系统、设备共同去完成任务，例如：用户输入 “明天请假一天”， 大模型（LLM）自动调用请假系统，发起一个请假申请。&lt;/p&gt;
+&lt;p&gt;● 模型记忆（memory）：让大模型 (llm) 记住之前的对话内容，这种能力成为模型记忆（memory）。&lt;/p&gt;
+&lt;h2 id=&#34;三框架组成&#34;&gt;三、框架组成&lt;/h2&gt;
+&lt;h3 id=&#34;1-核心组件&#34;&gt;1. 核心组件&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-mermaid&#34; data-lang=&#34;mermaid&#34;&gt;graph TD
+A[LangChain生态] --&amp;gt; B[LangChain库]
+A --&amp;gt; C[LangChain模板]
+A --&amp;gt; D[LangServe]
+A --&amp;gt; E[LangSmith]
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;figure 
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/5.svg&#34; &gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/5.svg&#34;
+			
+			
+			
+			loading=&#34;lazy&#34;
+			alt=&#34;官方框架图&#34;&gt;
+	&lt;/a&gt;
+	
+	&lt;figcaption&gt;官方框架图&lt;/figcaption&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;h3 id=&#34;2-库结构&#34;&gt;2. 库结构&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;langchain-core&lt;/strong&gt;：基础抽象/表达式语言&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;langchain-community&lt;/strong&gt;：第三方集成&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;langchain&lt;/strong&gt;：链/代理/检索实现&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;3-支持工具&#34;&gt;3. 支持工具&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;LangServe&lt;/strong&gt;：将链发布为REST API&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;LangSmith&lt;/strong&gt;：云平台(调试/监控)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;四任务处理流程&#34;&gt;四、任务处理流程&lt;/h2&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 260; 
+			flex-basis: 625px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/1.jpeg&#34; data-size=&#34;4000x1536&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/1.jpeg&#34;
+			width=&#34;4000&#34;
+			height=&#34;1536&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/1_hu97073836f6ba778688a6bd5e1d1fbe55_58268_480x0_resize_q75_box.jpeg 480w, https://zcj-git520.github.io/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/1_hu97073836f6ba778688a6bd5e1d1fbe55_58268_1024x0_resize_q75_box.jpeg 1024w&#34;
+			loading=&#34;lazy&#34;
+			alt=&#34;官方流程图&#34;&gt;
+	&lt;/a&gt;
+	
+	&lt;figcaption&gt;官方流程图&lt;/figcaption&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 229; 
+			flex-basis: 549px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/2.png&#34; data-size=&#34;2550x1113&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/2.png&#34;
+			width=&#34;2550&#34;
+			height=&#34;1113&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/2_hu5ce32b48f6b0b2a32f0dbe69eefd8b16_144111_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/2_hu5ce32b48f6b0b2a32f0dbe69eefd8b16_144111_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			alt=&#34;流程图2&#34;&gt;
+	&lt;/a&gt;
+	
+	&lt;figcaption&gt;流程图2&lt;/figcaption&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;h3 id=&#34;模型封装类型&#34;&gt;模型封装类型&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;类型&lt;/th&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;输入&lt;/th&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;输出&lt;/th&gt;
+&lt;th style=&#34;text-align:left&#34;&gt;典型场景&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;&lt;strong&gt;LLM&lt;/strong&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;文本&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;文本&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;基础问答&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;&lt;strong&gt;Chat Model&lt;/strong&gt;&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;消息列表&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;消息&lt;/td&gt;
+&lt;td style=&#34;text-align:left&#34;&gt;对话系统&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&#34;五核心概念&#34;&gt;五、核心概念&lt;/h2&gt;
+&lt;h3 id=&#34;1-llms-大语言模型&#34;&gt;1. LLMs (大语言模型)&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;定义&lt;/strong&gt;：LangChain封装的基础文本处理模型&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;输入/输出&lt;/strong&gt;：接收文本输入 → 返回文本结果&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;特点&lt;/strong&gt;：通用问答模型，适合基础文本生成任务&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;2-chat-models-对话模型&#34;&gt;2. Chat Models (对话模型)&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;定义&lt;/strong&gt;：专为对话场景设计的模型&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;输入/输出&lt;/strong&gt;：接收消息列表 → 返回对话消息&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;特点&lt;/strong&gt;：支持多轮对话上下文理解&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;3-消息-message&#34;&gt;3. 消息 (Message)&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;定义&lt;/strong&gt;：对话模型的消息内容载体&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;消息类型&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;HumanMessage&lt;/code&gt;：用户输入消息&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;AIMessage&lt;/code&gt;：AI生成的回复消息&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;SystemMessage&lt;/code&gt;：系统级指令消息&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;FunctionMessage&lt;/code&gt;：函数调用消息&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ToolMessage&lt;/code&gt;：工具调用消息&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;4-提示-prompts&#34;&gt;4. 提示 (Prompts)&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;功能&lt;/strong&gt;：提示词管理工具&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;核心能力&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;提示模板创建与管理&lt;/li&gt;
+&lt;li&gt;动态内容格式化&lt;/li&gt;
+&lt;li&gt;多变量插值支持&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;5-输出解析器-output-parsers&#34;&gt;5. 输出解析器 (Output Parsers)&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;作用&lt;/strong&gt;：处理LLM返回的文本内容&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;转换能力&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;文本 → JSON格式&lt;/li&gt;
+&lt;li&gt;文本 → Python对象&lt;/li&gt;
+&lt;li&gt;结构化数据提取&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;6-retrievers-检索器&#34;&gt;6. Retrievers (检索器)&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;目的&lt;/strong&gt;：增强LLM私有数据处理能力&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;功能&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;文档数据加载&lt;/li&gt;
+&lt;li&gt;文本切割分块&lt;/li&gt;
+&lt;li&gt;数据存储与检索&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;应用场景&lt;/strong&gt;：RAG(检索增强生成)架构核心组件&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;7-向量存储-vector-stores&#34;&gt;7. 向量存储 (Vector Stores)&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;作用&lt;/strong&gt;：支持语义相似搜索&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;特点&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;多种向量数据库集成&lt;/li&gt;
+&lt;li&gt;高维向量空间数据管理&lt;/li&gt;
+&lt;li&gt;相似内容检索优化&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;8-agents-智能体&#34;&gt;8. Agents (智能体)&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;定义&lt;/strong&gt;：LLM驱动的应用设计模式&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;核心架构&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;决策引擎&lt;/strong&gt;：LLM作为&amp;quot;大脑&amp;quot;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;执行系统&lt;/strong&gt;：自动调用外部设备/API&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;工作流程&lt;/strong&gt;：
+&lt;ol&gt;
+&lt;li&gt;接收用户任务&lt;/li&gt;
+&lt;li&gt;LLM分析决策&lt;/li&gt;
+&lt;li&gt;调用外部系统执行&lt;/li&gt;
+&lt;li&gt;返回综合结果&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;六应用场景&#34;&gt;六、应用场景&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;对话机器人&lt;/strong&gt;：客服/聊天助手&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;知识库问答&lt;/strong&gt;：开放域问题解答&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;智能写作&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;创意写作&lt;/li&gt;
+&lt;li&gt;文本摘要&lt;/li&gt;
+&lt;li&gt;内容生成&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;七快速入门&#34;&gt;七、快速入门&lt;/h2&gt;
+&lt;h3 id=&#34;安装步骤&#34;&gt;安装步骤&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;# Pip安装
+pip install langchain-openai
+
+# 设置API密钥
+export OPENAI_API_KEY=&amp;quot;sk-...&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;基础使用&#34;&gt;基础使用&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;from langchain_openai import OpenAI
+
+# 初始化模型
+llm = OpenAI()
+
+# 直接调用
+response = llm.invoke(&amp;quot;解释量子力学&amp;quot;)
+
+# 链式调用
+from langchain.prompts import PromptTemplate
+prompt = PromptTemplate.from_template(&amp;quot;{topic}是什么？&amp;quot;)
+chain = prompt | llm 
+result = chain.invoke({&amp;quot;topic&amp;quot;: &amp;quot;RAG&amp;quot;})
+
+# 输出处理
+str(response)  # 消息转字符串
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;langchain-思维导图&#34;&gt;LangChain 思维导图&lt;/h2&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 163; 
+			flex-basis: 392px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/3.png&#34; data-size=&#34;3299x2015&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/3.png&#34;
+			width=&#34;3299&#34;
+			height=&#34;2015&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/3_hud2fc26f07bb0da703052ea50948fff98_578884_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/3_hud2fc26f07bb0da703052ea50948fff98_578884_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			alt=&#34;整体思维导图&#34;&gt;
+	&lt;/a&gt;
+	
+	&lt;figcaption&gt;整体思维导图&lt;/figcaption&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>后端的安全和加密</title>
         <link>https://zcj-git520.github.io/p/%E5%90%8E%E7%AB%AF%E7%9A%84%E5%AE%89%E5%85%A8%E5%92%8C%E5%8A%A0%E5%AF%86/</link>
         <pubDate>Sun, 15 Jan 2023 22:00:38 +0800</pubDate>
