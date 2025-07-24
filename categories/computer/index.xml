@@ -6,7 +6,31 @@
     <description>Recent content in 知识学习 on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 18 Jan 2025 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/computer/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 25 Jan 2025 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/computer/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>LangServe</title>
+      <link>https://zcj-git520.github.io/p/langserve/</link>
+      <pubDate>Sat, 25 Jan 2025 22:00:38 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/langserve/</guid>
+      <description>LangServe 实践 核心功能 LangServe 是一个专为 LangChain 设计的部署工具，可将 LangChain 可运行对象和链快速转化为 REST API，主要特点包括：
+ 自动化 API 生成
+通过 FastAPI + Pydantic 自动推断输入/输出模型，生成带数据验证的 REST 端点 多协议支持
+提供 /invoke（单次调用）、/batch（批量处理）、/stream（实时流）等标准化端点 调试友好  /stream_log 实时流式传输中间步骤 0.0.40+ 版本新增 /stream_events 简化流式处理   生产级架构
+基于 uvloop 和 asyncio 实现高并发，支持 Swagger 自动文档  技术优势    特性 说明     声明式验证 通过 Pydantic 模型自动生成 JSON Schema，提供类型检查和清晰错误提示   无缝集成 内置 LangChain.js 客户端，支持 Python/JavaScript 调用   零模板代码 自动生成 API 文档和 Playground 调试界面    典型工作流 定义 LangChain 对象</description>
+    </item>
+    
+    <item>
+      <title>LCEL与LangChain流式处理指南</title>
+      <link>https://zcj-git520.github.io/p/lcel%E4%B8%8Elangchain%E6%B5%81%E5%BC%8F%E5%A4%84%E7%90%86%E6%8C%87%E5%8D%97/</link>
+      <pubDate>Sat, 25 Jan 2025 22:00:38 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/lcel%E4%B8%8Elangchain%E6%B5%81%E5%BC%8F%E5%A4%84%E7%90%86%E6%8C%87%E5%8D%97/</guid>
+      <description>LCEL与LangChain流式处理指南 什么是LCEL？ LCEL（LangChain Expression Language）是一种强大的工作流编排工具，能够从基本组件构建复杂任务链条(chain)，并具有以下生产级特性：
+ 🚀 一流的流式支持：直接从LLM流式传输标记到输出解析器 ⚡ 异步支持：同一代码可同步/异步运行，适合原型到生产 🔀 优化的并行执行：自动并行可并行步骤 🔄 重试和回退：配置可靠性机制 🔍 中间结果访问：实时监控和调试 📐 输入输出模式：自动生成Pydantic/JSONSchema验证  Runnable接口标准 LangChain组件通过Runnable协议实现标准化调用：
+同步方法  stream(): 流式返回响应块 invoke(): 调用链处理输入 batch(): 批量处理输入列表  异步方法  astream(): 异步流式响应 ainvoke(): 异步调用 abatch(): 异步批量处理 astream_log(): 流式中间步骤+最终结果 astream_events(): 流式链事件(Beta)  组件I/O类型    组件 输入类型 输出类型     提示 字典 提示值   聊天模型 字符串/消息列表/提示值 聊天消息   LLM 字符串/消息列表/提示值 字符串   输出解析器 LLM/聊天模型输出 解析器特定   检索器 字符串 文档列表   工具 字符串/字典 工具特定    流式处理(Stream) 核心方法  同步流式：stream() 异步流式：astream()  关键特性  实时返回每个处理块 要求所有步骤支持流式处理 复杂度范围：  简单：LLM令牌流 复杂：部分JSON结果流    最佳实践 建议从LLM组件开始逐步构建流式处理链。</description>
+    </item>
+    
     <item>
       <title>LangChain 框架解析</title>
       <link>https://zcj-git520.github.io/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/</link>

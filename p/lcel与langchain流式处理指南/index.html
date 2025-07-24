@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='LCEL与LangChain流式处理指南 什么是LCEL？ LCEL（LangChain Expression Language）是一种强大的工作流编排工具，能够从基本组件构建复杂任务链条(chain)，并具有以下生产级特性：
+ 🚀 一流的流式支持：直接从LLM流式传输标记到输出解析器 ⚡ 异步支持：同一代码可同步/异步运行，适合原型到生产 🔀 优化的并行执行：自动并行可并行步骤 🔄 重试和回退：配置可靠性机制 🔍 中间结果访问：实时监控和调试 📐 输入输出模式：自动生成Pydantic/JSONSchema验证  Runnable接口标准 LangChain组件通过Runnable协议实现标准化调用：
+同步方法  stream(): 流式返回响应块 invoke(): 调用链处理输入 batch(): 批量处理输入列表  异步方法  astream(): 异步流式响应 ainvoke(): 异步调用 abatch(): 异步批量处理 astream_log(): 流式中间步骤&#43;最终结果 astream_events(): 流式链事件(Beta)  组件I/O类型    组件 输入类型 输出类型     提示 字典 提示值   聊天模型 字符串/消息列表/提示值 聊天消息   LLM 字符串/消息列表/提示值 字符串   输出解析器 LLM/聊天模型输出 解析器特定   检索器 字符串 文档列表   工具 字符串/字典 工具特定    流式处理(Stream) 核心方法  同步流式：stream() 异步流式：astream()  关键特性  实时返回每个处理块 要求所有步骤支持流式处理 复杂度范围：  简单：LLM令牌流 复杂：部分JSON结果流    最佳实践 建议从LLM组件开始逐步构建流式处理链。'><title>LCEL与LangChain流式处理指南</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/lcel%E4%B8%8Elangchain%E6%B5%81%E5%BC%8F%E5%A4%84%E7%90%86%E6%8C%87%E5%8D%97/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='LCEL与LangChain流式处理指南'>
+<meta property='og:description' content='LCEL与LangChain流式处理指南 什么是LCEL？ LCEL（LangChain Expression Language）是一种强大的工作流编排工具，能够从基本组件构建复杂任务链条(chain)，并具有以下生产级特性：
+ 🚀 一流的流式支持：直接从LLM流式传输标记到输出解析器 ⚡ 异步支持：同一代码可同步/异步运行，适合原型到生产 🔀 优化的并行执行：自动并行可并行步骤 🔄 重试和回退：配置可靠性机制 🔍 中间结果访问：实时监控和调试 📐 输入输出模式：自动生成Pydantic/JSONSchema验证  Runnable接口标准 LangChain组件通过Runnable协议实现标准化调用：
+同步方法  stream(): 流式返回响应块 invoke(): 调用链处理输入 batch(): 批量处理输入列表  异步方法  astream(): 异步流式响应 ainvoke(): 异步调用 abatch(): 异步批量处理 astream_log(): 流式中间步骤&#43;最终结果 astream_events(): 流式链事件(Beta)  组件I/O类型    组件 输入类型 输出类型     提示 字典 提示值   聊天模型 字符串/消息列表/提示值 聊天消息   LLM 字符串/消息列表/提示值 字符串   输出解析器 LLM/聊天模型输出 解析器特定   检索器 字符串 文档列表   工具 字符串/字典 工具特定    流式处理(Stream) 核心方法  同步流式：stream() 异步流式：astream()  关键特性  实时返回每个处理块 要求所有步骤支持流式处理 复杂度范围：  简单：LLM令牌流 复杂：部分JSON结果流    最佳实践 建议从LLM组件开始逐步构建流式处理链。'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/lcel%E4%B8%8Elangchain%E6%B5%81%E5%BC%8F%E5%A4%84%E7%90%86%E6%8C%87%E5%8D%97/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-01-25T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2025-01-25T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/lcel%E4%B8%8Elangchain%E6%B5%81%E5%BC%8F%E5%A4%84%E7%90%86%E6%8C%87%E5%8D%97/1.png' />
+<meta name="twitter:title" content="LCEL与LangChain流式处理指南">
+<meta name="twitter:description" content="LCEL与LangChain流式处理指南 什么是LCEL？ LCEL（LangChain Expression Language）是一种强大的工作流编排工具，能够从基本组件构建复杂任务链条(chain)，并具有以下生产级特性：
+ 🚀 一流的流式支持：直接从LLM流式传输标记到输出解析器 ⚡ 异步支持：同一代码可同步/异步运行，适合原型到生产 🔀 优化的并行执行：自动并行可并行步骤 🔄 重试和回退：配置可靠性机制 🔍 中间结果访问：实时监控和调试 📐 输入输出模式：自动生成Pydantic/JSONSchema验证  Runnable接口标准 LangChain组件通过Runnable协议实现标准化调用：
+同步方法  stream(): 流式返回响应块 invoke(): 调用链处理输入 batch(): 批量处理输入列表  异步方法  astream(): 异步流式响应 ainvoke(): 异步调用 abatch(): 异步批量处理 astream_log(): 流式中间步骤&#43;最终结果 astream_events(): 流式链事件(Beta)  组件I/O类型    组件 输入类型 输出类型     提示 字典 提示值   聊天模型 字符串/消息列表/提示值 聊天消息   LLM 字符串/消息列表/提示值 字符串   输出解析器 LLM/聊天模型输出 解析器特定   检索器 字符串 文档列表   工具 字符串/字典 工具特定    流式处理(Stream) 核心方法  同步流式：stream() 异步流式：astream()  关键特性  实时返回每个处理块 要求所有步骤支持流式处理 复杂度范围：  简单：LLM令牌流 复杂：部分JSON结果流    最佳实践 建议从LLM组件开始逐步构建流式处理链。"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/lcel%E4%B8%8Elangchain%E6%B5%81%E5%BC%8F%E5%A4%84%E7%90%86%E6%8C%87%E5%8D%97/1.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/lcel%E4%B8%8Elangchain%E6%B5%81%E5%BC%8F%E5%A4%84%E7%90%86%E6%8C%87%E5%8D%97/">
+                <img src="/p/lcel%E4%B8%8Elangchain%E6%B5%81%E5%BC%8F%E5%A4%84%E7%90%86%E6%8C%87%E5%8D%97/1_huc0a8b95b33d8d6a656995fb54ca12c83_153854_800x0_resize_box_3.png"
+                        srcset="/p/lcel%E4%B8%8Elangchain%E6%B5%81%E5%BC%8F%E5%A4%84%E7%90%86%E6%8C%87%E5%8D%97/1_huc0a8b95b33d8d6a656995fb54ca12c83_153854_800x0_resize_box_3.png 800w, /p/lcel%E4%B8%8Elangchain%E6%B5%81%E5%BC%8F%E5%A4%84%E7%90%86%E6%8C%87%E5%8D%97/1_huc0a8b95b33d8d6a656995fb54ca12c83_153854_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="447" 
+                        loading="lazy"
+                        alt="Featured image of post LCEL与LangChain流式处理指南" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/computer/" style="background-color: #2a9d8f; color: #fff;">
+                知识学习
+            </a>
+        
+            <a href="/categories/ai/" style="background-color: #2a9d8f; color: #fff;">
+                AI
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/lcel%E4%B8%8Elangchain%E6%B5%81%E5%BC%8F%E5%A4%84%E7%90%86%E6%8C%87%E5%8D%97/">LCEL与LangChain流式处理指南</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jan 25, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 2 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h1 id="lcel与langchain流式处理指南">LCEL与LangChain流式处理指南</h1>
+<h2 id="什么是lcel">什么是LCEL？</h2>
+<p>LCEL（LangChain Expression Language）是一种强大的工作流编排工具，能够从基本组件构建复杂任务链条(chain)，并具有以下生产级特性：</p>
+<ul>
+<li>🚀 <strong>一流的流式支持</strong>：直接从LLM流式传输标记到输出解析器</li>
+<li>⚡ <strong>异步支持</strong>：同一代码可同步/异步运行，适合原型到生产</li>
+<li>🔀 <strong>优化的并行执行</strong>：自动并行可并行步骤</li>
+<li>🔄 <strong>重试和回退</strong>：配置可靠性机制</li>
+<li>🔍 <strong>中间结果访问</strong>：实时监控和调试</li>
+<li>📐 <strong>输入输出模式</strong>：自动生成Pydantic/JSONSchema验证</li>
+</ul>
+<h2 id="runnable接口标准">Runnable接口标准</h2>
+<p>LangChain组件通过Runnable协议实现标准化调用：</p>
+<h3 id="同步方法">同步方法</h3>
+<ul>
+<li><code>stream()</code>: 流式返回响应块</li>
+<li><code>invoke()</code>: 调用链处理输入</li>
+<li><code>batch()</code>: 批量处理输入列表</li>
+</ul>
+<h3 id="异步方法">异步方法</h3>
+<ul>
+<li><code>astream()</code>: 异步流式响应</li>
+<li><code>ainvoke()</code>: 异步调用</li>
+<li><code>abatch()</code>: 异步批量处理</li>
+<li><code>astream_log()</code>: 流式中间步骤+最终结果</li>
+<li><code>astream_events()</code>: 流式链事件(Beta)</li>
+</ul>
+<h3 id="组件io类型">组件I/O类型</h3>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>输入类型</th>
+<th>输出类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>提示</td>
+<td>字典</td>
+<td>提示值</td>
+</tr>
+<tr>
+<td>聊天模型</td>
+<td>字符串/消息列表/提示值</td>
+<td>聊天消息</td>
+</tr>
+<tr>
+<td>LLM</td>
+<td>字符串/消息列表/提示值</td>
+<td>字符串</td>
+</tr>
+<tr>
+<td>输出解析器</td>
+<td>LLM/聊天模型输出</td>
+<td>解析器特定</td>
+</tr>
+<tr>
+<td>检索器</td>
+<td>字符串</td>
+<td>文档列表</td>
+</tr>
+<tr>
+<td>工具</td>
+<td>字符串/字典</td>
+<td>工具特定</td>
+</tr>
+</tbody>
+</table>
+<h2 id="流式处理stream">流式处理(Stream)</h2>
+<h3 id="核心方法">核心方法</h3>
+<ol>
+<li><strong>同步流式</strong>：<code>stream()</code></li>
+<li><strong>异步流式</strong>：<code>astream()</code></li>
+</ol>
+<h3 id="关键特性">关键特性</h3>
+<ul>
+<li>实时返回每个处理块</li>
+<li>要求所有步骤支持流式处理</li>
+<li>复杂度范围：
+<ul>
+<li>简单：LLM令牌流</li>
+<li>复杂：部分JSON结果流</li>
+</ul>
+</li>
+</ul>
+<h3 id="最佳实践">最佳实践</h3>
+<p>建议从LLM组件开始逐步构建流式处理链。</p>
+<h2 id="事件流stream-events">事件流(Stream Events)</h2>
+<h3 id="高级方法">高级方法</h3>
+<ul>
+<li><code>astream_events()</code> (Beta): 流式传输链执行过程中的所有事件</li>
+<li><code>astream_log()</code>: 流式中间步骤+最终输出</li>
+</ul>
+<h3 id="典型应用场景">典型应用场景</h3>
+<ol>
+<li>实时用户反馈</li>
+<li>复杂链调试</li>
+<li>进度监控</li>
+<li>增量结果展示</li>
+</ol>
+<h1 id="代码示例">代码示例</h1>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">langchain.chains.llm</span> <span class="kn">import</span> <span class="n">LLMChain</span>
+<span class="kn">from</span> <span class="nn">langchain_core.output_parsers</span> <span class="kn">import</span> <span class="n">StrOutputParser</span><span class="p">,</span> <span class="n">JsonOutputParser</span>
+<span class="kn">from</span> <span class="nn">langchain_core.prompts</span> <span class="kn">import</span> <span class="n">ChatPromptTemplate</span>
+<span class="kn">from</span> <span class="nn">langchain_core.tools</span> <span class="kn">import</span> <span class="n">tool</span>
+
+<span class="kn">from</span> <span class="nn">langchain.chains</span> <span class="kn">import</span> <span class="n">SimpleSequentialChain</span>
+
+<span class="kn">import</span> <span class="nn">PromptStudy</span>
+<span class="kn">from</span> <span class="nn">common.modeCommon</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">config.config</span> <span class="kn">import</span> <span class="n">Config</span>
+
+
+<span class="c1"># LangChain工作流编排</span>
+
+<span class="c1"># 同步Stream运行</span>
+<span class="k">def</span> <span class="nf">sync_stream</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">constr</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">qwen_llm_stream</span><span class="p">()</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">constr</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">ch</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;|&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="c1"># @tool</span>
+<span class="c1"># 异步AStream运行</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">async_stream</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">constr</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">qwen_llm_stream</span><span class="p">()</span><span class="o">.</span><span class="n">astream</span><span class="p">(</span><span class="n">constr</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">ch</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;|&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="c1"># Chain</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">llm_chain</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">prompt</span><span class="p">:</span> <span class="n">PromptStudy</span><span class="p">):</span>
+    <span class="c1"># 创建一个工作链</span>
+    <span class="n">base_prompt</span> <span class="o">=</span> <span class="n">prompt</span><span class="o">.</span><span class="n">base_prompt</span><span class="p">()</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">StrOutputParser</span><span class="p">()</span>
+    <span class="n">stream_model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">qwen_llm_stream</span><span class="p">()</span>
+    <span class="n">chain</span> <span class="o">=</span> <span class="n">base_prompt</span> <span class="o">|</span> <span class="n">stream_model</span> <span class="o">|</span> <span class="n">parser</span> <span class="c1"># 创建一个创建一个工作链 先执行base_prompt 然后执行stream_model 最后执行parser</span>
+    <span class="c1"># 运行工作链</span>
+    <span class="k">async</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">chain</span><span class="o">.</span><span class="n">astream</span><span class="p">(</span><span class="n">prompt</span><span class="o">.</span><span class="n">base_prompt_invoke</span><span class="p">(</span><span class="s2">&#34;系统运维&#34;</span><span class="p">,</span> <span class="s2">&#34;运维高级工程师&#34;</span><span class="p">,</span> <span class="s2">&#34;想理解交换机原理&#34;</span><span class="p">,</span> <span class="s2">&#34;无&#34;</span><span class="p">,</span> <span class="s2">&#34;简短文字输出&#34;</span><span class="p">)):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">ch</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;|&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># 序列链（Sequential Chains）</span>
+<span class="s2">&#34;&#34;&#34;
+</span><span class="s2">    序列链是一种将多个链按照顺序连接在一起的工作流。
+</span><span class="s2">    每个链都可以接收前一个链的输出作为输入，并将其传递给下一个链。
+</span><span class="s2">    序列链可以用于构建复杂的工作流，其中每个链都有特定的任务和逻辑。
+</span><span class="s2">    序列链的主要优点是可以将多个链组合在一起，形成一个完整的工作流。
+</span><span class="s2">    序列链的主要缺点是每个链都需要独立运行，因此可能会导致性能问题。
+</span><span class="s2">&#34;&#34;&#34;</span>
+<span class="k">def</span> <span class="nf">one_chain</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">prompt</span><span class="p">:</span> <span class="n">PromptStudy</span><span class="p">):</span>
+    <span class="n">base_prompt</span> <span class="o">=</span> <span class="n">prompt</span><span class="o">.</span><span class="n">base_prompt</span><span class="p">()</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">JsonOutputParser</span><span class="p">()</span>
+    <span class="n">stream_model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">qwen_llm_stream</span><span class="p">()</span>
+    <span class="n">chain</span> <span class="o">=</span> <span class="n">base_prompt</span> <span class="o">|</span> <span class="n">stream_model</span> <span class="o">|</span> <span class="n">parser</span>
+    <span class="k">return</span> <span class="n">chain</span>
+<span class="k">def</span> <span class="nf">two_chain</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">prompt</span><span class="p">:</span> <span class="n">PromptStudy</span><span class="p">):</span>
+    <span class="n">base_prompt</span> <span class="o">=</span> <span class="n">prompt</span><span class="o">.</span><span class="n">base_prompt</span><span class="p">()</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">StrOutputParser</span><span class="p">()</span>
+    <span class="n">stream_model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">qwen_llm_stream</span><span class="p">()</span>
+    <span class="n">chain</span> <span class="o">=</span> <span class="n">base_prompt</span> <span class="o">|</span> <span class="n">stream_model</span> <span class="o">|</span> <span class="n">parser</span>
+    <span class="k">return</span> <span class="n">chain</span>
+<span class="k">def</span> <span class="nf">llm_chain_sequential</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">prompt</span><span class="p">:</span> <span class="n">PromptStudy</span><span class="p">):</span>
+    <span class="n">chain_one</span> <span class="o">=</span> <span class="n">one_chain</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">prompt</span><span class="p">)</span>
+    <span class="n">chain_two</span> <span class="o">=</span> <span class="n">two_chain</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">prompt</span><span class="p">)</span>
+    <span class="n">overall_chain</span> <span class="o">=</span> <span class="n">chain_one</span> <span class="o">|</span> <span class="n">chain_two</span>
+    <span class="c1"># 运行工作链</span>
+    <span class="c1"># 将 prompt.base_prompt_invoke 的返回值包装成字典</span>
+    <span class="c1"># input_dict =prompt.base_prompt_invoke(&#34;系统运维&#34;, &#34;运维高级工程师&#34;, &#34;想理解交换机原理&#34;, &#34;无&#34;, &#34;简短文字输出&#34;)</span>
+    <span class="c1"># 运行工作链</span>
+    <span class="n">input_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&#34;domain&#34;</span><span class="p">:</span> <span class="s2">&#34;高铁&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;profession&#34;</span><span class="p">:</span> <span class="s2">&#34;自愿者&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;do&#34;</span><span class="p">:</span> <span class="s2">&#34;去哪里购买高铁票，我应该去找谁&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;material&#34;</span><span class="p">:</span> <span class="s2">&#34;无&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;question&#34;</span><span class="p">:</span> <span class="s2">&#34;按照以下json的格式输出：{&#34;</span>
+                    <span class="s2">&#34;</span><span class="se">\&#34;</span><span class="s2">domain</span><span class="se">\&#34;</span><span class="s2">: </span><span class="se">\&#34;\&#34;</span><span class="s2">,&#34;</span>
+                    <span class="s2">&#34;</span><span class="se">\&#34;</span><span class="s2">profession</span><span class="se">\&#34;</span><span class="s2">: </span><span class="se">\&#34;\&#34;</span><span class="s2">,&#34;</span>
+                    <span class="s2">&#34;</span><span class="se">\&#34;</span><span class="s2">do</span><span class="se">\&#34;</span><span class="s2">: </span><span class="se">\&#34;\&#34;</span><span class="s2">,&#34;</span>
+                    <span class="s2">&#34;</span><span class="se">\&#34;</span><span class="s2">material</span><span class="se">\&#34;</span><span class="s2">: </span><span class="se">\&#34;\&#34;</span><span class="s2">, &#34;</span>
+                    <span class="s2">&#34;</span><span class="se">\&#34;</span><span class="s2">question</span><span class="se">\&#34;</span><span class="s2">: </span><span class="se">\&#34;\&#34;</span><span class="s2">}&#34;</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">overall_chain</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="n">input_dict</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">ch</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;|&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1">#转换链（Transform Chains）： 允许你在 链 的中间步骤中对数据进行转换</span>
+<span class="k">def</span> <span class="nf">transform_chain</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">):</span>
+    <span class="n">first_prompt</span> <span class="o">=</span> <span class="n">ChatPromptTemplate</span><span class="o">.</span><span class="n">from_template</span><span class="p">(</span><span class="s2">&#34;描述一家生产</span><span class="si">{产品}</span><span class="s2">的公司最好的名字是什么？&#34;</span><span class="p">)</span>
+    <span class="n">chain_one</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">qwen_llm_china</span><span class="p">(</span><span class="n">first_prompt</span><span class="p">)</span>
+    <span class="n">second_prompt</span> <span class="o">=</span> <span class="n">ChatPromptTemplate</span><span class="o">.</span><span class="n">from_template</span><span class="p">(</span><span class="s2">&#34;为以下公司写一个20字的描述：</span><span class="si">{company_name}</span><span class="s2">&#34;</span><span class="p">)</span>
+    <span class="n">chain_two</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">qwen_llm_china</span><span class="p">(</span><span class="n">second_prompt</span><span class="p">)</span>
+    <span class="n">overall_simple_chain</span> <span class="o">=</span> <span class="n">SimpleSequentialChain</span><span class="p">(</span><span class="n">chains</span><span class="o">=</span><span class="p">[</span><span class="n">chain_one</span><span class="p">,</span> <span class="n">chain_two</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">product</span> <span class="o">=</span> <span class="s2">&#34;外卖和电商&#34;</span>
+    <span class="n">chain_output</span> <span class="o">=</span> <span class="n">overall_simple_chain</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">product</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">chain_output</span><span class="p">)</span>
+<span class="c1">#条件链（Conditional Chains）： 允许你根据某些条件选择不同的链来执行</span>
+<span class="c1">#路由链（Router Chains）： 允许你根据某些条件选择不同的链来执行</span>
+<span class="c1">#多模型链（Multi Model Chains）： 允许你在不同的模型之间切换</span>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+    <span class="c1"># 初始化模型配置</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="s1">&#39;conf/config.yml&#39;</span><span class="p">)</span>
+    <span class="c1"># 初始化模型</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="c1"># 初始化模板</span>
+    <span class="n">prompt</span> <span class="o">=</span> <span class="n">PromptStudy</span><span class="o">.</span><span class="n">Prompt</span><span class="p">()</span>
+    <span class="c1"># sync_stream(model, &#34;贵州省的组成&#34;)</span>
+    <span class="c1"># asyncio.run(async_stream(model, &#34;上海怎么样&#34;))</span>
+    <span class="c1"># asyncio.run(llm_chain(model, prompt))</span>
+    <span class="c1"># llm_chain_sequential(model, prompt)</span>
+    <span class="n">transform_chain</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+</code></pre></div><h2 id="代码仓库路径">代码仓库路径</h2>
+<p><a class="link" href="https://github.com/zcj-git520/AiLargeModel"  target="_blank" rel="noopener"
+    >zcj-git520/AiLargeModel: 大模型应用开发学习</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/langserve/">
+        
+        
+            <div class="article-image">
+                <img src="/p/langserve/1.444e9d9f1c14c3c9fe1ea84f26db084b_huaf87ac797f5e5d7b1abc7edc85d278f9_1205191_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-RE6dnxwUw8n&#43;HqhPJtsISw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LangServe</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/5.svg" loading="lazy" data-key="" data-hash="/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/5.svg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LangChain 框架解析</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E5%90%8E%E7%AB%AF%E7%9A%84%E5%AE%89%E5%85%A8%E5%92%8C%E5%8A%A0%E5%AF%86/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E5%90%8E%E7%AB%AF%E7%9A%84%E5%AE%89%E5%85%A8%E5%92%8C%E5%8A%A0%E5%AF%86/1.35b9b69317ad3b3f0487cfabb82624c5_hu87659f1a5244bdf4eaa7c124361acc46_915216_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-Nbm2kxetOz8Eh8&#43;ruCYkxQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">后端的安全和加密</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/3.8c198d1a7de59ada973cc4f47a371932_hu5bc4d06a19d5d5d7b7fe871d036ee380_38629_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-jBmNGn3lmtqXPMT0ejcZMg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">linux 性能调试技术</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/proto3-%E8%AF%AD%E6%B3%95%E5%AD%A6%E4%B9%A0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/proto3-%E8%AF%AD%E6%B3%95%E5%AD%A6%E4%B9%A0/1.9f296f82f53b05ca4ee7dd598bb7e5b7_hud944d25af46653be6ac685099ccea094_87560_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-nylvgvU7BcpO591Zi7fltw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">proto3 语法学习</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#什么是lcel">什么是LCEL？</a></li>
+    <li><a href="#runnable接口标准">Runnable接口标准</a>
+      <ol>
+        <li><a href="#同步方法">同步方法</a></li>
+        <li><a href="#异步方法">异步方法</a></li>
+        <li><a href="#组件io类型">组件I/O类型</a></li>
+      </ol>
+    </li>
+    <li><a href="#流式处理stream">流式处理(Stream)</a>
+      <ol>
+        <li><a href="#核心方法">核心方法</a></li>
+        <li><a href="#关键特性">关键特性</a></li>
+        <li><a href="#最佳实践">最佳实践</a></li>
+      </ol>
+    </li>
+    <li><a href="#事件流stream-events">事件流(Stream Events)</a>
+      <ol>
+        <li><a href="#高级方法">高级方法</a></li>
+        <li><a href="#典型应用场景">典型应用场景</a></li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li><a href="#代码仓库路径">代码仓库路径</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

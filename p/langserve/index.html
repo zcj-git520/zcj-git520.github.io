@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='LangServe 实践 核心功能 LangServe 是一个专为 LangChain 设计的部署工具，可将 LangChain 可运行对象和链快速转化为 REST API，主要特点包括：
+ 自动化 API 生成
+通过 FastAPI &#43; Pydantic 自动推断输入/输出模型，生成带数据验证的 REST 端点 多协议支持
+提供 /invoke（单次调用）、/batch（批量处理）、/stream（实时流）等标准化端点 调试友好  /stream_log 实时流式传输中间步骤 0.0.40&#43; 版本新增 /stream_events 简化流式处理   生产级架构
+基于 uvloop 和 asyncio 实现高并发，支持 Swagger 自动文档  技术优势    特性 说明     声明式验证 通过 Pydantic 模型自动生成 JSON Schema，提供类型检查和清晰错误提示   无缝集成 内置 LangChain.js 客户端，支持 Python/JavaScript 调用   零模板代码 自动生成 API 文档和 Playground 调试界面    典型工作流 定义 LangChain 对象'><title>LangServe</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/langserve/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='LangServe'>
+<meta property='og:description' content='LangServe 实践 核心功能 LangServe 是一个专为 LangChain 设计的部署工具，可将 LangChain 可运行对象和链快速转化为 REST API，主要特点包括：
+ 自动化 API 生成
+通过 FastAPI &#43; Pydantic 自动推断输入/输出模型，生成带数据验证的 REST 端点 多协议支持
+提供 /invoke（单次调用）、/batch（批量处理）、/stream（实时流）等标准化端点 调试友好  /stream_log 实时流式传输中间步骤 0.0.40&#43; 版本新增 /stream_events 简化流式处理   生产级架构
+基于 uvloop 和 asyncio 实现高并发，支持 Swagger 自动文档  技术优势    特性 说明     声明式验证 通过 Pydantic 模型自动生成 JSON Schema，提供类型检查和清晰错误提示   无缝集成 内置 LangChain.js 客户端，支持 Python/JavaScript 调用   零模板代码 自动生成 API 文档和 Playground 调试界面    典型工作流 定义 LangChain 对象'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/langserve/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-01-25T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2025-01-25T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/langserve/1.png' />
+<meta name="twitter:title" content="LangServe">
+<meta name="twitter:description" content="LangServe 实践 核心功能 LangServe 是一个专为 LangChain 设计的部署工具，可将 LangChain 可运行对象和链快速转化为 REST API，主要特点包括：
+ 自动化 API 生成
+通过 FastAPI &#43; Pydantic 自动推断输入/输出模型，生成带数据验证的 REST 端点 多协议支持
+提供 /invoke（单次调用）、/batch（批量处理）、/stream（实时流）等标准化端点 调试友好  /stream_log 实时流式传输中间步骤 0.0.40&#43; 版本新增 /stream_events 简化流式处理   生产级架构
+基于 uvloop 和 asyncio 实现高并发，支持 Swagger 自动文档  技术优势    特性 说明     声明式验证 通过 Pydantic 模型自动生成 JSON Schema，提供类型检查和清晰错误提示   无缝集成 内置 LangChain.js 客户端，支持 Python/JavaScript 调用   零模板代码 自动生成 API 文档和 Playground 调试界面    典型工作流 定义 LangChain 对象"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/langserve/1.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/langserve/">
+                <img src="/p/langserve/1_huaf87ac797f5e5d7b1abc7edc85d278f9_1205191_800x0_resize_box_3.png"
+                        srcset="/p/langserve/1_huaf87ac797f5e5d7b1abc7edc85d278f9_1205191_800x0_resize_box_3.png 800w, /p/langserve/1_huaf87ac797f5e5d7b1abc7edc85d278f9_1205191_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="800" 
+                        loading="lazy"
+                        alt="Featured image of post LangServe" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/computer/" style="background-color: #2a9d8f; color: #fff;">
+                知识学习
+            </a>
+        
+            <a href="/categories/ai/" style="background-color: #2a9d8f; color: #fff;">
+                AI
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/langserve/">LangServe</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jan 25, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 2 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h1 id="langserve-实践">LangServe 实践</h1>
+<h2 id="核心功能">核心功能</h2>
+<p>LangServe 是一个专为 LangChain 设计的部署工具，可将 LangChain 可运行对象和链快速转化为 REST API，主要特点包括：</p>
+<ul>
+<li><strong>自动化 API 生成</strong><br>
+通过 FastAPI + Pydantic 自动推断输入/输出模型，生成带数据验证的 REST 端点</li>
+<li><strong>多协议支持</strong><br>
+提供 <code>/invoke</code>（单次调用）、<code>/batch</code>（批量处理）、<code>/stream</code>（实时流）等标准化端点</li>
+<li><strong>调试友好</strong>
+<ul>
+<li><code>/stream_log</code> 实时流式传输中间步骤</li>
+<li>0.0.40+ 版本新增 <code>/stream_events</code> 简化流式处理</li>
+</ul>
+</li>
+<li><strong>生产级架构</strong><br>
+基于 uvloop 和 asyncio 实现高并发，支持 Swagger 自动文档</li>
+</ul>
+<h2 id="技术优势">技术优势</h2>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>声明式验证</strong></td>
+<td>通过 Pydantic 模型自动生成 JSON Schema，提供类型检查和清晰错误提示</td>
+</tr>
+<tr>
+<td><strong>无缝集成</strong></td>
+<td>内置 LangChain.js 客户端，支持 Python/JavaScript 调用</td>
+</tr>
+<tr>
+<td><strong>零模板代码</strong></td>
+<td>自动生成 API 文档和 Playground 调试界面</td>
+</tr>
+</tbody>
+</table>
+<h2 id="典型工作流">典型工作流</h2>
+<p><strong>定义 LangChain 对象</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">langchain.chains</span> <span class="kn">import</span> <span class="n">LLMChain</span>
+<span class="n">chain</span> <span class="o">=</span> <span class="n">LLMChain</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</code></pre></div><p><strong>部署为 API</strong></p>
+<pre tabindex="0"><code>from langserve import add_routes
+add_routes(app, chain)
+</code></pre><p><strong>即时获得</strong>：</p>
+<ul>
+<li>✅ 自动生成的 Swagger 文档</li>
+<li>✅ 带类型校验的 <code>/invoke</code> 端点</li>
+<li>✅ 可视化调试 Playground</li>
+</ul>
+<h2 id="适用场景">适用场景</h2>
+<ul>
+<li>🔧 快速原型验证</li>
+<li>🚀 生产环境服务部署</li>
+<li>🔗 微服务架构集成</li>
+<li>🧪 交互式调试测试</li>
+</ul>
+<h2 id="代码示例">代码示例</h2>
+<ul>
+<li>服务端</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">uvicorn</span>
+<span class="kn">from</span> <span class="nn">fastapi</span> <span class="kn">import</span> <span class="n">FastAPI</span>
+<span class="kn">from</span> <span class="nn">fastapi.responses</span> <span class="kn">import</span> <span class="n">RedirectResponse</span>
+<span class="kn">from</span> <span class="nn">langchain_core.runnables</span> <span class="kn">import</span> <span class="n">RunnableLambda</span>
+<span class="kn">from</span> <span class="nn">langserve</span> <span class="kn">import</span> <span class="n">add_routes</span>
+
+<span class="kn">from</span> <span class="nn">Prompt</span> <span class="kn">import</span> <span class="n">Prompt</span>
+<span class="kn">from</span> <span class="nn">common.modeCommon</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">config.config</span> <span class="kn">import</span> <span class="n">Config</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&#34;LangChain 服务器&#34;</span><span class="p">,</span>
+              <span class="n">version</span><span class="o">=</span><span class="s2">&#34;1.0&#34;</span><span class="p">,</span>
+              <span class="n">description</span><span class="o">=</span><span class="s2">&#34;使用 Langchain 的 Runnable 接口的简单 API 服务器&#34;</span><span class="p">)</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&#34;/&#34;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">redirect_root_to_docs</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">RedirectResponse</span><span class="p">(</span><span class="s2">&#34;/docs&#34;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">base_prompt_routes</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+    <span class="n">base_prompt</span> <span class="o">=</span> <span class="n">prompt</span><span class="o">.</span><span class="n">base_prompt</span><span class="p">()</span>
+    <span class="n">llm_chain</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">qwen_llm_china</span><span class="p">(</span><span class="n">base_prompt</span><span class="p">)</span>
+    <span class="n">poetry_func</span> <span class="o">=</span> <span class="n">RunnableLambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">llm_chain</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="n">add_routes</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">poetry_func</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&#34;/base&#34;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">chat_prompt_routes</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+    <span class="n">chat_prompt</span> <span class="o">=</span> <span class="n">prompt</span><span class="o">.</span><span class="n">chat_prompt</span><span class="p">()</span>
+    <span class="n">llm_chain</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">qwen_llm_china</span><span class="p">(</span><span class="n">chat_prompt</span><span class="p">)</span>
+    <span class="n">poetry_func</span> <span class="o">=</span> <span class="n">RunnableLambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">llm_chain</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="n">add_routes</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">poetry_func</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&#34;/chat&#34;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">stream_prompt_routes</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+    <span class="n">llm_chain</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">qwen_llm_stream</span><span class="p">()</span>
+    <span class="n">poetry_func</span> <span class="o">=</span> <span class="n">RunnableLambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">llm_chain</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="n">add_routes</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">poetry_func</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&#34;/stream&#34;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&#34;__main__&#34;</span><span class="p">:</span>
+    <span class="c1"># 初始化模型配置</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="s1">&#39;conf/config.yml&#39;</span><span class="p">)</span>
+    <span class="c1"># 初始化模型</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="c1"># # 调用qwen模型</span>
+    <span class="n">prompt</span> <span class="o">=</span> <span class="n">Prompt</span><span class="p">()</span>
+    <span class="n">base_prompt_routes</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+    <span class="n">chat_prompt_routes</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+    <span class="n">stream_prompt_routes</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+    <span class="n">uvicorn</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s2">&#34;0.0.0.0&#34;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">8000</span><span class="p">)</span>
+</code></pre></div><ul>
+<li>客户端示例</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">langserve</span> <span class="kn">import</span> <span class="n">RemoteRunnable</span>
+
+<span class="n">remote_chain</span> <span class="o">=</span> <span class="n">RemoteRunnable</span><span class="p">(</span><span class="s2">&#34;http://127.0.0.1:8000/base&#34;</span><span class="p">)</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">remote_chain</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span>
+            <span class="s2">&#34;domain&#34;</span><span class="p">:</span> <span class="s2">&#34;金融&#34;</span><span class="p">,</span>
+            <span class="s2">&#34;profession&#34;</span><span class="p">:</span> <span class="s2">&#34;金融分析员&#34;</span><span class="p">,</span>
+            <span class="s2">&#34;do&#34;</span><span class="p">:</span> <span class="s2">&#34;评估未来半年中国的金融市场情况，分析市场趋势，预测未来的市场变化&#34;</span><span class="p">,</span>
+            <span class="s2">&#34;material&#34;</span><span class="p">:</span> <span class="s2">&#34;无&#34;</span><span class="p">,</span>
+            <span class="s2">&#34;question&#34;</span><span class="p">:</span> <span class="s2">&#34;以表格的形式输出&#34;</span><span class="p">,</span>
+        <span class="p">})</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</code></pre></div><h2 id="代码仓库路径">代码仓库路径</h2>
+<p><a class="link" href="https://github.com/zcj-git520/AiLargeModel"  target="_blank" rel="noopener"
+    >zcj-git520/AiLargeModel: 大模型应用开发学习</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/lcel%E4%B8%8Elangchain%E6%B5%81%E5%BC%8F%E5%A4%84%E7%90%86%E6%8C%87%E5%8D%97/">
+        
+        
+            <div class="article-image">
+                <img src="/p/lcel%E4%B8%8Elangchain%E6%B5%81%E5%BC%8F%E5%A4%84%E7%90%86%E6%8C%87%E5%8D%97/1.ab01ecfb616c2d5b5b8199e51dc472c0_huc0a8b95b33d8d6a656995fb54ca12c83_153854_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-qwHs&#43;2FsLVtbgZnlHcRywA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LCEL与LangChain流式处理指南</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/5.svg" loading="lazy" data-key="" data-hash="/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/5.svg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LangChain 框架解析</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E5%90%8E%E7%AB%AF%E7%9A%84%E5%AE%89%E5%85%A8%E5%92%8C%E5%8A%A0%E5%AF%86/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E5%90%8E%E7%AB%AF%E7%9A%84%E5%AE%89%E5%85%A8%E5%92%8C%E5%8A%A0%E5%AF%86/1.35b9b69317ad3b3f0487cfabb82624c5_hu87659f1a5244bdf4eaa7c124361acc46_915216_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-Nbm2kxetOz8Eh8&#43;ruCYkxQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">后端的安全和加密</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/3.8c198d1a7de59ada973cc4f47a371932_hu5bc4d06a19d5d5d7b7fe871d036ee380_38629_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-jBmNGn3lmtqXPMT0ejcZMg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">linux 性能调试技术</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/proto3-%E8%AF%AD%E6%B3%95%E5%AD%A6%E4%B9%A0/">
+        
+        
+            <div class="article-image">
+                <img src="/p/proto3-%E8%AF%AD%E6%B3%95%E5%AD%A6%E4%B9%A0/1.9f296f82f53b05ca4ee7dd598bb7e5b7_hud944d25af46653be6ac685099ccea094_87560_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-nylvgvU7BcpO591Zi7fltw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">proto3 语法学习</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#核心功能">核心功能</a></li>
+    <li><a href="#技术优势">技术优势</a></li>
+    <li><a href="#典型工作流">典型工作流</a></li>
+    <li><a href="#适用场景">适用场景</a></li>
+    <li><a href="#代码示例">代码示例</a></li>
+    <li><a href="#代码仓库路径">代码仓库路径</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
