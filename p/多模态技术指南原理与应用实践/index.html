@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='多模态技术指南：原理与应用实践 1. 多模态技术概述 多模态技术是指系统能够处理和整合多种形式数据（如文本、音频、图像、视频等）的能力。这项技术正在重塑人机交互方式，使AI系统能够像人类一样理解复杂的世界。
+核心组件支持  聊天模型：处理多模态输入/输出 嵌入模型：多模态数据向量化表示 向量存储：跨模态数据检索  2. 聊天模型中的多模态实现 2.1 基础配置要求  支持多模态的聊天模型（如GPT-4 Vision、Gemini等） 消息内容块(content blocks)构造能力 供应商特定的API接入权限  2.2 输入处理实践 通过URL传递图像 from langchain_core.messages import HumanMessage message = HumanMessage( content=json.dumps([ {&amp;#34;type&amp;#34;: &amp;#34;text&amp;#34;, &amp;#34;text&amp;#34;: prompt_txt}, {&amp;#34;type&amp;#34;: type, &amp;#34;data&amp;#34;: image_data, &amp;#34;source_type&amp;#34;: &amp;#34;base64&amp;#34;}, ]) ) 代码示例 # 多模态输入 import base64 import json from langchain_core.messages import HumanMessage from common.modeCommon import Model from config.config import Config from utils import images_util class Multimodal(object): def __init__(self, model: Model): self.'><title>多模态技术指南：原理与应用实践</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/%E5%A4%9A%E6%A8%A1%E6%80%81%E6%8A%80%E6%9C%AF%E6%8C%87%E5%8D%97%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8%E5%AE%9E%E8%B7%B5/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='多模态技术指南：原理与应用实践'>
+<meta property='og:description' content='多模态技术指南：原理与应用实践 1. 多模态技术概述 多模态技术是指系统能够处理和整合多种形式数据（如文本、音频、图像、视频等）的能力。这项技术正在重塑人机交互方式，使AI系统能够像人类一样理解复杂的世界。
+核心组件支持  聊天模型：处理多模态输入/输出 嵌入模型：多模态数据向量化表示 向量存储：跨模态数据检索  2. 聊天模型中的多模态实现 2.1 基础配置要求  支持多模态的聊天模型（如GPT-4 Vision、Gemini等） 消息内容块(content blocks)构造能力 供应商特定的API接入权限  2.2 输入处理实践 通过URL传递图像 from langchain_core.messages import HumanMessage message = HumanMessage( content=json.dumps([ {&amp;#34;type&amp;#34;: &amp;#34;text&amp;#34;, &amp;#34;text&amp;#34;: prompt_txt}, {&amp;#34;type&amp;#34;: type, &amp;#34;data&amp;#34;: image_data, &amp;#34;source_type&amp;#34;: &amp;#34;base64&amp;#34;}, ]) ) 代码示例 # 多模态输入 import base64 import json from langchain_core.messages import HumanMessage from common.modeCommon import Model from config.config import Config from utils import images_util class Multimodal(object): def __init__(self, model: Model): self.'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/%E5%A4%9A%E6%A8%A1%E6%80%81%E6%8A%80%E6%9C%AF%E6%8C%87%E5%8D%97%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8%E5%AE%9E%E8%B7%B5/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-02-25T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2025-02-25T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/%E5%A4%9A%E6%A8%A1%E6%80%81%E6%8A%80%E6%9C%AF%E6%8C%87%E5%8D%97%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8%E5%AE%9E%E8%B7%B5/1.png' />
+<meta name="twitter:title" content="多模态技术指南：原理与应用实践">
+<meta name="twitter:description" content="多模态技术指南：原理与应用实践 1. 多模态技术概述 多模态技术是指系统能够处理和整合多种形式数据（如文本、音频、图像、视频等）的能力。这项技术正在重塑人机交互方式，使AI系统能够像人类一样理解复杂的世界。
+核心组件支持  聊天模型：处理多模态输入/输出 嵌入模型：多模态数据向量化表示 向量存储：跨模态数据检索  2. 聊天模型中的多模态实现 2.1 基础配置要求  支持多模态的聊天模型（如GPT-4 Vision、Gemini等） 消息内容块(content blocks)构造能力 供应商特定的API接入权限  2.2 输入处理实践 通过URL传递图像 from langchain_core.messages import HumanMessage message = HumanMessage( content=json.dumps([ {&amp;#34;type&amp;#34;: &amp;#34;text&amp;#34;, &amp;#34;text&amp;#34;: prompt_txt}, {&amp;#34;type&amp;#34;: type, &amp;#34;data&amp;#34;: image_data, &amp;#34;source_type&amp;#34;: &amp;#34;base64&amp;#34;}, ]) ) 代码示例 # 多模态输入 import base64 import json from langchain_core.messages import HumanMessage from common.modeCommon import Model from config.config import Config from utils import images_util class Multimodal(object): def __init__(self, model: Model): self."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/%E5%A4%9A%E6%A8%A1%E6%80%81%E6%8A%80%E6%9C%AF%E6%8C%87%E5%8D%97%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8%E5%AE%9E%E8%B7%B5/1.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/%E5%A4%9A%E6%A8%A1%E6%80%81%E6%8A%80%E6%9C%AF%E6%8C%87%E5%8D%97%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8%E5%AE%9E%E8%B7%B5/">
+                <img src="/p/%E5%A4%9A%E6%A8%A1%E6%80%81%E6%8A%80%E6%9C%AF%E6%8C%87%E5%8D%97%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8%E5%AE%9E%E8%B7%B5/1_hu4c351f786f8fd3fbb31415493398512f_844896_800x0_resize_box_3.png"
+                        srcset="/p/%E5%A4%9A%E6%A8%A1%E6%80%81%E6%8A%80%E6%9C%AF%E6%8C%87%E5%8D%97%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8%E5%AE%9E%E8%B7%B5/1_hu4c351f786f8fd3fbb31415493398512f_844896_800x0_resize_box_3.png 800w, /p/%E5%A4%9A%E6%A8%A1%E6%80%81%E6%8A%80%E6%9C%AF%E6%8C%87%E5%8D%97%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8%E5%AE%9E%E8%B7%B5/1_hu4c351f786f8fd3fbb31415493398512f_844896_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="450" 
+                        loading="lazy"
+                        alt="Featured image of post 多模态技术指南：原理与应用实践" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/computer/" style="background-color: #2a9d8f; color: #fff;">
+                知识学习
+            </a>
+        
+            <a href="/categories/ai/" style="background-color: #2a9d8f; color: #fff;">
+                AI
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/%E5%A4%9A%E6%A8%A1%E6%80%81%E6%8A%80%E6%9C%AF%E6%8C%87%E5%8D%97%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8%E5%AE%9E%E8%B7%B5/">多模态技术指南：原理与应用实践</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Feb 25, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 1 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h1 id="多模态技术指南原理与应用实践">多模态技术指南：原理与应用实践</h1>
+<h2 id="1-多模态技术概述">1. 多模态技术概述</h2>
+<p>多模态技术是指系统能够处理和整合多种形式数据（如文本、音频、图像、视频等）的能力。这项技术正在重塑人机交互方式，使AI系统能够像人类一样理解复杂的世界。</p>
+<h3 id="核心组件支持">核心组件支持</h3>
+<ul>
+<li><strong>聊天模型</strong>：处理多模态输入/输出</li>
+<li><strong>嵌入模型</strong>：多模态数据向量化表示</li>
+<li><strong>向量存储</strong>：跨模态数据检索</li>
+</ul>
+<h2 id="2-聊天模型中的多模态实现">2. 聊天模型中的多模态实现</h2>
+<h3 id="21-基础配置要求">2.1 基础配置要求</h3>
+<ul>
+<li>支持多模态的聊天模型（如GPT-4 Vision、Gemini等）</li>
+<li>消息内容块(content blocks)构造能力</li>
+<li>供应商特定的API接入权限</li>
+</ul>
+<h3 id="22-输入处理实践">2.2 输入处理实践</h3>
+<h4 id="通过url传递图像">通过URL传递图像</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">langchain_core.messages</span> <span class="kn">import</span> <span class="n">HumanMessage</span>
+
+ <span class="n">message</span> <span class="o">=</span> <span class="n">HumanMessage</span><span class="p">(</span>
+                <span class="n">content</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">([</span>
+                    <span class="p">{</span><span class="s2">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;text&#34;</span><span class="p">,</span> <span class="s2">&#34;text&#34;</span><span class="p">:</span> <span class="n">prompt_txt</span><span class="p">},</span>
+                    <span class="p">{</span><span class="s2">&#34;type&#34;</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="s2">&#34;data&#34;</span><span class="p">:</span> <span class="n">image_data</span><span class="p">,</span> <span class="s2">&#34;source_type&#34;</span><span class="p">:</span> <span class="s2">&#34;base64&#34;</span><span class="p">},</span>
+                <span class="p">])</span>
+            <span class="p">)</span>
+</code></pre></div><h1 id="代码示例">代码示例</h1>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># 多模态输入</span>
+<span class="kn">import</span> <span class="nn">base64</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="kn">from</span> <span class="nn">langchain_core.messages</span> <span class="kn">import</span> <span class="n">HumanMessage</span>
+
+<span class="kn">from</span> <span class="nn">common.modeCommon</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">config.config</span> <span class="kn">import</span> <span class="n">Config</span>
+<span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">images_util</span>
+
+
+<span class="k">class</span> <span class="nc">Multimodal</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+
+    <span class="k">def</span> <span class="nf">input_by_base64</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt_txt</span><span class="p">,</span> <span class="n">image_data</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+
+            <span class="n">message</span> <span class="o">=</span> <span class="n">HumanMessage</span><span class="p">(</span>
+                <span class="n">content</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">([</span>
+                    <span class="p">{</span><span class="s2">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;text&#34;</span><span class="p">,</span> <span class="s2">&#34;text&#34;</span><span class="p">:</span> <span class="n">prompt_txt</span><span class="p">},</span>
+                    <span class="p">{</span><span class="s2">&#34;type&#34;</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="s2">&#34;data&#34;</span><span class="p">:</span> <span class="n">image_data</span><span class="p">,</span> <span class="s2">&#34;source_type&#34;</span><span class="p">:</span> <span class="s2">&#34;base64&#34;</span><span class="p">},</span>
+                <span class="p">])</span>
+            <span class="p">)</span>
+
+            <span class="n">china</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">qwen_llm</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">china</span><span class="o">.</span><span class="n">invoke</span><span class="p">([</span><span class="n">message</span><span class="p">])</span><span class="o">.</span><span class="n">content</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">&#34;&#34;</span>
+
+    <span class="k">def</span> <span class="nf">input_by_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt_txt</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="n">HumanMessage</span><span class="p">(</span>
+                <span class="n">content</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">([</span>
+                    <span class="p">{</span><span class="s2">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;text&#34;</span><span class="p">,</span> <span class="s2">&#34;text&#34;</span><span class="p">:</span> <span class="n">prompt_txt</span><span class="p">},</span>
+                    <span class="p">{</span><span class="s2">&#34;type&#34;</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="s2">&#34;data&#34;</span><span class="p">:</span> <span class="n">url</span><span class="p">,</span> <span class="s2">&#34;source_type&#34;</span><span class="p">:</span> <span class="s2">&#34;url&#34;</span><span class="p">},</span>
+                <span class="p">])</span>
+            <span class="p">)</span>
+            <span class="n">china</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">qwen_llm</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">china</span><span class="o">.</span><span class="n">invoke</span><span class="p">([</span><span class="n">message</span><span class="p">])</span><span class="o">.</span><span class="n">content</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">&#34;&#34;</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="s1">&#39;conf/config.yml&#39;</span><span class="p">)</span>
+    <span class="c1"># 初始化模型</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">multimodal</span> <span class="o">=</span> <span class="n">Multimodal</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+    <span class="c1"># image_path = &#34;C:\\Users\\Administrator\\Desktop\\17536735231103.png&#34;</span>
+    <span class="c1"># base64_code = images_util.image_to_base64_by_local(image_path)</span>
+
+    <span class="c1"># result = multimodal.input_by_image_base64(&#34;这张图片描述了什么,中文描述&#34;, base64_code, &#34;image/png&#34;)</span>
+    <span class="c1"># result = multimodal.input_by_url(&#34;这张图片描述了什么,中文描述&#34;, &#34;https://img.shetu66.com/2023/04/25/1682391094827084.png&#34;, &#34;image&#34;)</span>
+    <span class="n">file_path</span> <span class="o">=</span> <span class="s2">&#34;C:</span><span class="se">\\</span><span class="s2">Users</span><span class="se">\\</span><span class="s2">Administrator</span><span class="se">\\</span><span class="s2">Desktop</span><span class="se">\\</span><span class="s2">1.pdf&#34;</span>
+    <span class="n">base64_file</span> <span class="o">=</span> <span class="n">images_util</span><span class="o">.</span><span class="n">file_to_base64_by_local</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">multimodal</span><span class="o">.</span><span class="n">input_by_base64</span><span class="p">(</span><span class="s2">&#34;文件主要讲了什么&#34;</span><span class="p">,</span> <span class="n">base64_file</span><span class="p">,</span> <span class="s2">&#34;file&#34;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+</code></pre></div><h2 id="代码仓库路径">代码仓库路径</h2>
+<p><a class="link" href="https://github.com/zcj-git520/AiLargeModel"  target="_blank" rel="noopener"
+    >zcj-git520/AiLargeModel: 大模型应用开发学习</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/lcel%E4%B8%8Elangchain%E6%B5%81%E5%BC%8F%E5%A4%84%E7%90%86%E6%8C%87%E5%8D%97/">
+        
+        
+            <div class="article-image">
+                <img src="/p/lcel%E4%B8%8Elangchain%E6%B5%81%E5%BC%8F%E5%A4%84%E7%90%86%E6%8C%87%E5%8D%97/1.ab01ecfb616c2d5b5b8199e51dc472c0_huc0a8b95b33d8d6a656995fb54ca12c83_153854_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-qwHs&#43;2FsLVtbgZnlHcRywA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LCEL与LangChain流式处理指南</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/langserve/">
+        
+        
+            <div class="article-image">
+                <img src="/p/langserve/1.444e9d9f1c14c3c9fe1ea84f26db084b_huaf87ac797f5e5d7b1abc7edc85d278f9_1205191_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-RE6dnxwUw8n&#43;HqhPJtsISw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LangServe</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/5.svg" loading="lazy" data-key="" data-hash="/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/5.svg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LangChain 框架解析</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E5%90%8E%E7%AB%AF%E7%9A%84%E5%AE%89%E5%85%A8%E5%92%8C%E5%8A%A0%E5%AF%86/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E5%90%8E%E7%AB%AF%E7%9A%84%E5%AE%89%E5%85%A8%E5%92%8C%E5%8A%A0%E5%AF%86/1.35b9b69317ad3b3f0487cfabb82624c5_hu87659f1a5244bdf4eaa7c124361acc46_915216_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-Nbm2kxetOz8Eh8&#43;ruCYkxQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">后端的安全和加密</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/">
+        
+        
+            <div class="article-image">
+                <img src="/p/linux-%E6%80%A7%E8%83%BD%E8%B0%83%E8%AF%95%E6%8A%80%E6%9C%AF/3.8c198d1a7de59ada973cc4f47a371932_hu5bc4d06a19d5d5d7b7fe871d036ee380_38629_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-jBmNGn3lmtqXPMT0ejcZMg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">linux 性能调试技术</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#1-多模态技术概述">1. 多模态技术概述</a>
+      <ol>
+        <li><a href="#核心组件支持">核心组件支持</a></li>
+      </ol>
+    </li>
+    <li><a href="#2-聊天模型中的多模态实现">2. 聊天模型中的多模态实现</a>
+      <ol>
+        <li><a href="#21-基础配置要求">2.1 基础配置要求</a></li>
+        <li><a href="#22-输入处理实践">2.2 输入处理实践</a>
+          <ol>
+            <li><a href="#通过url传递图像">通过URL传递图像</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li><a href="#代码仓库路径">代码仓库路径</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
