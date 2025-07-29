@@ -6,15 +6,31 @@
     <description>Recent content in AI on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Tue, 25 Feb 2025 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/ai/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 25 Mar 2025 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/ai/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>多模态技术指南：原理与应用实践</title>
-      <link>https://zcj-git520.github.io/p/%E5%A4%9A%E6%A8%A1%E6%80%81%E6%8A%80%E6%9C%AF%E6%8C%87%E5%8D%97%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8%E5%AE%9E%E8%B7%B5/</link>
+      <title>LangChain 自定义工具</title>
+      <link>https://zcj-git520.github.io/p/langchain-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%B7%A5%E5%85%B7/</link>
+      <pubDate>Tue, 25 Mar 2025 22:00:38 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/langchain-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%B7%A5%E5%85%B7/</guid>
+      <description>LangChain 自定义工具 引言 在构建 LangChain 代理时，工具(Tools)是核心组件之一。工具允许代理与外部世界交互，执行特定任务。本文将深入探讨如何在 LangChain 中创建和使用自定义工具，包括内置工具的使用和自定义工具的多种实现方式。
+工具的基本组成 每个工具都包含几个关键组件：
+ name (str): 必需且必须在工具集中唯一 description (str): 可选但建议提供，代理用它来决定如何使用工具 return_direct (bool): 默认为 False args_schema (Pydantic BaseModel): 可选但建议提供，可用于验证参数或提供few-shot示例  内置工具的使用 LangChain 提供了许多内置工具，请访问工具集成查看可用工具列表，在使用第三方工具时，请确保您了解工具的工作原理、权限情况：
+维基百科查询工具 def get_wikipedia(query): api_wrapper = WikipediaAPIWrapper(top_k_results=1, doc_content_chars_max=100) tool = WikipediaQueryRun(api_wrapper=api_wrapper) result = tool.run(query) return result Google 文字转语音工具 def google_tts(text): tts = GoogleCloudTextToSpeechTool() speech_file = tts.run(text) return speech_file 自定义工具的实现方式 1. 使用 @tool 装饰器 这是定义自定义工具最简单的方式：
+from langchain_core.tools import tool @tool def search_city_tool(city: str) -&amp;gt; str: &amp;#34;&amp;#34;&amp;#34;搜索城市信息&amp;#34;&amp;#34;&amp;#34; url = f&amp;#34;https://api.</description>
+    </item>
+    
+    <item>
+      <title>LangChain 多模态输入处理</title>
+      <link>https://zcj-git520.github.io/p/langchain-%E5%A4%9A%E6%A8%A1%E6%80%81%E8%BE%93%E5%85%A5%E5%A4%84%E7%90%86/</link>
       <pubDate>Tue, 25 Feb 2025 22:00:38 +0800</pubDate>
       
-      <guid>https://zcj-git520.github.io/p/%E5%A4%9A%E6%A8%A1%E6%80%81%E6%8A%80%E6%9C%AF%E6%8C%87%E5%8D%97%E5%8E%9F%E7%90%86%E4%B8%8E%E5%BA%94%E7%94%A8%E5%AE%9E%E8%B7%B5/</guid>
-      <description>多模态技术指南：原理与应用实践 1. 多模态技术概述 多模态技术是指系统能够处理和整合多种形式数据（如文本、音频、图像、视频等）的能力。这项技术正在重塑人机交互方式，使AI系统能够像人类一样理解复杂的世界。
-核心组件支持  聊天模型：处理多模态输入/输出 嵌入模型：多模态数据向量化表示 向量存储：跨模态数据检索  2. 聊天模型中的多模态实现 2.1 基础配置要求  支持多模态的聊天模型（如GPT-4 Vision、Gemini等） 消息内容块(content blocks)构造能力 供应商特定的API接入权限  2.2 输入处理实践 通过URL传递图像 from langchain_core.messages import HumanMessage message = HumanMessage( content=json.dumps([ {&amp;#34;type&amp;#34;: &amp;#34;text&amp;#34;, &amp;#34;text&amp;#34;: prompt_txt}, {&amp;#34;type&amp;#34;: type, &amp;#34;data&amp;#34;: image_data, &amp;#34;source_type&amp;#34;: &amp;#34;base64&amp;#34;}, ]) ) 代码示例 # 多模态输入 import base64 import json from langchain_core.messages import HumanMessage from common.modeCommon import Model from config.config import Config from utils import images_util class Multimodal(object): def __init__(self, model: Model): self.</description>
+      <guid>https://zcj-git520.github.io/p/langchain-%E5%A4%9A%E6%A8%A1%E6%80%81%E8%BE%93%E5%85%A5%E5%A4%84%E7%90%86/</guid>
+      <description>LangChain 多模态输入处理 引言 随着大模型技术的发展，多模态能力已成为AI应用的重要方向。LangChain提供了强大的多模态处理能力，允许开发者将文本、图像、PDF等多种输入类型结合使用。本文将深入探讨LangChain中的多模态输入处理机制。
+多模态基础概念 多模态(Multimodality)是指模型能够同时处理和生成多种类型的数据，包括但不限于：
+ 文本(Text) 图像(Image) 音频(Audio) 视频(Video) 文档(Document)  LangChain多模态架构 LangChain的多模态处理主要基于以下组件：
+ HumanMessage: 承载多模态内容的核心消息类 内容类型标识(type字段): 标识不同媒体类型 数据来源标识(source_type字段): 区分本地base64或URL  多模态输入实现方式 1. 基于Base64的本地文件输入 def input_by_base64(self, prompt_txt, image_data, type): try: message = HumanMessage( content=json.dumps([ {&amp;#34;type&amp;#34;: &amp;#34;text&amp;#34;, &amp;#34;text&amp;#34;: prompt_txt}, {&amp;#34;type&amp;#34;: type, &amp;#34;data&amp;#34;: image_data, &amp;#34;source_type&amp;#34;: &amp;#34;base64&amp;#34;}, ]) ) china = self.model.qwen_llm() return china.invoke([message]).content except Exception as e: print(e) return &amp;#34;&amp;#34; 使用场景：
+ 处理本地存储的图片、PDF等文件 需要数据隐私保护的场景 离线应用环境  2. 基于URL的网络资源输入 def input_by_url(self, prompt_txt, url, type): try: message = HumanMessage( content=json.</description>
     </item>
     
     <item>

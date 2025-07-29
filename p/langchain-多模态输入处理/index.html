@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='LangChain 多模态输入处理 引言 随着大模型技术的发展，多模态能力已成为AI应用的重要方向。LangChain提供了强大的多模态处理能力，允许开发者将文本、图像、PDF等多种输入类型结合使用。本文将深入探讨LangChain中的多模态输入处理机制。
+多模态基础概念 多模态(Multimodality)是指模型能够同时处理和生成多种类型的数据，包括但不限于：
+ 文本(Text) 图像(Image) 音频(Audio) 视频(Video) 文档(Document)  LangChain多模态架构 LangChain的多模态处理主要基于以下组件：
+ HumanMessage: 承载多模态内容的核心消息类 内容类型标识(type字段): 标识不同媒体类型 数据来源标识(source_type字段): 区分本地base64或URL  多模态输入实现方式 1. 基于Base64的本地文件输入 def input_by_base64(self, prompt_txt, image_data, type): try: message = HumanMessage( content=json.dumps([ {&amp;#34;type&amp;#34;: &amp;#34;text&amp;#34;, &amp;#34;text&amp;#34;: prompt_txt}, {&amp;#34;type&amp;#34;: type, &amp;#34;data&amp;#34;: image_data, &amp;#34;source_type&amp;#34;: &amp;#34;base64&amp;#34;}, ]) ) china = self.model.qwen_llm() return china.invoke([message]).content except Exception as e: print(e) return &amp;#34;&amp;#34; 使用场景：
+ 处理本地存储的图片、PDF等文件 需要数据隐私保护的场景 离线应用环境  2. 基于URL的网络资源输入 def input_by_url(self, prompt_txt, url, type): try: message = HumanMessage( content=json.'><title>LangChain 多模态输入处理</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/langchain-%E5%A4%9A%E6%A8%A1%E6%80%81%E8%BE%93%E5%85%A5%E5%A4%84%E7%90%86/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='LangChain 多模态输入处理'>
+<meta property='og:description' content='LangChain 多模态输入处理 引言 随着大模型技术的发展，多模态能力已成为AI应用的重要方向。LangChain提供了强大的多模态处理能力，允许开发者将文本、图像、PDF等多种输入类型结合使用。本文将深入探讨LangChain中的多模态输入处理机制。
+多模态基础概念 多模态(Multimodality)是指模型能够同时处理和生成多种类型的数据，包括但不限于：
+ 文本(Text) 图像(Image) 音频(Audio) 视频(Video) 文档(Document)  LangChain多模态架构 LangChain的多模态处理主要基于以下组件：
+ HumanMessage: 承载多模态内容的核心消息类 内容类型标识(type字段): 标识不同媒体类型 数据来源标识(source_type字段): 区分本地base64或URL  多模态输入实现方式 1. 基于Base64的本地文件输入 def input_by_base64(self, prompt_txt, image_data, type): try: message = HumanMessage( content=json.dumps([ {&amp;#34;type&amp;#34;: &amp;#34;text&amp;#34;, &amp;#34;text&amp;#34;: prompt_txt}, {&amp;#34;type&amp;#34;: type, &amp;#34;data&amp;#34;: image_data, &amp;#34;source_type&amp;#34;: &amp;#34;base64&amp;#34;}, ]) ) china = self.model.qwen_llm() return china.invoke([message]).content except Exception as e: print(e) return &amp;#34;&amp;#34; 使用场景：
+ 处理本地存储的图片、PDF等文件 需要数据隐私保护的场景 离线应用环境  2. 基于URL的网络资源输入 def input_by_url(self, prompt_txt, url, type): try: message = HumanMessage( content=json.'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/langchain-%E5%A4%9A%E6%A8%A1%E6%80%81%E8%BE%93%E5%85%A5%E5%A4%84%E7%90%86/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-02-25T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2025-02-25T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/langchain-%E5%A4%9A%E6%A8%A1%E6%80%81%E8%BE%93%E5%85%A5%E5%A4%84%E7%90%86/1.png' />
+<meta name="twitter:title" content="LangChain 多模态输入处理">
+<meta name="twitter:description" content="LangChain 多模态输入处理 引言 随着大模型技术的发展，多模态能力已成为AI应用的重要方向。LangChain提供了强大的多模态处理能力，允许开发者将文本、图像、PDF等多种输入类型结合使用。本文将深入探讨LangChain中的多模态输入处理机制。
+多模态基础概念 多模态(Multimodality)是指模型能够同时处理和生成多种类型的数据，包括但不限于：
+ 文本(Text) 图像(Image) 音频(Audio) 视频(Video) 文档(Document)  LangChain多模态架构 LangChain的多模态处理主要基于以下组件：
+ HumanMessage: 承载多模态内容的核心消息类 内容类型标识(type字段): 标识不同媒体类型 数据来源标识(source_type字段): 区分本地base64或URL  多模态输入实现方式 1. 基于Base64的本地文件输入 def input_by_base64(self, prompt_txt, image_data, type): try: message = HumanMessage( content=json.dumps([ {&amp;#34;type&amp;#34;: &amp;#34;text&amp;#34;, &amp;#34;text&amp;#34;: prompt_txt}, {&amp;#34;type&amp;#34;: type, &amp;#34;data&amp;#34;: image_data, &amp;#34;source_type&amp;#34;: &amp;#34;base64&amp;#34;}, ]) ) china = self.model.qwen_llm() return china.invoke([message]).content except Exception as e: print(e) return &amp;#34;&amp;#34; 使用场景：
+ 处理本地存储的图片、PDF等文件 需要数据隐私保护的场景 离线应用环境  2. 基于URL的网络资源输入 def input_by_url(self, prompt_txt, url, type): try: message = HumanMessage( content=json."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/langchain-%E5%A4%9A%E6%A8%A1%E6%80%81%E8%BE%93%E5%85%A5%E5%A4%84%E7%90%86/1.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/langchain-%E5%A4%9A%E6%A8%A1%E6%80%81%E8%BE%93%E5%85%A5%E5%A4%84%E7%90%86/">
+                <img src="/p/langchain-%E5%A4%9A%E6%A8%A1%E6%80%81%E8%BE%93%E5%85%A5%E5%A4%84%E7%90%86/1_hu4c351f786f8fd3fbb31415493398512f_844896_800x0_resize_box_3.png"
+                        srcset="/p/langchain-%E5%A4%9A%E6%A8%A1%E6%80%81%E8%BE%93%E5%85%A5%E5%A4%84%E7%90%86/1_hu4c351f786f8fd3fbb31415493398512f_844896_800x0_resize_box_3.png 800w, /p/langchain-%E5%A4%9A%E6%A8%A1%E6%80%81%E8%BE%93%E5%85%A5%E5%A4%84%E7%90%86/1_hu4c351f786f8fd3fbb31415493398512f_844896_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="450" 
+                        loading="lazy"
+                        alt="Featured image of post LangChain 多模态输入处理" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/computer/" style="background-color: #2a9d8f; color: #fff;">
+                知识学习
+            </a>
+        
+            <a href="/categories/ai/" style="background-color: #2a9d8f; color: #fff;">
+                AI
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/langchain-%E5%A4%9A%E6%A8%A1%E6%80%81%E8%BE%93%E5%85%A5%E5%A4%84%E7%90%86/">LangChain 多模态输入处理</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Feb 25, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 2 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h1 id="langchain-多模态输入处理">LangChain 多模态输入处理</h1>
+<h2 id="引言">引言</h2>
+<p>随着大模型技术的发展，多模态能力已成为AI应用的重要方向。LangChain提供了强大的多模态处理能力，允许开发者将文本、图像、PDF等多种输入类型结合使用。本文将深入探讨LangChain中的多模态输入处理机制。</p>
+<h2 id="多模态基础概念">多模态基础概念</h2>
+<p>多模态(Multimodality)是指模型能够同时处理和生成多种类型的数据，包括但不限于：</p>
+<ul>
+<li>文本(Text)</li>
+<li>图像(Image)</li>
+<li>音频(Audio)</li>
+<li>视频(Video)</li>
+<li>文档(Document)</li>
+</ul>
+<h2 id="langchain多模态架构">LangChain多模态架构</h2>
+<p>LangChain的多模态处理主要基于以下组件：</p>
+<ul>
+<li><code>HumanMessage</code>: 承载多模态内容的核心消息类</li>
+<li>内容类型标识(type字段): 标识不同媒体类型</li>
+<li>数据来源标识(source_type字段): 区分本地base64或URL</li>
+</ul>
+<h2 id="多模态输入实现方式">多模态输入实现方式</h2>
+<h3 id="1-基于base64的本地文件输入">1. 基于Base64的本地文件输入</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">input_by_base64</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt_txt</span><span class="p">,</span> <span class="n">image_data</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">HumanMessage</span><span class="p">(</span>
+            <span class="n">content</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">([</span>
+                <span class="p">{</span><span class="s2">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;text&#34;</span><span class="p">,</span> <span class="s2">&#34;text&#34;</span><span class="p">:</span> <span class="n">prompt_txt</span><span class="p">},</span>
+                <span class="p">{</span><span class="s2">&#34;type&#34;</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="s2">&#34;data&#34;</span><span class="p">:</span> <span class="n">image_data</span><span class="p">,</span> <span class="s2">&#34;source_type&#34;</span><span class="p">:</span> <span class="s2">&#34;base64&#34;</span><span class="p">},</span>
+            <span class="p">])</span>
+        <span class="p">)</span>
+        <span class="n">china</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">qwen_llm</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">china</span><span class="o">.</span><span class="n">invoke</span><span class="p">([</span><span class="n">message</span><span class="p">])</span><span class="o">.</span><span class="n">content</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&#34;&#34;</span>
+</code></pre></div><p>使用场景：</p>
+<ul>
+<li>处理本地存储的图片、PDF等文件</li>
+<li>需要数据隐私保护的场景</li>
+<li>离线应用环境</li>
+</ul>
+<h3 id="2-基于url的网络资源输入">2. 基于URL的网络资源输入</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">input_by_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt_txt</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">HumanMessage</span><span class="p">(</span>
+            <span class="n">content</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">([</span>
+                <span class="p">{</span><span class="s2">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;text&#34;</span><span class="p">,</span> <span class="s2">&#34;text&#34;</span><span class="p">:</span> <span class="n">prompt_txt</span><span class="p">},</span>
+                <span class="p">{</span><span class="s2">&#34;type&#34;</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="s2">&#34;data&#34;</span><span class="p">:</span> <span class="n">url</span><span class="p">,</span> <span class="s2">&#34;source_type&#34;</span><span class="p">:</span> <span class="s2">&#34;url&#34;</span><span class="p">},</span>
+            <span class="p">])</span>
+        <span class="p">)</span>
+        <span class="n">china</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">qwen_llm</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">china</span><span class="o">.</span><span class="n">invoke</span><span class="p">([</span><span class="n">message</span><span class="p">])</span><span class="o">.</span><span class="n">content</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&#34;&#34;</span>
+</code></pre></div><p>使用场景：</p>
+<ul>
+<li>处理网络上的公开资源</li>
+<li>需要动态加载内容的场景</li>
+<li>减少本地存储压力的应用</li>
+</ul>
+<h2 id="文件类型支持">文件类型支持</h2>
+<p>LangChain支持多种文件类型，常见的有：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">类型</th>
+<th style="text-align:left">MIME类型</th>
+<th style="text-align:left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">图片</td>
+<td style="text-align:left">image/png, image/jpeg</td>
+<td style="text-align:left">支持常见图片格式</td>
+</tr>
+<tr>
+<td style="text-align:left">PDF</td>
+<td style="text-align:left">application/pdf</td>
+<td style="text-align:left">支持PDF文档解析</td>
+</tr>
+<tr>
+<td style="text-align:left">文本文件</td>
+<td style="text-align:left">text/plain</td>
+<td style="text-align:left">纯文本文件</td>
+</tr>
+<tr>
+<td style="text-align:left">Word文档</td>
+<td style="text-align:left">application/msword</td>
+<td style="text-align:left">Microsoft Word文档</td>
+</tr>
+</tbody>
+</table>
+<h2 id="实用工具函数">实用工具函数</h2>
+<h3 id="本地文件转base64">本地文件转Base64</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">base64</span>
+
+<span class="k">def</span> <span class="nf">file_to_base64_by_local</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&#34;rb&#34;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">())</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+</code></pre></div><h3 id="图片处理工具">图片处理工具</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">import</span> <span class="nn">io</span>
+
+<span class="k">def</span> <span class="nf">process_image</span><span class="p">(</span><span class="n">image_data</span><span class="p">):</span>
+    <span class="c1"># 从base64解码</span>
+    <span class="n">image_bytes</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">image_data</span><span class="p">)</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">))</span>
+    <span class="c1"># 进行各种图像处理...</span>
+</code></pre></div><h2 id="实际应用案例">实际应用案例</h2>
+<h3 id="1-图片内容描述">1. 图片内容描述</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="n">image_path</span> <span class="o">=</span> <span class="s2">&#34;path/to/image.png&#34;</span>
+<span class="n">base64_code</span> <span class="o">=</span> <span class="n">images_util</span><span class="o">.</span><span class="n">image_to_base64_by_local</span><span class="p">(</span><span class="n">image_path</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">multimodal</span><span class="o">.</span><span class="n">input_by_base64</span><span class="p">(</span>
+    <span class="s2">&#34;这张图片描述了什么,中文描述&#34;</span><span class="p">,</span> 
+    <span class="n">base64_code</span><span class="p">,</span> 
+    <span class="s2">&#34;image/png&#34;</span>
+<span class="p">)</span>
+</code></pre></div><h3 id="2-pdf文档摘要">2. PDF文档摘要</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="n">file_path</span> <span class="o">=</span> <span class="s2">&#34;path/to/document.pdf&#34;</span>
+<span class="n">base64_file</span> <span class="o">=</span> <span class="n">images_util</span><span class="o">.</span><span class="n">file_to_base64_by_local</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">multimodal</span><span class="o">.</span><span class="n">input_by_base64</span><span class="p">(</span>
+    <span class="s2">&#34;文件主要讲了什么&#34;</span><span class="p">,</span> 
+    <span class="n">base64_file</span><span class="p">,</span> 
+    <span class="s2">&#34;application/pdf&#34;</span>
+<span class="p">)</span>
+</code></pre></div><h3 id="3-网络图片分析">3. 网络图片分析</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="n">result</span> <span class="o">=</span> <span class="n">multimodal</span><span class="o">.</span><span class="n">input_by_url</span><span class="p">(</span>
+    <span class="s2">&#34;这张图片描述了什么,中文描述&#34;</span><span class="p">,</span> 
+    <span class="s2">&#34;https://img.shetu66.com/2023/04/25/1682391094827084.png&#34;</span><span class="p">,</span> 
+    <span class="s2">&#34;image&#34;</span>
+<span class="p">)</span>
+</code></pre></div><h1 id="代码示例">代码示例</h1>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># 多模态输入</span>
+<span class="kn">import</span> <span class="nn">base64</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="kn">from</span> <span class="nn">langchain_core.messages</span> <span class="kn">import</span> <span class="n">HumanMessage</span>
+
+<span class="kn">from</span> <span class="nn">common.modeCommon</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">config.config</span> <span class="kn">import</span> <span class="n">Config</span>
+<span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">images_util</span>
+
+
+<span class="k">class</span> <span class="nc">Multimodal</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+
+    <span class="k">def</span> <span class="nf">input_by_base64</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt_txt</span><span class="p">,</span> <span class="n">image_data</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+
+            <span class="n">message</span> <span class="o">=</span> <span class="n">HumanMessage</span><span class="p">(</span>
+                <span class="n">content</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">([</span>
+                    <span class="p">{</span><span class="s2">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;text&#34;</span><span class="p">,</span> <span class="s2">&#34;text&#34;</span><span class="p">:</span> <span class="n">prompt_txt</span><span class="p">},</span>
+                    <span class="p">{</span><span class="s2">&#34;type&#34;</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="s2">&#34;data&#34;</span><span class="p">:</span> <span class="n">image_data</span><span class="p">,</span> <span class="s2">&#34;source_type&#34;</span><span class="p">:</span> <span class="s2">&#34;base64&#34;</span><span class="p">},</span>
+                <span class="p">])</span>
+            <span class="p">)</span>
+
+            <span class="n">china</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">qwen_llm</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">china</span><span class="o">.</span><span class="n">invoke</span><span class="p">([</span><span class="n">message</span><span class="p">])</span><span class="o">.</span><span class="n">content</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">&#34;&#34;</span>
+
+    <span class="k">def</span> <span class="nf">input_by_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt_txt</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="n">HumanMessage</span><span class="p">(</span>
+                <span class="n">content</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">([</span>
+                    <span class="p">{</span><span class="s2">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;text&#34;</span><span class="p">,</span> <span class="s2">&#34;text&#34;</span><span class="p">:</span> <span class="n">prompt_txt</span><span class="p">},</span>
+                    <span class="p">{</span><span class="s2">&#34;type&#34;</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="s2">&#34;data&#34;</span><span class="p">:</span> <span class="n">url</span><span class="p">,</span> <span class="s2">&#34;source_type&#34;</span><span class="p">:</span> <span class="s2">&#34;url&#34;</span><span class="p">},</span>
+                <span class="p">])</span>
+            <span class="p">)</span>
+            <span class="n">china</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">qwen_llm</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">china</span><span class="o">.</span><span class="n">invoke</span><span class="p">([</span><span class="n">message</span><span class="p">])</span><span class="o">.</span><span class="n">content</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">&#34;&#34;</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="s1">&#39;conf/config.yml&#39;</span><span class="p">)</span>
+    <span class="c1"># 初始化模型</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">multimodal</span> <span class="o">=</span> <span class="n">Multimodal</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+    <span class="c1"># image_path = &#34;C:\\Users\\Administrator\\Desktop\\17536735231103.png&#34;</span>
+    <span class="c1"># base64_code = images_util.image_to_base64_by_local(image_path)</span>
+
+    <span class="c1"># result = multimodal.input_by_image_base64(&#34;这张图片描述了什么,中文描述&#34;, base64_code, &#34;image/png&#34;)</span>
+    <span class="c1"># result = multimodal.input_by_url(&#34;这张图片描述了什么,中文描述&#34;, &#34;https://img.shetu66.com/2023/04/25/1682391094827084.png&#34;, &#34;image&#34;)</span>
+    <span class="n">file_path</span> <span class="o">=</span> <span class="s2">&#34;C:</span><span class="se">\\</span><span class="s2">Users</span><span class="se">\\</span><span class="s2">Administrator</span><span class="se">\\</span><span class="s2">Desktop</span><span class="se">\\</span><span class="s2">1.pdf&#34;</span>
+    <span class="n">base64_file</span> <span class="o">=</span> <span class="n">images_util</span><span class="o">.</span><span class="n">file_to_base64_by_local</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">multimodal</span><span class="o">.</span><span class="n">input_by_base64</span><span class="p">(</span><span class="s2">&#34;文件主要讲了什么&#34;</span><span class="p">,</span> <span class="n">base64_file</span><span class="p">,</span> <span class="s2">&#34;file&#34;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+</code></pre></div><h2 id="代码仓库路径">代码仓库路径</h2>
+<p><a class="link" href="https://github.com/zcj-git520/AiLargeModel"  target="_blank" rel="noopener"
+    >zcj-git520/AiLargeModel: 大模型应用开发学习</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/langchain-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%B7%A5%E5%85%B7/">
+        
+        
+            <div class="article-image">
+                <img src="/p/langchain-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%B7%A5%E5%85%B7/1.9e68f053768f5d39127f08c30ecf0389_hudd76169eaa14e4b46869a65a4bae705b_986909_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-nmjwU3aPXTkSfwjDDs8DiQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LangChain 自定义工具</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/lcel%E4%B8%8Elangchain%E6%B5%81%E5%BC%8F%E5%A4%84%E7%90%86%E6%8C%87%E5%8D%97/">
+        
+        
+            <div class="article-image">
+                <img src="/p/lcel%E4%B8%8Elangchain%E6%B5%81%E5%BC%8F%E5%A4%84%E7%90%86%E6%8C%87%E5%8D%97/1.ab01ecfb616c2d5b5b8199e51dc472c0_huc0a8b95b33d8d6a656995fb54ca12c83_153854_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-qwHs&#43;2FsLVtbgZnlHcRywA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LCEL与LangChain流式处理指南</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/langserve/">
+        
+        
+            <div class="article-image">
+                <img src="/p/langserve/1.01f867d708bf9a66a530826882cee99a_hufacbddd1a7dc2ecd8ed6fcb829415c77_578046_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-Afhn1wi/mmalMIJogs7pmg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LangServe</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/5.svg" loading="lazy" data-key="" data-hash="/p/langchain-%E6%A1%86%E6%9E%B6%E8%A7%A3%E6%9E%90/5.svg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LangChain 框架解析</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E5%90%8E%E7%AB%AF%E7%9A%84%E5%AE%89%E5%85%A8%E5%92%8C%E5%8A%A0%E5%AF%86/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E5%90%8E%E7%AB%AF%E7%9A%84%E5%AE%89%E5%85%A8%E5%92%8C%E5%8A%A0%E5%AF%86/1.35b9b69317ad3b3f0487cfabb82624c5_hu87659f1a5244bdf4eaa7c124361acc46_915216_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-Nbm2kxetOz8Eh8&#43;ruCYkxQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">后端的安全和加密</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#引言">引言</a></li>
+    <li><a href="#多模态基础概念">多模态基础概念</a></li>
+    <li><a href="#langchain多模态架构">LangChain多模态架构</a></li>
+    <li><a href="#多模态输入实现方式">多模态输入实现方式</a>
+      <ol>
+        <li><a href="#1-基于base64的本地文件输入">1. 基于Base64的本地文件输入</a></li>
+        <li><a href="#2-基于url的网络资源输入">2. 基于URL的网络资源输入</a></li>
+      </ol>
+    </li>
+    <li><a href="#文件类型支持">文件类型支持</a></li>
+    <li><a href="#实用工具函数">实用工具函数</a>
+      <ol>
+        <li><a href="#本地文件转base64">本地文件转Base64</a></li>
+        <li><a href="#图片处理工具">图片处理工具</a></li>
+      </ol>
+    </li>
+    <li><a href="#实际应用案例">实际应用案例</a>
+      <ol>
+        <li><a href="#1-图片内容描述">1. 图片内容描述</a></li>
+        <li><a href="#2-pdf文档摘要">2. PDF文档摘要</a></li>
+        <li><a href="#3-网络图片分析">3. 网络图片分析</a></li>
+      </ol>
+    </li>
+  </ol>
+
+  <ol>
+    <li><a href="#代码仓库路径">代码仓库路径</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
