@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='检索增强生成（RAG）：从原理到工程实践的深度解析 在大语言模型（LLM）快速迭代的今天，如何让模型既具备通用智能，又能精准调用特定领域知识，成为企业级 AI 应用的核心挑战。检索增强生成（Retrieval-Augmented Generation，RAG）技术通过 &amp;ldquo;检索 &#43; 生成&amp;rdquo; 的协同模式，成功解决了纯 LLM 在知识时效性、准确性和领域适配性上的短板，成为连接通用 AI 与垂直业务的关键桥梁。本文将从技术原理出发，结合实战代码，全面剖析 RAG 的实现路径与工程实践。
+一、RAG 的基本概念和原理 RAG 技术的核心思想源于信息检索与自然语言生成的融合：在生成回答前，先从外部知识库中检索与问题相关的事实性信息，再让模型基于这些 &amp;ldquo;证据&amp;rdquo; 进行推理生成。这种机制将 LLM 的 &amp;ldquo;闭卷考试&amp;rdquo; 模式转变为 &amp;ldquo;开卷考试&amp;rdquo;，从根本上解决了三个核心问题：
+ 知识时效性局限：LLM 训练数据存在截止日期，无法应对动态更新的业务知识（如 2025 年的新法规、企业内部文档更新）； 幻觉生成风险：模型可能编造不存在的事实（如虚构产品参数、学术引用），在医疗、法律等领域可能引发严重后果； 领域知识壁垒：通用模型对专业领域（如网络安全、金融风控）的深度知识掌握不足，难以生成精准回答。  从技术本质看，RAG 是一种混合增强架构：通过检索模块将外部知识引入生成过程，形成 &amp;ldquo;知识输入 - 模型推理 - 结果输出&amp;rdquo; 的闭环。这种架构既保留了 LLM 的上下文理解与自然语言生成能力，又通过外部知识库实现了知识的可控更新与精准调用。
+流程图
+可以加密文本块和向量（向量也可能泄露原始语义），从而使用密文进行存储与网络传输。对于向量加密需采用特殊加密算法使得加密后向量仍能进行相似度检索。 加密流程图
+二、RAG 的工作流程 一个完整的 RAG 系统可分为离线知识库构建与在线问答交互两大阶段，包含五个核心步骤：
+1. 离线知识库构建  文档采集：收集结构化（如 Excel 表格）、半结构化（如 PDF 手册）和非结构化（如图片、音频转文本）数据； 文档预处理：对原始数据进行清洗（去噪、格式统一）、拆分（按语义单元切割长文档）； 向量编码：通过嵌入模型（Embedding Model）将文本片段转化为高维向量，捕捉语义特征； 向量存储：将向量及关联文本存入向量数据库，建立可检索的知识索引。'><title>检索增强生成（RAG）</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='检索增强生成（RAG）'>
+<meta property='og:description' content='检索增强生成（RAG）：从原理到工程实践的深度解析 在大语言模型（LLM）快速迭代的今天，如何让模型既具备通用智能，又能精准调用特定领域知识，成为企业级 AI 应用的核心挑战。检索增强生成（Retrieval-Augmented Generation，RAG）技术通过 &amp;ldquo;检索 &#43; 生成&amp;rdquo; 的协同模式，成功解决了纯 LLM 在知识时效性、准确性和领域适配性上的短板，成为连接通用 AI 与垂直业务的关键桥梁。本文将从技术原理出发，结合实战代码，全面剖析 RAG 的实现路径与工程实践。
+一、RAG 的基本概念和原理 RAG 技术的核心思想源于信息检索与自然语言生成的融合：在生成回答前，先从外部知识库中检索与问题相关的事实性信息，再让模型基于这些 &amp;ldquo;证据&amp;rdquo; 进行推理生成。这种机制将 LLM 的 &amp;ldquo;闭卷考试&amp;rdquo; 模式转变为 &amp;ldquo;开卷考试&amp;rdquo;，从根本上解决了三个核心问题：
+ 知识时效性局限：LLM 训练数据存在截止日期，无法应对动态更新的业务知识（如 2025 年的新法规、企业内部文档更新）； 幻觉生成风险：模型可能编造不存在的事实（如虚构产品参数、学术引用），在医疗、法律等领域可能引发严重后果； 领域知识壁垒：通用模型对专业领域（如网络安全、金融风控）的深度知识掌握不足，难以生成精准回答。  从技术本质看，RAG 是一种混合增强架构：通过检索模块将外部知识引入生成过程，形成 &amp;ldquo;知识输入 - 模型推理 - 结果输出&amp;rdquo; 的闭环。这种架构既保留了 LLM 的上下文理解与自然语言生成能力，又通过外部知识库实现了知识的可控更新与精准调用。
+流程图
+可以加密文本块和向量（向量也可能泄露原始语义），从而使用密文进行存储与网络传输。对于向量加密需采用特殊加密算法使得加密后向量仍能进行相似度检索。 加密流程图
+二、RAG 的工作流程 一个完整的 RAG 系统可分为离线知识库构建与在线问答交互两大阶段，包含五个核心步骤：
+1. 离线知识库构建  文档采集：收集结构化（如 Excel 表格）、半结构化（如 PDF 手册）和非结构化（如图片、音频转文本）数据； 文档预处理：对原始数据进行清洗（去噪、格式统一）、拆分（按语义单元切割长文档）； 向量编码：通过嵌入模型（Embedding Model）将文本片段转化为高维向量，捕捉语义特征； 向量存储：将向量及关联文本存入向量数据库，建立可检索的知识索引。'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-05-25T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2025-05-25T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/img.png' />
+<meta name="twitter:title" content="检索增强生成（RAG）">
+<meta name="twitter:description" content="检索增强生成（RAG）：从原理到工程实践的深度解析 在大语言模型（LLM）快速迭代的今天，如何让模型既具备通用智能，又能精准调用特定领域知识，成为企业级 AI 应用的核心挑战。检索增强生成（Retrieval-Augmented Generation，RAG）技术通过 &amp;ldquo;检索 &#43; 生成&amp;rdquo; 的协同模式，成功解决了纯 LLM 在知识时效性、准确性和领域适配性上的短板，成为连接通用 AI 与垂直业务的关键桥梁。本文将从技术原理出发，结合实战代码，全面剖析 RAG 的实现路径与工程实践。
+一、RAG 的基本概念和原理 RAG 技术的核心思想源于信息检索与自然语言生成的融合：在生成回答前，先从外部知识库中检索与问题相关的事实性信息，再让模型基于这些 &amp;ldquo;证据&amp;rdquo; 进行推理生成。这种机制将 LLM 的 &amp;ldquo;闭卷考试&amp;rdquo; 模式转变为 &amp;ldquo;开卷考试&amp;rdquo;，从根本上解决了三个核心问题：
+ 知识时效性局限：LLM 训练数据存在截止日期，无法应对动态更新的业务知识（如 2025 年的新法规、企业内部文档更新）； 幻觉生成风险：模型可能编造不存在的事实（如虚构产品参数、学术引用），在医疗、法律等领域可能引发严重后果； 领域知识壁垒：通用模型对专业领域（如网络安全、金融风控）的深度知识掌握不足，难以生成精准回答。  从技术本质看，RAG 是一种混合增强架构：通过检索模块将外部知识引入生成过程，形成 &amp;ldquo;知识输入 - 模型推理 - 结果输出&amp;rdquo; 的闭环。这种架构既保留了 LLM 的上下文理解与自然语言生成能力，又通过外部知识库实现了知识的可控更新与精准调用。
+流程图
+可以加密文本块和向量（向量也可能泄露原始语义），从而使用密文进行存储与网络传输。对于向量加密需采用特殊加密算法使得加密后向量仍能进行相似度检索。 加密流程图
+二、RAG 的工作流程 一个完整的 RAG 系统可分为离线知识库构建与在线问答交互两大阶段，包含五个核心步骤：
+1. 离线知识库构建  文档采集：收集结构化（如 Excel 表格）、半结构化（如 PDF 手册）和非结构化（如图片、音频转文本）数据； 文档预处理：对原始数据进行清洗（去噪、格式统一）、拆分（按语义单元切割长文档）； 向量编码：通过嵌入模型（Embedding Model）将文本片段转化为高维向量，捕捉语义特征； 向量存储：将向量及关联文本存入向量数据库，建立可检索的知识索引。"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/img.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/">
+                <img src="/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/img_hufef087fddda0fa8512a3bf0acfa96939_57649_800x0_resize_box_3.png"
+                        srcset="/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/img_hufef087fddda0fa8512a3bf0acfa96939_57649_800x0_resize_box_3.png 800w, /p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/img_hufef087fddda0fa8512a3bf0acfa96939_57649_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="508" 
+                        loading="lazy"
+                        alt="Featured image of post 检索增强生成（RAG）" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/computer/" style="background-color: #2a9d8f; color: #fff;">
+                知识学习
+            </a>
+        
+            <a href="/categories/ai/" style="background-color: #2a9d8f; color: #fff;">
+                AI
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/">检索增强生成（RAG）</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">May 25, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 4 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h1 id="检索增强生成rag从原理到工程实践的深度解析">检索增强生成（RAG）：从原理到工程实践的深度解析</h1>
+<p>在大语言模型（LLM）快速迭代的今天，如何让模型既具备通用智能，又能精准调用特定领域知识，成为企业级 AI 应用的核心挑战。检索增强生成（Retrieval-Augmented Generation，RAG）技术通过 &ldquo;检索 + 生成&rdquo; 的协同模式，成功解决了纯 LLM 在知识时效性、准确性和领域适配性上的短板，成为连接通用 AI 与垂直业务的关键桥梁。本文将从技术原理出发，结合实战代码，全面剖析 RAG 的实现路径与工程实践。</p>
+<h2 id="一rag-的基本概念和原理">一、RAG 的基本概念和原理</h2>
+<p>RAG 技术的核心思想源于信息检索与自然语言生成的融合：<strong>在生成回答前，先从外部知识库中检索与问题相关的事实性信息，再让模型基于这些 &ldquo;证据&rdquo; 进行推理生成</strong>。这种机制将 LLM 的 &ldquo;闭卷考试&rdquo; 模式转变为 &ldquo;开卷考试&rdquo;，从根本上解决了三个核心问题：</p>
+<ul>
+<li><strong>知识时效性局限</strong>：LLM 训练数据存在截止日期，无法应对动态更新的业务知识（如 2025 年的新法规、企业内部文档更新）；</li>
+<li><strong>幻觉生成风险</strong>：模型可能编造不存在的事实（如虚构产品参数、学术引用），在医疗、法律等领域可能引发严重后果；</li>
+<li><strong>领域知识壁垒</strong>：通用模型对专业领域（如网络安全、金融风控）的深度知识掌握不足，难以生成精准回答。</li>
+</ul>
+<p>从技术本质看，RAG 是一种<strong>混合增强架构</strong>：通过检索模块将外部知识引入生成过程，形成 &ldquo;知识输入 - 模型推理 - 结果输出&rdquo; 的闭环。这种架构既保留了 LLM 的上下文理解与自然语言生成能力，又通过外部知识库实现了知识的可控更新与精准调用。</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 204; 
+			flex-basis: 491px"
+	>
+	<a href="/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/img_2.png" data-size="1225x598">
+		<img src="/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/img_2.png"
+			width="1225"
+			height="598"
+			srcset="/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/img_2_hu6dfea62baf175810780ae5fe1edf4227_157107_480x0_resize_box_3.png 480w, /p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/img_2_hu6dfea62baf175810780ae5fe1edf4227_157107_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			alt="流程图">
+	</a>
+	
+	<figcaption>流程图</figcaption>
+	
+</figure></p>
+<p>可以加密文本块和向量（向量也可能泄露原始语义），从而使用密文进行存储与网络传输。对于向量加密需采用特殊加密算法使得加密后向量仍能进行相似度检索。
+<figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 110; 
+			flex-basis: 265px"
+	>
+	<a href="/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/img_1.png" data-size="579x523">
+		<img src="/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/img_1.png"
+			width="579"
+			height="523"
+			srcset="/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/img_1_hu895724358e675c793b11cd7ee5ee299d_34354_480x0_resize_box_3.png 480w, /p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/img_1_hu895724358e675c793b11cd7ee5ee299d_34354_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			alt="加密流程图">
+	</a>
+	
+	<figcaption>加密流程图</figcaption>
+	
+</figure></p>
+<h2 id="二rag-的工作流程">二、RAG 的工作流程</h2>
+<p>一个完整的 RAG 系统可分为<strong>离线知识库构建</strong>与<strong>在线问答交互</strong>两大阶段，包含五个核心步骤：</p>
+<h3 id="1-离线知识库构建">1. 离线知识库构建</h3>
+<ul>
+<li><strong>文档采集</strong>：收集结构化（如 Excel 表格）、半结构化（如 PDF 手册）和非结构化（如图片、音频转文本）数据；</li>
+<li><strong>文档预处理</strong>：对原始数据进行清洗（去噪、格式统一）、拆分（按语义单元切割长文档）；</li>
+<li><strong>向量编码</strong>：通过嵌入模型（Embedding Model）将文本片段转化为高维向量，捕捉语义特征；</li>
+<li><strong>向量存储</strong>：将向量及关联文本存入向量数据库，建立可检索的知识索引。</li>
+</ul>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 157; 
+			flex-basis: 378px"
+	>
+	<a href="/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/img.png" data-size="1716x1089">
+		<img src="/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/img.png"
+			width="1716"
+			height="1089"
+			srcset="/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/img_hufef087fddda0fa8512a3bf0acfa96939_57649_480x0_resize_box_3.png 480w, /p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/img_hufef087fddda0fa8512a3bf0acfa96939_57649_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<h3 id="2-在线问答交互">2. 在线问答交互</h3>
+<ul>
+<li><strong>查询理解与检索</strong>：将用户问题转化为向量，在向量数据库中检索最相似的文本片段（Top-K）；</li>
+<li><strong>增强生成</strong>：将检索到的文本作为上下文输入 LLM，生成基于事实的回答。</li>
+</ul>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 331; 
+			flex-basis: 794px"
+	>
+	<a href="/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/img_3.png" data-size="2569x776">
+		<img src="/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/img_3.png"
+			width="2569"
+			height="776"
+			srcset="/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/img_3_huf159f99e0fbd1cbcc88aa756d1d430c3_72596_480x0_resize_box_3.png 480w, /p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/img_3_huf159f99e0fbd1cbcc88aa756d1d430c3_72596_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<p>这种 &ldquo;离线建库 + 在线调用&rdquo; 的模式，既保证了知识更新的灵活性（无需重新训练模型），又确保了问答的实时性（检索与生成均为毫秒级操作）</p>
+<h2 id="三实现-rag-的关键技术">三、实现 RAG 的关键技术</h2>
+<h3 id="1-文档加载多源数据的统一接入">1. 文档加载：多源数据的统一接入</h3>
+<p>文档加载是 RAG 的入口环节，需支持多种格式文件的解析。示例代码中<code>Knowledge</code>类通过<code>loader_mapping</code>实现了多类型文件的适配：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># 文件类型与加载器的映射关系</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">loader_mapping</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&#34;txt&#34;</span><span class="p">:</span> <span class="n">TextLoader</span><span class="p">,</span>
+    <span class="s2">&#34;pdf&#34;</span><span class="p">:</span> <span class="n">PyMuPDFLoader</span><span class="p">,</span>
+    <span class="s2">&#34;docx&#34;</span><span class="p">:</span> <span class="n">Docx2txtLoader</span><span class="p">,</span>
+    <span class="s2">&#34;xlsx&#34;</span><span class="p">:</span> <span class="n">UnstructuredExcelLoader</span><span class="p">,</span>
+    <span class="s2">&#34;pptx&#34;</span><span class="p">:</span> <span class="n">UnstructuredPowerPointLoader</span><span class="p">,</span>
+    <span class="s2">&#34;image&#34;</span><span class="p">:</span> <span class="n">UnstructuredImageLoader</span><span class="p">,</span>
+    <span class="s2">&#34;default&#34;</span><span class="p">:</span> <span class="n">UnstructuredFileLoader</span>
+<span class="p">}</span>
+</code></pre></div><p><strong>技术要点</strong>：</p>
+<ul>
+<li>针对 PDF 优先选择<code>PyMuPDFLoader</code>，支持高效解析带格式文本；</li>
+<li>图片文件需配合 OCR 技术（如<code>UnstructuredImageLoader</code>）提取文字；</li>
+<li>大型文档（如数百页 PDF）需实现流式加载，避免内存溢出。</li>
+</ul>
+<h3 id="2-文本分割语义完整与检索效率的平衡">2. 文本分割：语义完整与检索效率的平衡</h3>
+<p>长文档直接编码会导致语义稀释，需按语义单元拆分。示例中使用<code>RecursiveCharacterTextSplitter</code>：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="bp">self</span><span class="o">.</span><span class="n">text_splitter</span> <span class="o">=</span> <span class="n">RecursiveCharacterTextSplitter</span><span class="p">(</span>
+    <span class="n">chunk_size</span><span class="o">=</span><span class="mi">4000</span><span class="p">,</span>  <span class="c1"># 每块最大长度</span>
+    <span class="n">chunk_overlap</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>  <span class="c1"># 块间重叠部分，保证语义连贯性</span>
+    <span class="n">length_function</span><span class="o">=</span><span class="nb">len</span>
+<span class="p">)</span>
+</code></pre></div><p><strong>分割策略</strong>：</p>
+<ul>
+<li>优先按自然分隔符（段落、句子）拆分，避免破坏语义；</li>
+<li><code>chunk_size</code>需根据嵌入模型最大输入长度调整（如 BERT 类模型通常支持 512 tokens）；</li>
+<li>重叠部分（<code>chunk_overlap</code>）建议设置为总长度的 10%-20%，防止上下文断裂。</li>
+</ul>
+<h3 id="3-向量数据库高效相似性检索">3. 向量数据库：高效相似性检索</h3>
+<p>向量数据库是 RAG 的 &ldquo;大脑&rdquo;，负责存储向量并支持快速近邻检索。示例中<code>ChromaDB</code>类实现了向量库的初始化与操作：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># 初始化Chroma向量数据库</span>
+<span class="n">db</span> <span class="o">=</span> <span class="n">Chroma</span><span class="p">(</span>
+    <span class="n">collection_name</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">chroma_config</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&#34;collection_name&#34;</span><span class="p">),</span>
+    <span class="n">client</span><span class="o">=</span><span class="n">HttpClient</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">),</span>
+    <span class="n">embedding_function</span><span class="o">=</span><span class="n">DashScopeEmbeddings</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="n">embedding_model_name</span><span class="p">,</span>
+        <span class="n">dashscope_api_key</span><span class="o">=</span><span class="n">api_key</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</code></pre></div><p><strong>选型考量</strong>：</p>
+<ul>
+<li>轻量级场景可选 Chroma、FAISS（适合单机部署）；</li>
+<li>大规模集群场景推荐 Milvus、Weaviate（支持分布式存储与水平扩展）；</li>
+<li>需关注向量数据库的索引类型（如 HNSW、IVF）对检索速度的影响。</li>
+</ul>
+<h3 id="4-检索与生成精准性与流畅性的协同">4. 检索与生成：精准性与流畅性的协同</h3>
+<p>检索阶段需平衡召回率与精确率，生成阶段需控制模型对检索结果的依赖度。示例中通过以下流程实现：</p>
+<ol>
+<li><strong>检索环节</strong>：</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># 基于用户查询检索相似文档</span>
+<span class="n">query</span> <span class="o">=</span> <span class="s2">&#34;已监听端口&#34;</span>
+<span class="n">docs</span> <span class="o">=</span> <span class="n">chromadb</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>  <span class="c1"># 内部调用similarity_search</span>
+<span class="n">retriever</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chromadb</span><span class="o">.</span><span class="n">as_retriever</span><span class="p">(</span><span class="n">search_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&#34;k&#34;</span><span class="p">:</span> <span class="mi">5</span><span class="p">})</span>
+</code></pre></div><p>2.<strong>生成环节</strong>：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python">  <span class="n">tool</span> <span class="o">=</span> <span class="n">create_retriever_tool</span><span class="p">(</span>
+            <span class="n">retriever</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&#34;知识库检索&#34;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&#34;从知识库中检索相关信息来回答问题&#34;</span>
+        <span class="p">)</span>
+
+        <span class="n">instructions</span> <span class="o">=</span> <span class="s2">&#34;&#34;&#34;
+</span><span class="s2">           您是一个设计用于查询检索知识库并回答问题的代理;
+</span><span class="s2">           您可以使用检索工具，并基于检索内容来回答问题;
+</span><span class="s2">           您可以通过不查询文档就知道答案，但您仍然需要通过查询文档来获取答案;
+</span><span class="s2">           如果您从文档中找不到任何信息用于回答问题，则只需返回“抱歉，这个问题我还不知道”作为答案。
+</span><span class="s2">           &#34;&#34;&#34;</span>
+        <span class="c1"># 基础提示模板</span>
+        <span class="n">base_prompt_template</span> <span class="o">=</span> <span class="s2">&#34;&#34;&#34;
+</span><span class="s2">           </span><span class="si">{instructions}</span><span class="s2">
+</span><span class="s2">
+</span><span class="s2">           TOOLS:
+</span><span class="s2">           ------
+</span><span class="s2">           You have access to the following tools:
+</span><span class="s2">           </span><span class="si">{tools}</span><span class="s2">
+</span><span class="s2">
+</span><span class="s2">           To use a tool,please use the following format:
+</span><span class="s2">
+</span><span class="s2">           Thought: Do I need to use a tool? Yes
+</span><span class="s2">           Action: the action to take,should be one of [</span><span class="si">{tool_names}</span><span class="s2">]
+</span><span class="s2">           Action Input: </span><span class="si">{input}</span><span class="s2">
+</span><span class="s2">           Observations: the result of the action
+</span><span class="s2">
+</span><span class="s2">           When you have a response to say to the Human,or if you do not need to use a tool,you MUST use the format:
+</span><span class="s2">           Thought: Do I need to use a tool: No
+</span><span class="s2">           Final Answer:[your response here]
+</span><span class="s2">
+</span><span class="s2">           Begin!
+</span><span class="s2">
+</span><span class="s2">           Previous conversation history:
+</span><span class="s2">           </span><span class="si">{chat_history}</span><span class="s2">
+</span><span class="s2">
+</span><span class="s2">           New input:</span><span class="si">{input}</span><span class="s2">
+</span><span class="s2">           </span><span class="si">{agent_scratchpad}</span><span class="s2">
+</span><span class="s2">           &#34;&#34;&#34;</span>
+        <span class="c1"># 创建基础提示词模板</span>
+        <span class="n">base_prompt</span> <span class="o">=</span> <span class="n">PromptTemplate</span><span class="o">.</span><span class="n">from_template</span><span class="p">(</span>
+            <span class="n">template</span><span class="o">=</span><span class="n">base_prompt_template</span>
+        <span class="p">)</span>
+        <span class="c1"># 创建部分填充的提示词模板</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="n">base_prompt</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+            <span class="n">instructions</span><span class="o">=</span><span class="n">instructions</span>
+        <span class="p">)</span>
+        <span class="n">agent</span> <span class="o">=</span> <span class="n">create_react_agent</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+            <span class="p">[</span><span class="n">tool</span><span class="p">],</span>
+            <span class="n">prompt</span>
+        <span class="p">)</span>
+
+</code></pre></div><p><strong>优化技巧</strong>：</p>
+<ul>
+<li>采用混合检索策略（关键词检索 + 向量检索）提升召回率；</li>
+<li>通过<code>search_kwargs={&quot;k&quot;: 5}</code>控制返回的文档数量（通常 5-10 篇为宜）；</li>
+<li>生成阶段使用提示词工程（如 &ldquo;严格基于提供的信息回答，不编造内容&rdquo;）约束模型行为。</li>
+</ul>
+<h2 id="四完整代码示例">四、完整代码示例</h2>
+<ul>
+<li>rag代码示例</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="s2">&#34;&#34;&#34;
+</span><span class="s2">知识库 RAG
+</span><span class="s2">&#34;&#34;&#34;</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span>
+
+<span class="kn">from</span> <span class="nn">langchain_community.document_loaders</span> <span class="kn">import</span> <span class="n">PyMuPDFLoader</span><span class="p">,</span> <span class="n">TextLoader</span><span class="p">,</span> <span class="n">Docx2txtLoader</span><span class="p">,</span> <span class="n">UnstructuredExcelLoader</span><span class="p">,</span> \
+    <span class="n">UnstructuredPowerPointLoader</span><span class="p">,</span> <span class="n">UnstructuredImageLoader</span><span class="p">,</span> <span class="n">UnstructuredFileLoader</span>
+<span class="kn">from</span> <span class="nn">langchain_core.tools</span> <span class="kn">import</span> <span class="n">create_retriever_tool</span>
+<span class="kn">from</span> <span class="nn">langchain_text_splitters</span> <span class="kn">import</span> <span class="n">RecursiveCharacterTextSplitter</span>
+
+<span class="kn">from</span> <span class="nn">DB.chroma</span> <span class="kn">import</span> <span class="n">ChromaDB</span>
+<span class="kn">from</span> <span class="nn">config.config</span> <span class="kn">import</span> <span class="n">Config</span>
+<span class="kn">from</span> <span class="nn">enums.model_enums</span> <span class="kn">import</span> <span class="n">ModelType</span>
+
+<span class="c1"># 配置日志</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
+    <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+    <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> - </span><span class="si">%(name)s</span><span class="s1"> - </span><span class="si">%(levelname)s</span><span class="s1"> - </span><span class="si">%(message)s</span><span class="s1">&#39;</span>
+<span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Knowledge</span><span class="p">:</span>
+    <span class="s2">&#34;&#34;&#34;文档处理器，负责加载和处理各种类型的文档&#34;&#34;&#34;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># 初始化文本分割器</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text_splitter</span> <span class="o">=</span> <span class="n">RecursiveCharacterTextSplitter</span><span class="p">(</span>
+            <span class="n">chunk_size</span><span class="o">=</span><span class="mi">4000</span><span class="p">,</span>  <span class="c1"># 每块最大长度</span>
+            <span class="n">chunk_overlap</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>  <span class="c1"># 块之间的重叠部分</span>
+            <span class="n">length_function</span><span class="o">=</span><span class="nb">len</span><span class="p">,</span>
+            <span class="n">is_separator_regex</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+
+        <span class="c1"># 文件类型与对应加载器的映射</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loader_mapping</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&#34;txt&#34;</span><span class="p">:</span> <span class="n">TextLoader</span><span class="p">,</span>
+            <span class="s2">&#34;pdf&#34;</span><span class="p">:</span> <span class="n">PyMuPDFLoader</span><span class="p">,</span>
+            <span class="s2">&#34;docx&#34;</span><span class="p">:</span> <span class="n">Docx2txtLoader</span><span class="p">,</span>
+            <span class="s2">&#34;xlsx&#34;</span><span class="p">:</span> <span class="n">UnstructuredExcelLoader</span><span class="p">,</span>
+            <span class="s2">&#34;xls&#34;</span><span class="p">:</span> <span class="n">UnstructuredExcelLoader</span><span class="p">,</span>
+            <span class="s2">&#34;pptx&#34;</span><span class="p">:</span> <span class="n">UnstructuredPowerPointLoader</span><span class="p">,</span>
+            <span class="s2">&#34;ppt&#34;</span><span class="p">:</span> <span class="n">UnstructuredPowerPointLoader</span><span class="p">,</span>
+            <span class="s2">&#34;image&#34;</span><span class="p">:</span> <span class="n">UnstructuredImageLoader</span><span class="p">,</span>
+            <span class="s2">&#34;png&#34;</span><span class="p">:</span> <span class="n">UnstructuredImageLoader</span><span class="p">,</span>
+            <span class="s2">&#34;jpg&#34;</span><span class="p">:</span> <span class="n">UnstructuredImageLoader</span><span class="p">,</span>
+            <span class="s2">&#34;jpeg&#34;</span><span class="p">:</span> <span class="n">UnstructuredImageLoader</span><span class="p">,</span>
+            <span class="s2">&#34;default&#34;</span><span class="p">:</span> <span class="n">UnstructuredFileLoader</span>  <span class="c1"># 默认加载器</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">clean_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="s2">&#34;&#34;&#34;清理文本内容&#34;&#34;&#34;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&#34;&#34;</span>
+
+        <span class="c1"># 移除多余的空格和换行</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="s2">&#34; &#34;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+        <span class="c1"># 截断超长文本</span>
+        <span class="k">return</span> <span class="n">text</span><span class="p">[:</span><span class="mi">8000</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">8000</span> <span class="k">else</span> <span class="n">text</span>
+
+    <span class="k">def</span> <span class="nf">load_single_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">]:</span>
+        <span class="s2">&#34;&#34;&#34;加载单个文件&#34;&#34;&#34;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># 获取合适的加载器</span>
+            <span class="n">loader_class</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader_mapping</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">file_type</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader_mapping</span><span class="p">[</span><span class="s2">&#34;default&#34;</span><span class="p">])</span>
+
+            <span class="c1"># 特殊处理：文本文件需要指定编码</span>
+            <span class="k">if</span> <span class="n">file_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&#34;txt&#34;</span><span class="p">:</span>
+                <span class="n">loader</span> <span class="o">=</span> <span class="n">loader_class</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&#34;utf-8&#34;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">loader</span> <span class="o">=</span> <span class="n">loader_class</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;加载文件 </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2"> 时出错: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">split_documents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">documents</span><span class="p">:</span> <span class="n">List</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
+        <span class="s2">&#34;&#34;&#34;分割文档&#34;&#34;&#34;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">documents</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">text_splitter</span><span class="o">.</span><span class="n">split_documents</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;分割文档时出错: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">documents</span>  <span class="c1"># 如果分割失败，返回原始文档</span>
+
+
+    <span class="k">def</span> <span class="nf">load_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_paths</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">file_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
+        <span class="s2">&#34;&#34;&#34;加载并处理多个文件&#34;&#34;&#34;</span>
+        <span class="n">all_documents</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">file_path</span> <span class="ow">in</span> <span class="n">file_paths</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;正在处理文件: </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+                <span class="n">documents</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_single_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">file_type</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">documents</span><span class="p">:</span>
+                    <span class="n">split_docs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">split_documents</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span>
+                    <span class="n">all_documents</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">split_docs</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;处理文件 </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2"> 时出错: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+        <span class="k">return</span> <span class="n">all_documents</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&#34;__main__&#34;</span><span class="p">:</span>
+    <span class="c1"># files = [&#34;D:\work\安服工作\安服资料\第2篇：Linux入侵排查.pdf&#34;,&#34;D:\work\安服工作\安服资料\Web安全开发指南 电子版.pdf&#34;]</span>
+    <span class="c1"># document_processor = Knowledge()</span>
+    <span class="c1"># documents = document_processor.load_files(files, &#34;pdf&#34;)</span>
+    <span class="c1"># print(documents)</span>
+    <span class="c1"># #批量写入</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="s1">&#39;conf/config.yml&#39;</span><span class="p">)</span>
+    <span class="n">chromadb</span> <span class="o">=</span> <span class="n">ChromaDB</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">ModelType</span><span class="o">.</span><span class="n">QWEN</span><span class="p">)</span>
+    <span class="c1"># chromadb.add(documents)</span>
+    <span class="c1"># # 向量数据库查询</span>
+    <span class="c1"># query = &#34;已监听端⼝ &#34;</span>
+    <span class="c1"># docs = chromadb.query(query)</span>
+    <span class="c1"># for doc in docs:</span>
+    <span class="c1">#     print(doc)</span>
+    <span class="n">retriever</span> <span class="o">=</span> <span class="n">chromadb</span><span class="o">.</span><span class="n">as_retriever</span><span class="p">(</span><span class="n">search_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&#34;k&#34;</span><span class="p">:</span> <span class="mi">3</span><span class="p">})</span>
+    <span class="n">tool</span> <span class="o">=</span> <span class="n">create_retriever_tool</span><span class="p">(</span>
+        <span class="n">retriever</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&#34;知识库检索&#34;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&#34;从知识库中检索相关信息来回答问题&#34;</span>
+    <span class="p">)</span>
+</code></pre></div><ul>
+<li>chroma向量数据库代码示例</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># chroma向量数据库</span>
+<span class="kn">from</span> <span class="nn">chromadb</span> <span class="kn">import</span> <span class="n">HttpClient</span>
+<span class="kn">from</span> <span class="nn">langchain_chroma</span> <span class="kn">import</span> <span class="n">Chroma</span>
+<span class="kn">from</span> <span class="nn">langchain_community.embeddings</span> <span class="kn">import</span> <span class="n">DashScopeEmbeddings</span>
+
+<span class="kn">from</span> <span class="nn">config.config</span> <span class="kn">import</span> <span class="n">Config</span>
+<span class="kn">from</span> <span class="nn">enums.model_enums</span> <span class="kn">import</span> <span class="n">ModelType</span>
+
+
+<span class="k">class</span> <span class="nc">ChromaDB</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">,</span> <span class="n">model_type</span><span class="p">:</span> <span class="n">ModelType</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">client</span> <span class="o">=</span> <span class="n">HttpClient</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">chroma_config</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&#34;host&#34;</span><span class="p">),</span> <span class="n">port</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">chroma_config</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&#34;port&#34;</span><span class="p">))</span>
+
+            <span class="n">embedding</span> <span class="o">=</span> <span class="n">DashScopeEmbeddings</span><span class="p">(</span>
+                <span class="n">model</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">model_config</span><span class="p">(</span><span class="n">model_type</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&#34;embeddingModelName&#34;</span><span class="p">),</span>
+                <span class="n">dashscope_api_key</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">model_config</span><span class="p">(</span><span class="n">model_type</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&#34;apiKey&#34;</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="n">db</span> <span class="o">=</span> <span class="n">Chroma</span><span class="p">(</span>
+                <span class="n">collection_name</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">chroma_config</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&#34;collection_name&#34;</span><span class="p">),</span>
+                <span class="n">client</span><span class="o">=</span><span class="n">client</span><span class="p">,</span>
+                <span class="n">embedding_function</span><span class="o">=</span><span class="n">embedding</span>  <span class="c1"># 传入嵌入函数</span>
+            <span class="p">)</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>  <span class="c1"># 尝试访问集合验证连接</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&#34;连接向量数据库成功..&#34;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">db</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># 异常处理</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;链接向量数据库失败: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">, 请检查配置信息&#34;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">documents</span><span class="p">):</span>
+        <span class="c1"># 新增：按API限制拆分批次（每批最多10个文档）</span>
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">documents</span><span class="p">),</span> <span class="n">batch_size</span><span class="p">):</span>
+            <span class="n">batch</span> <span class="o">=</span> <span class="n">documents</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">batch_size</span><span class="p">]</span>  <span class="c1"># 截取批次文档</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>  <span class="c1"># 分批添加</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;已添加第 </span><span class="si">{</span><span class="n">i</span> <span class="o">//</span> <span class="n">batch_size</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s2"> 批文档，共 </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span><span class="si">}</span><span class="s2"> 个&#34;</span><span class="p">)</span>
+            <span class="c1"># 新增：添加文档后，刷新索引</span>
+
+    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+        <span class="c1"># 查询文档</span>
+        <span class="n">docs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">similarity_search</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">docs</span>
+
+    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">document_id</span><span class="p">):</span>
+        <span class="c1"># 删除文档</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">document_id</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;已删除文档 ID: </span><span class="si">{</span><span class="n">document_id</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">document_id</span><span class="p">,</span> <span class="n">doc</span><span class="p">):</span>
+        <span class="c1"># 更新文档</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">update_document</span><span class="p">(</span><span class="n">document_id</span><span class="p">,</span> <span class="n">doc</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;已更新文档 ID: </span><span class="si">{</span><span class="n">document_id</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># 列出所有文档</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">delete_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># 删除所有文档</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">delete_collection</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&#34;已删除所有文档&#34;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">document_id</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">document_id</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">as_retriever</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">search_kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">as_retriever</span><span class="p">(</span><span class="n">search_kwargs</span><span class="o">=</span><span class="n">search_kwargs</span><span class="p">)</span>
+
+    <span class="c1"># def db(self):</span>
+    <span class="c1">#     return self.db</span>
+
+
+<span class="c1"># if __name__ == &#39;__main__&#39;:</span>
+<span class="c1">#     config = Config(&#39;../conf/config.yml&#39;)</span>
+<span class="c1">#     chromadb = ChromaDB(config, ModelType.QWEN)</span>
+<span class="c1">#     docs = chromadb.list()</span>
+<span class="c1">#     print(docs)</span>
+<span class="c1">#     print(chromadb.get_id(&#34;0f506577-1db5-42fb-b70d-fe77fb7fe173&#34;))</span>
+
+
+</code></pre></div><h2 id="五代码仓库路径">五、代码仓库路径</h2>
+<p><a class="link" href="https://github.com/zcj-git520/AiLargeModel"  target="_blank" rel="noopener"
+    >zcj-git520/AiLargeModel: 大模型应用开发学习</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/img.0cf458ef54fa450e9d1ac9086d930efe_huecad56dbf45667eb4f21f35c2388c063_52872_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-DPRY71T6RQ6dGskIbZMO/g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">智能知识检索系统</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/langchain-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%B7%A5%E5%85%B7/">
+        
+        
+            <div class="article-image">
+                <img src="/p/langchain-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%B7%A5%E5%85%B7/1.9e68f053768f5d39127f08c30ecf0389_hudd76169eaa14e4b46869a65a4bae705b_986909_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-nmjwU3aPXTkSfwjDDs8DiQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LangChain 自定义工具</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/langchain-%E5%A4%9A%E6%A8%A1%E6%80%81%E8%BE%93%E5%85%A5%E5%A4%84%E7%90%86/">
+        
+        
+            <div class="article-image">
+                <img src="/p/langchain-%E5%A4%9A%E6%A8%A1%E6%80%81%E8%BE%93%E5%85%A5%E5%A4%84%E7%90%86/1.dc09a51c545b2a001eb6625aaa3fcbed_hu4c351f786f8fd3fbb31415493398512f_844896_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-3AmlHFRbKgAetmJaqj/L7Q==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LangChain 多模态输入处理</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/lcel%E4%B8%8Elangchain%E6%B5%81%E5%BC%8F%E5%A4%84%E7%90%86%E6%8C%87%E5%8D%97/">
+        
+        
+            <div class="article-image">
+                <img src="/p/lcel%E4%B8%8Elangchain%E6%B5%81%E5%BC%8F%E5%A4%84%E7%90%86%E6%8C%87%E5%8D%97/1.ab01ecfb616c2d5b5b8199e51dc472c0_huc0a8b95b33d8d6a656995fb54ca12c83_153854_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-qwHs&#43;2FsLVtbgZnlHcRywA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LCEL与LangChain流式处理指南</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/langserve/">
+        
+        
+            <div class="article-image">
+                <img src="/p/langserve/1.01f867d708bf9a66a530826882cee99a_hufacbddd1a7dc2ecd8ed6fcb829415c77_578046_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-Afhn1wi/mmalMIJogs7pmg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LangServe</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#一rag-的基本概念和原理">一、RAG 的基本概念和原理</a></li>
+    <li><a href="#二rag-的工作流程">二、RAG 的工作流程</a>
+      <ol>
+        <li><a href="#1-离线知识库构建">1. 离线知识库构建</a></li>
+        <li><a href="#2-在线问答交互">2. 在线问答交互</a></li>
+      </ol>
+    </li>
+    <li><a href="#三实现-rag-的关键技术">三、实现 RAG 的关键技术</a>
+      <ol>
+        <li><a href="#1-文档加载多源数据的统一接入">1. 文档加载：多源数据的统一接入</a></li>
+        <li><a href="#2-文本分割语义完整与检索效率的平衡">2. 文本分割：语义完整与检索效率的平衡</a></li>
+        <li><a href="#3-向量数据库高效相似性检索">3. 向量数据库：高效相似性检索</a></li>
+        <li><a href="#4-检索与生成精准性与流畅性的协同">4. 检索与生成：精准性与流畅性的协同</a></li>
+      </ol>
+    </li>
+    <li><a href="#四完整代码示例">四、完整代码示例</a></li>
+    <li><a href="#五代码仓库路径">五、代码仓库路径</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

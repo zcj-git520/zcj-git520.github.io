@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='构建智能知识检索系统：基于 Streamlit 与 LangChain 的实现方案 在信息爆炸的时代，如何高效管理和检索文档中的知识成为一项重要需求。本文将介绍一个基于 Streamlit 和 LangChain 构建的智能知识检索系统，该系统支持多种格式文档的上传、解析与检索，能够通过自然语言交互为用户提供精准的知识问答服务。
+系统架构概览 该智能知识检索系统主要由以下几个核心模块构成：
+ 用户界面层：基于 Streamlit 构建的 Web 交互界面 文档处理层：负责解析多种格式的文档内容 向量数据库层：使用 ChromaDB 存储文档向量，支持高效检索 智能问答层：基于 LangChain 的 Agent 机制实现问答逻辑  系统的核心流程是：用户上传文档 → 系统解析并存储文档向量 → 用户提问 → 系统检索相关文档 → 生成回答。
+
+核心代码解析 类结构设计 系统的核心功能封装在KnowledgeBaseSystem类中，该类通过组合模式整合了模型、数据库和文档处理器：
+class KnowledgeBaseSystem: def __init__(self, model, chromadb: ChromaDB, document_processor: Knowledge): self.chromadb = chromadb self.model = model self.document_processor = document_processor 页面配置与初始化 setup_page_config方法负责初始化 Streamlit 页面配置和会话状态：
+def setup_page_config(self): &amp;#34;&amp;#34;&amp;#34;设置页面配置&amp;#34;&amp;#34;&amp;#34; st.set_page_config( page_title=&amp;#34;智能知识检索系统&amp;#34;, layout=&amp;#34;wide&amp;#34;, page_icon=&amp;#34;📚&amp;#34; ) st.'><title>智能知识检索系统</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='智能知识检索系统'>
+<meta property='og:description' content='构建智能知识检索系统：基于 Streamlit 与 LangChain 的实现方案 在信息爆炸的时代，如何高效管理和检索文档中的知识成为一项重要需求。本文将介绍一个基于 Streamlit 和 LangChain 构建的智能知识检索系统，该系统支持多种格式文档的上传、解析与检索，能够通过自然语言交互为用户提供精准的知识问答服务。
+系统架构概览 该智能知识检索系统主要由以下几个核心模块构成：
+ 用户界面层：基于 Streamlit 构建的 Web 交互界面 文档处理层：负责解析多种格式的文档内容 向量数据库层：使用 ChromaDB 存储文档向量，支持高效检索 智能问答层：基于 LangChain 的 Agent 机制实现问答逻辑  系统的核心流程是：用户上传文档 → 系统解析并存储文档向量 → 用户提问 → 系统检索相关文档 → 生成回答。
+
+核心代码解析 类结构设计 系统的核心功能封装在KnowledgeBaseSystem类中，该类通过组合模式整合了模型、数据库和文档处理器：
+class KnowledgeBaseSystem: def __init__(self, model, chromadb: ChromaDB, document_processor: Knowledge): self.chromadb = chromadb self.model = model self.document_processor = document_processor 页面配置与初始化 setup_page_config方法负责初始化 Streamlit 页面配置和会话状态：
+def setup_page_config(self): &amp;#34;&amp;#34;&amp;#34;设置页面配置&amp;#34;&amp;#34;&amp;#34; st.set_page_config( page_title=&amp;#34;智能知识检索系统&amp;#34;, layout=&amp;#34;wide&amp;#34;, page_icon=&amp;#34;📚&amp;#34; ) st.'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-06-02T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2025-06-02T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/img.png' />
+<meta name="twitter:title" content="智能知识检索系统">
+<meta name="twitter:description" content="构建智能知识检索系统：基于 Streamlit 与 LangChain 的实现方案 在信息爆炸的时代，如何高效管理和检索文档中的知识成为一项重要需求。本文将介绍一个基于 Streamlit 和 LangChain 构建的智能知识检索系统，该系统支持多种格式文档的上传、解析与检索，能够通过自然语言交互为用户提供精准的知识问答服务。
+系统架构概览 该智能知识检索系统主要由以下几个核心模块构成：
+ 用户界面层：基于 Streamlit 构建的 Web 交互界面 文档处理层：负责解析多种格式的文档内容 向量数据库层：使用 ChromaDB 存储文档向量，支持高效检索 智能问答层：基于 LangChain 的 Agent 机制实现问答逻辑  系统的核心流程是：用户上传文档 → 系统解析并存储文档向量 → 用户提问 → 系统检索相关文档 → 生成回答。
+
+核心代码解析 类结构设计 系统的核心功能封装在KnowledgeBaseSystem类中，该类通过组合模式整合了模型、数据库和文档处理器：
+class KnowledgeBaseSystem: def __init__(self, model, chromadb: ChromaDB, document_processor: Knowledge): self.chromadb = chromadb self.model = model self.document_processor = document_processor 页面配置与初始化 setup_page_config方法负责初始化 Streamlit 页面配置和会话状态：
+def setup_page_config(self): &amp;#34;&amp;#34;&amp;#34;设置页面配置&amp;#34;&amp;#34;&amp;#34; st.set_page_config( page_title=&amp;#34;智能知识检索系统&amp;#34;, layout=&amp;#34;wide&amp;#34;, page_icon=&amp;#34;📚&amp;#34; ) st."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/img.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/">
+                <img src="/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/img_huecad56dbf45667eb4f21f35c2388c063_52872_800x0_resize_box_3.png"
+                        srcset="/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/img_huecad56dbf45667eb4f21f35c2388c063_52872_800x0_resize_box_3.png 800w, /p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/img_huecad56dbf45667eb4f21f35c2388c063_52872_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="412" 
+                        loading="lazy"
+                        alt="Featured image of post 智能知识检索系统" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/computer/" style="background-color: #2a9d8f; color: #fff;">
+                知识学习
+            </a>
+        
+            <a href="/categories/ai/" style="background-color: #2a9d8f; color: #fff;">
+                AI
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/">智能知识检索系统</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jun 02, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 5 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h1 id="构建智能知识检索系统基于-streamlit-与-langchain-的实现方案">构建智能知识检索系统：基于 Streamlit 与 LangChain 的实现方案</h1>
+<p>在信息爆炸的时代，如何高效管理和检索文档中的知识成为一项重要需求。本文将介绍一个基于 Streamlit 和 LangChain 构建的智能知识检索系统，该系统支持多种格式文档的上传、解析与检索，能够通过自然语言交互为用户提供精准的知识问答服务。</p>
+<h2 id="系统架构概览">系统架构概览</h2>
+<p>该智能知识检索系统主要由以下几个核心模块构成：</p>
+<ul>
+<li><strong>用户界面层</strong>：基于 Streamlit 构建的 Web 交互界面</li>
+<li><strong>文档处理层</strong>：负责解析多种格式的文档内容</li>
+<li><strong>向量数据库层</strong>：使用 ChromaDB 存储文档向量，支持高效检索</li>
+<li><strong>智能问答层</strong>：基于 LangChain 的 Agent 机制实现问答逻辑</li>
+</ul>
+<p>系统的核心流程是：用户上传文档 → 系统解析并存储文档向量 → 用户提问 → 系统检索相关文档 → 生成回答。</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 203; 
+			flex-basis: 488px"
+	>
+	<a href="/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/img_2.png" data-size="1886x926">
+		<img src="/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/img_2.png"
+			width="1886"
+			height="926"
+			srcset="/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/img_2_hu8bdab7a95e98847ca0168e3a687a34f6_103467_480x0_resize_box_3.png 480w, /p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/img_2_hu8bdab7a95e98847ca0168e3a687a34f6_103467_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<h2 id="核心代码解析">核心代码解析</h2>
+<h3 id="类结构设计">类结构设计</h3>
+<p>系统的核心功能封装在<code>KnowledgeBaseSystem</code>类中，该类通过组合模式整合了模型、数据库和文档处理器：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">class</span> <span class="nc">KnowledgeBaseSystem</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">chromadb</span><span class="p">:</span> <span class="n">ChromaDB</span><span class="p">,</span> <span class="n">document_processor</span><span class="p">:</span> <span class="n">Knowledge</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chromadb</span> <span class="o">=</span> <span class="n">chromadb</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">document_processor</span> <span class="o">=</span> <span class="n">document_processor</span>
+</code></pre></div><h3 id="页面配置与初始化">页面配置与初始化</h3>
+<p><code>setup_page_config</code>方法负责初始化 Streamlit 页面配置和会话状态：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">setup_page_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="s2">&#34;&#34;&#34;设置页面配置&#34;&#34;&#34;</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">set_page_config</span><span class="p">(</span>
+        <span class="n">page_title</span><span class="o">=</span><span class="s2">&#34;智能知识检索系统&#34;</span><span class="p">,</span>
+        <span class="n">layout</span><span class="o">=</span><span class="s2">&#34;wide&#34;</span><span class="p">,</span>
+        <span class="n">page_icon</span><span class="o">=</span><span class="s2">&#34;📚&#34;</span>
+    <span class="p">)</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&#34;📚 智能知识检索系统&#34;</span><span class="p">)</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">sidebar</span><span class="o">.</span><span class="n">header</span><span class="p">(</span><span class="s2">&#34;文档上传&#34;</span><span class="p">)</span>
+    <span class="c1"># 初始化或重置聊天记录</span>
+    <span class="k">if</span> <span class="s2">&#34;messages&#34;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span> <span class="ow">or</span> <span class="n">st</span><span class="o">.</span><span class="n">sidebar</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="s2">&#34;清空聊天记录&#34;</span><span class="p">):</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s2">&#34;messages&#34;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&#34;role&#34;</span><span class="p">:</span> <span class="s2">&#34;assistant&#34;</span><span class="p">,</span>
+                <span class="s2">&#34;content&#34;</span><span class="p">:</span> <span class="s2">&#34;您好，我是您的知识检索助手，请问有什么可以帮助您的？&#34;</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+</code></pre></div><h3 id="文档上传与处理">文档上传与处理</h3>
+<p><code>handle_file_upload</code>方法实现了多格式文档的上传与处理功能，支持 TXT、PDF、Word、Excel、PPT 和图片等多种格式：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">handle_file_upload</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="s2">&#34;&#34;&#34;处理文件上传&#34;&#34;&#34;</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">sidebar</span><span class="o">.</span><span class="n">file_uploader</span><span class="p">(</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">&#34;支持上传TXT、PDF、Word、Excel、PPT和图片文件，单个文件最大200MB&#34;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;txt&#34;</span><span class="p">,</span> <span class="s2">&#34;pdf&#34;</span><span class="p">,</span> <span class="s2">&#34;docx&#34;</span><span class="p">,</span> <span class="s2">&#34;xlsx&#34;</span><span class="p">,</span> <span class="s2">&#34;pptx&#34;</span><span class="p">,</span> <span class="s2">&#34;png&#34;</span><span class="p">,</span> <span class="s2">&#34;jpg&#34;</span><span class="p">,</span> <span class="s2">&#34;jpeg&#34;</span><span class="p">],</span>
+        <span class="n">accept_multiple_files</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">files</span><span class="p">:</span>
+        <span class="k">return</span>
+
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># 处理文件并存储到向量数据库</span>
+            <span class="n">file_type</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&#34;.&#34;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;.</span><span class="si">{</span><span class="n">file_type</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tmp_file</span><span class="p">:</span>
+                <span class="n">tmp_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
+                <span class="n">tmp_file_path</span> <span class="o">=</span> <span class="n">tmp_file</span><span class="o">.</span><span class="n">name</span>
+
+            <span class="k">with</span> <span class="n">st</span><span class="o">.</span><span class="n">spinner</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;正在处理 </span><span class="si">{</span><span class="n">file</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">...&#34;</span><span class="p">):</span>
+                <span class="n">documents</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">document_processor</span><span class="o">.</span><span class="n">load_files</span><span class="p">([</span><span class="n">tmp_file_path</span><span class="p">],</span> <span class="n">file_type</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">chromadb</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span>
+                <span class="n">st</span><span class="o">.</span><span class="n">sidebar</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;</span><span class="si">{</span><span class="n">file</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> 上传成功&#34;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">st</span><span class="o">.</span><span class="n">sidebar</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;处理 </span><span class="si">{</span><span class="n">file</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> 时出错: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="c1"># 清理临时文件</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tmp_file_path</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tmp_file_path</span><span class="p">)</span>
+</code></pre></div><p>这段代码的关键在于：</p>
+<ul>
+<li>使用临时文件处理上传的文档</li>
+<li>通过文档处理器解析不同格式的文件</li>
+<li>将解析后的文档内容添加到向量数据库</li>
+<li>完善的异常处理和资源清理</li>
+</ul>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 154; 
+			flex-basis: 371px"
+	>
+	<a href="/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/img_1.png" data-size="948x612">
+		<img src="/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/img_1.png"
+			width="948"
+			height="612"
+			srcset="/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/img_1_hu0dcf70a1bfc9e344716068c8a51bbedf_39184_480x0_resize_box_3.png 480w, /p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/img_1_hu0dcf70a1bfc9e344716068c8a51bbedf_39184_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<h3 id="智能问答代理的创建">智能问答代理的创建</h3>
+<p>系统的核心智能问答功能通过<code>create_agent</code>方法实现，该方法利用 LangChain 构建了一个具有检索能力的智能代理：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">create_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AgentExecutor</span><span class="p">:</span>
+    <span class="s2">&#34;&#34;&#34;创建代理执行器&#34;&#34;&#34;</span>
+    <span class="c1"># 创建检索器，设置返回3个最相关的结果</span>
+    <span class="n">retriever</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chromadb</span><span class="o">.</span><span class="n">as_retriever</span><span class="p">(</span><span class="n">search_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&#34;k&#34;</span><span class="p">:</span> <span class="mi">3</span><span class="p">})</span>
+
+    <span class="c1"># 创建检索工具</span>
+    <span class="n">tool</span> <span class="o">=</span> <span class="n">create_retriever_tool</span><span class="p">(</span>
+        <span class="n">retriever</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&#34;知识库检索&#34;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&#34;从知识库中检索相关信息来回答问题&#34;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># 设置聊天历史存储</span>
+    <span class="n">msgs</span> <span class="o">=</span> <span class="n">StreamlitChatMessageHistory</span><span class="p">()</span>
+    <span class="n">memory</span> <span class="o">=</span> <span class="n">ConversationBufferMemory</span><span class="p">(</span>
+        <span class="n">chat_memory</span><span class="o">=</span><span class="n">msgs</span><span class="p">,</span>
+        <span class="n">return_messages</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">memory_key</span><span class="o">=</span><span class="s2">&#34;chat_history&#34;</span><span class="p">,</span>
+        <span class="n">output_key</span><span class="o">=</span><span class="s2">&#34;output&#34;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># 定义代理的指令和提示模板</span>
+    <span class="n">instructions</span> <span class="o">=</span> <span class="s2">&#34;&#34;&#34;
+</span><span class="s2">       您是一个设计用于查询检索知识库并回答问题的代理;
+</span><span class="s2">       您可以使用检索工具，并基于检索内容来回答问题;
+</span><span class="s2">       您可以通过不查询文档就知道答案，但您仍然需要通过查询文档来获取答案;
+</span><span class="s2">       如果您从文档中找不到任何信息用于回答问题，则只需返回“抱歉，这个问题我还不知道”作为答案。
+</span><span class="s2">       &#34;&#34;&#34;</span>
+    
+    <span class="c1"># 创建提示模板</span>
+    <span class="n">base_prompt_template</span> <span class="o">=</span> <span class="s2">&#34;&#34;&#34;
+</span><span class="s2">       </span><span class="si">{instructions}</span><span class="s2">
+</span><span class="s2">
+</span><span class="s2">       TOOLS:
+</span><span class="s2">       ------
+</span><span class="s2">       You have access to the following tools:
+</span><span class="s2">       </span><span class="si">{tools}</span><span class="s2">
+</span><span class="s2">
+</span><span class="s2">       To use a tool,please use the following format:
+</span><span class="s2">
+</span><span class="s2">       Thought: Do I need to use a tool? Yes
+</span><span class="s2">       Action: the action to take,should be one of [</span><span class="si">{tool_names}</span><span class="s2">]
+</span><span class="s2">       Action Input: </span><span class="si">{input}</span><span class="s2">
+</span><span class="s2">       Observations: the result of the action
+</span><span class="s2">
+</span><span class="s2">       When you have a response to say to the Human,or if you do not need to use a tool,you MUST use the format:
+</span><span class="s2">       Thought: Do I need to use a tool: No
+</span><span class="s2">       Final Answer:[your response here]
+</span><span class="s2">
+</span><span class="s2">       Begin!
+</span><span class="s2">
+</span><span class="s2">       Previous conversation history:
+</span><span class="s2">       </span><span class="si">{chat_history}</span><span class="s2">
+</span><span class="s2">
+</span><span class="s2">       New input:</span><span class="si">{input}</span><span class="s2">
+</span><span class="s2">       </span><span class="si">{agent_scratchpad}</span><span class="s2">
+</span><span class="s2">       &#34;&#34;&#34;</span>
+    
+    <span class="n">base_prompt</span> <span class="o">=</span> <span class="n">PromptTemplate</span><span class="o">.</span><span class="n">from_template</span><span class="p">(</span><span class="n">template</span><span class="o">=</span><span class="n">base_prompt_template</span><span class="p">)</span>
+    <span class="n">prompt</span> <span class="o">=</span> <span class="n">base_prompt</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">instructions</span><span class="o">=</span><span class="n">instructions</span><span class="p">)</span>
+    
+    <span class="c1"># 创建REACT代理</span>
+    <span class="n">agent</span> <span class="o">=</span> <span class="n">create_react_agent</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+        <span class="p">[</span><span class="n">tool</span><span class="p">],</span>
+        <span class="n">prompt</span>
+    <span class="p">)</span>
+
+    <span class="c1"># 返回代理执行器</span>
+    <span class="k">return</span> <span class="n">AgentExecutor</span><span class="p">(</span>
+        <span class="n">agent</span><span class="o">=</span><span class="n">agent</span><span class="p">,</span>
+        <span class="n">tools</span><span class="o">=</span><span class="p">[</span><span class="n">tool</span><span class="p">],</span>
+        <span class="n">memory</span><span class="o">=</span><span class="n">memory</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">handle_parsing_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">max_iterations</span><span class="o">=</span><span class="mi">5</span>
+    <span class="p">)</span>
+</code></pre></div><p>这段代码的核心是构建了一个基于 REACT 思维链的智能代理，它能够：</p>
+<ul>
+<li>使用检索工具从知识库获取相关信息</li>
+<li>维护对话历史，支持上下文感知</li>
+<li>遵循特定的思考和行动格式</li>
+<li>处理解析错误并限制最大迭代次数</li>
+</ul>
+<h3 id="聊天交互处理">聊天交互处理</h3>
+<p><code>handle_user_query</code>方法实现了用户输入的处理和回答的生成：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">handle_user_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent_executor</span><span class="p">:</span> <span class="n">AgentExecutor</span><span class="p">):</span>
+    <span class="s2">&#34;&#34;&#34;处理用户查询&#34;&#34;&#34;</span>
+    <span class="n">user_query</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">chat_input</span><span class="p">(</span><span class="n">placeholder</span><span class="o">=</span><span class="s2">&#34;请输入您的问题...&#34;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">user_query</span><span class="p">:</span>
+        <span class="k">return</span>
+
+    <span class="c1"># 添加用户消息到会话状态并显示</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&#34;role&#34;</span><span class="p">:</span> <span class="s2">&#34;user&#34;</span><span class="p">,</span> <span class="s2">&#34;content&#34;</span><span class="p">:</span> <span class="n">user_query</span><span class="p">})</span>
+    <span class="n">st</span><span class="o">.</span><span class="n">chat_message</span><span class="p">(</span><span class="s2">&#34;user&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">user_query</span><span class="p">)</span>
+
+    <span class="c1"># 生成并显示回答</span>
+    <span class="k">with</span> <span class="n">st</span><span class="o">.</span><span class="n">chat_message</span><span class="p">(</span><span class="s2">&#34;assistant&#34;</span><span class="p">):</span>
+        <span class="n">st_cb</span> <span class="o">=</span> <span class="n">StreamlitCallbackHandler</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">container</span><span class="p">())</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">agent_executor</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span>
+            <span class="p">{</span><span class="s2">&#34;input&#34;</span><span class="p">:</span> <span class="n">user_query</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&#34;callbacks&#34;</span><span class="p">:</span> <span class="p">[</span><span class="n">st_cb</span><span class="p">]}</span>
+        <span class="p">)</span>
+
+        <span class="n">answer</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&#34;output&#34;</span><span class="p">,</span> <span class="s2">&#34;抱歉，我无法回答这个问题。&#34;</span><span class="p">)</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&#34;role&#34;</span><span class="p">:</span> <span class="s2">&#34;assistant&#34;</span><span class="p">,</span> <span class="s2">&#34;content&#34;</span><span class="p">:</span> <span class="n">answer</span><span class="p">})</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">answer</span><span class="p">)</span>
+</code></pre></div><p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 177; 
+			flex-basis: 427px"
+	>
+	<a href="/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/img_3.png" data-size="1507x847">
+		<img src="/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/img_3.png"
+			width="1507"
+			height="847"
+			srcset="/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/img_3_hu0b418cfa9cb70e314746975f0d9372f4_80375_480x0_resize_box_3.png 480w, /p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/img_3_hu0b418cfa9cb70e314746975f0d9372f4_80375_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<h3 id="系统运行入口">系统运行入口</h3>
+<p><code>run</code>方法作为系统的入口点，协调各个模块的执行：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="s2">&#34;&#34;&#34;运行知识检索系统&#34;&#34;&#34;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">setup_page_config</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">display_chat_history</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">handle_file_upload</span><span class="p">()</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">agent_executor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_agent</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">handle_user_query</span><span class="p">(</span><span class="n">agent_executor</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;系统错误: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s2">&#34;role&#34;</span><span class="p">:</span> <span class="s2">&#34;assistant&#34;</span><span class="p">,</span>
+            <span class="s2">&#34;content&#34;</span><span class="p">:</span> <span class="s2">&#34;抱歉，系统出现错误，请稍后再试。&#34;</span>
+        <span class="p">})</span>
+</code></pre></div><h3 id="系统启动与配置">系统启动与配置</h3>
+<p>主程序通过以下代码启动系统：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">model_type</span> <span class="o">=</span> <span class="n">ModelType</span><span class="o">.</span><span class="n">QWEN</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="s2">&#34;conf/config.yml&#34;</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">chromadb</span> <span class="o">=</span> <span class="n">ChromaDB</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">model_type</span><span class="p">)</span>
+    <span class="n">document_processor</span> <span class="o">=</span> <span class="n">Knowledge</span><span class="p">()</span>
+    <span class="n">system</span> <span class="o">=</span> <span class="n">KnowledgeBaseSystem</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">qwen_llm</span><span class="p">(),</span> <span class="n">chromadb</span><span class="p">,</span> <span class="n">document_processor</span><span class="p">)</span>
+    <span class="n">system</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div><p>这里使用了 Qwen 模型作为基础大语言模型，通过配置文件进行系统参数的管理，并初始化了向量数据库和文档处理器。</p>
+<h2 id="代码示例">代码示例</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+
+<span class="kn">import</span> <span class="nn">streamlit</span> <span class="k">as</span> <span class="nn">st</span>
+<span class="kn">from</span> <span class="nn">langchain.agents</span> <span class="kn">import</span> <span class="n">AgentExecutor</span><span class="p">,</span> <span class="n">create_react_agent</span>
+<span class="kn">from</span> <span class="nn">langchain.memory</span> <span class="kn">import</span> <span class="n">ConversationBufferMemory</span>
+<span class="kn">from</span> <span class="nn">langchain_community.callbacks</span> <span class="kn">import</span> <span class="n">StreamlitCallbackHandler</span>
+<span class="kn">from</span> <span class="nn">langchain_community.chat_message_histories</span> <span class="kn">import</span> <span class="n">StreamlitChatMessageHistory</span>
+<span class="kn">from</span> <span class="nn">langchain_core.prompts</span> <span class="kn">import</span> <span class="n">PromptTemplate</span>
+<span class="kn">from</span> <span class="nn">langchain_core.tools</span> <span class="kn">import</span> <span class="n">create_retriever_tool</span>
+
+<span class="kn">from</span> <span class="nn">DB.chroma</span> <span class="kn">import</span> <span class="n">ChromaDB</span>
+<span class="kn">from</span> <span class="nn">common.modeCommon</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">config.config</span> <span class="kn">import</span> <span class="n">Config</span>
+<span class="kn">from</span> <span class="nn">enums.model_enums</span> <span class="kn">import</span> <span class="n">ModelType</span>
+<span class="kn">from</span> <span class="nn">knowledge</span> <span class="kn">import</span> <span class="n">Knowledge</span>
+
+
+<span class="k">class</span> <span class="nc">KnowledgeBaseSystem</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">chromadb</span><span class="p">:</span> <span class="n">ChromaDB</span><span class="p">,</span> <span class="n">document_processor</span><span class="p">:</span> <span class="n">Knowledge</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chromadb</span> <span class="o">=</span> <span class="n">chromadb</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">document_processor</span> <span class="o">=</span> <span class="n">document_processor</span>
+
+    <span class="k">def</span> <span class="nf">setup_page_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s2">&#34;&#34;&#34;设置页面配置&#34;&#34;&#34;</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">set_page_config</span><span class="p">(</span>
+            <span class="n">page_title</span><span class="o">=</span><span class="s2">&#34;智能知识检索系统&#34;</span><span class="p">,</span>
+            <span class="n">layout</span><span class="o">=</span><span class="s2">&#34;wide&#34;</span><span class="p">,</span>
+            <span class="n">page_icon</span><span class="o">=</span><span class="s2">&#34;📚&#34;</span>
+        <span class="p">)</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&#34;📚 智能知识检索系统&#34;</span><span class="p">)</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">sidebar</span><span class="o">.</span><span class="n">header</span><span class="p">(</span><span class="s2">&#34;文档上传&#34;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&#34;messages&#34;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span> <span class="ow">or</span> <span class="n">st</span><span class="o">.</span><span class="n">sidebar</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="s2">&#34;清空聊天记录&#34;</span><span class="p">):</span>
+            <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="p">[</span><span class="s2">&#34;messages&#34;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">&#34;role&#34;</span><span class="p">:</span> <span class="s2">&#34;assistant&#34;</span><span class="p">,</span>
+                    <span class="s2">&#34;content&#34;</span><span class="p">:</span> <span class="s2">&#34;您好，我是您的知识检索助手，请问有什么可以帮助您的？&#34;</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+
+
+    <span class="k">def</span> <span class="nf">display_chat_history</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s2">&#34;&#34;&#34;显示聊天历史&#34;&#34;&#34;</span>
+        <span class="c1"># 显示聊天历史</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">messages</span><span class="p">:</span>
+            <span class="n">st</span><span class="o">.</span><span class="n">chat_message</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="s2">&#34;role&#34;</span><span class="p">])</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="s2">&#34;content&#34;</span><span class="p">])</span>
+
+
+    <span class="k">def</span> <span class="nf">handle_file_upload</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s2">&#34;&#34;&#34;处理文件上传&#34;&#34;&#34;</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">sidebar</span><span class="o">.</span><span class="n">file_uploader</span><span class="p">(</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">&#34;支持上传TXT、PDF、Word、Excel、PPT和图片文件，单个文件最大200MB&#34;</span><span class="p">,</span>  <span class="c1"># 主标签改为中文</span>
+            <span class="nb">type</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;txt&#34;</span><span class="p">,</span> <span class="s2">&#34;pdf&#34;</span><span class="p">,</span> <span class="s2">&#34;docx&#34;</span><span class="p">,</span> <span class="s2">&#34;xlsx&#34;</span><span class="p">,</span> <span class="s2">&#34;pptx&#34;</span><span class="p">,</span> <span class="s2">&#34;png&#34;</span><span class="p">,</span> <span class="s2">&#34;jpg&#34;</span><span class="p">,</span> <span class="s2">&#34;jpeg&#34;</span><span class="p">],</span>  <span class="c1"># 支持的文件类型</span>
+            <span class="n">accept_multiple_files</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># 允许上传多个文件</span>
+            <span class="c1"># help=&#34;支持上传TXT、PDF、Word、Excel、PPT和图片文件，单个文件最大200MB&#34;  # 帮助文本改为中文</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">files</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">file_type</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&#34;.&#34;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;.</span><span class="si">{</span><span class="n">file_type</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tmp_file</span><span class="p">:</span>
+                    <span class="n">tmp_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
+                    <span class="n">tmp_file_path</span> <span class="o">=</span> <span class="n">tmp_file</span><span class="o">.</span><span class="n">name</span>
+
+                <span class="k">with</span> <span class="n">st</span><span class="o">.</span><span class="n">spinner</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;正在处理 </span><span class="si">{</span><span class="n">file</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">...&#34;</span><span class="p">):</span>
+                    <span class="n">documents</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">document_processor</span><span class="o">.</span><span class="n">load_files</span><span class="p">([</span><span class="n">tmp_file_path</span><span class="p">],</span> <span class="n">file_type</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">chromadb</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span>
+                    <span class="n">st</span><span class="o">.</span><span class="n">sidebar</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;</span><span class="si">{</span><span class="n">file</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> 上传成功&#34;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">st</span><span class="o">.</span><span class="n">sidebar</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;处理 </span><span class="si">{</span><span class="n">file</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> 时出错: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tmp_file_path</span><span class="p">):</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tmp_file_path</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">create_agent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AgentExecutor</span><span class="p">:</span>
+        <span class="s2">&#34;&#34;&#34;创建代理执行器&#34;&#34;&#34;</span>
+        <span class="n">retriever</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chromadb</span><span class="o">.</span><span class="n">as_retriever</span><span class="p">(</span><span class="n">search_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&#34;k&#34;</span><span class="p">:</span> <span class="mi">3</span><span class="p">})</span>
+
+        <span class="n">tool</span> <span class="o">=</span> <span class="n">create_retriever_tool</span><span class="p">(</span>
+            <span class="n">retriever</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&#34;知识库检索&#34;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&#34;从知识库中检索相关信息来回答问题&#34;</span>
+        <span class="p">)</span>
+
+        <span class="n">msgs</span> <span class="o">=</span> <span class="n">StreamlitChatMessageHistory</span><span class="p">()</span>
+        <span class="n">memory</span> <span class="o">=</span> <span class="n">ConversationBufferMemory</span><span class="p">(</span>
+            <span class="n">chat_memory</span><span class="o">=</span><span class="n">msgs</span><span class="p">,</span>
+            <span class="n">return_messages</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">memory_key</span><span class="o">=</span><span class="s2">&#34;chat_history&#34;</span><span class="p">,</span>
+            <span class="n">output_key</span><span class="o">=</span><span class="s2">&#34;output&#34;</span>
+        <span class="p">)</span>
+
+        <span class="n">instructions</span> <span class="o">=</span> <span class="s2">&#34;&#34;&#34;
+</span><span class="s2">           您是一个设计用于查询检索知识库并回答问题的代理;
+</span><span class="s2">           您可以使用检索工具，并基于检索内容来回答问题;
+</span><span class="s2">           您可以通过不查询文档就知道答案，但您仍然需要通过查询文档来获取答案;
+</span><span class="s2">           如果您从文档中找不到任何信息用于回答问题，则只需返回“抱歉，这个问题我还不知道”作为答案。
+</span><span class="s2">           &#34;&#34;&#34;</span>
+        <span class="c1"># 基础提示模板</span>
+        <span class="n">base_prompt_template</span> <span class="o">=</span> <span class="s2">&#34;&#34;&#34;
+</span><span class="s2">           </span><span class="si">{instructions}</span><span class="s2">
+</span><span class="s2">
+</span><span class="s2">           TOOLS:
+</span><span class="s2">           ------
+</span><span class="s2">           You have access to the following tools:
+</span><span class="s2">           </span><span class="si">{tools}</span><span class="s2">
+</span><span class="s2">
+</span><span class="s2">           To use a tool,please use the following format:
+</span><span class="s2">
+</span><span class="s2">           Thought: Do I need to use a tool? Yes
+</span><span class="s2">           Action: the action to take,should be one of [</span><span class="si">{tool_names}</span><span class="s2">]
+</span><span class="s2">           Action Input: </span><span class="si">{input}</span><span class="s2">
+</span><span class="s2">           Observations: the result of the action
+</span><span class="s2">
+</span><span class="s2">           When you have a response to say to the Human,or if you do not need to use a tool,you MUST use the format:
+</span><span class="s2">           Thought: Do I need to use a tool: No
+</span><span class="s2">           Final Answer:[your response here]
+</span><span class="s2">
+</span><span class="s2">           Begin!
+</span><span class="s2">
+</span><span class="s2">           Previous conversation history:
+</span><span class="s2">           </span><span class="si">{chat_history}</span><span class="s2">
+</span><span class="s2">
+</span><span class="s2">           New input:</span><span class="si">{input}</span><span class="s2">
+</span><span class="s2">           </span><span class="si">{agent_scratchpad}</span><span class="s2">
+</span><span class="s2">           &#34;&#34;&#34;</span>
+        <span class="c1"># 创建基础提示词模板</span>
+        <span class="n">base_prompt</span> <span class="o">=</span> <span class="n">PromptTemplate</span><span class="o">.</span><span class="n">from_template</span><span class="p">(</span>
+            <span class="n">template</span><span class="o">=</span><span class="n">base_prompt_template</span>
+        <span class="p">)</span>
+        <span class="c1"># 创建部分填充的提示词模板</span>
+        <span class="n">prompt</span> <span class="o">=</span> <span class="n">base_prompt</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+            <span class="n">instructions</span><span class="o">=</span><span class="n">instructions</span>
+        <span class="p">)</span>
+        <span class="n">agent</span> <span class="o">=</span> <span class="n">create_react_agent</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+            <span class="p">[</span><span class="n">tool</span><span class="p">],</span>
+            <span class="n">prompt</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">AgentExecutor</span><span class="p">(</span>
+            <span class="n">agent</span><span class="o">=</span><span class="n">agent</span><span class="p">,</span>
+            <span class="n">tools</span><span class="o">=</span><span class="p">[</span><span class="n">tool</span><span class="p">],</span>
+            <span class="n">memory</span><span class="o">=</span><span class="n">memory</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">handle_parsing_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">max_iterations</span><span class="o">=</span><span class="mi">5</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">handle_user_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent_executor</span><span class="p">:</span> <span class="n">AgentExecutor</span><span class="p">):</span>
+        <span class="s2">&#34;&#34;&#34;处理用户查询&#34;&#34;&#34;</span>
+        <span class="n">user_query</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">chat_input</span><span class="p">(</span><span class="n">placeholder</span><span class="o">=</span><span class="s2">&#34;请输入您的问题...&#34;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">user_query</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&#34;role&#34;</span><span class="p">:</span> <span class="s2">&#34;user&#34;</span><span class="p">,</span> <span class="s2">&#34;content&#34;</span><span class="p">:</span> <span class="n">user_query</span><span class="p">})</span>
+        <span class="n">st</span><span class="o">.</span><span class="n">chat_message</span><span class="p">(</span><span class="s2">&#34;user&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">user_query</span><span class="p">)</span>
+
+
+        <span class="k">with</span> <span class="n">st</span><span class="o">.</span><span class="n">chat_message</span><span class="p">(</span><span class="s2">&#34;assistant&#34;</span><span class="p">):</span>
+            <span class="n">st_cb</span> <span class="o">=</span> <span class="n">StreamlitCallbackHandler</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">container</span><span class="p">())</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">agent_executor</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span>
+                <span class="p">{</span><span class="s2">&#34;input&#34;</span><span class="p">:</span> <span class="n">user_query</span><span class="p">},</span>
+                <span class="p">{</span><span class="s2">&#34;callbacks&#34;</span><span class="p">:</span> <span class="p">[</span><span class="n">st_cb</span><span class="p">]}</span>
+            <span class="p">)</span>
+
+            <span class="n">answer</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&#34;output&#34;</span><span class="p">,</span> <span class="s2">&#34;抱歉，我无法回答这个问题。&#34;</span><span class="p">)</span>
+            <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&#34;role&#34;</span><span class="p">:</span> <span class="s2">&#34;assistant&#34;</span><span class="p">,</span> <span class="s2">&#34;content&#34;</span><span class="p">:</span> <span class="n">answer</span><span class="p">})</span>
+            <span class="n">st</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">answer</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s2">&#34;&#34;&#34;运行知识检索系统&#34;&#34;&#34;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_page_config</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">display_chat_history</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">handle_file_upload</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">agent_executor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_agent</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">handle_user_query</span><span class="p">(</span><span class="n">agent_executor</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">st</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;系统错误: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+            <span class="n">st</span><span class="o">.</span><span class="n">session_state</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s2">&#34;role&#34;</span><span class="p">:</span> <span class="s2">&#34;assistant&#34;</span><span class="p">,</span>
+                <span class="s2">&#34;content&#34;</span><span class="p">:</span> <span class="s2">&#34;抱歉，系统出现错误，请稍后再试。&#34;</span>
+            <span class="p">})</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">model_type</span> <span class="o">=</span> <span class="n">ModelType</span><span class="o">.</span><span class="n">QWEN</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="s2">&#34;conf/config.yml&#34;</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">chromadb</span> <span class="o">=</span> <span class="n">ChromaDB</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">model_type</span><span class="p">)</span>
+    <span class="n">document_processor</span> <span class="o">=</span> <span class="n">Knowledge</span><span class="p">()</span>
+    <span class="n">system</span> <span class="o">=</span> <span class="n">KnowledgeBaseSystem</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">qwen_llm</span><span class="p">(),</span> <span class="n">chromadb</span><span class="p">,</span> <span class="n">document_processor</span><span class="p">)</span>
+    <span class="n">system</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+</code></pre></div><h2 id="代码仓库路径">代码仓库路径</h2>
+<p><a class="link" href="https://github.com/zcj-git520/AiLargeModel"  target="_blank" rel="noopener"
+    >zcj-git520/AiLargeModel: 大模型应用开发学习</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/img.91bf08890296485b5b595123bb1b9c01_hufef087fddda0fa8512a3bf0acfa96939_57649_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-kb8IiQKWSFtbWVEjuxucAQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">检索增强生成（RAG）</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/langchain-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%B7%A5%E5%85%B7/">
+        
+        
+            <div class="article-image">
+                <img src="/p/langchain-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%B7%A5%E5%85%B7/1.9e68f053768f5d39127f08c30ecf0389_hudd76169eaa14e4b46869a65a4bae705b_986909_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-nmjwU3aPXTkSfwjDDs8DiQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LangChain 自定义工具</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/langchain-%E5%A4%9A%E6%A8%A1%E6%80%81%E8%BE%93%E5%85%A5%E5%A4%84%E7%90%86/">
+        
+        
+            <div class="article-image">
+                <img src="/p/langchain-%E5%A4%9A%E6%A8%A1%E6%80%81%E8%BE%93%E5%85%A5%E5%A4%84%E7%90%86/1.dc09a51c545b2a001eb6625aaa3fcbed_hu4c351f786f8fd3fbb31415493398512f_844896_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-3AmlHFRbKgAetmJaqj/L7Q==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LangChain 多模态输入处理</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/lcel%E4%B8%8Elangchain%E6%B5%81%E5%BC%8F%E5%A4%84%E7%90%86%E6%8C%87%E5%8D%97/">
+        
+        
+            <div class="article-image">
+                <img src="/p/lcel%E4%B8%8Elangchain%E6%B5%81%E5%BC%8F%E5%A4%84%E7%90%86%E6%8C%87%E5%8D%97/1.ab01ecfb616c2d5b5b8199e51dc472c0_huc0a8b95b33d8d6a656995fb54ca12c83_153854_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-qwHs&#43;2FsLVtbgZnlHcRywA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LCEL与LangChain流式处理指南</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/langserve/">
+        
+        
+            <div class="article-image">
+                <img src="/p/langserve/1.01f867d708bf9a66a530826882cee99a_hufacbddd1a7dc2ecd8ed6fcb829415c77_578046_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-Afhn1wi/mmalMIJogs7pmg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LangServe</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#系统架构概览">系统架构概览</a></li>
+    <li><a href="#核心代码解析">核心代码解析</a>
+      <ol>
+        <li><a href="#类结构设计">类结构设计</a></li>
+        <li><a href="#页面配置与初始化">页面配置与初始化</a></li>
+        <li><a href="#文档上传与处理">文档上传与处理</a></li>
+        <li><a href="#智能问答代理的创建">智能问答代理的创建</a></li>
+        <li><a href="#聊天交互处理">聊天交互处理</a></li>
+        <li><a href="#系统运行入口">系统运行入口</a></li>
+        <li><a href="#系统启动与配置">系统启动与配置</a></li>
+      </ol>
+    </li>
+    <li><a href="#代码示例">代码示例</a></li>
+    <li><a href="#代码仓库路径">代码仓库路径</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

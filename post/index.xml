@@ -6,7 +6,37 @@
     <description>Recent content in Posts on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Tue, 25 Mar 2025 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 02 Jun 2025 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>智能知识检索系统</title>
+      <link>https://zcj-git520.github.io/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/</link>
+      <pubDate>Mon, 02 Jun 2025 22:00:38 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/</guid>
+      <description>构建智能知识检索系统：基于 Streamlit 与 LangChain 的实现方案 在信息爆炸的时代，如何高效管理和检索文档中的知识成为一项重要需求。本文将介绍一个基于 Streamlit 和 LangChain 构建的智能知识检索系统，该系统支持多种格式文档的上传、解析与检索，能够通过自然语言交互为用户提供精准的知识问答服务。
+系统架构概览 该智能知识检索系统主要由以下几个核心模块构成：
+ 用户界面层：基于 Streamlit 构建的 Web 交互界面 文档处理层：负责解析多种格式的文档内容 向量数据库层：使用 ChromaDB 存储文档向量，支持高效检索 智能问答层：基于 LangChain 的 Agent 机制实现问答逻辑  系统的核心流程是：用户上传文档 → 系统解析并存储文档向量 → 用户提问 → 系统检索相关文档 → 生成回答。
+
+核心代码解析 类结构设计 系统的核心功能封装在KnowledgeBaseSystem类中，该类通过组合模式整合了模型、数据库和文档处理器：
+class KnowledgeBaseSystem: def __init__(self, model, chromadb: ChromaDB, document_processor: Knowledge): self.chromadb = chromadb self.model = model self.document_processor = document_processor 页面配置与初始化 setup_page_config方法负责初始化 Streamlit 页面配置和会话状态：
+def setup_page_config(self): &amp;#34;&amp;#34;&amp;#34;设置页面配置&amp;#34;&amp;#34;&amp;#34; st.set_page_config( page_title=&amp;#34;智能知识检索系统&amp;#34;, layout=&amp;#34;wide&amp;#34;, page_icon=&amp;#34;📚&amp;#34; ) st.</description>
+    </item>
+    
+    <item>
+      <title>检索增强生成（RAG）</title>
+      <link>https://zcj-git520.github.io/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/</link>
+      <pubDate>Sun, 25 May 2025 22:00:38 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/</guid>
+      <description>检索增强生成（RAG）：从原理到工程实践的深度解析 在大语言模型（LLM）快速迭代的今天，如何让模型既具备通用智能，又能精准调用特定领域知识，成为企业级 AI 应用的核心挑战。检索增强生成（Retrieval-Augmented Generation，RAG）技术通过 &amp;ldquo;检索 + 生成&amp;rdquo; 的协同模式，成功解决了纯 LLM 在知识时效性、准确性和领域适配性上的短板，成为连接通用 AI 与垂直业务的关键桥梁。本文将从技术原理出发，结合实战代码，全面剖析 RAG 的实现路径与工程实践。
+一、RAG 的基本概念和原理 RAG 技术的核心思想源于信息检索与自然语言生成的融合：在生成回答前，先从外部知识库中检索与问题相关的事实性信息，再让模型基于这些 &amp;ldquo;证据&amp;rdquo; 进行推理生成。这种机制将 LLM 的 &amp;ldquo;闭卷考试&amp;rdquo; 模式转变为 &amp;ldquo;开卷考试&amp;rdquo;，从根本上解决了三个核心问题：
+ 知识时效性局限：LLM 训练数据存在截止日期，无法应对动态更新的业务知识（如 2025 年的新法规、企业内部文档更新）； 幻觉生成风险：模型可能编造不存在的事实（如虚构产品参数、学术引用），在医疗、法律等领域可能引发严重后果； 领域知识壁垒：通用模型对专业领域（如网络安全、金融风控）的深度知识掌握不足，难以生成精准回答。  从技术本质看，RAG 是一种混合增强架构：通过检索模块将外部知识引入生成过程，形成 &amp;ldquo;知识输入 - 模型推理 - 结果输出&amp;rdquo; 的闭环。这种架构既保留了 LLM 的上下文理解与自然语言生成能力，又通过外部知识库实现了知识的可控更新与精准调用。
+流程图
+可以加密文本块和向量（向量也可能泄露原始语义），从而使用密文进行存储与网络传输。对于向量加密需采用特殊加密算法使得加密后向量仍能进行相似度检索。 加密流程图
+二、RAG 的工作流程 一个完整的 RAG 系统可分为离线知识库构建与在线问答交互两大阶段，包含五个核心步骤：
+1. 离线知识库构建  文档采集：收集结构化（如 Excel 表格）、半结构化（如 PDF 手册）和非结构化（如图片、音频转文本）数据； 文档预处理：对原始数据进行清洗（去噪、格式统一）、拆分（按语义单元切割长文档）； 向量编码：通过嵌入模型（Embedding Model）将文本片段转化为高维向量，捕捉语义特征； 向量存储：将向量及关联文本存入向量数据库，建立可检索的知识索引。</description>
+    </item>
+    
     <item>
       <title>LangChain 自定义工具</title>
       <link>https://zcj-git520.github.io/p/langchain-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%B7%A5%E5%85%B7/</link>
