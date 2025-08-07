@@ -6,7 +6,33 @@
     <description>Recent content in 知识学习 on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Mon, 02 Jun 2025 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/computer/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 25 Jun 2025 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/computer/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>LangGraph预构建Agent</title>
+      <link>https://zcj-git520.github.io/p/langgraph%E9%A2%84%E6%9E%84%E5%BB%BAagent/</link>
+      <pubDate>Wed, 25 Jun 2025 22:00:38 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/langgraph%E9%A2%84%E6%9E%84%E5%BB%BAagent/</guid>
+      <description>LangGraph 预构建 Agent 智能代理（Agent）系统已成为连接用户与复杂功能的重要桥梁。LangGraph 作为一个强大的框架，为开发者提供了构建健壮、可投入生产的代理系统的丰富工具。
+一、Agent 核心组件解析 LangGraph 预构建的 Agent 由三个核心部分构成，它们协同工作，使 Agent 能够理解用户需求、执行任务并返回结果：
+1.大型语言模型（LLM）
+这是 Agent 的 &amp;ldquo;大脑&amp;rdquo;，负责理解文本、生成响应并决定下一步行动。LLM 在一个循环中运行：每次迭代中选择工具、提供输入、接收结果（观察），并根据观察指导下一个动作，直到收集到足够信息响应用户。
+2.工具（Tools）
+工具是 Agent 可以调用的函数或 API，用于执行特定任务。例如：
+  网络搜索工具
+  数据库查询工具
+  第三方服务调用工具（如天气查询、IP 解析等）
+  工具使 Agent 能够突破自身知识局限，获取实时信息或执行复杂操作。
+3.提示（Prompt）
+提示是指导 LLM 行为的文本指令。它定义了 Agent 的角色、目标和行为准则。例如：&amp;ldquo;你是一个智能小助手，能够使用工具帮助用户查询天气和城市信息&amp;rdquo;。
+二、LangGraph 的核心优势 LangGraph 为构建 Agent 系统提供了多项关键功能，使其在实际生产环境中表现出色：
+  内存集成：同时支持短期（会话内）和长期（跨会话）内存，实现有状态行为，让 Agent 能够记住历史对话和用户偏好。
+  人在回路控制：允许执行过程在任何点暂停，等待人工反馈或审批，支持异步干预，这对于需要人工确认的敏感操作至关重要。
+  流式传输支持：能够实时流式传输 Agent 状态、模型输出和工具结果，提升用户体验。
+  部署工具：提供完整的测试、调试和部署工具链，简化从开发到生产的流程。
+  三、创建和配置 Agent 使用 LangGraph 创建预构建 Agent 非常简单，以下是基本步骤：</description>
+    </item>
+    
     <item>
       <title>智能知识检索系统</title>
       <link>https://zcj-git520.github.io/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/</link>

@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='LangGraph 预构建 Agent 智能代理（Agent）系统已成为连接用户与复杂功能的重要桥梁。LangGraph 作为一个强大的框架，为开发者提供了构建健壮、可投入生产的代理系统的丰富工具。
+一、Agent 核心组件解析 LangGraph 预构建的 Agent 由三个核心部分构成，它们协同工作，使 Agent 能够理解用户需求、执行任务并返回结果：
+1.大型语言模型（LLM）
+这是 Agent 的 &amp;ldquo;大脑&amp;rdquo;，负责理解文本、生成响应并决定下一步行动。LLM 在一个循环中运行：每次迭代中选择工具、提供输入、接收结果（观察），并根据观察指导下一个动作，直到收集到足够信息响应用户。
+2.工具（Tools）
+工具是 Agent 可以调用的函数或 API，用于执行特定任务。例如：
+  网络搜索工具
+  数据库查询工具
+  第三方服务调用工具（如天气查询、IP 解析等）
+  工具使 Agent 能够突破自身知识局限，获取实时信息或执行复杂操作。
+3.提示（Prompt）
+提示是指导 LLM 行为的文本指令。它定义了 Agent 的角色、目标和行为准则。例如：&amp;ldquo;你是一个智能小助手，能够使用工具帮助用户查询天气和城市信息&amp;rdquo;。
+二、LangGraph 的核心优势 LangGraph 为构建 Agent 系统提供了多项关键功能，使其在实际生产环境中表现出色：
+  内存集成：同时支持短期（会话内）和长期（跨会话）内存，实现有状态行为，让 Agent 能够记住历史对话和用户偏好。
+  人在回路控制：允许执行过程在任何点暂停，等待人工反馈或审批，支持异步干预，这对于需要人工确认的敏感操作至关重要。
+  流式传输支持：能够实时流式传输 Agent 状态、模型输出和工具结果，提升用户体验。
+  部署工具：提供完整的测试、调试和部署工具链，简化从开发到生产的流程。
+  三、创建和配置 Agent 使用 LangGraph 创建预构建 Agent 非常简单，以下是基本步骤：'><title>LangGraph预构建Agent</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/langgraph%E9%A2%84%E6%9E%84%E5%BB%BAagent/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='LangGraph预构建Agent'>
+<meta property='og:description' content='LangGraph 预构建 Agent 智能代理（Agent）系统已成为连接用户与复杂功能的重要桥梁。LangGraph 作为一个强大的框架，为开发者提供了构建健壮、可投入生产的代理系统的丰富工具。
+一、Agent 核心组件解析 LangGraph 预构建的 Agent 由三个核心部分构成，它们协同工作，使 Agent 能够理解用户需求、执行任务并返回结果：
+1.大型语言模型（LLM）
+这是 Agent 的 &amp;ldquo;大脑&amp;rdquo;，负责理解文本、生成响应并决定下一步行动。LLM 在一个循环中运行：每次迭代中选择工具、提供输入、接收结果（观察），并根据观察指导下一个动作，直到收集到足够信息响应用户。
+2.工具（Tools）
+工具是 Agent 可以调用的函数或 API，用于执行特定任务。例如：
+  网络搜索工具
+  数据库查询工具
+  第三方服务调用工具（如天气查询、IP 解析等）
+  工具使 Agent 能够突破自身知识局限，获取实时信息或执行复杂操作。
+3.提示（Prompt）
+提示是指导 LLM 行为的文本指令。它定义了 Agent 的角色、目标和行为准则。例如：&amp;ldquo;你是一个智能小助手，能够使用工具帮助用户查询天气和城市信息&amp;rdquo;。
+二、LangGraph 的核心优势 LangGraph 为构建 Agent 系统提供了多项关键功能，使其在实际生产环境中表现出色：
+  内存集成：同时支持短期（会话内）和长期（跨会话）内存，实现有状态行为，让 Agent 能够记住历史对话和用户偏好。
+  人在回路控制：允许执行过程在任何点暂停，等待人工反馈或审批，支持异步干预，这对于需要人工确认的敏感操作至关重要。
+  流式传输支持：能够实时流式传输 Agent 状态、模型输出和工具结果，提升用户体验。
+  部署工具：提供完整的测试、调试和部署工具链，简化从开发到生产的流程。
+  三、创建和配置 Agent 使用 LangGraph 创建预构建 Agent 非常简单，以下是基本步骤：'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/langgraph%E9%A2%84%E6%9E%84%E5%BB%BAagent/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-06-25T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2025-06-25T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/langgraph%E9%A2%84%E6%9E%84%E5%BB%BAagent/1.png' />
+<meta name="twitter:title" content="LangGraph预构建Agent">
+<meta name="twitter:description" content="LangGraph 预构建 Agent 智能代理（Agent）系统已成为连接用户与复杂功能的重要桥梁。LangGraph 作为一个强大的框架，为开发者提供了构建健壮、可投入生产的代理系统的丰富工具。
+一、Agent 核心组件解析 LangGraph 预构建的 Agent 由三个核心部分构成，它们协同工作，使 Agent 能够理解用户需求、执行任务并返回结果：
+1.大型语言模型（LLM）
+这是 Agent 的 &amp;ldquo;大脑&amp;rdquo;，负责理解文本、生成响应并决定下一步行动。LLM 在一个循环中运行：每次迭代中选择工具、提供输入、接收结果（观察），并根据观察指导下一个动作，直到收集到足够信息响应用户。
+2.工具（Tools）
+工具是 Agent 可以调用的函数或 API，用于执行特定任务。例如：
+  网络搜索工具
+  数据库查询工具
+  第三方服务调用工具（如天气查询、IP 解析等）
+  工具使 Agent 能够突破自身知识局限，获取实时信息或执行复杂操作。
+3.提示（Prompt）
+提示是指导 LLM 行为的文本指令。它定义了 Agent 的角色、目标和行为准则。例如：&amp;ldquo;你是一个智能小助手，能够使用工具帮助用户查询天气和城市信息&amp;rdquo;。
+二、LangGraph 的核心优势 LangGraph 为构建 Agent 系统提供了多项关键功能，使其在实际生产环境中表现出色：
+  内存集成：同时支持短期（会话内）和长期（跨会话）内存，实现有状态行为，让 Agent 能够记住历史对话和用户偏好。
+  人在回路控制：允许执行过程在任何点暂停，等待人工反馈或审批，支持异步干预，这对于需要人工确认的敏感操作至关重要。
+  流式传输支持：能够实时流式传输 Agent 状态、模型输出和工具结果，提升用户体验。
+  部署工具：提供完整的测试、调试和部署工具链，简化从开发到生产的流程。
+  三、创建和配置 Agent 使用 LangGraph 创建预构建 Agent 非常简单，以下是基本步骤："><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/langgraph%E9%A2%84%E6%9E%84%E5%BB%BAagent/1.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/langgraph%E9%A2%84%E6%9E%84%E5%BB%BAagent/">
+                <img src="/p/langgraph%E9%A2%84%E6%9E%84%E5%BB%BAagent/1_hufc87676f5c03c42ba4fd49855ef25156_1205177_800x0_resize_box_3.png"
+                        srcset="/p/langgraph%E9%A2%84%E6%9E%84%E5%BB%BAagent/1_hufc87676f5c03c42ba4fd49855ef25156_1205177_800x0_resize_box_3.png 800w, /p/langgraph%E9%A2%84%E6%9E%84%E5%BB%BAagent/1_hufc87676f5c03c42ba4fd49855ef25156_1205177_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="542" 
+                        loading="lazy"
+                        alt="Featured image of post LangGraph预构建Agent" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/computer/" style="background-color: #2a9d8f; color: #fff;">
+                知识学习
+            </a>
+        
+            <a href="/categories/ai/" style="background-color: #2a9d8f; color: #fff;">
+                AI
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/langgraph%E9%A2%84%E6%9E%84%E5%BB%BAagent/">LangGraph预构建Agent</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jun 25, 2025</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 3 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h1 id="langgraph-预构建-agent">LangGraph 预构建 Agent</h1>
+<p>智能代理（Agent）系统已成为连接用户与复杂功能的重要桥梁。LangGraph 作为一个强大的框架，为开发者提供了构建健壮、可投入生产的代理系统的丰富工具。</p>
+<h2 id="一agent-核心组件解析">一、Agent 核心组件解析</h2>
+<p>LangGraph 预构建的 Agent 由三个核心部分构成，它们协同工作，使 Agent 能够理解用户需求、执行任务并返回结果：</p>
+<p>1.<strong>大型语言模型（LLM）</strong></p>
+<p>这是 Agent 的 &ldquo;大脑&rdquo;，负责理解文本、生成响应并决定下一步行动。LLM 在一个循环中运行：每次迭代中选择工具、提供输入、接收结果（观察），并根据观察指导下一个动作，直到收集到足够信息响应用户。</p>
+<p>2.<strong>工具（Tools）</strong></p>
+<p>工具是 Agent 可以调用的函数或 API，用于执行特定任务。例如：</p>
+<ul>
+<li>
+<p>网络搜索工具</p>
+</li>
+<li>
+<p>数据库查询工具</p>
+</li>
+<li>
+<p>第三方服务调用工具（如天气查询、IP 解析等）</p>
+</li>
+</ul>
+<p>工具使 Agent 能够突破自身知识局限，获取实时信息或执行复杂操作。</p>
+<p>3.<strong>提示（Prompt）</strong></p>
+<p>提示是指导 LLM 行为的文本指令。它定义了 Agent 的角色、目标和行为准则。例如：&ldquo;你是一个智能小助手，能够使用工具帮助用户查询天气和城市信息&rdquo;。</p>
+<h2 id="二langgraph-的核心优势">二、LangGraph 的核心优势</h2>
+<p>LangGraph 为构建 Agent 系统提供了多项关键功能，使其在实际生产环境中表现出色：</p>
+<ul>
+<li>
+<p><strong>内存集成</strong>：同时支持短期（会话内）和长期（跨会话）内存，实现有状态行为，让 Agent 能够记住历史对话和用户偏好。</p>
+</li>
+<li>
+<p><strong>人在回路控制</strong>：允许执行过程在任何点暂停，等待人工反馈或审批，支持异步干预，这对于需要人工确认的敏感操作至关重要。</p>
+</li>
+<li>
+<p><strong>流式传输支持</strong>：能够实时流式传输 Agent 状态、模型输出和工具结果，提升用户体验。</p>
+</li>
+<li>
+<p><strong>部署工具</strong>：提供完整的测试、调试和部署工具链，简化从开发到生产的流程。</p>
+</li>
+</ul>
+<h2 id="三创建和配置-agent">三、创建和配置 Agent</h2>
+<p>使用 LangGraph 创建预构建 Agent 非常简单，以下是基本步骤：</p>
+<h3 id="1-定义工具">1. 定义工具</h3>
+<p>首先，需要定义 Agent 可以使用的工具。例如，我们可以创建 IP 解析、天气查询和城市搜索工具：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="n">tools</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">ip_to_city_tool</span><span class="p">,</span>  <span class="c1"># 解析IP获取城市</span>
+    <span class="n">search_weather_tool</span><span class="p">,</span>  <span class="c1"># 查询天气</span>
+    <span class="n">search_city_tool</span>  <span class="c1"># 搜索城市信息</span>
+<span class="p">]</span>
+</code></pre></div><h3 id="2-创建提示">2. 创建提示</h3>
+<p>定义指导 Agent 行为的提示：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">langchain_core.prompts</span> <span class="kn">import</span> <span class="n">PromptTemplate</span>
+
+<span class="n">prompt</span> <span class="o">=</span> <span class="n">PromptTemplate</span><span class="p">(</span>
+    <span class="n">input_variables</span><span class="o">=</span><span class="p">[],</span>
+    <span class="n">template</span><span class="o">=</span><span class="s2">&#34;你是一个智能小助手，能够帮助用户查询IP对应的城市以及城市的天气信息&#34;</span>
+<span class="p">)</span>
+</code></pre></div><h3 id="3-初始化-agent">3. 初始化 Agent</h3>
+<p>使用 create_react_agent 函数创建 Agent：</p>
+<pre tabindex="0"><code>from langgraph.prebuilt import create_react_agent
+
+agent = create_react_agent(
+    model=model.qwen_llm(),  # 配置的语言模型
+    tools=tools,  # 上面定义的工具集
+    prompt=prompt,  # 提示模板
+    parallel_tool_calls=False  # 禁用并行工具调用
+)
+</code></pre><h2 id="四运行-agent-的两种模式">四、运行 Agent 的两种模式</h2>
+<p>LangGraph Agent 支持同步和异步两种运行模式，以适应不同的应用场景：</p>
+<h3 id="1-同步模式">1. 同步模式</h3>
+<p>使用 .invoke() 或 .stream() 方法：</p>
+<pre tabindex="0"><code># 同步调用
+result = agent.invoke({
+    &quot;messages&quot;: [HumanMessage(content=&quot;你好，请问杭州的天气如何？&quot;)]
+})
+print(result)
+</code></pre><h3 id="2-异步模式">2. 异步模式</h3>
+<p>使用 await .ainvoke() 或 async for 与 .astream()：</p>
+<pre tabindex="0"><code># 异步调用
+async for event in agent.astream({
+    &quot;messages&quot;: [HumanMessage(content=&quot;你好，请问杭州的天气如何？&quot;)]
+}):
+    print(event)
+</code></pre><h2 id="五输入与输出格式">五、输入与输出格式</h2>
+<h3 id="输入格式">输入格式</h3>
+<p>LangGraph Agent 支持多种输入格式，提供灵活性：</p>
+<ul>
+<li>
+<p>字符串：{&ldquo;messages&rdquo;: &ldquo;Hello&rdquo;}（解释为用户消息）</p>
+</li>
+<li>
+<p>消息字典：{&ldquo;messages&rdquo;: {&ldquo;role&rdquo;: &ldquo;user&rdquo;, &ldquo;content&rdquo;: &ldquo;Hello&rdquo;}}</p>
+</li>
+<li>
+<p>消息列表：{&ldquo;messages&rdquo;: [{&ldquo;role&rdquo;: &ldquo;user&rdquo;, &ldquo;content&rdquo;: &ldquo;Hello&rdquo;}]}</p>
+</li>
+<li>
+<p>带自定义状态：{&ldquo;messages&rdquo;: [&hellip;], &ldquo;user_name&rdquo;: &ldquo;Alice&rdquo;}（适用于自定义状态）</p>
+</li>
+</ul>
+<h3 id="输出格式">输出格式</h3>
+<p>Agent 的输出是一个包含以下键的字典：</p>
+<ul>
+<li>
+<p>messages：执行期间的所有消息（用户输入、助手回复、工具调用）</p>
+</li>
+<li>
+<p>structured_response（可选）：如果配置了结构化输出</p>
+</li>
+<li>
+<p>自定义字段（可选）：基于自定义状态 schema 定义的额外键</p>
+</li>
+</ul>
+<h2 id="六控制-agent-执行流程">六、控制 Agent 执行流程</h2>
+<p>为避免无限循环或失控执行，LangGraph 提供了多种控制机制：</p>
+<h3 id="1-设置最大迭代次数">1. 设置最大迭代次数</h3>
+<p>通过配置递归限制，定义 Agent 可执行的最大步骤数：</p>
+<pre tabindex="0"><code># 运行时配置
+max_iterations = 3
+recursion_limit = 2 * max_iterations + 1
+
+result = agent.invoke(
+    {&quot;messages&quot;: [HumanMessage(content=&quot;Hello&quot;)]},
+    {&quot;recursion_limit&quot;: recursion_limit}
+)
+</code></pre><p>或在创建时配置：</p>
+<pre tabindex="0"><code>agent = create_react_agent(
+    llm=model.qwen_llm(), 
+    tools=tools, 
+    prompt=prompt
+).with_config(recursion_limit=recursion_limit)
+</code></pre><h3 id="2-工具调用控制">2. 工具调用控制</h3>
+<ul>
+<li>
+<p><strong>禁用并行工具调用</strong>：parallel_tool_calls=False</p>
+</li>
+<li>
+<p><strong>直接返回工具结果</strong>：在工具定义中使用 return_direct=True，使 Agent 在工具执行后立即停止</p>
+</li>
+<li>
+<p><strong>强制使用工具</strong>：force_tool=True，确保 Agent 必须调用工具才能响应（需配合防护措施避免无限循环）</p>
+</li>
+</ul>
+<h2 id="七流式传输功能">七、流式传输功能</h2>
+<p>流式传输是构建响应式应用的关键，LangGraph 支持多种流式传输类型：</p>
+<h3 id="1-agent-进度流">1. Agent 进度流</h3>
+<p>获取每个节点执行后的更新：</p>
+<pre tabindex="0"><code>for event in agent.stream(
+    {&quot;messages&quot;: [HumanMessage(content=&quot;你好&quot;)]}, 
+    stream_mode=&quot;updates&quot;
+):
+    print(event)
+    print(&quot;=&quot;*20)
+</code></pre><h3 id="2-llm-令牌流">2. LLM 令牌流</h3>
+<p>实时获取语言模型生成的令牌：</p>
+<pre tabindex="0"><code>for token, metadata in agent.stream(
+    {&quot;messages&quot;: [HumanMessage(content=&quot;获取这个ip：115.239.210.27的城市信息&quot;)]}, 
+    stream_mode=&quot;messages&quot;
+):
+    print(&quot;Token&quot;, token)
+    print(&quot;Metadata&quot;, metadata)
+</code></pre><h2 id="八上下文管理">八、上下文管理</h2>
+<p>Agent 通常需要除消息之外的更多信息才能有效工作，LangGraph 提供了三种上下文管理方式：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>描述</th>
+<th>可变性</th>
+<th>生命周期</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>配置</td>
+<td>运行开始时传入的静态数据</td>
+<td>❌</td>
+<td>每次运行</td>
+</tr>
+<tr>
+<td>状态</td>
+<td>执行中可更改的动态数据</td>
+<td>✅</td>
+<td>每次运行或对话</td>
+</tr>
+<tr>
+<td>长期记忆</td>
+<td>跨对话共享的数据</td>
+<td>✅</td>
+<td>跨对话</td>
+</tr>
+</tbody>
+</table>
+<h3 id="1-配置静态上下文">1. 配置（静态上下文）</h3>
+<p>在运行时传入不可变数据：</p>
+<pre tabindex="0"><code>data = agent.invoke(
+    {&quot;messages&quot;:  [HumanMessage(content=&quot;获取这个城市信息&quot;)]},
+    config={&quot;configurable&quot;: {&quot;ip&quot;: &quot;115.239.210.27&quot;}}
+)
+</code></pre><h3 id="2-状态动态上下文">2. 状态（动态上下文）</h3>
+<p>定义自定义状态跟踪额外信息：</p>
+<pre tabindex="0"><code>class CustomState(AgentState):
+    user_name: str  # 跟踪用户名
+
+agent = create_react_agent(
+    # 其他参数...
+    state_schema=CustomState,
+)
+</code></pre><h3 id="3-长期记忆存储">3. 长期记忆（存储）</h3>
+<p>在对话之间持久化数据：</p>
+<pre tabindex="0"><code>from langgraph.store.memory import InMemoryStore
+
+# 初始化存储
+store = InMemoryStore()
+
+# 存储用户信息
+store.put(
+    (&quot;users&quot;,),
+    &quot;user_123&quot;,
+    {
+        &quot;name&quot;: &quot;John Smith&quot;,
+        &quot;language&quot;: &quot;English&quot;,
+    }
+)
+
+# 创建使用存储的Agent
+agent = create_react_agent(
+    model=model.qwen_llm(),
+    tools=tools,
+    store=store
+)
+</code></pre><h2 id="九人机协作">九、人机协作</h2>
+<p>LangGraph 内置了人机协作（HIL）功能，允许在 Agent 执行过程中加入人工审查步骤：</p>
+<pre tabindex="0"><code>def book_hotel(hotel_name: str):
+    # 暂停执行，等待人工审批
+    response = interrupt(
+        f&quot;尝试调用 `book_hotel`，参数为 {{'hotel_name': {hotel_name}}}。请批准或建议修改。&quot;
+    )
+    
+    # 根据人工反馈继续执行
+    if response[&quot;type&quot;] == &quot;accept&quot;:
+        pass  # 执行预订
+    elif response[&quot;type&quot;] == &quot;edit&quot;:
+        hotel_name = response[&quot;args&quot;][&quot;hotel_name&quot;]  # 使用修改后的参数
+    else:
+        raise ValueError(f&quot;未知响应类型: {response['type']}&quot;)
+        
+    return f&quot;成功预订 {hotel_name} 的住宿。&quot;
+</code></pre><p>这种机制使 Agent 能够在关键操作处暂停，等待人工确认，大大提高了系统的可靠性和安全性。</p>
+<h2 id="十多智能体系统">十、多智能体系统</h2>
+<p>对于复杂任务，单个 Agent 可能难以应对，此时可以构建多智能体系统。LangGraph 支持两种主要架构：</p>
+<h3 id="1-主管架构">1. 主管架构</h3>
+<p>由一个中央主管 Agent 协调多个专业 Agent：</p>
+<pre tabindex="0"><code>from langgraph_supervisor import create_supervisor
+
+# 创建专业Agent
+search_city_agent = create_react_agent(...)
+weather_agent = create_react_agent(...)
+ip_agent = create_react_agent(...)
+
+# 创建主管Agent
+supervisor = create_supervisor(
+    model=model.qwen_llm(),
+    agents=[search_city_agent, weather_agent, ip_agent],
+    prompt=&quot;你是一个智能体协调器，根据用户问题调用合适的智能体&quot;
+).compile()
+</code></pre><h3 id="2-群组架构">2. 群组架构</h3>
+<p>Agent 之间根据专业性动态移交控制权：</p>
+<pre tabindex="0"><code>from langgraph.prebuilt import create_swarm
+
+# 创建多个Agent
+agent1 = create_react_agent(...)
+agent2 = create_react_agent(...)
+agent3 = create_react_agent(...)
+
+# 创建群组
+swarm = create_swarm(
+    agents=[agent1, agent2, agent3],
+    default_active_agent=&quot;agent1&quot;  # 默认激活的Agent
+).compile()
+</code></pre><p>多智能体系统通过<strong>移交（handoffs）</strong> 机制实现通信，一个 Agent 可以将控制权移交给另一个 Agent，并传递必要的信息。</p>
+<h2 id="总结">总结</h2>
+<p>LangGraph 预构建 Agent 为开发者提供了构建强大智能代理系统的便捷途径。通过其丰富的功能特性 —— 包括灵活的工具集成、完善的上下文管理、可靠的执行控制和多智能体协作能力 —— 开发者可以快速构建出适应各种场景的智能应用。</p>
+<p>无论是简单的信息查询还是复杂的多步骤任务处理，LangGraph 都能提供坚实的技术支持，帮助你打造高效、可靠且用户友好的智能系统。</p>
+<p>想要了解更多细节，可以访问 <a class="link" href="https://langgraph.com.cn/agents/overview.1.html"  target="_blank" rel="noopener"
+    >LangGraph 官方文档</a>。</p>
+<h2 id="代码仓库路径">代码仓库路径</h2>
+<p><a class="link" href="https://github.com/zcj-git520/AiLargeModel"  target="_blank" rel="noopener"
+    >zcj-git520/AiLargeModel: 大模型应用开发学习</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/img.0cf458ef54fa450e9d1ac9086d930efe_huecad56dbf45667eb4f21f35c2388c063_52872_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-DPRY71T6RQ6dGskIbZMO/g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">智能知识检索系统</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/img.91bf08890296485b5b595123bb1b9c01_hufef087fddda0fa8512a3bf0acfa96939_57649_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-kb8IiQKWSFtbWVEjuxucAQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">检索增强生成（RAG）</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/langchain-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%B7%A5%E5%85%B7/">
+        
+        
+            <div class="article-image">
+                <img src="/p/langchain-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%B7%A5%E5%85%B7/1.9e68f053768f5d39127f08c30ecf0389_hudd76169eaa14e4b46869a65a4bae705b_986909_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-nmjwU3aPXTkSfwjDDs8DiQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LangChain 自定义工具</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/langchain-%E5%A4%9A%E6%A8%A1%E6%80%81%E8%BE%93%E5%85%A5%E5%A4%84%E7%90%86/">
+        
+        
+            <div class="article-image">
+                <img src="/p/langchain-%E5%A4%9A%E6%A8%A1%E6%80%81%E8%BE%93%E5%85%A5%E5%A4%84%E7%90%86/1.dc09a51c545b2a001eb6625aaa3fcbed_hu4c351f786f8fd3fbb31415493398512f_844896_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-3AmlHFRbKgAetmJaqj/L7Q==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LangChain 多模态输入处理</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/lcel%E4%B8%8Elangchain%E6%B5%81%E5%BC%8F%E5%A4%84%E7%90%86%E6%8C%87%E5%8D%97/">
+        
+        
+            <div class="article-image">
+                <img src="/p/lcel%E4%B8%8Elangchain%E6%B5%81%E5%BC%8F%E5%A4%84%E7%90%86%E6%8C%87%E5%8D%97/1.ab01ecfb616c2d5b5b8199e51dc472c0_huc0a8b95b33d8d6a656995fb54ca12c83_153854_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-qwHs&#43;2FsLVtbgZnlHcRywA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LCEL与LangChain流式处理指南</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#一agent-核心组件解析">一、Agent 核心组件解析</a></li>
+    <li><a href="#二langgraph-的核心优势">二、LangGraph 的核心优势</a></li>
+    <li><a href="#三创建和配置-agent">三、创建和配置 Agent</a>
+      <ol>
+        <li><a href="#1-定义工具">1. 定义工具</a></li>
+        <li><a href="#2-创建提示">2. 创建提示</a></li>
+        <li><a href="#3-初始化-agent">3. 初始化 Agent</a></li>
+      </ol>
+    </li>
+    <li><a href="#四运行-agent-的两种模式">四、运行 Agent 的两种模式</a>
+      <ol>
+        <li><a href="#1-同步模式">1. 同步模式</a></li>
+        <li><a href="#2-异步模式">2. 异步模式</a></li>
+      </ol>
+    </li>
+    <li><a href="#五输入与输出格式">五、输入与输出格式</a>
+      <ol>
+        <li><a href="#输入格式">输入格式</a></li>
+        <li><a href="#输出格式">输出格式</a></li>
+      </ol>
+    </li>
+    <li><a href="#六控制-agent-执行流程">六、控制 Agent 执行流程</a>
+      <ol>
+        <li><a href="#1-设置最大迭代次数">1. 设置最大迭代次数</a></li>
+        <li><a href="#2-工具调用控制">2. 工具调用控制</a></li>
+      </ol>
+    </li>
+    <li><a href="#七流式传输功能">七、流式传输功能</a>
+      <ol>
+        <li><a href="#1-agent-进度流">1. Agent 进度流</a></li>
+        <li><a href="#2-llm-令牌流">2. LLM 令牌流</a></li>
+      </ol>
+    </li>
+    <li><a href="#八上下文管理">八、上下文管理</a>
+      <ol>
+        <li><a href="#1-配置静态上下文">1. 配置（静态上下文）</a></li>
+        <li><a href="#2-状态动态上下文">2. 状态（动态上下文）</a></li>
+        <li><a href="#3-长期记忆存储">3. 长期记忆（存储）</a></li>
+      </ol>
+    </li>
+    <li><a href="#九人机协作">九、人机协作</a></li>
+    <li><a href="#十多智能体系统">十、多智能体系统</a>
+      <ol>
+        <li><a href="#1-主管架构">1. 主管架构</a></li>
+        <li><a href="#2-群组架构">2. 群组架构</a></li>
+      </ol>
+    </li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#代码仓库路径">代码仓库路径</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
