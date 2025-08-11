@@ -6,7 +6,28 @@
     <description>Recent content in 知识学习 on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Wed, 25 Jun 2025 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/computer/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 30 Jun 2025 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/computer/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>深入探索 LangGraph</title>
+      <link>https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E6%8E%A2%E7%B4%A2-langgraph/</link>
+      <pubDate>Mon, 30 Jun 2025 22:00:38 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E6%8E%A2%E7%B4%A2-langgraph/</guid>
+      <description>深入探索 LangGraph 在人工智能快速发展的今天，构建能够自主决策、灵活调用工具的智能代理成为了许多开发者的目标。LangGraph 作为一个强大的框架，为我们提供了构建这类代理的理想工具。本文将深入探讨 LangGraph 的核心概念、架构设计以及实际应用，帮助你快速掌握这一框架的使用。
+什么是 LangGraph？ LangGraph 是一个基于图论的框架，用于构建具有复杂决策能力的智能代理。它允许开发者将代理的行为建模为一个状态图，其中包含节点（代表计算步骤）和边（代表节点间的连接）。这种结构使得代理能够根据当前状态做出决策，选择合适的工具，并在必要时调整其行为。
+与传统的线性工作流不同，LangGraph 提供的图结构赋予了代理更强的灵活性和自主性。代理可以根据输入动态选择执行路径，多次调用不同工具，并在获得新信息时调整其策略。
+LangGraph 的核心概念 状态（State） 状态是 LangGraph 中最基础的概念，它表示应用程序在某一时刻的快照。状态通常定义为一个 TypedDict 或 Pydantic 模型，包含代理在执行过程中需要跟踪的所有信息。
+class State(TypedDict):messages: Annotated[list, add_messages]在这个例子中，我们定义了一个简单的状态，只包含一个 messages 字段，用于存储对话历史。Annotated[list, add_messages] 表示这个字段将使用 add_messages 归约器，这意味着新消息会被添加到列表中，而不是替换整个列表。
+节点（Nodes） 节点是图中的基本单位，代表一个计算步骤或状态转换。每个节点都是一个函数，接收当前状态作为输入，执行某些操作，并返回更新后的状态。
+def node(state: State):messages = state[&amp;quot;messages&amp;quot;]response = model.qwen_llm().invoke(messages)return {&amp;quot;messages&amp;quot;: [response]}这个示例展示了一个简单的节点，它接收当前状态中的消息，调用语言模型生成响应，并将响应添加到消息列表中。
+LangGraph 支持多种类型的节点：
+  计算节点：执行计算或转换操作
+  条件节点：根据状态条件执行不同路径
+  工具节点：调用外部工具（如 API、数据库等）
+  边（Edges） 边定义了图中节点之间的连接关系，控制着程序的执行流程。LangGraph 提供了多种类型的边：
+ 普通边：直接从一个节点连接到另一个节点  graph_builder.add_edge(&amp;quot;node_a&amp;quot;, &amp;quot;node_b&amp;quot;) 条件边：根据状态动态决定下一个节点  graph_builder.</description>
+    </item>
+    
     <item>
       <title>LangGraph预构建Agent</title>
       <link>https://zcj-git520.github.io/p/langgraph%E9%A2%84%E6%9E%84%E5%BB%BAagent/</link>

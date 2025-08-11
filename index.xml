@@ -6,7 +6,180 @@
         <description>Recent content on Chengji Zhao&#39;s blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Wed, 25 Jun 2025 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Mon, 30 Jun 2025 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>深入探索 LangGraph</title>
+        <link>https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E6%8E%A2%E7%B4%A2-langgraph/</link>
+        <pubDate>Mon, 30 Jun 2025 22:00:38 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E6%8E%A2%E7%B4%A2-langgraph/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E6%8E%A2%E7%B4%A2-langgraph/1.png" alt="Featured image of post 深入探索 LangGraph" /&gt;&lt;h1 id=&#34;深入探索-langgraph&#34;&gt;深入探索 LangGraph&lt;/h1&gt;
+&lt;p&gt;在人工智能快速发展的今天，构建能够自主决策、灵活调用工具的智能代理成为了许多开发者的目标。LangGraph 作为一个强大的框架，为我们提供了构建这类代理的理想工具。本文将深入探讨 LangGraph 的核心概念、架构设计以及实际应用，帮助你快速掌握这一框架的使用。&lt;/p&gt;
+&lt;h2 id=&#34;什么是-langgraph&#34;&gt;什么是 LangGraph？&lt;/h2&gt;
+&lt;p&gt;LangGraph 是一个基于图论的框架，用于构建具有复杂决策能力的智能代理。它允许开发者将代理的行为建模为一个状态图，其中包含节点（代表计算步骤）和边（代表节点间的连接）。这种结构使得代理能够根据当前状态做出决策，选择合适的工具，并在必要时调整其行为。&lt;/p&gt;
+&lt;p&gt;与传统的线性工作流不同，LangGraph 提供的图结构赋予了代理更强的灵活性和自主性。代理可以根据输入动态选择执行路径，多次调用不同工具，并在获得新信息时调整其策略。&lt;/p&gt;
+&lt;h2 id=&#34;langgraph-的核心概念&#34;&gt;LangGraph 的核心概念&lt;/h2&gt;
+&lt;h3 id=&#34;状态state&#34;&gt;状态（State）&lt;/h3&gt;
+&lt;p&gt;状态是 LangGraph 中最基础的概念，它表示应用程序在某一时刻的快照。状态通常定义为一个 TypedDict 或 Pydantic 模型，包含代理在执行过程中需要跟踪的所有信息。&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;class State(TypedDict):
+    messages: Annotated[list, add_messages]
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;在这个例子中，我们定义了一个简单的状态，只包含一个 messages 字段，用于存储对话历史。Annotated[list, add_messages] 表示这个字段将使用 add_messages 归约器，这意味着新消息会被添加到列表中，而不是替换整个列表。&lt;/p&gt;
+&lt;h3 id=&#34;节点nodes&#34;&gt;节点（Nodes）&lt;/h3&gt;
+&lt;p&gt;节点是图中的基本单位，代表一个计算步骤或状态转换。每个节点都是一个函数，接收当前状态作为输入，执行某些操作，并返回更新后的状态。&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;def node(state: State):
+    messages = state[&amp;quot;messages&amp;quot;]
+    response = model.qwen_llm().invoke(messages)
+    return {&amp;quot;messages&amp;quot;: [response]}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;这个示例展示了一个简单的节点，它接收当前状态中的消息，调用语言模型生成响应，并将响应添加到消息列表中。&lt;/p&gt;
+&lt;p&gt;LangGraph 支持多种类型的节点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;计算节点：执行计算或转换操作&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;条件节点：根据状态条件执行不同路径&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;工具节点：调用外部工具（如 API、数据库等）&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;边edges&#34;&gt;边（Edges）&lt;/h3&gt;
+&lt;p&gt;边定义了图中节点之间的连接关系，控制着程序的执行流程。LangGraph 提供了多种类型的边：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;普通边&lt;/strong&gt;：直接从一个节点连接到另一个节点&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;graph_builder.add_edge(&amp;quot;node_a&amp;quot;, &amp;quot;node_b&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;条件边&lt;/strong&gt;：根据状态动态决定下一个节点&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;graph_builder.add_conditional_edges(
+    &amp;quot;chatbot&amp;quot;,
+    tools_condition,
+)
+&lt;/code&gt;&lt;/pre&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;入口点&lt;/strong&gt;：指定图的起始节点&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;graph_builder.add_edge(START, &amp;quot;chatbot&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;归约器reducers&#34;&gt;归约器（Reducers）&lt;/h3&gt;
+&lt;p&gt;归约器决定了如何将节点返回的部分状态更新合并到整体状态中。默认情况下，归约器会覆盖现有状态，但我们可以自定义归约器以实现更复杂的行为。&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;class State(TypedDict):
+    foo: int
+    bar: Annotated[list[str], add]  # 使用add归约器，将新元素添加到列表
+    baz: Annotated[str, replace]    # 使用replace归约器，替换现有值
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;构建你的第一个-langgraph-应用&#34;&gt;构建你的第一个 LangGraph 应用&lt;/h2&gt;
+&lt;p&gt;让我们通过一个实际的例子来了解如何使用 LangGraph 构建一个简单的智能代理。这个代理能够进行对话，并在需要时调用维基百科和 IP 地址解析工具。&lt;/p&gt;
+&lt;h3 id=&#34;步骤-1导入必要的库&#34;&gt;步骤 1：导入必要的库&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;from langchain_community.tools import WikipediaQueryRun
+from langchain_community.utilities import WikipediaAPIWrapper
+from langchain_core.messages import HumanMessage
+from langgraph.checkpoint.memory import MemorySaver
+from langgraph.constants import START
+from langgraph.graph import StateGraph
+from langgraph.graph.message import add_messages
+from langgraph.prebuilt import ToolNode, tools_condition
+from sqlalchemy.sql.annotation import Annotated
+from typing_extensions import TypedDict
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;步骤-2定义状态&#34;&gt;步骤 2：定义状态&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;class State(TypedDict):
+    messages: Annotated[list, add_messages]
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;步骤-3定义节点&#34;&gt;步骤 3：定义节点&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;def node(state: State):
+    messages = state[&amp;quot;messages&amp;quot;]
+    response = model.qwen_llm().invoke(messages)
+    return {&amp;quot;messages&amp;quot;: [response]}
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;步骤-4定义工具&#34;&gt;步骤 4：定义工具&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;def tools():
+    api_wrapper = WikipediaAPIWrapper(top_k_results=1, doc_content_chars_max=100)
+    tool = WikipediaQueryRun(api_wrapper=api_wrapper)
+    return [tool, ip_to_city_tool]
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;步骤-5构建图&#34;&gt;步骤 5：构建图&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;def buildGraph():
+    graph_builder = StateGraph(State)
+    memory = MemorySaver()
+    
+    graph_builder.add_node(&amp;quot;chatbot&amp;quot;, node)
+    tool_node = ToolNode(tools=tools())
+    graph_builder.add_conditional_edges(
+        &amp;quot;chatbot&amp;quot;,
+        tools_condition,
+    )
+    graph_builder.add_node(&amp;quot;tools&amp;quot;, tool_node)
+    graph_builder.add_edge(START, &amp;quot;chatbot&amp;quot;)
+
+    graph = graph_builder.compile(checkpointer=memory)
+    try:
+        graph.get_graph().draw_mermaid_png(output_file_path=&amp;quot;graph.png&amp;quot;, max_retries=5, retry_delay=2.0)
+    except Exception as e:
+        print(f&amp;quot;渲染图表失败: {e}&amp;quot;)
+    return graph
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;步骤-6运行对话&#34;&gt;步骤 6：运行对话&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;def chat(graph, msg):
+    message = {&amp;quot;messages&amp;quot;: [HumanMessage(content=msg)]}
+    for event in graph.stream(message):
+        for value in event.values():
+            print(&amp;quot;Assistant:&amp;quot;, value[&amp;quot;messages&amp;quot;][-1].content)
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;代理架构超越简单路由&#34;&gt;代理架构：超越简单路由&lt;/h2&gt;
+&lt;p&gt;LangGraph 允许我们构建真正的智能代理，这些代理能够：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;在多条潜在路径之间进行路由&lt;/strong&gt;：根据输入和当前状态选择最佳执行路径&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;决定调用众多工具中的哪一个&lt;/strong&gt;：根据任务需求选择合适的工具&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;判断生成的答案是否足够&lt;/strong&gt;：决定是直接回答还是需要进一步的信息收集&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;这种架构超越了简单的路由机制，实现了真正的自主决策能力。&lt;/p&gt;
+&lt;h3 id=&#34;react-架构&#34;&gt;ReAct 架构&lt;/h3&gt;
+&lt;p&gt;ReAct 是一种流行的代理架构，它结合了三个核心概念：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;工具调用&lt;/strong&gt;：允许 LLM 根据需要选择和使用各种工具&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;记忆&lt;/strong&gt;：使代理能够保留和使用来自先前步骤的信息&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;规划&lt;/strong&gt;：使 LLM 能够创建并遵循多步计划以实现目标&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;LangGraph 完美支持 ReAct 架构，通过状态管理实现记忆，通过条件边实现工具选择和规划。&lt;/p&gt;
+&lt;h2 id=&#34;高级特性&#34;&gt;高级特性&lt;/h2&gt;
+&lt;h3 id=&#34;并行执行&#34;&gt;并行执行&lt;/h3&gt;
+&lt;p&gt;LangGraph 支持节点的并行执行，这可以显著提高复杂工作流的效率。通过从一个节点扇出到多个节点，然后再扇入到一个节点，我们可以同时执行多个任务。&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;# 扇出到节点B和C，然后扇入到节点D
+graph_builder.add_edge(&amp;quot;A&amp;quot;, &amp;quot;B&amp;quot;)
+graph_builder.add_edge(&amp;quot;A&amp;quot;, &amp;quot;C&amp;quot;)
+graph_builder.add_edge(&amp;quot;B&amp;quot;, &amp;quot;D&amp;quot;)
+graph_builder.add_edge(&amp;quot;C&amp;quot;, &amp;quot;D&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;节点缓存&#34;&gt;节点缓存&lt;/h3&gt;
+&lt;p&gt;对于计算密集型节点，LangGraph 提供了缓存功能，可以避免重复计算：&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;from langgraph.pregel import CachePolicy
+
+builder.add_node(&amp;quot;expensive_node&amp;quot;, expensive_node, cache_policy=CachePolicy(ttl=300))  # 缓存5分钟
+graph = builder.compile(cache=InMemoryCache())
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;递归限制&#34;&gt;递归限制&lt;/h3&gt;
+&lt;p&gt;为了防止无限循环，LangGraph 提供了递归限制功能，可以设置图在单次执行期间可以执行的最大步骤数：&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;graph.invoke(inputs, config={&amp;quot;recursion_limit&amp;quot;: 10})  # 限制为10步
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;运行时配置&#34;&gt;运行时配置&lt;/h3&gt;
+&lt;p&gt;LangGraph 允许在运行时配置图的行为，例如指定使用哪个语言模型：&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;class ConfigSchema(TypedDict):
+    llm: str
+
+graph = StateGraph(State, config_schema=ConfigSchema)
+
+# 调用时指定配置
+graph.invoke(inputs, config={&amp;quot;configurable&amp;quot;: {&amp;quot;llm&amp;quot;: &amp;quot;gpt-4&amp;quot;}})
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;总结&#34;&gt;总结&lt;/h2&gt;
+&lt;p&gt;LangGraph 为构建复杂的智能代理提供了强大而灵活的框架。通过将代理行为建模为状态图，我们可以创建能够自主决策、灵活调用工具的智能系统。无论是简单的对话代理还是复杂的多步骤工作流，LangGraph 都能提供清晰的结构和强大的功能支持。&lt;/p&gt;
+&lt;p&gt;通过本文的介绍，你应该对 LangGraph 的核心概念和使用方法有了基本的了解。接下来，不妨尝试使用 LangGraph 构建一个属于你自己的智能代理，探索更多高级特性和应用场景。&lt;/p&gt;
+&lt;h2 id=&#34;代码仓库路径&#34;&gt;代码仓库路径&lt;/h2&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/zcj-git520/AiLargeModel&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;zcj-git520/AiLargeModel: 大模型应用开发学习&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>LangGraph预构建Agent</title>
         <link>https://zcj-git520.github.io/p/langgraph%E9%A2%84%E6%9E%84%E5%BB%BAagent/</link>
         <pubDate>Wed, 25 Jun 2025 22:00:38 +0800</pubDate>
