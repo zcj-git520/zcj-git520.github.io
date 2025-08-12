@@ -2585,6 +2585,209 @@ export OPENAI_API_KEY=&amp;quot;sk-...&amp;quot;
 </description>
         </item>
         <item>
+        <title>Prometheus 监控体系</title>
+        <link>https://zcj-git520.github.io/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/</link>
+        <pubDate>Sat, 25 Nov 2023 22:00:38 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/1.png" alt="Featured image of post Prometheus 监控体系" /&gt;&lt;h1 id=&#34;prometheus-监控体系原理实践配置与拓展&#34;&gt;Prometheus 监控体系：原理、实践、配置与拓展&lt;/h1&gt;
+&lt;p&gt;在现代复杂系统架构里，监控体系是保障系统稳定运行、快速排障的关键。Prometheus 凭借标准化数据流程、灵活拓展能力，成为云原生监控的核心方案。本文结合架构设计，深度拆解其原理、实践与配置要点，教你搭建全链路可观测体系。&lt;/p&gt;
+&lt;h2 id=&#34;一数据格式监控的-通用语言&#34;&gt;一、数据格式：监控的 “通用语言”&lt;/h2&gt;
+&lt;p&gt;Prometheus 用标准化格式定义指标，让监控数据有清晰语义，是分析的基础。&lt;/p&gt;
+&lt;h3 id=&#34;一指标标识规则&#34;&gt;（一）指标标识规则&lt;/h3&gt;
+&lt;p&gt;指标格式为 &lt;!-- raw HTML omitted --&gt;{&lt;!-- raw HTML omitted --&gt;=&lt;!-- raw HTML omitted --&gt;, &amp;hellip;} ，比如 api_http_requests_total{method=&amp;ldquo;POST&amp;rdquo;, handler=&amp;quot;/messages&amp;quot;} ，拆解来看：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;指标名称&lt;/strong&gt;：要能直观体现监控内容，像 http_request_total 就是记录 HTTP 请求总量 。命名得符合正则 [a-zA-Z_:][a-zA-Z0-9_:]* ，用 ASCII 字符、数字、下划线、冒号组合，底层实际存成 &lt;strong&gt;name&lt;/strong&gt;=&lt;!-- raw HTML omitted --&gt; ，方便系统识别。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;标签（Label）&lt;/strong&gt;：用来描述样本特征，方便后续过滤、聚合数据。名称得是 [a-zA-Z_][a-zA-Z0-9_]* 规则的 ASCII 组合，__ 开头是系统保留的，别乱用；值就灵活多了，任意 Unicode 字符都行，适配各种业务场景打标签。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;二时间序列与样本构成&#34;&gt;（二）时间序列与样本构成&lt;/h3&gt;
+&lt;p&gt;Prometheus 把监控数据存成&lt;strong&gt;时间序列（time-series）&lt;/strong&gt;，每个序列由 “指标名称 + 标签集” 唯一确定。序列里的 ** 样本（sample）** 包含三部分：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;指标（metric）&lt;/strong&gt;：名称加标签集，精准描述样本特征；&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;时间戳（timestamp）&lt;/strong&gt;：精确到毫秒，记录数据产生的时刻；&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;样本值（value）&lt;/strong&gt;：用 float64 浮点型，存具体的监控数值。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;三四种核心指标类型&#34;&gt;（三）四种核心指标类型&lt;/h3&gt;
+&lt;p&gt;为了覆盖不同监控场景，Prometheus 设计了四类指标：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Counter（计数器）&lt;/strong&gt;：只会单调递增，适合统计请求数、任务完成数、错误次数这些，一直往上加，不会降。比如统计 http请求总数 ，就用它。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Gauge（仪表盘）&lt;/strong&gt;：数值可增可减，像内存使用率、当前并发请求数这种动态变化的，就用它。还支持做求和、算均值、找极值这些计算，比如 node_memory_MemFree 看主机空闲内存 。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Histogram（直方图）&lt;/strong&gt;：主要用来分析请求耗时、响应大小这类数据的分布。通过 “存储桶（bucket）” 统计，能记录样本总和（sum）、次数（count）还有桶的边界，像分析磁盘使用率、请求总次数分布，就靠它。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Summary（摘要）&lt;/strong&gt;：直接存分位数（客户端自己算好），不用像 Histogram 那样依赖函数算。要是想精准统计请求耗时、响应大小的分位情况，比如 go_gc_duration_seconds_count 看 GC 总次数 ，用它就很方便。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;二传输协议与方式数据怎么-跑-起来&#34;&gt;二、传输协议与方式：数据怎么 “跑” 起来&lt;/h2&gt;
+&lt;p&gt;监控数据要在服务端和客户端之间传输，得确定好协议和方式，保证采集高效、稳定。&lt;/p&gt;
+&lt;h3 id=&#34;一传输协议&#34;&gt;（一）传输协议&lt;/h3&gt;
+&lt;p&gt;Prometheus 最常用的是 &lt;strong&gt;HTTP 协议&lt;/strong&gt; 来拉数据，配置好 agent 的 HTTP 接口，定时发 GET 请求去采集。当然，也支持本地文件、RPC、队列这些方式，灵活适配不同部署情况。比如监控服务和 agent 在同一台机器，就可以本地读文件；跨机器部署，就用网络协议传输。&lt;/p&gt;
+&lt;h3 id=&#34;二传输方式&#34;&gt;（二）传输方式&lt;/h3&gt;
+&lt;p&gt;从监控服务器的角度看，有两种传输模式：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;主动拉取（Pull）&lt;/strong&gt;：Prometheus 主动出击，定时调用 agent 的 HTTP 接口或者 RPC 方法，把数据拿过来。像用 node_exporter 拉取主机指标，就是典型的主动拉取。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;被动推送（Push）&lt;/strong&gt;：agent 主动把数据推到队列或者数据库里，Prometheus 再定时从这些地方把数据捞出来。这种适合那些没办法主动暴露接口的场景，比如有些第三方服务的监控。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;三拓展监控对象让监控-触角-更全&#34;&gt;三、拓展监控对象：让监控 “触角” 更全&lt;/h2&gt;
+&lt;p&gt;系统里的监控对象多种多样，得针对性处理，保证监控体系能扩展。&lt;/p&gt;
+&lt;h3 id=&#34;一两类监控对象的适配方法&#34;&gt;（一）两类监控对象的适配方法&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;能部署 agent 的场景&lt;/strong&gt;：像微服务这种，直接在要监控的对象上装 agent（比如 exporter ）。agent 负责采集运行数据，按照 Prometheus 的格式打包好，再通过主动或者被动的方式，把数据传给服务端。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;受限场景（没法部署 / 改代码）&lt;/strong&gt;：像 MySQL、Redis 这些中间件，或者淘宝、百度这类第三方服务，就得用 “中间 agent”。中间 agent 去连接目标服务（比如用 MySQL 协议、调用第三方 API ），把运行状态（连接数、健康状态这些 ）采集过来，再按照 Prometheus 的格式封装好，提供接口让 Prometheus 拉取，或者直接主动把数据推过去。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;二拓展的核心条件&#34;&gt;（二）拓展的核心条件&lt;/h3&gt;
+&lt;p&gt;不管监控啥对象，想拓展监控体系，得满足这些条件：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;agent 依赖&lt;/strong&gt;：目标对象得能被 agent 采集到，要么直接装 agent，要么通过中间 agent 代理；&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;格式统一&lt;/strong&gt;：数据必须严格按照 Prometheus 的指标格式来，这样才能被识别；&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;协议和方式一致&lt;/strong&gt;：传输用的协议（HTTP/RPC 这些 ）、传输方式（拉取还是推送 ），得和整个监控体系匹配上；&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;服务端配置&lt;/strong&gt;：Prometheus 这边得配置好对应的采集接口、定时任务，保证能持续拿到数据。要是动态更新监控对象，还得通过配置服务实现热加载。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;四prometheus-与-grafana-交互让数据-看得见&#34;&gt;四、Prometheus 与 Grafana 交互：让数据 “看得见”&lt;/h2&gt;
+&lt;p&gt;Grafana 是可视化的好帮手，和 Prometheus 配合起来，能把监控数据变成直观的图表。以监控主机为例，流程是这样的：&lt;/p&gt;
+&lt;h3 id=&#34;一部署-exporter&#34;&gt;（一）部署 exporter&lt;/h3&gt;
+&lt;p&gt;在主机上装 node_exporter ，它会采集主机的各种信息，像 CPU、内存、磁盘这些，然后暴露一个 HTTP 接口，把 metrics 数据提供出去。&lt;/p&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 232; 
+			flex-basis: 557px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/2.jpg&#34; data-size=&#34;1279x551&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/2.jpg&#34;
+			width=&#34;1279&#34;
+			height=&#34;551&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/2_hu0beb00594f518ccad4aa81eb1d4d83eb_74848_480x0_resize_q75_box.jpg 480w, https://zcj-git520.github.io/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/2_hu0beb00594f518ccad4aa81eb1d4d83eb_74848_1024x0_resize_q75_box.jpg 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;h3 id=&#34;二prometheus-配置&#34;&gt;（二）Prometheus 配置&lt;/h3&gt;
+&lt;p&gt;在 Prometheus 服务端，把 node_exporter 的接口配置好，定时去拉取数据。拉回来之后，先格式化处理，再存到内存数据库里（也会持久化到硬盘 ）。&lt;/p&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 322; 
+			flex-basis: 774px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/3.jpg&#34; data-size=&#34;1103x342&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/3.jpg&#34;
+			width=&#34;1103&#34;
+			height=&#34;342&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/3_hud64e9824c5fd5b7829117ceff45b030e_37802_480x0_resize_q75_box.jpg 480w, https://zcj-git520.github.io/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/3_hud64e9824c5fd5b7829117ceff45b030e_37802_1024x0_resize_q75_box.jpg 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;h3 id=&#34;三grafana-对接&#34;&gt;（三）Grafana 对接&lt;/h3&gt;
+&lt;p&gt;Grafana 的后端要配置 Prometheus 作为数据源，根据可视化的需求（比如做个大屏模板 ），从 Prometheus 里把指标数据拉过来。前端再把这些数据渲染出来，直观地展示在监控大屏上，完成 “数据采集→存储→可视化” 的闭环。另外，Prometheus 和 Grafana 都有 API，支持自定义的数据交互，比如二次开发、导出数据啥的。&lt;/p&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 230; 
+			flex-basis: 552px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/4.jpg&#34; data-size=&#34;1896x823&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/4.jpg&#34;
+			width=&#34;1896&#34;
+			height=&#34;823&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/4_hu702e001a5f65417ca145099069521469_274969_480x0_resize_q75_box.jpg 480w, https://zcj-git520.github.io/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/4_hu702e001a5f65417ca145099069521469_274969_1024x0_resize_q75_box.jpg 1024w&#34;
+			loading=&#34;lazy&#34;
+			&gt;
+	&lt;/a&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;h2 id=&#34;五动态更新监控对象让监控-更聪明&#34;&gt;五、动态更新监控对象：让监控 “更聪明”&lt;/h2&gt;
+&lt;p&gt;Prometheus 需要动态适应监控对象的变化，实现&lt;strong&gt;热加载&lt;/strong&gt;，这样不用重启服务，就能更新监控配置。&lt;/p&gt;
+&lt;h3 id=&#34;一配置服务支撑&#34;&gt;（一）配置服务支撑&lt;/h3&gt;
+&lt;p&gt;通过配置服务暴露一个 HTTP 接口，这个接口返回的是当前需要监控的对象信息。比如系统新增了一个微服务，配置服务里的监控列表就会更新，把新服务的信息加上。&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt; job_name: &amp;quot;主机监控&amp;quot;
+    http_sd_configs:
+     - url: &amp;quot;http://xxxxxx/xxxxxx&amp;quot;
+       refresh_interval: 5s
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;二定时拉取更新&#34;&gt;（二）定时拉取更新&lt;/h3&gt;
+&lt;p&gt;Prometheus 会定时去调用这个接口，拿到最新的监控对象列表，自动更新自己的采集配置。这样不管是新增、删除还是修改监控对象，都能实时跟上，保证监控不脱节。&lt;/p&gt;
+&lt;h2 id=&#34;六配置说明让监控体系-稳准狠&#34;&gt;六、配置说明：让监控体系 “稳准狠”&lt;/h2&gt;
+&lt;h3 id=&#34;一prometheus-配置要点&#34;&gt;（一）Prometheus 配置要点&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;静态配置&lt;/strong&gt;：在 prometheus.yml 里，直接写死要监控的目标。比如监控主机，就配置 node_exporter 的地址：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;scrape_configs:
+  - job_name: &#39;node&#39;
+    static_configs:
+      - targets: [&#39;localhost:9100&#39;]  # node_exporter默认端口
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;动态发现配置&lt;/strong&gt;：适合监控对象经常变化的场景，比如基于文件、DNS、Consul 这些方式自动发现。以 Consul 为例：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;scrape_configs:
+  - job_name: &#39;consul-services&#39;
+    consul_sd_configs:
+      - server: &#39;localhost:8500&#39;
+        services: []  # 可指定服务，空则发现所有
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;采集周期与超时&lt;/strong&gt;：调整 scrape_interval（采集间隔 ）和 scrape_timeout（超时时间 ），适配不同监控需求：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;global:
+  scrape_interval: 15s  # 默认15秒拉一次
+  scrape_timeout: 10s   # 拉取超时时间
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;二grafana-配置关键&#34;&gt;（二）Grafana 配置关键&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;数据源配置&lt;/strong&gt;：在 Grafana 里添加 Prometheus 数据源，填好地址（比如 http://prometheus:9090 ），保存测试，确保能连通。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;仪表盘（Dashboard）配置&lt;/strong&gt;：可以自己创建，也能导入社区模板（比如 ID 为 8919 的 Node Exporter 模板 ）。配置的时候，选好数据源，写 PromQL 查询语句（比如 node_cpu_seconds_total{mode=&amp;ldquo;idle&amp;rdquo;} 看 CPU 空闲时间 ），设置图表类型（折线图、柱状图等 ），让数据可视化更直观。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;三agent-与中间件配置&#34;&gt;（三）Agent 与中间件配置&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Exporter 配置&lt;/strong&gt;：不同的 exporter 有不同的配置文件。比如 node_exporter 可以通过命令行参数调整采集项（如 &amp;ndash;no-collector.diskstats 关闭磁盘统计 ）；mysql_exporter 需要配置数据库连接信息，在配置文件里填好用户名、密码、地址：&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[client]
+user = prometheus
+password = yourpassword
+host = localhost
+port = 3306
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;中间 agent 配置&lt;/strong&gt;：针对第三方服务的中间 agent，要配置好连接目标服务的参数（如 API 密钥、访问地址 ），还有数据转换规则，确保采集的数据符合 Prometheus 格式。&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>后端的安全和加密</title>
         <link>https://zcj-git520.github.io/p/%E5%90%8E%E7%AB%AF%E7%9A%84%E5%AE%89%E5%85%A8%E5%92%8C%E5%8A%A0%E5%AF%86/</link>
         <pubDate>Sun, 15 Jan 2023 22:00:38 +0800</pubDate>

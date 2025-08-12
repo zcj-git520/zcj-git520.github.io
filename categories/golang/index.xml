@@ -6,7 +6,26 @@
     <description>Recent content in Golang on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Thu, 25 Aug 2022 21:00:08 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/golang/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 25 Nov 2023 22:00:38 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/golang/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Prometheus 监控体系</title>
+      <link>https://zcj-git520.github.io/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/</link>
+      <pubDate>Sat, 25 Nov 2023 22:00:38 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/</guid>
+      <description>Prometheus 监控体系：原理、实践、配置与拓展 在现代复杂系统架构里，监控体系是保障系统稳定运行、快速排障的关键。Prometheus 凭借标准化数据流程、灵活拓展能力，成为云原生监控的核心方案。本文结合架构设计，深度拆解其原理、实践与配置要点，教你搭建全链路可观测体系。
+一、数据格式：监控的 “通用语言” Prometheus 用标准化格式定义指标，让监控数据有清晰语义，是分析的基础。
+（一）指标标识规则 指标格式为 {=, &amp;hellip;} ，比如 api_http_requests_total{method=&amp;ldquo;POST&amp;rdquo;, handler=&amp;quot;/messages&amp;quot;} ，拆解来看：
+  指标名称：要能直观体现监控内容，像 http_request_total 就是记录 HTTP 请求总量 。命名得符合正则 [a-zA-Z_:][a-zA-Z0-9_:]* ，用 ASCII 字符、数字、下划线、冒号组合，底层实际存成 name=，方便系统识别。
+  标签（Label）：用来描述样本特征，方便后续过滤、聚合数据。名称得是 [a-zA-Z_][a-zA-Z0-9_]* 规则的 ASCII 组合，__ 开头是系统保留的，别乱用；值就灵活多了，任意 Unicode 字符都行，适配各种业务场景打标签。
+  （二）时间序列与样本构成 Prometheus 把监控数据存成时间序列（time-series），每个序列由 “指标名称 + 标签集” 唯一确定。序列里的 ** 样本（sample）** 包含三部分：
+  指标（metric）：名称加标签集，精准描述样本特征；
+  时间戳（timestamp）：精确到毫秒，记录数据产生的时刻；
+  样本值（value）：用 float64 浮点型，存具体的监控数值。
+  （三）四种核心指标类型 为了覆盖不同监控场景，Prometheus 设计了四类指标：
+  Counter（计数器）：只会单调递增，适合统计请求数、任务完成数、错误次数这些，一直往上加，不会降。比如统计 http请求总数 ，就用它。</description>
+    </item>
+    
     <item>
       <title>数据结构-Trie tree go实现</title>
       <link>https://zcj-git520.github.io/p/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-trie-tree-go%E5%AE%9E%E7%8E%B0/</link>

@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Prometheus 监控体系：原理、实践、配置与拓展 在现代复杂系统架构里，监控体系是保障系统稳定运行、快速排障的关键。Prometheus 凭借标准化数据流程、灵活拓展能力，成为云原生监控的核心方案。本文结合架构设计，深度拆解其原理、实践与配置要点，教你搭建全链路可观测体系。
+一、数据格式：监控的 “通用语言” Prometheus 用标准化格式定义指标，让监控数据有清晰语义，是分析的基础。
+（一）指标标识规则 指标格式为 {=, &amp;hellip;} ，比如 api_http_requests_total{method=&amp;ldquo;POST&amp;rdquo;, handler=&amp;quot;/messages&amp;quot;} ，拆解来看：
+  指标名称：要能直观体现监控内容，像 http_request_total 就是记录 HTTP 请求总量 。命名得符合正则 [a-zA-Z_:][a-zA-Z0-9_:]* ，用 ASCII 字符、数字、下划线、冒号组合，底层实际存成 name=，方便系统识别。
+  标签（Label）：用来描述样本特征，方便后续过滤、聚合数据。名称得是 [a-zA-Z_][a-zA-Z0-9_]* 规则的 ASCII 组合，__ 开头是系统保留的，别乱用；值就灵活多了，任意 Unicode 字符都行，适配各种业务场景打标签。
+  （二）时间序列与样本构成 Prometheus 把监控数据存成时间序列（time-series），每个序列由 “指标名称 &#43; 标签集” 唯一确定。序列里的 ** 样本（sample）** 包含三部分：
+  指标（metric）：名称加标签集，精准描述样本特征；
+  时间戳（timestamp）：精确到毫秒，记录数据产生的时刻；
+  样本值（value）：用 float64 浮点型，存具体的监控数值。
+  （三）四种核心指标类型 为了覆盖不同监控场景，Prometheus 设计了四类指标：
+  Counter（计数器）：只会单调递增，适合统计请求数、任务完成数、错误次数这些，一直往上加，不会降。比如统计 http请求总数 ，就用它。'><title>Prometheus 监控体系</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Prometheus 监控体系'>
+<meta property='og:description' content='Prometheus 监控体系：原理、实践、配置与拓展 在现代复杂系统架构里，监控体系是保障系统稳定运行、快速排障的关键。Prometheus 凭借标准化数据流程、灵活拓展能力，成为云原生监控的核心方案。本文结合架构设计，深度拆解其原理、实践与配置要点，教你搭建全链路可观测体系。
+一、数据格式：监控的 “通用语言” Prometheus 用标准化格式定义指标，让监控数据有清晰语义，是分析的基础。
+（一）指标标识规则 指标格式为 {=, &amp;hellip;} ，比如 api_http_requests_total{method=&amp;ldquo;POST&amp;rdquo;, handler=&amp;quot;/messages&amp;quot;} ，拆解来看：
+  指标名称：要能直观体现监控内容，像 http_request_total 就是记录 HTTP 请求总量 。命名得符合正则 [a-zA-Z_:][a-zA-Z0-9_:]* ，用 ASCII 字符、数字、下划线、冒号组合，底层实际存成 name=，方便系统识别。
+  标签（Label）：用来描述样本特征，方便后续过滤、聚合数据。名称得是 [a-zA-Z_][a-zA-Z0-9_]* 规则的 ASCII 组合，__ 开头是系统保留的，别乱用；值就灵活多了，任意 Unicode 字符都行，适配各种业务场景打标签。
+  （二）时间序列与样本构成 Prometheus 把监控数据存成时间序列（time-series），每个序列由 “指标名称 &#43; 标签集” 唯一确定。序列里的 ** 样本（sample）** 包含三部分：
+  指标（metric）：名称加标签集，精准描述样本特征；
+  时间戳（timestamp）：精确到毫秒，记录数据产生的时刻；
+  样本值（value）：用 float64 浮点型，存具体的监控数值。
+  （三）四种核心指标类型 为了覆盖不同监控场景，Prometheus 设计了四类指标：
+  Counter（计数器）：只会单调递增，适合统计请求数、任务完成数、错误次数这些，一直往上加，不会降。比如统计 http请求总数 ，就用它。'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2023-11-25T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2023-11-25T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/1.png' />
+<meta name="twitter:title" content="Prometheus 监控体系">
+<meta name="twitter:description" content="Prometheus 监控体系：原理、实践、配置与拓展 在现代复杂系统架构里，监控体系是保障系统稳定运行、快速排障的关键。Prometheus 凭借标准化数据流程、灵活拓展能力，成为云原生监控的核心方案。本文结合架构设计，深度拆解其原理、实践与配置要点，教你搭建全链路可观测体系。
+一、数据格式：监控的 “通用语言” Prometheus 用标准化格式定义指标，让监控数据有清晰语义，是分析的基础。
+（一）指标标识规则 指标格式为 {=, &amp;hellip;} ，比如 api_http_requests_total{method=&amp;ldquo;POST&amp;rdquo;, handler=&amp;quot;/messages&amp;quot;} ，拆解来看：
+  指标名称：要能直观体现监控内容，像 http_request_total 就是记录 HTTP 请求总量 。命名得符合正则 [a-zA-Z_:][a-zA-Z0-9_:]* ，用 ASCII 字符、数字、下划线、冒号组合，底层实际存成 name=，方便系统识别。
+  标签（Label）：用来描述样本特征，方便后续过滤、聚合数据。名称得是 [a-zA-Z_][a-zA-Z0-9_]* 规则的 ASCII 组合，__ 开头是系统保留的，别乱用；值就灵活多了，任意 Unicode 字符都行，适配各种业务场景打标签。
+  （二）时间序列与样本构成 Prometheus 把监控数据存成时间序列（time-series），每个序列由 “指标名称 &#43; 标签集” 唯一确定。序列里的 ** 样本（sample）** 包含三部分：
+  指标（metric）：名称加标签集，精准描述样本特征；
+  时间戳（timestamp）：精确到毫秒，记录数据产生的时刻；
+  样本值（value）：用 float64 浮点型，存具体的监控数值。
+  （三）四种核心指标类型 为了覆盖不同监控场景，Prometheus 设计了四类指标：
+  Counter（计数器）：只会单调递增，适合统计请求数、任务完成数、错误次数这些，一直往上加，不会降。比如统计 http请求总数 ，就用它。"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/1.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/">
+                <img src="/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/1_hu7bc2e2363b789d26ffbef1b3568d6ac2_1191273_800x0_resize_box_3.png"
+                        srcset="/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/1_hu7bc2e2363b789d26ffbef1b3568d6ac2_1191273_800x0_resize_box_3.png 800w, /p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/1_hu7bc2e2363b789d26ffbef1b3568d6ac2_1191273_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="434" 
+                        loading="lazy"
+                        alt="Featured image of post Prometheus 监控体系" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/computer/" style="background-color: #2a9d8f; color: #fff;">
+                知识学习
+            </a>
+        
+            <a href="/categories/golang/" style="background-color: #2a9d8f; color: #fff;">
+                Golang
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/">Prometheus 监控体系</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Nov 25, 2023</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 2 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h1 id="prometheus-监控体系原理实践配置与拓展">Prometheus 监控体系：原理、实践、配置与拓展</h1>
+<p>在现代复杂系统架构里，监控体系是保障系统稳定运行、快速排障的关键。Prometheus 凭借标准化数据流程、灵活拓展能力，成为云原生监控的核心方案。本文结合架构设计，深度拆解其原理、实践与配置要点，教你搭建全链路可观测体系。</p>
+<h2 id="一数据格式监控的-通用语言">一、数据格式：监控的 “通用语言”</h2>
+<p>Prometheus 用标准化格式定义指标，让监控数据有清晰语义，是分析的基础。</p>
+<h3 id="一指标标识规则">（一）指标标识规则</h3>
+<p>指标格式为 <!-- raw HTML omitted -->{<!-- raw HTML omitted -->=<!-- raw HTML omitted -->, &hellip;} ，比如 api_http_requests_total{method=&ldquo;POST&rdquo;, handler=&quot;/messages&quot;} ，拆解来看：</p>
+<ul>
+<li>
+<p><strong>指标名称</strong>：要能直观体现监控内容，像 http_request_total 就是记录 HTTP 请求总量 。命名得符合正则 [a-zA-Z_:][a-zA-Z0-9_:]* ，用 ASCII 字符、数字、下划线、冒号组合，底层实际存成 <strong>name</strong>=<!-- raw HTML omitted --> ，方便系统识别。</p>
+</li>
+<li>
+<p><strong>标签（Label）</strong>：用来描述样本特征，方便后续过滤、聚合数据。名称得是 [a-zA-Z_][a-zA-Z0-9_]* 规则的 ASCII 组合，__ 开头是系统保留的，别乱用；值就灵活多了，任意 Unicode 字符都行，适配各种业务场景打标签。</p>
+</li>
+</ul>
+<h3 id="二时间序列与样本构成">（二）时间序列与样本构成</h3>
+<p>Prometheus 把监控数据存成<strong>时间序列（time-series）</strong>，每个序列由 “指标名称 + 标签集” 唯一确定。序列里的 ** 样本（sample）** 包含三部分：</p>
+<ul>
+<li>
+<p><strong>指标（metric）</strong>：名称加标签集，精准描述样本特征；</p>
+</li>
+<li>
+<p><strong>时间戳（timestamp）</strong>：精确到毫秒，记录数据产生的时刻；</p>
+</li>
+<li>
+<p><strong>样本值（value）</strong>：用 float64 浮点型，存具体的监控数值。</p>
+</li>
+</ul>
+<h3 id="三四种核心指标类型">（三）四种核心指标类型</h3>
+<p>为了覆盖不同监控场景，Prometheus 设计了四类指标：</p>
+<ul>
+<li>
+<p><strong>Counter（计数器）</strong>：只会单调递增，适合统计请求数、任务完成数、错误次数这些，一直往上加，不会降。比如统计 http请求总数 ，就用它。</p>
+</li>
+<li>
+<p><strong>Gauge（仪表盘）</strong>：数值可增可减，像内存使用率、当前并发请求数这种动态变化的，就用它。还支持做求和、算均值、找极值这些计算，比如 node_memory_MemFree 看主机空闲内存 。</p>
+</li>
+<li>
+<p><strong>Histogram（直方图）</strong>：主要用来分析请求耗时、响应大小这类数据的分布。通过 “存储桶（bucket）” 统计，能记录样本总和（sum）、次数（count）还有桶的边界，像分析磁盘使用率、请求总次数分布，就靠它。</p>
+</li>
+<li>
+<p><strong>Summary（摘要）</strong>：直接存分位数（客户端自己算好），不用像 Histogram 那样依赖函数算。要是想精准统计请求耗时、响应大小的分位情况，比如 go_gc_duration_seconds_count 看 GC 总次数 ，用它就很方便。</p>
+</li>
+</ul>
+<h2 id="二传输协议与方式数据怎么-跑-起来">二、传输协议与方式：数据怎么 “跑” 起来</h2>
+<p>监控数据要在服务端和客户端之间传输，得确定好协议和方式，保证采集高效、稳定。</p>
+<h3 id="一传输协议">（一）传输协议</h3>
+<p>Prometheus 最常用的是 <strong>HTTP 协议</strong> 来拉数据，配置好 agent 的 HTTP 接口，定时发 GET 请求去采集。当然，也支持本地文件、RPC、队列这些方式，灵活适配不同部署情况。比如监控服务和 agent 在同一台机器，就可以本地读文件；跨机器部署，就用网络协议传输。</p>
+<h3 id="二传输方式">（二）传输方式</h3>
+<p>从监控服务器的角度看，有两种传输模式：</p>
+<ul>
+<li>
+<p><strong>主动拉取（Pull）</strong>：Prometheus 主动出击，定时调用 agent 的 HTTP 接口或者 RPC 方法，把数据拿过来。像用 node_exporter 拉取主机指标，就是典型的主动拉取。</p>
+</li>
+<li>
+<p><strong>被动推送（Push）</strong>：agent 主动把数据推到队列或者数据库里，Prometheus 再定时从这些地方把数据捞出来。这种适合那些没办法主动暴露接口的场景，比如有些第三方服务的监控。</p>
+</li>
+</ul>
+<h2 id="三拓展监控对象让监控-触角-更全">三、拓展监控对象：让监控 “触角” 更全</h2>
+<p>系统里的监控对象多种多样，得针对性处理，保证监控体系能扩展。</p>
+<h3 id="一两类监控对象的适配方法">（一）两类监控对象的适配方法</h3>
+<ul>
+<li>
+<p><strong>能部署 agent 的场景</strong>：像微服务这种，直接在要监控的对象上装 agent（比如 exporter ）。agent 负责采集运行数据，按照 Prometheus 的格式打包好，再通过主动或者被动的方式，把数据传给服务端。</p>
+</li>
+<li>
+<p><strong>受限场景（没法部署 / 改代码）</strong>：像 MySQL、Redis 这些中间件，或者淘宝、百度这类第三方服务，就得用 “中间 agent”。中间 agent 去连接目标服务（比如用 MySQL 协议、调用第三方 API ），把运行状态（连接数、健康状态这些 ）采集过来，再按照 Prometheus 的格式封装好，提供接口让 Prometheus 拉取，或者直接主动把数据推过去。</p>
+</li>
+</ul>
+<h3 id="二拓展的核心条件">（二）拓展的核心条件</h3>
+<p>不管监控啥对象，想拓展监控体系，得满足这些条件：</p>
+<ul>
+<li>
+<p><strong>agent 依赖</strong>：目标对象得能被 agent 采集到，要么直接装 agent，要么通过中间 agent 代理；</p>
+</li>
+<li>
+<p><strong>格式统一</strong>：数据必须严格按照 Prometheus 的指标格式来，这样才能被识别；</p>
+</li>
+<li>
+<p><strong>协议和方式一致</strong>：传输用的协议（HTTP/RPC 这些 ）、传输方式（拉取还是推送 ），得和整个监控体系匹配上；</p>
+</li>
+<li>
+<p><strong>服务端配置</strong>：Prometheus 这边得配置好对应的采集接口、定时任务，保证能持续拿到数据。要是动态更新监控对象，还得通过配置服务实现热加载。</p>
+</li>
+</ul>
+<h2 id="四prometheus-与-grafana-交互让数据-看得见">四、Prometheus 与 Grafana 交互：让数据 “看得见”</h2>
+<p>Grafana 是可视化的好帮手，和 Prometheus 配合起来，能把监控数据变成直观的图表。以监控主机为例，流程是这样的：</p>
+<h3 id="一部署-exporter">（一）部署 exporter</h3>
+<p>在主机上装 node_exporter ，它会采集主机的各种信息，像 CPU、内存、磁盘这些，然后暴露一个 HTTP 接口，把 metrics 数据提供出去。</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 232; 
+			flex-basis: 557px"
+	>
+	<a href="/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/2.jpg" data-size="1279x551">
+		<img src="/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/2.jpg"
+			width="1279"
+			height="551"
+			srcset="/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/2_hu0beb00594f518ccad4aa81eb1d4d83eb_74848_480x0_resize_q75_box.jpg 480w, /p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/2_hu0beb00594f518ccad4aa81eb1d4d83eb_74848_1024x0_resize_q75_box.jpg 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<h3 id="二prometheus-配置">（二）Prometheus 配置</h3>
+<p>在 Prometheus 服务端，把 node_exporter 的接口配置好，定时去拉取数据。拉回来之后，先格式化处理，再存到内存数据库里（也会持久化到硬盘 ）。</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 322; 
+			flex-basis: 774px"
+	>
+	<a href="/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/3.jpg" data-size="1103x342">
+		<img src="/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/3.jpg"
+			width="1103"
+			height="342"
+			srcset="/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/3_hud64e9824c5fd5b7829117ceff45b030e_37802_480x0_resize_q75_box.jpg 480w, /p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/3_hud64e9824c5fd5b7829117ceff45b030e_37802_1024x0_resize_q75_box.jpg 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<h3 id="三grafana-对接">（三）Grafana 对接</h3>
+<p>Grafana 的后端要配置 Prometheus 作为数据源，根据可视化的需求（比如做个大屏模板 ），从 Prometheus 里把指标数据拉过来。前端再把这些数据渲染出来，直观地展示在监控大屏上，完成 “数据采集→存储→可视化” 的闭环。另外，Prometheus 和 Grafana 都有 API，支持自定义的数据交互，比如二次开发、导出数据啥的。</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 230; 
+			flex-basis: 552px"
+	>
+	<a href="/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/4.jpg" data-size="1896x823">
+		<img src="/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/4.jpg"
+			width="1896"
+			height="823"
+			srcset="/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/4_hu702e001a5f65417ca145099069521469_274969_480x0_resize_q75_box.jpg 480w, /p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/4_hu702e001a5f65417ca145099069521469_274969_1024x0_resize_q75_box.jpg 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<h2 id="五动态更新监控对象让监控-更聪明">五、动态更新监控对象：让监控 “更聪明”</h2>
+<p>Prometheus 需要动态适应监控对象的变化，实现<strong>热加载</strong>，这样不用重启服务，就能更新监控配置。</p>
+<h3 id="一配置服务支撑">（一）配置服务支撑</h3>
+<p>通过配置服务暴露一个 HTTP 接口，这个接口返回的是当前需要监控的对象信息。比如系统新增了一个微服务，配置服务里的监控列表就会更新，把新服务的信息加上。</p>
+<pre tabindex="0"><code> job_name: &quot;主机监控&quot;
+    http_sd_configs:
+     - url: &quot;http://xxxxxx/xxxxxx&quot;
+       refresh_interval: 5s
+</code></pre><h3 id="二定时拉取更新">（二）定时拉取更新</h3>
+<p>Prometheus 会定时去调用这个接口，拿到最新的监控对象列表，自动更新自己的采集配置。这样不管是新增、删除还是修改监控对象，都能实时跟上，保证监控不脱节。</p>
+<h2 id="六配置说明让监控体系-稳准狠">六、配置说明：让监控体系 “稳准狠”</h2>
+<h3 id="一prometheus-配置要点">（一）Prometheus 配置要点</h3>
+<ul>
+<li><strong>静态配置</strong>：在 prometheus.yml 里，直接写死要监控的目标。比如监控主机，就配置 node_exporter 的地址：</li>
+</ul>
+<pre tabindex="0"><code>scrape_configs:
+  - job_name: 'node'
+    static_configs:
+      - targets: ['localhost:9100']  # node_exporter默认端口
+</code></pre><ul>
+<li><strong>动态发现配置</strong>：适合监控对象经常变化的场景，比如基于文件、DNS、Consul 这些方式自动发现。以 Consul 为例：</li>
+</ul>
+<pre tabindex="0"><code>scrape_configs:
+  - job_name: 'consul-services'
+    consul_sd_configs:
+      - server: 'localhost:8500'
+        services: []  # 可指定服务，空则发现所有
+</code></pre><ul>
+<li><strong>采集周期与超时</strong>：调整 scrape_interval（采集间隔 ）和 scrape_timeout（超时时间 ），适配不同监控需求：</li>
+</ul>
+<pre tabindex="0"><code>global:
+  scrape_interval: 15s  # 默认15秒拉一次
+  scrape_timeout: 10s   # 拉取超时时间
+</code></pre><h3 id="二grafana-配置关键">（二）Grafana 配置关键</h3>
+<ol>
+<li>
+<p><strong>数据源配置</strong>：在 Grafana 里添加 Prometheus 数据源，填好地址（比如 http://prometheus:9090 ），保存测试，确保能连通。</p>
+</li>
+<li>
+<p><strong>仪表盘（Dashboard）配置</strong>：可以自己创建，也能导入社区模板（比如 ID 为 8919 的 Node Exporter 模板 ）。配置的时候，选好数据源，写 PromQL 查询语句（比如 node_cpu_seconds_total{mode=&ldquo;idle&rdquo;} 看 CPU 空闲时间 ），设置图表类型（折线图、柱状图等 ），让数据可视化更直观。</p>
+</li>
+</ol>
+<h3 id="三agent-与中间件配置">（三）Agent 与中间件配置</h3>
+<ol>
+<li><strong>Exporter 配置</strong>：不同的 exporter 有不同的配置文件。比如 node_exporter 可以通过命令行参数调整采集项（如 &ndash;no-collector.diskstats 关闭磁盘统计 ）；mysql_exporter 需要配置数据库连接信息，在配置文件里填好用户名、密码、地址：</li>
+</ol>
+<pre tabindex="0"><code>[client]
+user = prometheus
+password = yourpassword
+host = localhost
+port = 3306
+</code></pre><p><strong>中间 agent 配置</strong>：针对第三方服务的中间 agent，要配置好连接目标服务的参数（如 API 密钥、访问地址 ），还有数据转换规则，确保采集的数据符合 Prometheus 格式。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%B7%B1%E5%85%A5%E6%8E%A2%E7%B4%A2-langgraph/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%B7%B1%E5%85%A5%E6%8E%A2%E7%B4%A2-langgraph/1.aa343f2b772deb1d00623b7bed972c8d_huba2bd994f0da4e171194ad980a76e763_1196516_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-qjQ/K3ct6x0AYjt77ZcsjQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">深入探索 LangGraph</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/langgraph%E9%A2%84%E6%9E%84%E5%BB%BAagent/">
+        
+        
+            <div class="article-image">
+                <img src="/p/langgraph%E9%A2%84%E6%9E%84%E5%BB%BAagent/1.0a7c8044cb262efce3cc1c3d74e338bd_hufc87676f5c03c42ba4fd49855ef25156_1205177_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-CnyARMsmLvzjzBw9dOM4vQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LangGraph预构建Agent</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/img.0cf458ef54fa450e9d1ac9086d930efe_huecad56dbf45667eb4f21f35c2388c063_52872_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-DPRY71T6RQ6dGskIbZMO/g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">智能知识检索系统</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/img.91bf08890296485b5b595123bb1b9c01_hufef087fddda0fa8512a3bf0acfa96939_57649_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-kb8IiQKWSFtbWVEjuxucAQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">检索增强生成（RAG）</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/langchain-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%B7%A5%E5%85%B7/">
+        
+        
+            <div class="article-image">
+                <img src="/p/langchain-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%B7%A5%E5%85%B7/1.9e68f053768f5d39127f08c30ecf0389_hudd76169eaa14e4b46869a65a4bae705b_986909_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-nmjwU3aPXTkSfwjDDs8DiQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LangChain 自定义工具</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#一数据格式监控的-通用语言">一、数据格式：监控的 “通用语言”</a>
+      <ol>
+        <li><a href="#一指标标识规则">（一）指标标识规则</a></li>
+        <li><a href="#二时间序列与样本构成">（二）时间序列与样本构成</a></li>
+        <li><a href="#三四种核心指标类型">（三）四种核心指标类型</a></li>
+      </ol>
+    </li>
+    <li><a href="#二传输协议与方式数据怎么-跑-起来">二、传输协议与方式：数据怎么 “跑” 起来</a>
+      <ol>
+        <li><a href="#一传输协议">（一）传输协议</a></li>
+        <li><a href="#二传输方式">（二）传输方式</a></li>
+      </ol>
+    </li>
+    <li><a href="#三拓展监控对象让监控-触角-更全">三、拓展监控对象：让监控 “触角” 更全</a>
+      <ol>
+        <li><a href="#一两类监控对象的适配方法">（一）两类监控对象的适配方法</a></li>
+        <li><a href="#二拓展的核心条件">（二）拓展的核心条件</a></li>
+      </ol>
+    </li>
+    <li><a href="#四prometheus-与-grafana-交互让数据-看得见">四、Prometheus 与 Grafana 交互：让数据 “看得见”</a>
+      <ol>
+        <li><a href="#一部署-exporter">（一）部署 exporter</a></li>
+        <li><a href="#二prometheus-配置">（二）Prometheus 配置</a></li>
+        <li><a href="#三grafana-对接">（三）Grafana 对接</a></li>
+      </ol>
+    </li>
+    <li><a href="#五动态更新监控对象让监控-更聪明">五、动态更新监控对象：让监控 “更聪明”</a>
+      <ol>
+        <li><a href="#一配置服务支撑">（一）配置服务支撑</a></li>
+        <li><a href="#二定时拉取更新">（二）定时拉取更新</a></li>
+      </ol>
+    </li>
+    <li><a href="#六配置说明让监控体系-稳准狠">六、配置说明：让监控体系 “稳准狠”</a>
+      <ol>
+        <li><a href="#一prometheus-配置要点">（一）Prometheus 配置要点</a></li>
+        <li><a href="#二grafana-配置关键">（二）Grafana 配置关键</a></li>
+        <li><a href="#三agent-与中间件配置">（三）Agent 与中间件配置</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
