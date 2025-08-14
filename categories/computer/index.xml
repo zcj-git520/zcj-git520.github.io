@@ -145,6 +145,19 @@ from langchain_core.tools import tool @tool def search_city_tool(city: str) -&am
     </item>
     
     <item>
+      <title>深入解析 SNMP Exporter</title>
+      <link>https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/</link>
+      <pubDate>Mon, 25 Dec 2023 22:00:38 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/</guid>
+      <description>深入解析 SNMP Exporter 在现代网络架构中，对交换机、路由器、NAS 等网络设备的监控至关重要。Prometheus 作为主流的开源监控系统，以其时序数据存储、灵活的查询语言（PromQL）和丰富的生态组件成为监控领域的标杆。而 SNMP Exporter 作为 Prometheus 生态的关键一环，专门解决了网络设备的监控数据采集问题。本文将结合 Prometheus 的核心特性，从组件简况、部署架构、配置格式到工作流程，全面剖析 SNMP Exporter 的核心价值。
+一、SNMP Exporter Prometheus 的核心功能是时序数据采集、存储与分析，其工作流程包括：通过 exporter 组件采集目标指标 → 存储到时序数据库 → 通过 PromQL 查询分析 → 结合 Grafana 可视化。但网络设备（如交换机、路由器）通常不支持 Prometheus 原生的 HTTP 接口，而是通过 SNMP 协议 暴露监控数据。
+SNMP Exporter 的核心作用：作为 Prometheus 与网络设备之间的 “翻译官”，通过 SNMP 协议从设备采集数据，转换为 Prometheus 可识别的指标格式（如 cpu_usage{device=&amp;quot;cisco-fw&amp;quot;} 25），实现网络设备与 Prometheus 生态的无缝对接。
+二、SNMP Exporter 简况 SNMP Exporter 是 Prometheus 生态的核心组件之一，其设计围绕 Prometheus 的 “拉取式”（Pull）采集模型展开，核心价值体现在三个方面：
+  标准化采集：通过自带的 generator 工具解析 MIB 文件（网络设备的 “字典”），自动生成 OID 与 Prometheus 指标的映射配置（snmp.</description>
+    </item>
+    
+    <item>
       <title>Prometheus 监控体系</title>
       <link>https://zcj-git520.github.io/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/</link>
       <pubDate>Sat, 25 Nov 2023 22:00:38 +0800</pubDate>

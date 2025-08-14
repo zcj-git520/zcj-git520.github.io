@@ -2585,6 +2585,335 @@ export OPENAI_API_KEY=&amp;quot;sk-...&amp;quot;
 </description>
         </item>
         <item>
+        <title>深入解析 SNMP Exporter</title>
+        <link>https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/</link>
+        <pubDate>Mon, 25 Dec 2023 22:00:38 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/1.png" alt="Featured image of post 深入解析 SNMP Exporter" /&gt;&lt;h1 id=&#34;深入解析-snmp-exporter&#34;&gt;深入解析 SNMP Exporter&lt;/h1&gt;
+&lt;p&gt;在现代网络架构中，对交换机、路由器、NAS 等网络设备的监控至关重要。&lt;strong&gt;Prometheus&lt;/strong&gt; 作为主流的开源监控系统，以其时序数据存储、灵活的查询语言（PromQL）和丰富的生态组件成为监控领域的标杆。而 &lt;strong&gt;SNMP Exporter&lt;/strong&gt; 作为 Prometheus 生态的关键一环，专门解决了网络设备的监控数据采集问题。本文将结合 Prometheus 的核心特性，从组件简况、部署架构、配置格式到工作流程，全面剖析 SNMP Exporter 的核心价值。&lt;/p&gt;
+&lt;h2 id=&#34;一snmp-exporter&#34;&gt;一、SNMP Exporter&lt;/h2&gt;
+&lt;p&gt;Prometheus 的核心功能是&lt;strong&gt;时序数据采集、存储与分析&lt;/strong&gt;，其工作流程包括：通过 &lt;code&gt;exporter&lt;/code&gt; 组件采集目标指标 → 存储到时序数据库 → 通过 PromQL 查询分析 → 结合 Grafana 可视化。但网络设备（如交换机、路由器）通常不支持 Prometheus 原生的 HTTP 接口，而是通过 &lt;strong&gt;SNMP 协议&lt;/strong&gt; 暴露监控数据。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;SNMP Exporter 的核心作用&lt;/strong&gt;：作为 Prometheus 与网络设备之间的 “翻译官”，通过 SNMP 协议从设备采集数据，转换为 Prometheus 可识别的&lt;strong&gt;指标格式&lt;/strong&gt;（如 &lt;code&gt;cpu_usage{device=&amp;quot;cisco-fw&amp;quot;} 25&lt;/code&gt;），实现网络设备与 Prometheus 生态的无缝对接。&lt;/p&gt;
+&lt;h2 id=&#34;二snmp-exporter-简况&#34;&gt;二、SNMP Exporter 简况&lt;/h2&gt;
+&lt;p&gt;SNMP Exporter 是 Prometheus 生态的核心组件之一，其设计围绕 Prometheus 的 “拉取式”（Pull）采集模型展开，核心价值体现在三个方面：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;标准化采集&lt;/strong&gt;：通过自带的 &lt;code&gt;generator&lt;/code&gt; 工具解析 MIB 文件（网络设备的 “字典”），自动生成 OID 与 Prometheus 指标的映射配置（&lt;code&gt;snmp.yml&lt;/code&gt;），支持多厂商设备的统一采集逻辑。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;灵活部署&lt;/strong&gt;：支持 Docker 快速部署和二进制长期运行，可直接被 Prometheus 的 &lt;code&gt;scrape_configs&lt;/code&gt; 配置项抓取，无需额外适配。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;广泛应用&lt;/strong&gt;：覆盖 Cisco、Arista 等主流网络设备，以及 Synology NAS 等存储设备，完美填补了 Prometheus 在 SNMP 设备监控中的空白。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;三部署架构snmp-exporter-与-prometheus-的集成&#34;&gt;三、部署架构：SNMP Exporter 与 Prometheus 的集成&lt;/h2&gt;
+&lt;h3 id=&#34;31-部署方式&#34;&gt;3.1 部署方式&lt;/h3&gt;
+&lt;p&gt;SNMP Exporter 提供两种部署方式，均需与 Prometheus 配置联动：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;部署方式&lt;/th&gt;
+&lt;th&gt;适用场景&lt;/th&gt;
+&lt;th&gt;操作步骤（含 Prometheus 配置）&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Docker&lt;/td&gt;
+&lt;td&gt;快速原型验证&lt;/td&gt;
+&lt;td&gt;1. 启动 SNMP Exporter 容器：&lt;code&gt;docker run -d -p 9116:9116 -v ./snmp.yml:/etc/snmp_exporter/snmp.yml prom/snmp-exporter&lt;/code&gt;2. 在 Prometheus 配置中添加抓取规则：&lt;code&gt;yaml&amp;lt;br&amp;gt;scrape_configs:&amp;lt;br&amp;gt;  - job_name: &#39;snmp&#39;&amp;lt;br&amp;gt;    static_configs:&amp;lt;br&amp;gt;      - targets: [&#39;192.168.1.1&#39;]  # 网络设备 IP&amp;lt;br&amp;gt;    metrics_path: /snmp&amp;lt;br&amp;gt;    params:&amp;lt;br&amp;gt;      module: [cisco_firewall]  # 对应 snmp.yml 中的模块&amp;lt;br&amp;gt;    relabel_configs:&amp;lt;br&amp;gt;      - source_labels: [__address__]&amp;lt;br&amp;gt;        target_label: __param_target&amp;lt;br&amp;gt;      - source_labels: [__param_target]&amp;lt;br&amp;gt;        target_label: instance&amp;lt;br&amp;gt;      - target_label: __address__&amp;lt;br&amp;gt;        replacement: localhost:9116  # SNMP Exporter 地址&amp;lt;br&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;二进制&lt;/td&gt;
+&lt;td&gt;生产环境&lt;/td&gt;
+&lt;td&gt;1. 下载二进制包并运行：&lt;code&gt;./snmp_exporter --config.file=snmp.yml&lt;/code&gt;2. 同上配置 Prometheus 的 &lt;code&gt;scrape_configs&lt;/code&gt;，将 &lt;code&gt;replacement&lt;/code&gt; 指向 SNMP Exporter 所在服务器的 IP: 端口。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;32-集群部署与-prometheus-调度&#34;&gt;3.2 集群部署与 Prometheus 调度&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;高可用设计&lt;/strong&gt;：SNMP Exporter 本身不支持集群，但可部署多个实例，由 Prometheus 通过 &lt;code&gt;scrape_configs&lt;/code&gt; 配置多目标抓取，实现负载均衡。例如：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;scrape_configs:
+  - job_name: &lt;span class=&#34;s1&#34;&gt;&amp;#39;snmp-cluster&amp;#39;&lt;/span&gt;
+    static_configs:
+      - targets: &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;192.168.1.1&amp;#39;&lt;/span&gt;, &lt;span class=&#34;s1&#34;&gt;&amp;#39;192.168.1.2&amp;#39;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;# 多个网络设备&lt;/span&gt;
+    metrics_path: /snmp
+    params: &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt; module: &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;cisco_firewall&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+    relabel_configs:
+      - source_labels: &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;__address__&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+        target_label: __param_target
+      - source_labels: &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;__param_target&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+        target_label: instance
+      - target_label: __address__
+        replacement: &lt;span class=&#34;s1&#34;&gt;&amp;#39;snmp-exporter-1:9116,snmp-exporter-2:9116&amp;#39;&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;# 多个 Exporter 实例&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;性能优化&lt;/strong&gt;：单实例高并发采集超时可通过 &lt;code&gt;--snmp.module-concurrency&lt;/code&gt; 调整并发数，配合 Prometheus 的 &lt;code&gt;scrape_interval&lt;/code&gt;（采集间隔）和 &lt;code&gt;timeout&lt;/code&gt; 参数避免数据丢失。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;四snmp-exporter-配置&#34;&gt;四、SNMP Exporter 配置&lt;/h2&gt;
+&lt;p&gt;SNMP Exporter 的 &lt;code&gt;snmp.yml&lt;/code&gt; 配置直接决定了 Prometheus 最终采集到的指标格式，需遵循 Prometheus 的指标命名规范（如小写字母、下划线分隔）。&lt;/p&gt;
+&lt;h3 id=&#34;41-配置示例与-prometheus-指标对应&#34;&gt;4.1 配置示例（与 Prometheus 指标对应）&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;modules:
+  cisco_firewall:  # 针对 Cisco 防火墙的模块
+    walk:  # 遍历采集的 OID 范围
+      - 1.3.6.1.2.1.1.3  # sysUpTime（系统运行时间）
+      - 1.3.6.1.4.1.9.9.109.1.1.1.1.5  # CPU 使用率
+    metrics:  # 映射为 Prometheus 指标
+      - name: sys_uptime  # Prometheus 指标名（符合规范）
+        oid: 1.3.6.1.2.1.1.3.0
+        type: gauge  # Prometheus 指标类型（gauge 支持波动值）
+        help: &amp;quot;系统运行时间（秒）&amp;quot;  # 对应 Prometheus 指标的 HELP 信息
+      - name: cpu_usage
+        oid: 1.3.6.1.4.1.9.9.109.1.1.1.1.5
+        type: gauge
+        help: &amp;quot;CPU 使用率（百分比）&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;在 Prometheus 中查询该指标的示例：&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;# 查看所有 Cisco 防火墙的 CPU 使用率
+cpu_usage{module=&amp;quot;cisco_firewall&amp;quot;}
+
+# 筛选使用率超过 80% 的设备
+cpu_usage{module=&amp;quot;cisco_firewall&amp;quot;} &amp;gt; 80
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;42-核心字段与-prometheus-指标关联&#34;&gt;4.2 核心字段与 Prometheus 指标关联&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;字段&lt;/th&gt;
+&lt;th&gt;与 Prometheus 关联说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;name&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;直接作为 Prometheus 指标名，需简洁且符合命名规范（如 &lt;code&gt;network_interface_in_bytes&lt;/code&gt;）。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;type&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;对应 Prometheus 的指标类型：&lt;code&gt;gauge&lt;/code&gt;（如 CPU 使用率）、&lt;code&gt;counter&lt;/code&gt;（如累计流量），影响 PromQL 计算方式（如 &lt;code&gt;rate()&lt;/code&gt; 函数适用于 &lt;code&gt;counter&lt;/code&gt;）。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;help&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;生成 Prometheus 指标的 &lt;code&gt;HELP&lt;/code&gt; 信息（如 &lt;code&gt;# HELP cpu_usage CPU 使用率（百分比）&lt;/code&gt;），提升指标可读性。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;index_oids&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;为 Prometheus 指标添加标签（Label），实现多维度分析（如 &lt;code&gt;interface&lt;/code&gt; 标签区分不同网卡）。&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&#34;五generator工具配置解析流程&#34;&gt;五、Generator工具配置解析流程&lt;/h2&gt;
+&lt;h4 id=&#34;51全流程图&#34;&gt;5.1全流程图&lt;/h4&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 257; 
+			flex-basis: 619px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/1.png&#34; data-size=&#34;552x214&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/1.png&#34;
+			width=&#34;552&#34;
+			height=&#34;214&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/1_hu40d5ff5869a4756969dfc1f40badba91_17406_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/1_hu40d5ff5869a4756969dfc1f40badba91_17406_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			alt=&#34;img&#34;&gt;
+	&lt;/a&gt;
+	
+	&lt;figcaption&gt;img&lt;/figcaption&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;h4 id=&#34;52详细流程说明&#34;&gt;5.2详细流程说明&lt;/h4&gt;
+&lt;h5 id=&#34;1mib解析阶段&#34;&gt;（1）MIB解析阶段&lt;/h5&gt;
+&lt;ul&gt;
+&lt;li&gt;基础MIB加载：优先解析SNMPv2标准库（SMI定义数据类型，TC定义文本约定，CONF定义模块合规性）。&lt;/li&gt;
+&lt;li&gt;依赖分析：递归解析MIB文件间的IMPORTS依赖，确保完整OID树构建。&lt;/li&gt;
+&lt;li&gt;OID树构建：将OID组织为树状结构（如.1.3.6.1.2.1.1对应system组）。&lt;/li&gt;
+&lt;li&gt;TRAP处理：提取通知类型定义（如linkDown），用于事件监控&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 153; 
+			flex-basis: 368px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/2.png&#34; data-size=&#34;444x289&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/2.png&#34;
+			width=&#34;444&#34;
+			height=&#34;289&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/2_hu07593892b283b4bf5bd6253a4a0f0867_23413_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/2_hu07593892b283b4bf5bd6253a4a0f0867_23413_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			alt=&#34;img&#34;&gt;
+	&lt;/a&gt;
+	
+	&lt;figcaption&gt;img&lt;/figcaption&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;h5 id=&#34;2oid语义提取&#34;&gt;（2）OID语义提取&lt;/h5&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;类型识别&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Counter32/64 → int类型&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Gauge32 → 浮点数&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;OctetString → string&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;描述文本解析：从DESCRIPTION字段提取指标含义（如sysUpTime→系统运行时间）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;表索引处理：识别类似ifIndex的索引键，关联多维度数据（如网卡流量表）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;枚举值转换：将数字枚举映射为文本（如ifOperStatus：1=up, 2=down）&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 277; 
+			flex-basis: 664px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/3.png&#34; data-size=&#34;554x200&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/3.png&#34;
+			width=&#34;554&#34;
+			height=&#34;200&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/3_hub74a5547efe6468c41175103d9f33583_22380_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/3_hub74a5547efe6468c41175103d9f33583_22380_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			alt=&#34;img&#34;&gt;
+	&lt;/a&gt;
+	
+	&lt;figcaption&gt;img&lt;/figcaption&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;h5 id=&#34;3规则应用&#34;&gt;（3）规则应用&lt;/h5&gt;
+&lt;ul&gt;
+&lt;li&gt;generator.yml 自定义格式&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;modules:
+ &lt;span class=&#34;se&#34;&gt;\#&lt;/span&gt; 模块名称（对应设备类型）
+ cisco_asa:
+  walk: 
+   &lt;span class=&#34;se&#34;&gt;\-&lt;/span&gt; 1.3.6.1.2.1.1 &lt;span class=&#34;c1&#34;&gt;# 系统组&lt;/span&gt;
+   &lt;span class=&#34;se&#34;&gt;\-&lt;/span&gt; 1.3.6.1.2.1.2 &lt;span class=&#34;c1&#34;&gt;# 接口组&lt;/span&gt;
+  &lt;span class=&#34;se&#34;&gt;\#&lt;/span&gt; 指标重命名（实现统一命名）
+  overrides:
+   ifInOctets:
+    regex_extracts:
+     &lt;span class=&#34;s2&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt;: - value &lt;span class=&#34;c1&#34;&gt;# 原始 OID&lt;/span&gt;
+    &lt;span class=&#34;se&#34;&gt;\#&lt;/span&gt; 映射为统一指标名
+    name: &lt;span class=&#34;s2&#34;&gt;&amp;#34;network_interface_in_bytes&amp;#34;&lt;/span&gt; 
+ huawei_firewall:
+  walk:
+   &lt;span class=&#34;se&#34;&gt;\-&lt;/span&gt; 1.3.6.1.4.1.2011.6
+  overrides:
+   hwSecurityCpuUsage:
+    name: &lt;span class=&#34;s2&#34;&gt;&amp;#34;system_cpu_usage_percent&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;指标重命名（标准指标名）：将冗长OID名转为简洁标准Prometheus指标名（例：UCD-SNMP-MIB→ssCpuIdle）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 368; 
+			flex-basis: 885px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/4.png&#34; data-size=&#34;450x122&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/4.png&#34;
+			width=&#34;450&#34;
+			height=&#34;122&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/4_hu81d9401578413599bee6469ccbc5b0f8_34667_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/4_hu81d9401578413599bee6469ccbc5b0f8_34667_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			alt=&#34;img&#34;&gt;
+	&lt;/a&gt;
+	
+	&lt;figcaption&gt;img&lt;/figcaption&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;类型覆盖：强制指定数据类型（如将误识别为Gauge的Counter修正）&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;值转换:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;scale：数值单位转换（例：scale: 0.001 将KB转为MB）&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;regex_extracts: 数据替换等&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;如：Generator.yml&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 161; 
+			flex-basis: 386px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/5.png&#34; data-size=&#34;474x294&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/5.png&#34;
+			width=&#34;474&#34;
+			height=&#34;294&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/5_hu8feb1715bbf3b64e499f82f6545464d2_55818_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/5_hu8feb1715bbf3b64e499f82f6545464d2_55818_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			alt=&#34;img&#34;&gt;
+	&lt;/a&gt;
+	
+	&lt;figcaption&gt;img&lt;/figcaption&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;h5 id=&#34;4配置生成&#34;&gt;（4）配置生成&lt;/h5&gt;
+&lt;p&gt;&lt;figure 
+	
+		class=&#34;gallery-image&#34; 
+		style=&#34;
+			flex-grow: 314; 
+			flex-basis: 755px&#34;
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/6.png&#34; data-size=&#34;554x176&#34;&gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/6.png&#34;
+			width=&#34;554&#34;
+			height=&#34;176&#34;
+			srcset=&#34;https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/6_hue059aa2f5d322abc1fb682e95828c97d_34767_480x0_resize_box_3.png 480w, https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/6_hue059aa2f5d322abc1fb682e95828c97d_34767_1024x0_resize_box_3.png 1024w&#34;
+			loading=&#34;lazy&#34;
+			alt=&#34;img&#34;&gt;
+	&lt;/a&gt;
+	
+	&lt;figcaption&gt;img&lt;/figcaption&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;h2 id=&#34;六总结snmp-exporter-对-prometheus-生态的价值&#34;&gt;六、总结：SNMP Exporter 对 Prometheus 生态的价值&lt;/h2&gt;
+&lt;p&gt;SNMP Exporter 作为 Prometheus 生态的重要补充，解决了网络设备通过 SNMP 协议暴露数据的采集难题，其核心价值在于：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;生态无缝对接&lt;/strong&gt;：将 SNMP 数据标准化为 Prometheus 指标，让网络设备监控融入统一的时序数据体系。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;灵活适配多厂商&lt;/strong&gt;：通过 MIB 解析和规则配置，支持不同品牌设备的监控，避免重复开发。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;兼容 Prometheus 最佳实践&lt;/strong&gt;：生成的指标支持 Label 多维度分析、PromQL 聚合计算和 Grafana 可视化，构建完整的监控闭环。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+        </item>
+        <item>
         <title>Prometheus 监控体系</title>
         <link>https://zcj-git520.github.io/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/</link>
         <pubDate>Sat, 25 Nov 2023 22:00:38 +0800</pubDate>

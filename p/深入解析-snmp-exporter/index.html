@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='深入解析 SNMP Exporter 在现代网络架构中，对交换机、路由器、NAS 等网络设备的监控至关重要。Prometheus 作为主流的开源监控系统，以其时序数据存储、灵活的查询语言（PromQL）和丰富的生态组件成为监控领域的标杆。而 SNMP Exporter 作为 Prometheus 生态的关键一环，专门解决了网络设备的监控数据采集问题。本文将结合 Prometheus 的核心特性，从组件简况、部署架构、配置格式到工作流程，全面剖析 SNMP Exporter 的核心价值。
+一、SNMP Exporter Prometheus 的核心功能是时序数据采集、存储与分析，其工作流程包括：通过 exporter 组件采集目标指标 → 存储到时序数据库 → 通过 PromQL 查询分析 → 结合 Grafana 可视化。但网络设备（如交换机、路由器）通常不支持 Prometheus 原生的 HTTP 接口，而是通过 SNMP 协议 暴露监控数据。
+SNMP Exporter 的核心作用：作为 Prometheus 与网络设备之间的 “翻译官”，通过 SNMP 协议从设备采集数据，转换为 Prometheus 可识别的指标格式（如 cpu_usage{device=&amp;quot;cisco-fw&amp;quot;} 25），实现网络设备与 Prometheus 生态的无缝对接。
+二、SNMP Exporter 简况 SNMP Exporter 是 Prometheus 生态的核心组件之一，其设计围绕 Prometheus 的 “拉取式”（Pull）采集模型展开，核心价值体现在三个方面：
+  标准化采集：通过自带的 generator 工具解析 MIB 文件（网络设备的 “字典”），自动生成 OID 与 Prometheus 指标的映射配置（snmp.'><title>深入解析 SNMP Exporter</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='深入解析 SNMP Exporter'>
+<meta property='og:description' content='深入解析 SNMP Exporter 在现代网络架构中，对交换机、路由器、NAS 等网络设备的监控至关重要。Prometheus 作为主流的开源监控系统，以其时序数据存储、灵活的查询语言（PromQL）和丰富的生态组件成为监控领域的标杆。而 SNMP Exporter 作为 Prometheus 生态的关键一环，专门解决了网络设备的监控数据采集问题。本文将结合 Prometheus 的核心特性，从组件简况、部署架构、配置格式到工作流程，全面剖析 SNMP Exporter 的核心价值。
+一、SNMP Exporter Prometheus 的核心功能是时序数据采集、存储与分析，其工作流程包括：通过 exporter 组件采集目标指标 → 存储到时序数据库 → 通过 PromQL 查询分析 → 结合 Grafana 可视化。但网络设备（如交换机、路由器）通常不支持 Prometheus 原生的 HTTP 接口，而是通过 SNMP 协议 暴露监控数据。
+SNMP Exporter 的核心作用：作为 Prometheus 与网络设备之间的 “翻译官”，通过 SNMP 协议从设备采集数据，转换为 Prometheus 可识别的指标格式（如 cpu_usage{device=&amp;quot;cisco-fw&amp;quot;} 25），实现网络设备与 Prometheus 生态的无缝对接。
+二、SNMP Exporter 简况 SNMP Exporter 是 Prometheus 生态的核心组件之一，其设计围绕 Prometheus 的 “拉取式”（Pull）采集模型展开，核心价值体现在三个方面：
+  标准化采集：通过自带的 generator 工具解析 MIB 文件（网络设备的 “字典”），自动生成 OID 与 Prometheus 指标的映射配置（snmp.'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2023-12-25T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2023-12-25T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/1.png' />
+<meta name="twitter:title" content="深入解析 SNMP Exporter">
+<meta name="twitter:description" content="深入解析 SNMP Exporter 在现代网络架构中，对交换机、路由器、NAS 等网络设备的监控至关重要。Prometheus 作为主流的开源监控系统，以其时序数据存储、灵活的查询语言（PromQL）和丰富的生态组件成为监控领域的标杆。而 SNMP Exporter 作为 Prometheus 生态的关键一环，专门解决了网络设备的监控数据采集问题。本文将结合 Prometheus 的核心特性，从组件简况、部署架构、配置格式到工作流程，全面剖析 SNMP Exporter 的核心价值。
+一、SNMP Exporter Prometheus 的核心功能是时序数据采集、存储与分析，其工作流程包括：通过 exporter 组件采集目标指标 → 存储到时序数据库 → 通过 PromQL 查询分析 → 结合 Grafana 可视化。但网络设备（如交换机、路由器）通常不支持 Prometheus 原生的 HTTP 接口，而是通过 SNMP 协议 暴露监控数据。
+SNMP Exporter 的核心作用：作为 Prometheus 与网络设备之间的 “翻译官”，通过 SNMP 协议从设备采集数据，转换为 Prometheus 可识别的指标格式（如 cpu_usage{device=&amp;quot;cisco-fw&amp;quot;} 25），实现网络设备与 Prometheus 生态的无缝对接。
+二、SNMP Exporter 简况 SNMP Exporter 是 Prometheus 生态的核心组件之一，其设计围绕 Prometheus 的 “拉取式”（Pull）采集模型展开，核心价值体现在三个方面：
+  标准化采集：通过自带的 generator 工具解析 MIB 文件（网络设备的 “字典”），自动生成 OID 与 Prometheus 指标的映射配置（snmp."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/1.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/">
+                <img src="/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/1_hu40d5ff5869a4756969dfc1f40badba91_17406_800x0_resize_box_3.png"
+                        srcset="/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/1_hu40d5ff5869a4756969dfc1f40badba91_17406_800x0_resize_box_3.png 800w, /p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/1_hu40d5ff5869a4756969dfc1f40badba91_17406_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="310" 
+                        loading="lazy"
+                        alt="Featured image of post 深入解析 SNMP Exporter" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/computer/" style="background-color: #2a9d8f; color: #fff;">
+                知识学习
+            </a>
+        
+            <a href="/categories/golang/" style="background-color: #2a9d8f; color: #fff;">
+                Golang
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/">深入解析 SNMP Exporter</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Dec 25, 2023</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 3 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h1 id="深入解析-snmp-exporter">深入解析 SNMP Exporter</h1>
+<p>在现代网络架构中，对交换机、路由器、NAS 等网络设备的监控至关重要。<strong>Prometheus</strong> 作为主流的开源监控系统，以其时序数据存储、灵活的查询语言（PromQL）和丰富的生态组件成为监控领域的标杆。而 <strong>SNMP Exporter</strong> 作为 Prometheus 生态的关键一环，专门解决了网络设备的监控数据采集问题。本文将结合 Prometheus 的核心特性，从组件简况、部署架构、配置格式到工作流程，全面剖析 SNMP Exporter 的核心价值。</p>
+<h2 id="一snmp-exporter">一、SNMP Exporter</h2>
+<p>Prometheus 的核心功能是<strong>时序数据采集、存储与分析</strong>，其工作流程包括：通过 <code>exporter</code> 组件采集目标指标 → 存储到时序数据库 → 通过 PromQL 查询分析 → 结合 Grafana 可视化。但网络设备（如交换机、路由器）通常不支持 Prometheus 原生的 HTTP 接口，而是通过 <strong>SNMP 协议</strong> 暴露监控数据。</p>
+<p><strong>SNMP Exporter 的核心作用</strong>：作为 Prometheus 与网络设备之间的 “翻译官”，通过 SNMP 协议从设备采集数据，转换为 Prometheus 可识别的<strong>指标格式</strong>（如 <code>cpu_usage{device=&quot;cisco-fw&quot;} 25</code>），实现网络设备与 Prometheus 生态的无缝对接。</p>
+<h2 id="二snmp-exporter-简况">二、SNMP Exporter 简况</h2>
+<p>SNMP Exporter 是 Prometheus 生态的核心组件之一，其设计围绕 Prometheus 的 “拉取式”（Pull）采集模型展开，核心价值体现在三个方面：</p>
+<ul>
+<li>
+<p><strong>标准化采集</strong>：通过自带的 <code>generator</code> 工具解析 MIB 文件（网络设备的 “字典”），自动生成 OID 与 Prometheus 指标的映射配置（<code>snmp.yml</code>），支持多厂商设备的统一采集逻辑。</p>
+</li>
+<li>
+<p><strong>灵活部署</strong>：支持 Docker 快速部署和二进制长期运行，可直接被 Prometheus 的 <code>scrape_configs</code> 配置项抓取，无需额外适配。</p>
+</li>
+<li>
+<p><strong>广泛应用</strong>：覆盖 Cisco、Arista 等主流网络设备，以及 Synology NAS 等存储设备，完美填补了 Prometheus 在 SNMP 设备监控中的空白。</p>
+</li>
+</ul>
+<h2 id="三部署架构snmp-exporter-与-prometheus-的集成">三、部署架构：SNMP Exporter 与 Prometheus 的集成</h2>
+<h3 id="31-部署方式">3.1 部署方式</h3>
+<p>SNMP Exporter 提供两种部署方式，均需与 Prometheus 配置联动：</p>
+<table>
+<thead>
+<tr>
+<th>部署方式</th>
+<th>适用场景</th>
+<th>操作步骤（含 Prometheus 配置）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Docker</td>
+<td>快速原型验证</td>
+<td>1. 启动 SNMP Exporter 容器：<code>docker run -d -p 9116:9116 -v ./snmp.yml:/etc/snmp_exporter/snmp.yml prom/snmp-exporter</code>2. 在 Prometheus 配置中添加抓取规则：<code>yaml&lt;br&gt;scrape_configs:&lt;br&gt;  - job_name: 'snmp'&lt;br&gt;    static_configs:&lt;br&gt;      - targets: ['192.168.1.1']  # 网络设备 IP&lt;br&gt;    metrics_path: /snmp&lt;br&gt;    params:&lt;br&gt;      module: [cisco_firewall]  # 对应 snmp.yml 中的模块&lt;br&gt;    relabel_configs:&lt;br&gt;      - source_labels: [__address__]&lt;br&gt;        target_label: __param_target&lt;br&gt;      - source_labels: [__param_target]&lt;br&gt;        target_label: instance&lt;br&gt;      - target_label: __address__&lt;br&gt;        replacement: localhost:9116  # SNMP Exporter 地址&lt;br&gt;</code></td>
+</tr>
+<tr>
+<td>二进制</td>
+<td>生产环境</td>
+<td>1. 下载二进制包并运行：<code>./snmp_exporter --config.file=snmp.yml</code>2. 同上配置 Prometheus 的 <code>scrape_configs</code>，将 <code>replacement</code> 指向 SNMP Exporter 所在服务器的 IP: 端口。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-集群部署与-prometheus-调度">3.2 集群部署与 Prometheus 调度</h3>
+<ul>
+<li><strong>高可用设计</strong>：SNMP Exporter 本身不支持集群，但可部署多个实例，由 Prometheus 通过 <code>scrape_configs</code> 配置多目标抓取，实现负载均衡。例如：</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">scrape_configs:
+  - job_name: <span class="s1">&#39;snmp-cluster&#39;</span>
+    static_configs:
+      - targets: <span class="o">[</span><span class="s1">&#39;192.168.1.1&#39;</span>, <span class="s1">&#39;192.168.1.2&#39;</span><span class="o">]</span>  <span class="c1"># 多个网络设备</span>
+    metrics_path: /snmp
+    params: <span class="o">{</span> module: <span class="o">[</span>cisco_firewall<span class="o">]</span> <span class="o">}</span>
+    relabel_configs:
+      - source_labels: <span class="o">[</span>__address__<span class="o">]</span>
+        target_label: __param_target
+      - source_labels: <span class="o">[</span>__param_target<span class="o">]</span>
+        target_label: instance
+      - target_label: __address__
+        replacement: <span class="s1">&#39;snmp-exporter-1:9116,snmp-exporter-2:9116&#39;</span>  <span class="c1"># 多个 Exporter 实例</span>
+</code></pre></div><ul>
+<li><strong>性能优化</strong>：单实例高并发采集超时可通过 <code>--snmp.module-concurrency</code> 调整并发数，配合 Prometheus 的 <code>scrape_interval</code>（采集间隔）和 <code>timeout</code> 参数避免数据丢失。</li>
+</ul>
+<h2 id="四snmp-exporter-配置">四、SNMP Exporter 配置</h2>
+<p>SNMP Exporter 的 <code>snmp.yml</code> 配置直接决定了 Prometheus 最终采集到的指标格式，需遵循 Prometheus 的指标命名规范（如小写字母、下划线分隔）。</p>
+<h3 id="41-配置示例与-prometheus-指标对应">4.1 配置示例（与 Prometheus 指标对应）</h3>
+<pre tabindex="0"><code>modules:
+  cisco_firewall:  # 针对 Cisco 防火墙的模块
+    walk:  # 遍历采集的 OID 范围
+      - 1.3.6.1.2.1.1.3  # sysUpTime（系统运行时间）
+      - 1.3.6.1.4.1.9.9.109.1.1.1.1.5  # CPU 使用率
+    metrics:  # 映射为 Prometheus 指标
+      - name: sys_uptime  # Prometheus 指标名（符合规范）
+        oid: 1.3.6.1.2.1.1.3.0
+        type: gauge  # Prometheus 指标类型（gauge 支持波动值）
+        help: &quot;系统运行时间（秒）&quot;  # 对应 Prometheus 指标的 HELP 信息
+      - name: cpu_usage
+        oid: 1.3.6.1.4.1.9.9.109.1.1.1.1.5
+        type: gauge
+        help: &quot;CPU 使用率（百分比）&quot;
+</code></pre><p>在 Prometheus 中查询该指标的示例：</p>
+<pre tabindex="0"><code># 查看所有 Cisco 防火墙的 CPU 使用率
+cpu_usage{module=&quot;cisco_firewall&quot;}
+
+# 筛选使用率超过 80% 的设备
+cpu_usage{module=&quot;cisco_firewall&quot;} &gt; 80
+</code></pre><h3 id="42-核心字段与-prometheus-指标关联">4.2 核心字段与 Prometheus 指标关联</h3>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>与 Prometheus 关联说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>直接作为 Prometheus 指标名，需简洁且符合命名规范（如 <code>network_interface_in_bytes</code>）。</td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td>对应 Prometheus 的指标类型：<code>gauge</code>（如 CPU 使用率）、<code>counter</code>（如累计流量），影响 PromQL 计算方式（如 <code>rate()</code> 函数适用于 <code>counter</code>）。</td>
+</tr>
+<tr>
+<td><code>help</code></td>
+<td>生成 Prometheus 指标的 <code>HELP</code> 信息（如 <code># HELP cpu_usage CPU 使用率（百分比）</code>），提升指标可读性。</td>
+</tr>
+<tr>
+<td><code>index_oids</code></td>
+<td>为 Prometheus 指标添加标签（Label），实现多维度分析（如 <code>interface</code> 标签区分不同网卡）。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="五generator工具配置解析流程">五、Generator工具配置解析流程</h2>
+<h4 id="51全流程图">5.1全流程图</h4>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 257; 
+			flex-basis: 619px"
+	>
+	<a href="/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/1.png" data-size="552x214">
+		<img src="/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/1.png"
+			width="552"
+			height="214"
+			srcset="/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/1_hu40d5ff5869a4756969dfc1f40badba91_17406_480x0_resize_box_3.png 480w, /p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/1_hu40d5ff5869a4756969dfc1f40badba91_17406_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			alt="img">
+	</a>
+	
+	<figcaption>img</figcaption>
+	
+</figure></p>
+<h4 id="52详细流程说明">5.2详细流程说明</h4>
+<h5 id="1mib解析阶段">（1）MIB解析阶段</h5>
+<ul>
+<li>基础MIB加载：优先解析SNMPv2标准库（SMI定义数据类型，TC定义文本约定，CONF定义模块合规性）。</li>
+<li>依赖分析：递归解析MIB文件间的IMPORTS依赖，确保完整OID树构建。</li>
+<li>OID树构建：将OID组织为树状结构（如.1.3.6.1.2.1.1对应system组）。</li>
+<li>TRAP处理：提取通知类型定义（如linkDown），用于事件监控</li>
+</ul>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 153; 
+			flex-basis: 368px"
+	>
+	<a href="/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/2.png" data-size="444x289">
+		<img src="/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/2.png"
+			width="444"
+			height="289"
+			srcset="/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/2_hu07593892b283b4bf5bd6253a4a0f0867_23413_480x0_resize_box_3.png 480w, /p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/2_hu07593892b283b4bf5bd6253a4a0f0867_23413_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			alt="img">
+	</a>
+	
+	<figcaption>img</figcaption>
+	
+</figure></p>
+<h5 id="2oid语义提取">（2）OID语义提取</h5>
+<ul>
+<li>
+<p>类型识别</p>
+<ul>
+<li>
+<p>Counter32/64 → int类型</p>
+</li>
+<li>
+<p>Gauge32 → 浮点数</p>
+</li>
+<li>
+<p>OctetString → string</p>
+</li>
+</ul>
+</li>
+<li>
+<p>描述文本解析：从DESCRIPTION字段提取指标含义（如sysUpTime→系统运行时间）。</p>
+</li>
+<li>
+<p>表索引处理：识别类似ifIndex的索引键，关联多维度数据（如网卡流量表）。</p>
+</li>
+<li>
+<p>枚举值转换：将数字枚举映射为文本（如ifOperStatus：1=up, 2=down）</p>
+</li>
+</ul>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 277; 
+			flex-basis: 664px"
+	>
+	<a href="/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/3.png" data-size="554x200">
+		<img src="/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/3.png"
+			width="554"
+			height="200"
+			srcset="/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/3_hub74a5547efe6468c41175103d9f33583_22380_480x0_resize_box_3.png 480w, /p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/3_hub74a5547efe6468c41175103d9f33583_22380_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			alt="img">
+	</a>
+	
+	<figcaption>img</figcaption>
+	
+</figure></p>
+<h5 id="3规则应用">（3）规则应用</h5>
+<ul>
+<li>generator.yml 自定义格式</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">modules:
+ <span class="se">\#</span> 模块名称（对应设备类型）
+ cisco_asa:
+  walk: 
+   <span class="se">\-</span> 1.3.6.1.2.1.1 <span class="c1"># 系统组</span>
+   <span class="se">\-</span> 1.3.6.1.2.1.2 <span class="c1"># 接口组</span>
+  <span class="se">\#</span> 指标重命名（实现统一命名）
+  overrides:
+   ifInOctets:
+    regex_extracts:
+     <span class="s2">&#34;&#34;</span>: - value <span class="c1"># 原始 OID</span>
+    <span class="se">\#</span> 映射为统一指标名
+    name: <span class="s2">&#34;network_interface_in_bytes&#34;</span> 
+ huawei_firewall:
+  walk:
+   <span class="se">\-</span> 1.3.6.1.4.1.2011.6
+  overrides:
+   hwSecurityCpuUsage:
+    name: <span class="s2">&#34;system_cpu_usage_percent&#34;</span>
+</code></pre></div><ul>
+<li>指标重命名（标准指标名）：将冗长OID名转为简洁标准Prometheus指标名（例：UCD-SNMP-MIB→ssCpuIdle）</li>
+</ul>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 368; 
+			flex-basis: 885px"
+	>
+	<a href="/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/4.png" data-size="450x122">
+		<img src="/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/4.png"
+			width="450"
+			height="122"
+			srcset="/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/4_hu81d9401578413599bee6469ccbc5b0f8_34667_480x0_resize_box_3.png 480w, /p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/4_hu81d9401578413599bee6469ccbc5b0f8_34667_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			alt="img">
+	</a>
+	
+	<figcaption>img</figcaption>
+	
+</figure></p>
+<ul>
+<li>
+<p>类型覆盖：强制指定数据类型（如将误识别为Gauge的Counter修正）</p>
+</li>
+<li>
+<p>值转换:</p>
+<ul>
+<li>
+<p>scale：数值单位转换（例：scale: 0.001 将KB转为MB）</p>
+</li>
+<li>
+<p>regex_extracts: 数据替换等</p>
+</li>
+<li>
+<p>如：Generator.yml</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 161; 
+			flex-basis: 386px"
+	>
+	<a href="/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/5.png" data-size="474x294">
+		<img src="/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/5.png"
+			width="474"
+			height="294"
+			srcset="/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/5_hu8feb1715bbf3b64e499f82f6545464d2_55818_480x0_resize_box_3.png 480w, /p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/5_hu8feb1715bbf3b64e499f82f6545464d2_55818_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			alt="img">
+	</a>
+	
+	<figcaption>img</figcaption>
+	
+</figure></p>
+<h5 id="4配置生成">（4）配置生成</h5>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 314; 
+			flex-basis: 755px"
+	>
+	<a href="/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/6.png" data-size="554x176">
+		<img src="/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/6.png"
+			width="554"
+			height="176"
+			srcset="/p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/6_hue059aa2f5d322abc1fb682e95828c97d_34767_480x0_resize_box_3.png 480w, /p/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-snmp-exporter/6_hue059aa2f5d322abc1fb682e95828c97d_34767_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			alt="img">
+	</a>
+	
+	<figcaption>img</figcaption>
+	
+</figure></p>
+<h2 id="六总结snmp-exporter-对-prometheus-生态的价值">六、总结：SNMP Exporter 对 Prometheus 生态的价值</h2>
+<p>SNMP Exporter 作为 Prometheus 生态的重要补充，解决了网络设备通过 SNMP 协议暴露数据的采集难题，其核心价值在于：</p>
+<ol>
+<li>
+<p><strong>生态无缝对接</strong>：将 SNMP 数据标准化为 Prometheus 指标，让网络设备监控融入统一的时序数据体系。</p>
+</li>
+<li>
+<p><strong>灵活适配多厂商</strong>：通过 MIB 解析和规则配置，支持不同品牌设备的监控，避免重复开发。</p>
+</li>
+<li>
+<p><strong>兼容 Prometheus 最佳实践</strong>：生成的指标支持 Label 多维度分析、PromQL 聚合计算和 Grafana 可视化，构建完整的监控闭环。</p>
+</li>
+</ol>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/">
+        
+        
+            <div class="article-image">
+                <img src="/p/prometheus-%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB/1.b4ec81d6538cea8d10b1b4db548053ac_hu7bc2e2363b789d26ffbef1b3568d6ac2_1191273_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-tOyB1lOM6o0QsbTbVIBTrA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Prometheus 监控体系</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%B7%B1%E5%85%A5%E6%8E%A2%E7%B4%A2-langgraph/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%B7%B1%E5%85%A5%E6%8E%A2%E7%B4%A2-langgraph/1.aa343f2b772deb1d00623b7bed972c8d_huba2bd994f0da4e171194ad980a76e763_1196516_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-qjQ/K3ct6x0AYjt77ZcsjQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">深入探索 LangGraph</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/langgraph%E9%A2%84%E6%9E%84%E5%BB%BAagent/">
+        
+        
+            <div class="article-image">
+                <img src="/p/langgraph%E9%A2%84%E6%9E%84%E5%BB%BAagent/1.0a7c8044cb262efce3cc1c3d74e338bd_hufc87676f5c03c42ba4fd49855ef25156_1205177_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-CnyARMsmLvzjzBw9dOM4vQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LangGraph预构建Agent</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/img.0cf458ef54fa450e9d1ac9086d930efe_huecad56dbf45667eb4f21f35c2388c063_52872_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-DPRY71T6RQ6dGskIbZMO/g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">智能知识检索系统</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/img.91bf08890296485b5b595123bb1b9c01_hufef087fddda0fa8512a3bf0acfa96939_57649_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-kb8IiQKWSFtbWVEjuxucAQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">检索增强生成（RAG）</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#一snmp-exporter">一、SNMP Exporter</a></li>
+    <li><a href="#二snmp-exporter-简况">二、SNMP Exporter 简况</a></li>
+    <li><a href="#三部署架构snmp-exporter-与-prometheus-的集成">三、部署架构：SNMP Exporter 与 Prometheus 的集成</a>
+      <ol>
+        <li><a href="#31-部署方式">3.1 部署方式</a></li>
+        <li><a href="#32-集群部署与-prometheus-调度">3.2 集群部署与 Prometheus 调度</a></li>
+      </ol>
+    </li>
+    <li><a href="#四snmp-exporter-配置">四、SNMP Exporter 配置</a>
+      <ol>
+        <li><a href="#41-配置示例与-prometheus-指标对应">4.1 配置示例（与 Prometheus 指标对应）</a></li>
+        <li><a href="#42-核心字段与-prometheus-指标关联">4.2 核心字段与 Prometheus 指标关联</a></li>
+      </ol>
+    </li>
+    <li><a href="#五generator工具配置解析流程">五、Generator工具配置解析流程</a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#51全流程图">5.1全流程图</a></li>
+            <li><a href="#52详细流程说明">5.2详细流程说明</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#六总结snmp-exporter-对-prometheus-生态的价值">六、总结：SNMP Exporter 对 Prometheus 生态的价值</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
