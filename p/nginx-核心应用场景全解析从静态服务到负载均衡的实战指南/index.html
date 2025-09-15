@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Nginx 核心应用场景全解析：从静态服务到负载均衡的实战指南 Nginx 凭借其轻量级架构、卓越的性能稳定性和高并发处理能力，早已成为互联网架构中的核心组件。除了广为人知的静态资源服务和反向代理功能，它在负载均衡、动静分离、URL 重写等场景中同样发挥着不可替代的作用。本文将结合实战配置案例，系统梳理 Nginx 的核心应用场景与技术细节，助你全面掌握这一强大工具。
+一、基础认知：Nginx 的核心优势与架构基础 1.1 Nginx 的核心特性 Nginx 的成功并非偶然，其核心特性完美契合了现代 Web 应用的需求：
+  高并发处理能力：采用异步非阻塞的事件驱动模型（epoll/kqueue），能在低内存消耗下同时处理数万个并发连接。相比传统的多进程模型，这种设计避免了进程切换的开销，让资源利用率大幅提升。
+  轻量级与高性能：核心代码仅几十 KB，启动速度毫秒级，内存占用通常维持在几 MB 级别。即使在高负载场景下，也能保持稳定的响应速度，尤其擅长处理静态资源请求。
+  灵活的配置系统：采用模块化的层级配置结构，语法简洁明了。无论是简单的静态服务还是复杂的负载均衡，都能通过配置文件快速实现，且支持热加载配置（nginx -s reload），无需重启服务。
+  跨平台兼容性：全面支持 Linux、Windows、macOS、BSD 等主流操作系统，部署场景不受限制，无论是服务器集群还是本地开发环境都能轻松适配。
+  模块化架构：核心功能与扩展功能分离，用户可根据需求加载或卸载模块。官方提供了基础模块，社区还贡献了大量第三方模块，如防火墙、认证、日志分析等，极大扩展了 Nginx 的能力边界。
+  完善的社区生态：作为成熟的开源项目，Nginx 拥有活跃的开发者社区和广泛的用户群体。官方文档详尽，社区问答资源丰富，遇到问题能快速找到解决方案，同时持续的版本更新也保证了功能的迭代与安全补丁的及时推送。
+  Nginx 的配置核心围绕http块展开，其中可包含多个server块（对应不同域名或端口的服务），每个server块内通过location块实现路径匹配与请求处理，这种层级结构为多场景适配提供了灵活支撑。
+1.2 Nginx 的典型应用场景 正是这些特性，让 Nginx 在多种场景中发挥着不可替代的作用：
+  静态资源 Web 服务器
+  反向代理服务器
+  负载均衡器
+  邮件代理服务器
+  HTTP 缓存服务器'><title>Nginx 核心应用场景全解析：从静态服务到负载均衡的实战指南</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/nginx-%E6%A0%B8%E5%BF%83%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E5%85%A8%E8%A7%A3%E6%9E%90%E4%BB%8E%E9%9D%99%E6%80%81%E6%9C%8D%E5%8A%A1%E5%88%B0%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%9A%84%E5%AE%9E%E6%88%98%E6%8C%87%E5%8D%97/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Nginx 核心应用场景全解析：从静态服务到负载均衡的实战指南'>
+<meta property='og:description' content='Nginx 核心应用场景全解析：从静态服务到负载均衡的实战指南 Nginx 凭借其轻量级架构、卓越的性能稳定性和高并发处理能力，早已成为互联网架构中的核心组件。除了广为人知的静态资源服务和反向代理功能，它在负载均衡、动静分离、URL 重写等场景中同样发挥着不可替代的作用。本文将结合实战配置案例，系统梳理 Nginx 的核心应用场景与技术细节，助你全面掌握这一强大工具。
+一、基础认知：Nginx 的核心优势与架构基础 1.1 Nginx 的核心特性 Nginx 的成功并非偶然，其核心特性完美契合了现代 Web 应用的需求：
+  高并发处理能力：采用异步非阻塞的事件驱动模型（epoll/kqueue），能在低内存消耗下同时处理数万个并发连接。相比传统的多进程模型，这种设计避免了进程切换的开销，让资源利用率大幅提升。
+  轻量级与高性能：核心代码仅几十 KB，启动速度毫秒级，内存占用通常维持在几 MB 级别。即使在高负载场景下，也能保持稳定的响应速度，尤其擅长处理静态资源请求。
+  灵活的配置系统：采用模块化的层级配置结构，语法简洁明了。无论是简单的静态服务还是复杂的负载均衡，都能通过配置文件快速实现，且支持热加载配置（nginx -s reload），无需重启服务。
+  跨平台兼容性：全面支持 Linux、Windows、macOS、BSD 等主流操作系统，部署场景不受限制，无论是服务器集群还是本地开发环境都能轻松适配。
+  模块化架构：核心功能与扩展功能分离，用户可根据需求加载或卸载模块。官方提供了基础模块，社区还贡献了大量第三方模块，如防火墙、认证、日志分析等，极大扩展了 Nginx 的能力边界。
+  完善的社区生态：作为成熟的开源项目，Nginx 拥有活跃的开发者社区和广泛的用户群体。官方文档详尽，社区问答资源丰富，遇到问题能快速找到解决方案，同时持续的版本更新也保证了功能的迭代与安全补丁的及时推送。
+  Nginx 的配置核心围绕http块展开，其中可包含多个server块（对应不同域名或端口的服务），每个server块内通过location块实现路径匹配与请求处理，这种层级结构为多场景适配提供了灵活支撑。
+1.2 Nginx 的典型应用场景 正是这些特性，让 Nginx 在多种场景中发挥着不可替代的作用：
+  静态资源 Web 服务器
+  反向代理服务器
+  负载均衡器
+  邮件代理服务器
+  HTTP 缓存服务器'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/nginx-%E6%A0%B8%E5%BF%83%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E5%85%A8%E8%A7%A3%E6%9E%90%E4%BB%8E%E9%9D%99%E6%80%81%E6%9C%8D%E5%8A%A1%E5%88%B0%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%9A%84%E5%AE%9E%E6%88%98%E6%8C%87%E5%8D%97/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2024-05-25T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2024-05-25T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/nginx-%E6%A0%B8%E5%BF%83%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E5%85%A8%E8%A7%A3%E6%9E%90%E4%BB%8E%E9%9D%99%E6%80%81%E6%9C%8D%E5%8A%A1%E5%88%B0%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%9A%84%E5%AE%9E%E6%88%98%E6%8C%87%E5%8D%97/1.png' />
+<meta name="twitter:title" content="Nginx 核心应用场景全解析：从静态服务到负载均衡的实战指南">
+<meta name="twitter:description" content="Nginx 核心应用场景全解析：从静态服务到负载均衡的实战指南 Nginx 凭借其轻量级架构、卓越的性能稳定性和高并发处理能力，早已成为互联网架构中的核心组件。除了广为人知的静态资源服务和反向代理功能，它在负载均衡、动静分离、URL 重写等场景中同样发挥着不可替代的作用。本文将结合实战配置案例，系统梳理 Nginx 的核心应用场景与技术细节，助你全面掌握这一强大工具。
+一、基础认知：Nginx 的核心优势与架构基础 1.1 Nginx 的核心特性 Nginx 的成功并非偶然，其核心特性完美契合了现代 Web 应用的需求：
+  高并发处理能力：采用异步非阻塞的事件驱动模型（epoll/kqueue），能在低内存消耗下同时处理数万个并发连接。相比传统的多进程模型，这种设计避免了进程切换的开销，让资源利用率大幅提升。
+  轻量级与高性能：核心代码仅几十 KB，启动速度毫秒级，内存占用通常维持在几 MB 级别。即使在高负载场景下，也能保持稳定的响应速度，尤其擅长处理静态资源请求。
+  灵活的配置系统：采用模块化的层级配置结构，语法简洁明了。无论是简单的静态服务还是复杂的负载均衡，都能通过配置文件快速实现，且支持热加载配置（nginx -s reload），无需重启服务。
+  跨平台兼容性：全面支持 Linux、Windows、macOS、BSD 等主流操作系统，部署场景不受限制，无论是服务器集群还是本地开发环境都能轻松适配。
+  模块化架构：核心功能与扩展功能分离，用户可根据需求加载或卸载模块。官方提供了基础模块，社区还贡献了大量第三方模块，如防火墙、认证、日志分析等，极大扩展了 Nginx 的能力边界。
+  完善的社区生态：作为成熟的开源项目，Nginx 拥有活跃的开发者社区和广泛的用户群体。官方文档详尽，社区问答资源丰富，遇到问题能快速找到解决方案，同时持续的版本更新也保证了功能的迭代与安全补丁的及时推送。
+  Nginx 的配置核心围绕http块展开，其中可包含多个server块（对应不同域名或端口的服务），每个server块内通过location块实现路径匹配与请求处理，这种层级结构为多场景适配提供了灵活支撑。
+1.2 Nginx 的典型应用场景 正是这些特性，让 Nginx 在多种场景中发挥着不可替代的作用：
+  静态资源 Web 服务器
+  反向代理服务器
+  负载均衡器
+  邮件代理服务器
+  HTTP 缓存服务器"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/nginx-%E6%A0%B8%E5%BF%83%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E5%85%A8%E8%A7%A3%E6%9E%90%E4%BB%8E%E9%9D%99%E6%80%81%E6%9C%8D%E5%8A%A1%E5%88%B0%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%9A%84%E5%AE%9E%E6%88%98%E6%8C%87%E5%8D%97/1.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/nginx-%E6%A0%B8%E5%BF%83%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E5%85%A8%E8%A7%A3%E6%9E%90%E4%BB%8E%E9%9D%99%E6%80%81%E6%9C%8D%E5%8A%A1%E5%88%B0%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%9A%84%E5%AE%9E%E6%88%98%E6%8C%87%E5%8D%97/">
+                <img src="/p/nginx-%E6%A0%B8%E5%BF%83%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E5%85%A8%E8%A7%A3%E6%9E%90%E4%BB%8E%E9%9D%99%E6%80%81%E6%9C%8D%E5%8A%A1%E5%88%B0%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%9A%84%E5%AE%9E%E6%88%98%E6%8C%87%E5%8D%97/1_hu95cabb0399a3e3d421b9d5ea320897f4_493379_800x0_resize_box_3.png"
+                        srcset="/p/nginx-%E6%A0%B8%E5%BF%83%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E5%85%A8%E8%A7%A3%E6%9E%90%E4%BB%8E%E9%9D%99%E6%80%81%E6%9C%8D%E5%8A%A1%E5%88%B0%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%9A%84%E5%AE%9E%E6%88%98%E6%8C%87%E5%8D%97/1_hu95cabb0399a3e3d421b9d5ea320897f4_493379_800x0_resize_box_3.png 800w, /p/nginx-%E6%A0%B8%E5%BF%83%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E5%85%A8%E8%A7%A3%E6%9E%90%E4%BB%8E%E9%9D%99%E6%80%81%E6%9C%8D%E5%8A%A1%E5%88%B0%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%9A%84%E5%AE%9E%E6%88%98%E6%8C%87%E5%8D%97/1_hu95cabb0399a3e3d421b9d5ea320897f4_493379_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="404" 
+                        loading="lazy"
+                        alt="Featured image of post Nginx 核心应用场景全解析：从静态服务到负载均衡的实战指南" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/computer/" style="background-color: #2a9d8f; color: #fff;">
+                知识学习
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/nginx-%E6%A0%B8%E5%BF%83%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E5%85%A8%E8%A7%A3%E6%9E%90%E4%BB%8E%E9%9D%99%E6%80%81%E6%9C%8D%E5%8A%A1%E5%88%B0%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E7%9A%84%E5%AE%9E%E6%88%98%E6%8C%87%E5%8D%97/">Nginx 核心应用场景全解析：从静态服务到负载均衡的实战指南</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">May 25, 2024</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 5 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h1 id="nginx-核心应用场景全解析从静态服务到负载均衡的实战指南">Nginx 核心应用场景全解析：从静态服务到负载均衡的实战指南</h1>
+<p>Nginx 凭借其轻量级架构、卓越的性能稳定性和高并发处理能力，早已成为互联网架构中的核心组件。除了广为人知的静态资源服务和反向代理功能，它在负载均衡、动静分离、URL 重写等场景中同样发挥着不可替代的作用。本文将结合实战配置案例，系统梳理 Nginx 的核心应用场景与技术细节，助你全面掌握这一强大工具。</p>
+<h2 id="一基础认知nginx-的核心优势与架构基础">一、基础认知：Nginx 的核心优势与架构基础</h2>
+<h3 id="11-nginx-的核心特性">1.1 Nginx 的核心特性</h3>
+<p>Nginx 的成功并非偶然，其核心特性完美契合了现代 Web 应用的需求：</p>
+<ul>
+<li>
+<p><strong>高并发处理能力</strong>：采用异步非阻塞的事件驱动模型（epoll/kqueue），能在低内存消耗下同时处理数万个并发连接。相比传统的多进程模型，这种设计避免了进程切换的开销，让资源利用率大幅提升。</p>
+</li>
+<li>
+<p><strong>轻量级与高性能</strong>：核心代码仅几十 KB，启动速度毫秒级，内存占用通常维持在几 MB 级别。即使在高负载场景下，也能保持稳定的响应速度，尤其擅长处理静态资源请求。</p>
+</li>
+<li>
+<p><strong>灵活的配置系统</strong>：采用模块化的层级配置结构，语法简洁明了。无论是简单的静态服务还是复杂的负载均衡，都能通过配置文件快速实现，且支持热加载配置（<code>nginx -s reload</code>），无需重启服务。</p>
+</li>
+<li>
+<p><strong>跨平台兼容性</strong>：全面支持 Linux、Windows、macOS、BSD 等主流操作系统，部署场景不受限制，无论是服务器集群还是本地开发环境都能轻松适配。</p>
+</li>
+<li>
+<p><strong>模块化架构</strong>：核心功能与扩展功能分离，用户可根据需求加载或卸载模块。官方提供了基础模块，社区还贡献了大量第三方模块，如防火墙、认证、日志分析等，极大扩展了 Nginx 的能力边界。</p>
+</li>
+<li>
+<p><strong>完善的社区生态</strong>：作为成熟的开源项目，Nginx 拥有活跃的开发者社区和广泛的用户群体。官方文档详尽，社区问答资源丰富，遇到问题能快速找到解决方案，同时持续的版本更新也保证了功能的迭代与安全补丁的及时推送。</p>
+</li>
+</ul>
+<p>Nginx 的配置核心围绕<code>http</code>块展开，其中可包含多个<code>server</code>块（对应不同域名或端口的服务），每个<code>server</code>块内通过<code>location</code>块实现路径匹配与请求处理，这种层级结构为多场景适配提供了灵活支撑。</p>
+<h3 id="12-nginx-的典型应用场景">1.2 Nginx 的典型应用场景</h3>
+<p>正是这些特性，让 Nginx 在多种场景中发挥着不可替代的作用：</p>
+<ul>
+<li>
+<p>静态资源 Web 服务器</p>
+</li>
+<li>
+<p>反向代理服务器</p>
+</li>
+<li>
+<p>负载均衡器</p>
+</li>
+<li>
+<p>邮件代理服务器</p>
+</li>
+<li>
+<p>HTTP 缓存服务器</p>
+</li>
+<li>
+<p>API 网关</p>
+</li>
+<li>
+<p>内容分发网络（CDN）节点</p>
+</li>
+<li>
+<p>微服务架构中的服务路由层</p>
+</li>
+</ul>
+<h2 id="二核心应用场景配置与原理详解">二、核心应用场景：配置与原理详解</h2>
+<h3 id="场景-1静态资源服务器--高效分发静态内容">场景 1：静态资源服务器 —— 高效分发静态内容</h3>
+<p>静态资源（图片、CSS、JS、HTML 等）是网站的重要组成部分，Nginx 天生具备高效处理静态资源的能力，常被用作独立的静态资源服务器，降低应用服务器的负载。</p>
+<h4 id="实战配置">实战配置</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">http <span class="o">{</span>
+
+   server <span class="o">{</span>
+
+       listen       80<span class="p">;</span>
+
+       server_name  static.example.com<span class="p">;</span>
+
+       <span class="c1"># 定义根目录变量，简化配置维护</span>
+
+       <span class="nb">set</span> <span class="nv">$doc_root</span> /usr/local/var/www<span class="p">;</span>
+
+       <span class="c1"># 匹配/images/路径的资源</span>
+
+       location ^~ /images/ <span class="o">{</span>
+
+           root <span class="nv">$doc_root</span><span class="p">;</span>
+
+           <span class="c1"># 可选：添加缓存控制，减少重复请求</span>
+
+           expires 7d<span class="p">;</span>
+
+       <span class="o">}</span>
+
+       <span class="c1"># 按文件后缀匹配静态资源</span>
+
+       location ~* .<span class="o">(</span>gif<span class="p">|</span>jpg<span class="p">|</span>jpeg<span class="p">|</span>png<span class="p">|</span>bmp<span class="p">|</span>css<span class="p">|</span>js<span class="p">|</span>ico<span class="o">)</span>$ <span class="o">{</span>
+
+           root <span class="nv">$doc_root</span>/img<span class="p">;</span>
+
+           expires 30d<span class="p">;</span>
+
+       <span class="o">}</span>
+
+       <span class="c1"># 处理404错误</span>
+
+       error_page <span class="m">404</span> /404.html<span class="p">;</span>
+
+       <span class="nv">location</span> <span class="o">=</span> /404.html <span class="o">{</span>
+
+           root <span class="nv">$doc_root</span><span class="p">;</span>
+
+       <span class="o">}</span>
+
+   <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div><h4 id="关键技术点">关键技术点</h4>
+<ul>
+<li>
+<p><strong>路径匹配策略</strong>：支持两种核心匹配方式 —— 路径匹配（如<code>/images/</code>）和后缀匹配（如<code>.(jpg|css)$</code>），满足不同资源管理习惯。</p>
+</li>
+<li>
+<p><strong>优先级规则</strong>：<code>^~</code>前缀匹配优先级高于正则匹配（<code>~</code>/<code>~*</code>），相同类型时更长的字符串优先，配置时需注意匹配顺序无关性。</p>
+</li>
+<li>
+<p><strong>性能优化</strong>：通过<code>expires</code>指令设置浏览器缓存过期时间，减少重复请求；配合<code>gzip</code>压缩静态资源，降低传输带宽。</p>
+</li>
+</ul>
+<h4 id="常见问题解决">常见问题解决</h4>
+<p>访问静态资源出现 403 Forbidden 错误，多为权限问题：</p>
+<ul>
+<li>
+<p>Linux 系统：修改<code>nginx.conf</code>首行<code>user root;</code>（或指定有目录权限的用户）。</p>
+</li>
+<li>
+<p>macOS 系统：使用<code>who am i</code>查询用户名和用户组，配置为<code>user 用户名 组名;</code>，重启 Nginx 即可。</p>
+</li>
+</ul>
+<h3 id="场景-2反向代理--隐藏后端服务的-安全屏障">场景 2：反向代理 —— 隐藏后端服务的 &ldquo;安全屏障&rdquo;</h3>
+<p>反向代理是 Nginx 最常用的功能之一，它作为客户端与后端服务之间的中间层，接收客户端请求后转发至内部服务器，再将响应结果返回给客户端。这种模式既能隐藏后端服务地址保障安全，又能实现请求过滤、负载均衡等扩展功能。</p>
+<h4 id="实战配置代理-java-web-服务">实战配置（代理 Java Web 服务）</h4>
+<pre tabindex="0"><code>http {
+
+   server {
+
+       listen       80;
+
+       server_name  api.example.com;
+
+       location / {
+
+           # 转发至后端服务地址
+
+           proxy_pass http://localhost:8081;
+
+           # 传递真实主机名和端口
+
+           proxy_set_header Host $host:$server_port;
+
+           # 传递客户端真实IP（解决后端服务获取IP为代理服务器地址的问题）
+
+           proxy_set_header X-Forwarded-For $remote_addr;
+
+           # 异常处理：后端服务出错时尝试其他节点
+
+           proxy_next_upstream error timeout invalid_header http_500 http_502 http_503;
+
+           # 连接超时配置
+
+           proxy_connect_timeout 60s;
+
+           proxy_read_timeout 60s;
+
+       }
+
+   }
+
+}
+</code></pre><h4 id="核心价值">核心价值</h4>
+<ul>
+<li>
+<p><strong>服务隐藏</strong>：后端服务可部署在私有网络，仅通过代理服务器对外暴露，降低攻击面。</p>
+</li>
+<li>
+<p><strong>协议转换</strong>：可实现 HTTP 与 HTTPS、HTTP/1.1 与 HTTP/2 之间的转换，适配不同客户端需求。</p>
+</li>
+<li>
+<p><strong>请求过滤</strong>：通过<code>location</code>匹配规则，可在代理层拦截非法请求，减轻后端压力。</p>
+</li>
+</ul>
+<h3 id="场景-3负载均衡--分布式架构的-流量调度中枢">场景 3：负载均衡 —— 分布式架构的 &ldquo;流量调度中枢&rdquo;</h3>
+<p>当单台后端服务器无法承载高并发请求时，负载均衡可将流量分摊到多台服务器，提升系统吞吐量与可用性。Nginx 内置 3 种负载均衡策略，并支持第三方扩展，满足不同业务场景需求。</p>
+<h4 id="负载均衡核心配置结构">负载均衡核心配置结构</h4>
+<pre tabindex="0"><code>http {
+
+   # 定义后端服务器集群
+
+   upstream web_servers {
+
+       # 负载均衡策略配置在此处
+
+       server localhost:8081 weight=1;
+
+       server localhost:8082 weight=3;
+
+       server localhost:8083 backup;
+
+   }
+
+   server {
+
+       listen       80;
+
+       server_name  www.example.com;
+
+       location / {
+
+           # 代理至集群
+
+           proxy_pass http://web_servers;
+
+           proxy_set_header Host $host:$server_port;
+
+       }
+
+   }
+
+}
+</code></pre><h4 id="5-种负载均衡策略对比">5 种负载均衡策略对比</h4>
+<table>
+<thead>
+<tr>
+<th>策略类型</th>
+<th>核心原理</th>
+<th>适用场景</th>
+<th>配置示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>轮询（RR）</strong></td>
+<td>按时间顺序逐一分配请求，自动剔除故障节点</td>
+<td>后端服务器性能均等的场景</td>
+<td><code>upstream web_servers { server localhost:8081; server localhost:8082; }</code></td>
+</tr>
+<tr>
+<td><strong>权重（Weight）</strong></td>
+<td>按权重比例分配请求，权重越高接收请求越多</td>
+<td>后端服务器性能不均的场景</td>
+<td><code>upstream web_servers { server localhost:8081 weight=1; server localhost:8082 weight=3; }</code></td>
+</tr>
+<tr>
+<td><strong>IP 哈希（ip_hash）</strong></td>
+<td>按客户端 IP 哈希结果分配，固定客户端访问节点</td>
+<td>需要保持会话一致性的场景（如 Session 存储）</td>
+<td><code>upstream web_servers { ip_hash; server localhost:8081; server localhost:8082; }</code></td>
+</tr>
+<tr>
+<td><strong>Fair（第三方）</strong></td>
+<td>按后端服务器响应时间分配，响应快的优先</td>
+<td>对响应速度要求高的场景</td>
+<td><code>upstream web_servers { fair; server localhost:8081; server localhost:8082; }</code></td>
+</tr>
+<tr>
+<td><strong>URL 哈希（第三方）</strong></td>
+<td>按请求 URL 哈希结果分配，固定 URL 访问节点</td>
+<td>后端为缓存服务器的场景</td>
+<td><code>upstream web_servers { hash $request_uri; hash_method crc32; server localhost:8081; }</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="关键扩展">关键扩展</h4>
+<ul>
+<li>
+<p><strong>热备配置</strong>：通过<code>backup</code>参数设置备用服务器，仅当主服务器全部故障时才启用，提升系统可用性。</p>
+</li>
+<li>
+<p><strong>健康检查</strong>：Nginx 默认通过连接超时、错误状态码（500/502 等）判断服务器状态，故障节点自动剔除，恢复后自动重新加入集群。</p>
+</li>
+</ul>
+<h3 id="场景-4动静分离--优化资源处理效率的-分工模式">场景 4：动静分离 —— 优化资源处理效率的 &ldquo;分工模式&rdquo;</h3>
+<p>动静分离是将动态请求（如 API 接口、数据查询）与静态请求（如图片、CSS）分开处理，静态资源由 Nginx 直接响应，动态请求转发至应用服务器。这种模式充分发挥了 Nginx 处理静态资源的优势，减少应用服务器的资源消耗。</p>
+<h4 id="实战配置-1">实战配置</h4>
+<pre tabindex="0"><code>http {
+
+   upstream app_servers {
+
+       server localhost:8081;
+
+       server localhost:8082;
+
+   }
+
+   server {
+
+       listen       80;
+
+       server_name  www.example.com;
+
+       set $doc_root /usr/local/var/www;
+
+       # 静态资源直接处理
+
+       location ~* .(gif|jpg|jpeg|png|bmp|ico|swf|css|js)$ {
+
+           root $doc_root/static;
+
+           expires 15d;
+
+           gzip on; # 启用Gzip压缩
+
+       }
+
+       # 动态请求转发至应用集群
+
+       location / {
+
+           proxy_pass http://app_servers;
+
+           proxy_set_header Host $host:$server_port;
+
+           proxy_set_header X-Forwarded-For $remote_addr;
+
+       }
+
+   }
+
+}
+</code></pre><h4 id="实现价值">实现价值</h4>
+<ul>
+<li>
+<p><strong>性能提升</strong>：Nginx 处理静态资源的效率远高于应用服务器，可降低应用服务器 CPU 和内存占用。</p>
+</li>
+<li>
+<p><strong>缓存优化</strong>：静态资源可配置长期缓存，动态请求专注于数据处理，实现资源按需优化。</p>
+</li>
+<li>
+<p><strong>扩展性增强</strong>：静态资源可独立扩容（如增加 CDN），动态服务可按需扩展节点，互不影响。</p>
+</li>
+</ul>
+<h3 id="场景-5高级功能拓展-url-重写与访问控制">场景 5：高级功能拓展 ——URL 重写与访问控制</h3>
+<p>除了核心场景，Nginx 的<code>rewrite</code>、<code>return</code>、<code>deny</code>等指令可实现 URL 重写、访问控制等高级功能，进一步满足业务需求。</p>
+<h4 id="1-url-重写rewrite">1. URL 重写（rewrite）</h4>
+<p>用于修改请求 URI，支持正则匹配与参数替换，常用于 URL 规范化、路由调整等场景。</p>
+<pre tabindex="0"><code>location /users/ {
+
+   # 将 /users/zhangsan 重写为 /show?user=zhangsan，break表示停止后续重写
+
+   rewrite ^/users/(.*)$ /show?user=$1 break;
+
+}
+</code></pre><h4 id="2-页面重定向return">2. 页面重定向（return）</h4>
+<p>返回 HTTP 状态码并实现重定向，适用于页面迁移、域名变更等场景。</p>
+<pre tabindex="0"><code># 永久重定向（301）：旧路径指向新路径
+
+location /old-path/ {
+
+   return 301 http://www.example.com/new-path/;
+
+}
+
+# 临时重定向（302）：临时调整访问路径
+
+location /temp-path/ {
+
+   return 302 http://www.example.com/current-path/;
+
+}
+</code></pre><h4 id="3-访问控制denyallow">3. 访问控制（deny/allow）</h4>
+<p>实现基于 IP 或路径的访问限制，保障敏感资源安全。</p>
+<pre tabindex="0"><code># 禁止所有用户访问txt和doc文件
+
+location ~* .(txt|doc)$ {
+
+   root $doc_root;
+
+   deny all;
+
+}
+
+# 仅允许指定IP段访问管理后台
+
+location /admin/ {
+
+   allow 192.168.1.0/24;
+
+   deny all;
+
+   proxy_pass http://localhost:8080/admin/;
+
+}
+</code></pre><h2 id="三实战入门nginx-基础配置与-http-服务器搭建">三、实战入门：Nginx 基础配置与 HTTP 服务器搭建</h2>
+<p>作为最基础的应用场景，Nginx 常被用作 HTTP 服务器提供静态资源访问。这一部分将从环境配置到实战操作，带你掌握基础用法。</p>
+<h3 id="21-环境准备与核心配置文件">2.1 环境准备与核心配置文件</h3>
+<p>Nginx 的核心配置文件通常命名为<code>nginx.conf</code>，不同系统的默认路径略有差异：</p>
+<ul>
+<li>
+<p>Linux：<code>/usr/local/nginx/conf/nginx.conf</code> 或 <code>/etc/nginx/nginx.conf</code></p>
+</li>
+<li>
+<p>macOS：<code>/usr/local/etc/nginx/nginx.conf</code>（brew 安装）</p>
+</li>
+<li>
+<p>Windows：<code>nginx安装目录/conf/nginx.conf</code></p>
+</li>
+</ul>
+<p>配置文件采用层级结构，最外层包含<code>main</code>（全局配置）、<code>http</code>（HTTP 模块配置）、<code>events</code>（事件驱动配置）等块，其中<code>http</code>块内可包含多个<code>server</code>（虚拟主机）块，每个<code>server</code>块又可包含多个<code>location</code>（路径匹配）块。</p>
+<h3 id="22-搭建基础-http-服务器">2.2 搭建基础 HTTP 服务器</h3>
+<p>以 macOS/Linux 环境为例，搭建一个简单的 HTTP 服务器只需三步：</p>
+<h4 id="步骤-1创建网站根目录与测试文件">步骤 1：创建网站根目录与测试文件</h4>
+<p>首先在文档根目录下创建存放静态文件的目录，并新建测试页面：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 创建根目录（以macOS为例）</span>
+
+mkdir -p /usr/local/var/www/html
+
+<span class="c1"># 新建测试首页</span>
+
+<span class="nb">echo</span> <span class="s2">&#34;&lt;h1&gt;Hello Nginx!&lt;/h1&gt;&#34;</span> &gt; /usr/local/var/www/html/index.html
+
+<span class="c1"># 新建测试页面</span>
+
+<span class="nb">echo</span> <span class="s2">&#34;&lt;p&gt;Test Page&lt;/p&gt;&#34;</span> &gt; /usr/local/var/www/html/test.html
+</code></pre></div><h4 id="步骤-2配置-nginxconf">步骤 2：配置 nginx.conf</h4>
+<p>编辑<code>nginx.conf</code>文件，在<code>http</code>块内添加<code>server</code>配置：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">user 你的用户名 你的用户组<span class="p">;</span>  <span class="c1"># macOS用whoami查看用户名，groups查看用户组；Linux可设为root</span>
+
+events <span class="o">{</span>
+
+   worker_connections  1024<span class="p">;</span>  <span class="c1"># 单个worker进程的最大连接数</span>
+
+<span class="o">}</span>
+
+http <span class="o">{</span>
+
+   include       mime.types<span class="p">;</span>  <span class="c1"># 引入MIME类型映射文件</span>
+
+   default_type  application/octet-stream<span class="p">;</span>
+
+   server <span class="o">{</span>
+
+       listen       80<span class="p">;</span>  <span class="c1"># 监听80端口（HTTP默认端口）</span>
+
+       server_name  localhost<span class="p">;</span>  <span class="c1"># 绑定的域名/主机名</span>
+
+       client_max_body_size 1024M<span class="p">;</span>  <span class="c1"># 允许的最大请求体大小</span>
+
+       <span class="c1"># 默认路径匹配</span>
+
+       location / <span class="o">{</span>
+
+           root   /usr/local/var/www/html<span class="p">;</span>  <span class="c1"># 网站根目录</span>
+
+           index  index.html index.htm<span class="p">;</span>  <span class="c1"># 默认首页文件</span>
+
+       <span class="o">}</span>
+
+   <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div><h4 id="步骤-3启动服务与测试">步骤 3：启动服务与测试</h4>
+<pre tabindex="0"><code># 检查配置文件语法是否正确
+
+nginx -t
+
+# 启动Nginx服务
+
+nginx
+
+# 重新加载配置（修改配置后使用）
+
+nginx -s reload
+</code></pre><p>此时访问<code>http://localhost</code>会显示<code>Hello Nginx!</code>，访问<code>http://localhost/test.html</code>会显示<code>Test Page</code>，说明基础 HTTP 服务器搭建成功。</p>
+<h4 id="常见问题解决-1">常见问题解决</h4>
+<p>若访问时出现<strong>403 Forbidden</strong>错误，大概率是<code>user</code>配置不当：</p>
+<ul>
+<li>
+<p>Linux 环境：将<code>user</code>改为<code>root;</code></p>
+</li>
+<li>
+<p>macOS 环境：确保<code>user</code>配置的用户名和用户组正确，可通过<code>whoami</code>和<code>groups</code>命令获取</p>
+</li>
+</ul>
+<h3 id="23-核心指令解析">2.3 核心指令解析</h3>
+<p>理解基础配置中的核心指令，是灵活使用 Nginx 的前提：</p>
+<ul>
+<li>
+<p><strong>server</strong>：定义一个虚拟主机，<code>http</code>块内可配置多个<code>server</code>，通过<code>listen</code>和<code>server_name</code>区分不同服务。</p>
+</li>
+<li>
+<p><strong>listen</strong>：指定服务器监听的 IP 地址和端口，省略 IP 则监听所有地址，省略端口则使用 HTTP 默认的 80 端口或 HTTPS 默认的 443 端口。</p>
+</li>
+<li>
+<p><strong>server_name</strong>：绑定的域名，支持多个域名（空格分隔）和通配符（如<code>*.``example.com</code>）。</p>
+</li>
+<li>
+<p><strong>location</strong>：用于匹配请求的 URI 路径，一个<code>server</code>内可配置多个<code>location</code>，根据路径匹配规则执行不同配置。</p>
+</li>
+<li>
+<p><strong>root</strong>：指定静态资源的根目录，资源的物理路径 = <code>root</code> + 请求 URI。例如<code>root /usr/local/var/www/html</code>，请求<code>/test.html</code>时实际访问<code>/usr/local/var/www/html/test.html</code>。</p>
+</li>
+<li>
+<p><strong>index</strong>：设置默认首页，当请求路径为目录时，自动返回<code>index</code>指定的文件，优先级按顺序排列。</p>
+</li>
+</ul>
+<h2 id="四深入-location路径匹配规则与优先级详解">四、深入 location：路径匹配规则与优先级详解</h2>
+<p><code>location</code>是 Nginx 配置中最核心的部分之一，它决定了不同请求路径的处理逻辑。掌握<code>location</code>的匹配规则和优先级，能避免配置中的逻辑冲突。</p>
+<h3 id="31-location-的匹配模式">3.1 location 的匹配模式</h3>
+<p>Nginx 的<code>location</code>支持多种匹配模式，按类型可分为以下几类：</p>
+<table>
+<thead>
+<tr>
+<th>匹配模式</th>
+<th>语法示例</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>精确匹配</td>
+<td><code>location = /login</code></td>
+<td>完全匹配请求 URI，仅当请求路径为<code>/login</code>时生效</td>
+</tr>
+<tr>
+<td>前缀匹配</td>
+<td><code>location ^~ /images/</code></td>
+<td>匹配以指定路径开头的 URI，优先级高于正则匹配</td>
+</tr>
+<tr>
+<td>正则匹配（区分大小写）</td>
+<td><code>location ~ .php$</code></td>
+<td>用正则表达式匹配 URI，区分大小写，如仅匹配<code>.php</code>结尾</td>
+</tr>
+<tr>
+<td>正则匹配（不区分大小写）</td>
+<td><code>location ~* .jpg$</code></td>
+<td>用正则表达式匹配 URI，不区分大小写，如同时匹配<code>.jpg</code>和<code>.JPG</code></td>
+</tr>
+<tr>
+<td>普通前缀匹配</td>
+<td><code>location /documents/</code></td>
+<td>匹配以指定路径开头的 URI，优先级低于正则匹配</td>
+</tr>
+<tr>
+<td>通用匹配</td>
+<td><code>location /</code></td>
+<td>匹配所有未被其他<code>location</code>匹配的请求</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-正则表达式基础">3.2 正则表达式基础</h3>
+<p>正则匹配是<code>location</code>的强大功能，掌握基础正则语法能灵活定义匹配规则：</p>
+<ul>
+<li>
+<p><code>.</code>：匹配除换行符外的任意字符</p>
+</li>
+<li>
+<p><code>?</code>：重复 0 次或 1 次</p>
+</li>
+<li>
+<p><code>+</code>：重复 1 次或更多次</p>
+</li>
+<li>
+<p><code>*</code>：重复 0 次或更多次</p>
+</li>
+<li>
+<p><code>^</code>：匹配字符串开头</p>
+</li>
+<li>
+<p><code>$</code>：匹配字符串结尾</p>
+</li>
+<li>
+<p><code>[a-z]</code>：匹配 a-z 之间的任意小写字母</p>
+</li>
+<li>
+<p><code>(a|b)</code>：匹配 a 或 b</p>
+</li>
+<li>
+<p>``：转义特殊字符（如<code>.</code>需写为<code>.</code>）</p>
+</li>
+<li>
+<p><code>()</code>：分组，匹配的内容可通过<code>$1</code>、<code>$2</code>等引用</p>
+</li>
+</ul>
+<h3 id="33-location-的优先级规则">3.3 location 的优先级规则</h3>
+<p>当一个请求同时匹配多个<code>location</code>时，Nginx 会按固定优先级选择生效的配置，<strong>优先级与配置文件中的顺序无关</strong>，仅由匹配模式决定：</p>
+<ol>
+<li>
+<p><strong>精确匹配（=）</strong>：优先级最高，匹配成功后立即停止搜索其他<code>location</code>。</p>
+</li>
+<li>
+<p><strong>前缀匹配（^~）</strong>：优先级次之，匹配成功后停止搜索其他<code>location</code>。</p>
+</li>
+<li>
+<p><strong>正则匹配（~、~*）</strong>：优先级低于前缀匹配，多个正则匹配时，<strong>更长的表达式优先</strong>。</p>
+</li>
+<li>
+<p><strong>普通前缀匹配</strong>：按路径长度排序，<strong>更长的路径优先</strong>。</p>
+</li>
+<li>
+<p><strong>通用匹配（/）</strong>：优先级最低，仅当其他<code>location</code>都不匹配时生效。</p>
+</li>
+</ol>
+<h3 id="34-实战案例location-优先级验证">3.4 实战案例：location 优先级验证</h3>
+<p>以下配置可直观展示优先级规则：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">server <span class="o">{</span>
+
+   listen 80<span class="p">;</span>
+
+   server_name localhost<span class="p">;</span>
+
+   root /usr/local/var/www<span class="p">;</span>
+
+   <span class="c1"># 1. 精确匹配：仅匹配 http://localhost/</span>
+
+   <span class="nv">location</span> <span class="o">=</span> / <span class="o">{</span>
+
+       <span class="k">return</span> <span class="m">200</span> <span class="s2">&#34;精确匹配 /&#34;</span><span class="p">;</span>
+
+   <span class="o">}</span>
+
+   <span class="c1"># 2. 前缀匹配：匹配以 /images/ 开头的请求，匹配成功后停止搜索</span>
+
+   location ^~ /images/ <span class="o">{</span>
+
+       <span class="k">return</span> <span class="m">200</span> <span class="s2">&#34;前缀匹配 /images/&#34;</span><span class="p">;</span>
+
+   <span class="o">}</span>
+
+   <span class="c1"># 3. 正则匹配：匹配以 .jpg 结尾的请求</span>
+
+   location ~* .jpg$ <span class="o">{</span>
+
+       <span class="k">return</span> <span class="m">200</span> <span class="s2">&#34;正则匹配 .jpg&#34;</span><span class="p">;</span>
+
+   <span class="o">}</span>
+
+   <span class="c1"># 4. 普通前缀匹配：匹配以 /images/ 开头的请求（但优先级低于^~）</span>
+
+   location /images/ <span class="o">{</span>
+
+       <span class="k">return</span> <span class="m">200</span> <span class="s2">&#34;普通前缀匹配 /images/&#34;</span><span class="p">;</span>
+
+   <span class="o">}</span>
+
+   <span class="c1"># 5. 通用匹配：匹配所有未被其他location匹配的请求</span>
+
+   location / <span class="o">{</span>
+
+       <span class="k">return</span> <span class="m">200</span> <span class="s2">&#34;通用匹配 /&#34;</span><span class="p">;</span>
+
+   <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div><p>测试不同请求的结果：</p>
+<ul>
+<li>
+<p><code>http://localhost/</code> → 精确匹配，返回 &ldquo;精确匹配 /&rdquo;</p>
+</li>
+<li>
+<p><code>http://localhost/images/test.jpg</code> → 前缀匹配（^~）生效，返回 &ldquo;前缀匹配 /images/&rdquo;</p>
+</li>
+<li>
+<p><code>http://localhost/test.jpg</code> → 正则匹配生效，返回 &ldquo;正则匹配 .jpg&rdquo;</p>
+</li>
+<li>
+<p><code>http://localhost/documents/test</code> → 通用匹配生效，返回 &ldquo;通用匹配 /&rdquo;</p>
+</li>
+</ul>
+<h2 id="五静态资源服务器高效托管图片jscss-等资源">五、静态资源服务器：高效托管图片、JS、CSS 等资源</h2>
+<p>在企业开发中，静态资源（图片、CSS、JS、视频等）通常会单独部署到静态服务器，通过 Nginx 提供访问服务。这种方式既能减轻应用服务器的压力，又能利用 Nginx 的高性能特性提升资源加载速度。</p>
+<h3 id="41-静态服务器的两种配置方式">4.1 静态服务器的两种配置方式</h3>
+<p>静态资源的访问通常通过 &ldquo;路径匹配&rdquo; 或 &ldquo;后缀匹配&rdquo; 实现，可根据资源存放规则选择合适的方式。</p>
+<h4 id="方式-1按路径匹配适合分类存放的资源">方式 1：按路径匹配（适合分类存放的资源）</h4>
+<p>将不同类型的资源存放在不同目录，通过路径匹配指向对应的目录：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">server <span class="o">{</span>
+
+   listen 80<span class="p">;</span>
+
+   server_name localhost<span class="p">;</span>
+
+   <span class="c1"># 定义根目录变量，简化配置</span>
+
+   <span class="nb">set</span> <span class="nv">$doc_root</span> /usr/local/var/www<span class="p">;</span>
+
+   <span class="c1"># 图片资源：匹配 /images/ 路径</span>
+
+   location ^~ /images/ <span class="o">{</span>
+
+       root <span class="nv">$doc_root</span><span class="p">;</span>  <span class="c1"># 资源路径 = /usr/local/var/www + /images/xxx</span>
+
+       expires 7d<span class="p">;</span>  <span class="c1"># 浏览器缓存7天，减少重复请求</span>
+
+   <span class="o">}</span>
+
+   <span class="c1"># CSS/JS资源：匹配 /static/ 路径</span>
+
+   location ^~ /static/ <span class="o">{</span>
+
+       root <span class="nv">$doc_root</span><span class="p">;</span>
+
+       expires 30d<span class="p">;</span>  <span class="c1"># 静态资源缓存30天</span>
+
+   <span class="o">}</span>
+
+   <span class="c1"># 首页</span>
+
+   location / <span class="o">{</span>
+
+       root <span class="nv">$doc_root</span>/html<span class="p">;</span>
+
+       index index.html<span class="p">;</span>
+
+   <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div><h4 id="方式-2按后缀匹配适合混合存放的资源">方式 2：按后缀匹配（适合混合存放的资源）</h4>
+<p>通过文件后缀匹配所有静态资源，统一指向存放目录：</p>
+<pre tabindex="0"><code>server {
+
+   listen 80;
+
+   server_name localhost;
+
+   set $doc_root /usr/local/var/www;
+
+   # 匹配常见静态资源后缀
+
+   location ~* .(gif|jpg|jpeg|png|bmp|ico|swf|css|js|html|txt)$ {
+
+       root $doc_root/static;  # 所有静态资源存放在 /static 目录下
+
+       expires 15d;  # 缓存15天
+
+       add_header Cache-Control &quot;public&quot;;  # 允许公开缓存
+
+   }
+
+   # 视频资源：单独设置较长缓存
+
+   location ~* .(mp4|flv|mov)$ {
+
+       root $doc_root/video;
+
+       expires 365d;
+
+       # 支持断点续传
+
+       add_header Accept-Ranges bytes;
+
+   }
+
+}
+</code></pre><h3 id="42-静态服务器优化配置">4.2 静态服务器优化配置</h3>
+<p>为进一步提升静态资源的访问性能，可添加以下优化配置：</p>
+<ul>
+<li>
+<p><strong>缓存控制</strong>：通过<code>expires</code>指令设置浏览器缓存时间，减少重复请求。</p>
+</li>
+<li>
+<p><strong>断点续传</strong>：添加<code>Accept-Ranges bytes</code>头，支持大文件断点下载。</p>
+</li>
+<li>
+<p><strong>gzip 压缩</strong>：开启 gzip 压缩，减少资源传输大小（后续章节详细说明）。</p>
+</li>
+<li>
+<p><strong>防盗链</strong>：限制资源只能被指定域名引用，防止资源被盗用（后续章节详细说明）。</p>
+</li>
+</ul>
+<h2 id="五反向代理隐藏后端服务提升系统安全性与可用性">五、反向代理：隐藏后端服务，提升系统安全性与可用性</h2>
+<p>反向代理是 Nginx 最常用的功能之一，它作为客户端与后端服务器之间的中间层，接收客户端请求并转发给后端服务，再将后端响应返回给客户端。这种模式既能隐藏后端服务器的真实地址，又能实现负载均衡、缓存等高级功能。</p>
+<h3 id="51-反向代理的核心价值">5.1 反向代理的核心价值</h3>
+<ul>
+<li>
+<p><strong>隐藏后端服务</strong>：客户端仅与反向代理交互，后端服务器无需暴露在公网，降低安全风险。</p>
+</li>
+<li>
+<p><strong>统一入口</strong>：多个后端服务可通过反向代理提供统一的访问入口，简化客户端配置。</p>
+</li>
+<li>
+<p><strong>功能扩展</strong>：在代理层实现缓存、限流、认证等功能，无需修改后端服务代码。</p>
+</li>
+<li>
+<p><strong>跨域解决</strong>：通过代理转发请求，避免前端直接调用后端服务的跨域问题。</p>
+</li>
+</ul>
+<h3 id="52-基础反向代理配置">5.2 基础反向代理配置</h3>
+<p>反向代理通过<code>proxy_pass</code>指令实现，以下是代理单个后端服务的配置：</p>
+<h4 id="场景代理-spring-boot-应用">场景：代理 Spring Boot 应用</h4>
+<p>假设 Spring Boot 应用运行在<code>localhost:8081</code>，通过 Nginx 代理后，访问<code>http://localhost</code>即可转发到后端服务：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">server <span class="o">{</span>
+
+   listen 80<span class="p">;</span>
+
+   server_name localhost<span class="p">;</span>
+
+   <span class="c1"># 所有请求转发到后端服务</span>
+
+   location / <span class="o">{</span>
+
+       proxy_pass http://localhost:8081<span class="p">;</span>  <span class="c1"># 后端服务地址</span>
+
+       <span class="c1"># 传递真实的请求头信息</span>
+
+       proxy_set_header Host <span class="nv">$host</span>:<span class="nv">$server_port</span><span class="p">;</span>  <span class="c1"># 传递主机名和端口</span>
+
+       proxy_set_header X-Forwarded-For <span class="nv">$remote_addr</span><span class="p">;</span>  <span class="c1"># 传递客户端真实IP</span>
+
+       proxy_set_header X-Forwarded-Proto <span class="nv">$scheme</span><span class="p">;</span>  <span class="c1"># 传递请求协议（http/https）</span>
+
+       <span class="c1"># 超时配置</span>
+
+       proxy_connect_timeout 60s<span class="p">;</span>  <span class="c1"># 连接超时时间</span>
+
+       proxy_read_timeout 60s<span class="p">;</span>  <span class="c1"># 读取响应超时时间</span>
+
+   <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div><h4 id="关键指令说明">关键指令说明</h4>
+<ul>
+<li>
+<p><strong>proxy_pass</strong>：指定后端服务的地址，格式可为<code>http://IP:端口</code>、<code>http://域名</code>或<code>http://upstream名称</code>（负载均衡时使用）。</p>
+</li>
+<li>
+<p><strong>proxy_set_header</strong>：修改或添加请求头，传递给后端服务。后端服务可通过这些头信息获取客户端真实信息（如 IP 地址）。</p>
+</li>
+<li>
+<p><strong>proxy_connect_timeout</strong>：Nginx 与后端服务建立连接的超时时间。</p>
+</li>
+<li>
+<p><strong>proxy_read_timeout</strong>：Nginx 等待后端服务返回响应的超时时间。</p>
+</li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%B7%B1%E5%85%A5%E6%8E%A2%E7%B4%A2-langgraph/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%B7%B1%E5%85%A5%E6%8E%A2%E7%B4%A2-langgraph/1.aa343f2b772deb1d00623b7bed972c8d_huba2bd994f0da4e171194ad980a76e763_1196516_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-qjQ/K3ct6x0AYjt77ZcsjQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">深入探索 LangGraph</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/langgraph%E9%A2%84%E6%9E%84%E5%BB%BAagent/">
+        
+        
+            <div class="article-image">
+                <img src="/p/langgraph%E9%A2%84%E6%9E%84%E5%BB%BAagent/1.0a7c8044cb262efce3cc1c3d74e338bd_hufc87676f5c03c42ba4fd49855ef25156_1205177_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-CnyARMsmLvzjzBw9dOM4vQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LangGraph预构建Agent</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/img.0cf458ef54fa450e9d1ac9086d930efe_huecad56dbf45667eb4f21f35c2388c063_52872_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-DPRY71T6RQ6dGskIbZMO/g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">智能知识检索系统</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/img.91bf08890296485b5b595123bb1b9c01_hufef087fddda0fa8512a3bf0acfa96939_57649_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-kb8IiQKWSFtbWVEjuxucAQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">检索增强生成（RAG）</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/langchain-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%B7%A5%E5%85%B7/">
+        
+        
+            <div class="article-image">
+                <img src="/p/langchain-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%B7%A5%E5%85%B7/1.9e68f053768f5d39127f08c30ecf0389_hudd76169eaa14e4b46869a65a4bae705b_986909_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-nmjwU3aPXTkSfwjDDs8DiQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LangChain 自定义工具</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2025 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#一基础认知nginx-的核心优势与架构基础">一、基础认知：Nginx 的核心优势与架构基础</a>
+      <ol>
+        <li><a href="#11-nginx-的核心特性">1.1 Nginx 的核心特性</a></li>
+        <li><a href="#12-nginx-的典型应用场景">1.2 Nginx 的典型应用场景</a></li>
+      </ol>
+    </li>
+    <li><a href="#二核心应用场景配置与原理详解">二、核心应用场景：配置与原理详解</a>
+      <ol>
+        <li><a href="#场景-1静态资源服务器--高效分发静态内容">场景 1：静态资源服务器 —— 高效分发静态内容</a>
+          <ol>
+            <li><a href="#实战配置">实战配置</a></li>
+            <li><a href="#关键技术点">关键技术点</a></li>
+            <li><a href="#常见问题解决">常见问题解决</a></li>
+          </ol>
+        </li>
+        <li><a href="#场景-2反向代理--隐藏后端服务的-安全屏障">场景 2：反向代理 —— 隐藏后端服务的 &ldquo;安全屏障&rdquo;</a>
+          <ol>
+            <li><a href="#实战配置代理-java-web-服务">实战配置（代理 Java Web 服务）</a></li>
+            <li><a href="#核心价值">核心价值</a></li>
+          </ol>
+        </li>
+        <li><a href="#场景-3负载均衡--分布式架构的-流量调度中枢">场景 3：负载均衡 —— 分布式架构的 &ldquo;流量调度中枢&rdquo;</a>
+          <ol>
+            <li><a href="#负载均衡核心配置结构">负载均衡核心配置结构</a></li>
+            <li><a href="#5-种负载均衡策略对比">5 种负载均衡策略对比</a></li>
+            <li><a href="#关键扩展">关键扩展</a></li>
+          </ol>
+        </li>
+        <li><a href="#场景-4动静分离--优化资源处理效率的-分工模式">场景 4：动静分离 —— 优化资源处理效率的 &ldquo;分工模式&rdquo;</a>
+          <ol>
+            <li><a href="#实战配置-1">实战配置</a></li>
+            <li><a href="#实现价值">实现价值</a></li>
+          </ol>
+        </li>
+        <li><a href="#场景-5高级功能拓展-url-重写与访问控制">场景 5：高级功能拓展 ——URL 重写与访问控制</a>
+          <ol>
+            <li><a href="#1-url-重写rewrite">1. URL 重写（rewrite）</a></li>
+            <li><a href="#2-页面重定向return">2. 页面重定向（return）</a></li>
+            <li><a href="#3-访问控制denyallow">3. 访问控制（deny/allow）</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#三实战入门nginx-基础配置与-http-服务器搭建">三、实战入门：Nginx 基础配置与 HTTP 服务器搭建</a>
+      <ol>
+        <li><a href="#21-环境准备与核心配置文件">2.1 环境准备与核心配置文件</a></li>
+        <li><a href="#22-搭建基础-http-服务器">2.2 搭建基础 HTTP 服务器</a>
+          <ol>
+            <li><a href="#步骤-1创建网站根目录与测试文件">步骤 1：创建网站根目录与测试文件</a></li>
+            <li><a href="#步骤-2配置-nginxconf">步骤 2：配置 nginx.conf</a></li>
+            <li><a href="#步骤-3启动服务与测试">步骤 3：启动服务与测试</a></li>
+            <li><a href="#常见问题解决-1">常见问题解决</a></li>
+          </ol>
+        </li>
+        <li><a href="#23-核心指令解析">2.3 核心指令解析</a></li>
+      </ol>
+    </li>
+    <li><a href="#四深入-location路径匹配规则与优先级详解">四、深入 location：路径匹配规则与优先级详解</a>
+      <ol>
+        <li><a href="#31-location-的匹配模式">3.1 location 的匹配模式</a></li>
+        <li><a href="#32-正则表达式基础">3.2 正则表达式基础</a></li>
+        <li><a href="#33-location-的优先级规则">3.3 location 的优先级规则</a></li>
+        <li><a href="#34-实战案例location-优先级验证">3.4 实战案例：location 优先级验证</a></li>
+      </ol>
+    </li>
+    <li><a href="#五静态资源服务器高效托管图片jscss-等资源">五、静态资源服务器：高效托管图片、JS、CSS 等资源</a>
+      <ol>
+        <li><a href="#41-静态服务器的两种配置方式">4.1 静态服务器的两种配置方式</a>
+          <ol>
+            <li><a href="#方式-1按路径匹配适合分类存放的资源">方式 1：按路径匹配（适合分类存放的资源）</a></li>
+            <li><a href="#方式-2按后缀匹配适合混合存放的资源">方式 2：按后缀匹配（适合混合存放的资源）</a></li>
+          </ol>
+        </li>
+        <li><a href="#42-静态服务器优化配置">4.2 静态服务器优化配置</a></li>
+      </ol>
+    </li>
+    <li><a href="#五反向代理隐藏后端服务提升系统安全性与可用性">五、反向代理：隐藏后端服务，提升系统安全性与可用性</a>
+      <ol>
+        <li><a href="#51-反向代理的核心价值">5.1 反向代理的核心价值</a></li>
+        <li><a href="#52-基础反向代理配置">5.2 基础反向代理配置</a>
+          <ol>
+            <li><a href="#场景代理-spring-boot-应用">场景：代理 Spring Boot 应用</a></li>
+            <li><a href="#关键指令说明">关键指令说明</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
