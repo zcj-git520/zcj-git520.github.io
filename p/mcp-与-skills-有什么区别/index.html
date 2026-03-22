@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='MCP 与 Skills 有什么区别 一、背景介绍 随着 AI Agent（智能体）技术的快速发展，如何让大模型与外部系统交互成为了核心问题。目前业界主要有两种方案：
+ MCP (Model Context Protocol) - 由 Anthropic 提出的模型上下文协议 Skills (技能系统) - OpenClaw 等平台的技能扩展机制  本文将从多个维度对比这两种方案，帮助开发者理解它们的区别和适用场景。
+二、核心概念对比 1. MCP (Model Context Protocol)    属性 描述     定义 模型上下文协议，标准化的 AI 模型与外部数据源连接协议   提出者 Anthropic (Claude 团队)   核心思想 统一接口规范，让 AI 模型能够安全地访问外部数据   架构模式 客户端 - 服务器模式    2. Skills (技能系统)    属性 描述     定义 AI Agent 的功能扩展单元，封装特定能力的代码模块   代表平台 OpenClaw、AutoGen 等   核心思想 将功能模块化，Agent 按需调用技能完成任务   架构模式 插件化/模块化架构    三、架构对比 graph TB subgraph MCP 架构 A1[AI 模型] --&amp;gt;|MCP 协议 | A2[MCP Client] A2 --&amp;gt;|标准化接口 | A3[MCP Server] A3 --&amp;gt; A4[数据源 1] A3 --&amp;gt; A5[数据源 2] A3 --&amp;gt; A6[工具/服务] end subgraph Skills 架构 B1[AI Agent] --&amp;gt;|技能调用 | B2[Skills 管理器] B2 --&amp;gt; B3[Skill 1] B2 --&amp;gt; B4[Skill 2] B2 --&amp;gt; B5[Skill 3] B3 --&amp;gt; B6[外部系统] end MCP 与 Skills 架构对比'><title>MCP 与 Skills 有什么区别</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/mcp-%E4%B8%8E-skills-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='MCP 与 Skills 有什么区别'>
+<meta property='og:description' content='MCP 与 Skills 有什么区别 一、背景介绍 随着 AI Agent（智能体）技术的快速发展，如何让大模型与外部系统交互成为了核心问题。目前业界主要有两种方案：
+ MCP (Model Context Protocol) - 由 Anthropic 提出的模型上下文协议 Skills (技能系统) - OpenClaw 等平台的技能扩展机制  本文将从多个维度对比这两种方案，帮助开发者理解它们的区别和适用场景。
+二、核心概念对比 1. MCP (Model Context Protocol)    属性 描述     定义 模型上下文协议，标准化的 AI 模型与外部数据源连接协议   提出者 Anthropic (Claude 团队)   核心思想 统一接口规范，让 AI 模型能够安全地访问外部数据   架构模式 客户端 - 服务器模式    2. Skills (技能系统)    属性 描述     定义 AI Agent 的功能扩展单元，封装特定能力的代码模块   代表平台 OpenClaw、AutoGen 等   核心思想 将功能模块化，Agent 按需调用技能完成任务   架构模式 插件化/模块化架构    三、架构对比 graph TB subgraph MCP 架构 A1[AI 模型] --&amp;gt;|MCP 协议 | A2[MCP Client] A2 --&amp;gt;|标准化接口 | A3[MCP Server] A3 --&amp;gt; A4[数据源 1] A3 --&amp;gt; A5[数据源 2] A3 --&amp;gt; A6[工具/服务] end subgraph Skills 架构 B1[AI Agent] --&amp;gt;|技能调用 | B2[Skills 管理器] B2 --&amp;gt; B3[Skill 1] B2 --&amp;gt; B4[Skill 2] B2 --&amp;gt; B5[Skill 3] B3 --&amp;gt; B6[外部系统] end MCP 与 Skills 架构对比'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/mcp-%E4%B8%8E-skills-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='AI Agent' /><meta property='article:tag' content='MCP' /><meta property='article:tag' content='Skills' /><meta property='article:tag' content='OpenClaw' /><meta property='article:published_time' content='2026-03-22T23:25:00&#43;08:00'/><meta property='article:modified_time' content='2026-03-22T23:25:00&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/mcp-%E4%B8%8E-skills-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/mcp-vs-skills.svg' />
+<meta name="twitter:title" content="MCP 与 Skills 有什么区别">
+<meta name="twitter:description" content="MCP 与 Skills 有什么区别 一、背景介绍 随着 AI Agent（智能体）技术的快速发展，如何让大模型与外部系统交互成为了核心问题。目前业界主要有两种方案：
+ MCP (Model Context Protocol) - 由 Anthropic 提出的模型上下文协议 Skills (技能系统) - OpenClaw 等平台的技能扩展机制  本文将从多个维度对比这两种方案，帮助开发者理解它们的区别和适用场景。
+二、核心概念对比 1. MCP (Model Context Protocol)    属性 描述     定义 模型上下文协议，标准化的 AI 模型与外部数据源连接协议   提出者 Anthropic (Claude 团队)   核心思想 统一接口规范，让 AI 模型能够安全地访问外部数据   架构模式 客户端 - 服务器模式    2. Skills (技能系统)    属性 描述     定义 AI Agent 的功能扩展单元，封装特定能力的代码模块   代表平台 OpenClaw、AutoGen 等   核心思想 将功能模块化，Agent 按需调用技能完成任务   架构模式 插件化/模块化架构    三、架构对比 graph TB subgraph MCP 架构 A1[AI 模型] --&amp;gt;|MCP 协议 | A2[MCP Client] A2 --&amp;gt;|标准化接口 | A3[MCP Server] A3 --&amp;gt; A4[数据源 1] A3 --&amp;gt; A5[数据源 2] A3 --&amp;gt; A6[工具/服务] end subgraph Skills 架构 B1[AI Agent] --&amp;gt;|技能调用 | B2[Skills 管理器] B2 --&amp;gt; B3[Skill 1] B2 --&amp;gt; B4[Skill 2] B2 --&amp;gt; B5[Skill 3] B3 --&amp;gt; B6[外部系统] end MCP 与 Skills 架构对比"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/mcp-%E4%B8%8E-skills-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/mcp-vs-skills.svg' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/mcp-%E4%B8%8E-skills-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/">
+                
+                    <img src="/p/mcp-%E4%B8%8E-skills-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/mcp-vs-skills.svg" loading="lazy" alt="Featured image of post MCP 与 Skills 有什么区别" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/computer/" style="background-color: #2a9d8f; color: #fff;">
+                知识学习
+            </a>
+        
+            <a href="/categories/ai/" style="background-color: #2a9d8f; color: #fff;">
+                AI
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/mcp-%E4%B8%8E-skills-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/">MCP 与 Skills 有什么区别</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Mar 22, 2026</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 3 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h1 id="mcp-与-skills-有什么区别">MCP 与 Skills 有什么区别</h1>
+<h2 id="一背景介绍">一、背景介绍</h2>
+<p>随着 AI Agent（智能体）技术的快速发展，<strong>如何让大模型与外部系统交互</strong>成为了核心问题。目前业界主要有两种方案：</p>
+<ul>
+<li><strong>MCP (Model Context Protocol)</strong> - 由 Anthropic 提出的模型上下文协议</li>
+<li><strong>Skills (技能系统)</strong> - OpenClaw 等平台的技能扩展机制</li>
+</ul>
+<p>本文将从多个维度对比这两种方案，帮助开发者理解它们的区别和适用场景。</p>
+<h2 id="二核心概念对比">二、核心概念对比</h2>
+<h3 id="1-mcp-model-context-protocol">1. MCP (Model Context Protocol)</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>定义</strong></td>
+<td>模型上下文协议，标准化的 AI 模型与外部数据源连接协议</td>
+</tr>
+<tr>
+<td><strong>提出者</strong></td>
+<td>Anthropic (Claude 团队)</td>
+</tr>
+<tr>
+<td><strong>核心思想</strong></td>
+<td>统一接口规范，让 AI 模型能够安全地访问外部数据</td>
+</tr>
+<tr>
+<td><strong>架构模式</strong></td>
+<td>客户端 - 服务器模式</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-skills-技能系统">2. Skills (技能系统)</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>定义</strong></td>
+<td>AI Agent 的功能扩展单元，封装特定能力的代码模块</td>
+</tr>
+<tr>
+<td><strong>代表平台</strong></td>
+<td>OpenClaw、AutoGen 等</td>
+</tr>
+<tr>
+<td><strong>核心思想</strong></td>
+<td>将功能模块化，Agent 按需调用技能完成任务</td>
+</tr>
+<tr>
+<td><strong>架构模式</strong></td>
+<td>插件化/模块化架构</td>
+</tr>
+</tbody>
+</table>
+<h2 id="三架构对比">三、架构对比</h2>
+<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">graph TB
+    subgraph MCP 架构
+        A1[AI 模型] --&gt;|MCP 协议 | A2[MCP Client]
+        A2 --&gt;|标准化接口 | A3[MCP Server]
+        A3 --&gt; A4[数据源 1]
+        A3 --&gt; A5[数据源 2]
+        A3 --&gt; A6[工具/服务]
+    end
+    
+    subgraph Skills 架构
+        B1[AI Agent] --&gt;|技能调用 | B2[Skills 管理器]
+        B2 --&gt; B3[Skill 1]
+        B2 --&gt; B4[Skill 2]
+        B2 --&gt; B5[Skill 3]
+        B3 --&gt; B6[外部系统]
+    end
+</code></pre><p><figure 
+	>
+	<a href="/p/mcp-%E4%B8%8E-skills-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/mcp-vs-skills.svg" >
+		<img src="/p/mcp-%E4%B8%8E-skills-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/mcp-vs-skills.svg"
+			
+			
+			
+			loading="lazy"
+			alt="MCP 与 Skills 架构对比">
+	</a>
+	
+	<figcaption>MCP 与 Skills 架构对比</figcaption>
+	
+</figure></p>
+<h2 id="四核心差异分析">四、核心差异分析</h2>
+<h3 id="1-设计目标">1. 设计目标</h3>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>MCP</th>
+<th>Skills</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>标准化</strong></td>
+<td>高 - 统一协议规范</td>
+<td>中 - 平台自定义</td>
+</tr>
+<tr>
+<td><strong>通用性</strong></td>
+<td>高 - 跨平台兼容</td>
+<td>中 - 平台特定</td>
+</tr>
+<tr>
+<td><strong>灵活性</strong></td>
+<td>中 - 遵循协议约束</td>
+<td>高 - 自由实现</td>
+</tr>
+<tr>
+<td><strong>生态建设</strong></td>
+<td>新兴生态</td>
+<td>成熟生态</td>
+</tr>
+</tbody>
+</table>
+<h3 id="2-技术实现">2. 技术实现</h3>
+<pre tabindex="0"><code>┌─────────────────────────────────────────────────────────────────┐
+│                        MCP 实现方式                              │
+├─────────────────────────────────────────────────────────────────┤
+│  1. 定义标准 JSON-RPC 接口                                      │
+│  2. Server 暴露资源 (Resources)、工具 (Tools)、提示 (Prompts)   │
+│  3. Client 发现并调用 Server 能力                               │
+│  4. 支持 SSE、stdio 等传输层                                    │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                       Skills 实现方式                            │
+├─────────────────────────────────────────────────────────────────┤
+│  1. 定义 Skill 接口规范 (SKILL.md)                              │
+│  2. 实现工具函数 (Tools)                                        │
+│  3. 注册到 Agent 技能系统                                       │
+│  4. Agent 根据任务自动选择技能                                  │
+└─────────────────────────────────────────────────────────────────┘
+</code></pre><h3 id="3-使用场景对比">3. 使用场景对比</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th style="text-align:center">MCP</th>
+<th style="text-align:center">Skills</th>
+<th style="text-align:center">推荐方案</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>连接外部数据源</strong></td>
+<td style="text-align:center">✅</td>
+<td style="text-align:center">⚠️</td>
+<td style="text-align:center">MCP</td>
+</tr>
+<tr>
+<td><strong>跨平台集成</strong></td>
+<td style="text-align:center">✅</td>
+<td style="text-align:center">❌</td>
+<td style="text-align:center">MCP</td>
+</tr>
+<tr>
+<td><strong>复杂业务逻辑</strong></td>
+<td style="text-align:center">⚠️</td>
+<td style="text-align:center">✅</td>
+<td style="text-align:center">Skills</td>
+</tr>
+<tr>
+<td><strong>平台特定功能</strong></td>
+<td style="text-align:center">❌</td>
+<td style="text-align:center">✅</td>
+<td style="text-align:center">Skills</td>
+</tr>
+<tr>
+<td><strong>快速原型开发</strong></td>
+<td style="text-align:center">⚠️</td>
+<td style="text-align:center">✅</td>
+<td style="text-align:center">Skills</td>
+</tr>
+<tr>
+<td><strong>企业级部署</strong></td>
+<td style="text-align:center">✅</td>
+<td style="text-align:center">✅</td>
+<td style="text-align:center">均可</td>
+</tr>
+</tbody>
+</table>
+<h2 id="五代码示例对比">五、代码示例对比</h2>
+<h3 id="mcp-server-示例">MCP Server 示例</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># MCP Server 实现</span>
+<span class="kn">from</span> <span class="nn">mcp.server</span> <span class="kn">import</span> <span class="n">Server</span>
+<span class="kn">from</span> <span class="nn">mcp.server.stdio</span> <span class="kn">import</span> <span class="n">stdio_server</span>
+
+<span class="n">server</span> <span class="o">=</span> <span class="n">Server</span><span class="p">(</span><span class="s2">&#34;example-server&#34;</span><span class="p">)</span>
+
+<span class="nd">@server</span><span class="o">.</span><span class="n">list_tools</span><span class="p">()</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">list_tools</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="n">Tool</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&#34;get_weather&#34;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&#34;获取天气信息&#34;</span><span class="p">,</span>
+            <span class="n">inputSchema</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;object&#34;</span><span class="p">,</span>
+                <span class="s2">&#34;properties&#34;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&#34;city&#34;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;string&#34;</span><span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+    <span class="p">]</span>
+
+<span class="nd">@server</span><span class="o">.</span><span class="n">call_tool</span><span class="p">()</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">call_tool</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&#34;get_weather&#34;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">get_weather</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="s2">&#34;city&#34;</span><span class="p">])</span>
+</code></pre></div><h3 id="skills-示例">Skills 示例</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># OpenClaw Skill 实现</span>
+<span class="c1"># skills/weather/SKILL.md</span>
+<span class="s2">&#34;&#34;&#34;
+</span><span class="s2">name: weather
+</span><span class="s2">description: 获取天气信息
+</span><span class="s2">tools:
+</span><span class="s2">  - get_weather
+</span><span class="s2">&#34;&#34;&#34;</span>
+
+<span class="c1"># skills/weather/tools.py</span>
+<span class="k">def</span> <span class="nf">get_weather</span><span class="p">(</span><span class="n">city</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="s2">&#34;&#34;&#34;获取指定城市的天气&#34;&#34;&#34;</span>
+    <span class="kn">import</span> <span class="nn">requests</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;https://wttr.in/</span><span class="si">{</span><span class="n">city</span><span class="si">}</span><span class="s2">?format=3&#34;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
+
+<span class="c1"># 注册到 Agent</span>
+<span class="c1"># agent 自动发现并调用该技能</span>
+</code></pre></div><h2 id="六优劣势分析">六、优劣势分析</h2>
+<h3 id="mcp-优势">MCP 优势</h3>
+<table>
+<thead>
+<tr>
+<th>优势</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>标准化</strong></td>
+<td>统一协议，降低集成成本</td>
+</tr>
+<tr>
+<td><strong>安全性</strong></td>
+<td>内置权限控制和沙箱机制</td>
+</tr>
+<tr>
+<td><strong>可发现性</strong></td>
+<td>自动发现 Server 能力</td>
+</tr>
+<tr>
+<td><strong>生态兼容</strong></td>
+<td>支持 Claude 及其他兼容模型</td>
+</tr>
+</tbody>
+</table>
+<h3 id="mcp-劣势">MCP 劣势</h3>
+<table>
+<thead>
+<tr>
+<th>劣势</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>学习曲线</strong></td>
+<td>需要理解协议规范</td>
+</tr>
+<tr>
+<td><strong>灵活性受限</strong></td>
+<td>必须遵循协议约束</td>
+</tr>
+<tr>
+<td><strong>生态较新</strong></td>
+<td>工具和资源相对较少</td>
+</tr>
+</tbody>
+</table>
+<h3 id="skills-优势">Skills 优势</h3>
+<table>
+<thead>
+<tr>
+<th>优势</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>灵活性高</strong></td>
+<td>自由实现业务逻辑</td>
+</tr>
+<tr>
+<td><strong>开发简单</strong></td>
+<td>直接编写 Python/Go 代码</td>
+</tr>
+<tr>
+<td><strong>平台集成</strong></td>
+<td>深度集成平台能力</td>
+</tr>
+<tr>
+<td><strong>生态成熟</strong></td>
+<td>丰富的技能库</td>
+</tr>
+</tbody>
+</table>
+<h3 id="skills-劣势">Skills 劣势</h3>
+<table>
+<thead>
+<tr>
+<th>劣势</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>平台绑定</strong></td>
+<td>技能通常绑定特定平台</td>
+</tr>
+<tr>
+<td><strong>标准化低</strong></td>
+<td>不同平台技能不兼容</td>
+</tr>
+<tr>
+<td><strong>安全风险</strong></td>
+<td>需要自行处理安全</td>
+</tr>
+</tbody>
+</table>
+<h2 id="七选择建议">七、选择建议</h2>
+<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">graph TD
+    A[需求分析] --&gt; B{需要跨平台吗？}
+    B --&gt;|是 | C[选择 MCP]
+    B --&gt;|否 | D{需要复杂业务逻辑？}
+    D --&gt;|是 | E[选择 Skills]
+    D --&gt;|否 | F{连接外部数据源？}
+    F --&gt;|是 | C
+    F --&gt;|否 | E
+    
+    C --&gt; G[MCP Server 开发]
+    E --&gt; H[Skills 开发]
+    
+    G --&gt; I[部署 MCP Server]
+    H --&gt; J[注册到 Agent]
+</code></pre><h3 id="决策树说明">决策树说明</h3>
+<ol>
+<li>
+<p><strong>优先选择 MCP 的场景</strong>：</p>
+<ul>
+<li>需要连接多个数据源</li>
+<li>要求跨平台兼容</li>
+<li>重视安全性和标准化</li>
+</ul>
+</li>
+<li>
+<p><strong>优先选择 Skills 的场景</strong>：</p>
+<ul>
+<li>平台特定功能开发</li>
+<li>复杂业务逻辑实现</li>
+<li>快速原型验证</li>
+</ul>
+</li>
+</ol>
+<h2 id="八未来趋势">八、未来趋势</h2>
+<h3 id="融合趋势">融合趋势</h3>
+<pre tabindex="0"><code>┌─────────────────────────────────────────────────────────────────┐
+│                    未来发展方向                                  │
+├─────────────────────────────────────────────────────────────────┤
+│  1. MCP + Skills 混合架构                                       │
+│     - 用 MCP 连接外部数据                                        │
+│     - 用 Skills 实现业务逻辑                                     │
+│                                                                 │
+│  2. 标准化技能接口                                              │
+│     - Skills 采用 MCP 协议暴露能力                               │
+│     - 实现跨平台技能共享                                         │
+│                                                                 │
+│  3. 安全增强                                                    │
+│     - 统一的权限模型                                             │
+│     - 沙箱执行环境                                               │
+└─────────────────────────────────────────────────────────────────┘
+</code></pre><h2 id="九实践建议">九、实践建议</h2>
+<h3 id="对于开发者">对于开发者</h3>
+<ol>
+<li><strong>学习 MCP 协议</strong> - 理解标准化接口设计</li>
+<li><strong>掌握 Skills 开发</strong> - 熟悉平台技能系统</li>
+<li><strong>根据场景选择</strong> - 不盲目追新，适合最重要</li>
+</ol>
+<h3 id="对于企业">对于企业</h3>
+<ol>
+<li><strong>评估现有系统</strong> - 确定集成需求</li>
+<li><strong>制定技术路线</strong> - MCP 和 Skills 可并存</li>
+<li><strong>关注安全合规</strong> - 建立权限审计机制</li>
+</ol>
+<h2 id="十总结">十、总结</h2>
+<table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>MCP</th>
+<th>Skills</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>定位</strong></td>
+<td>协议标准</td>
+<td>功能模块</td>
+</tr>
+<tr>
+<td><strong>适用场景</strong></td>
+<td>数据连接/跨平台</td>
+<td>业务逻辑/平台功能</td>
+</tr>
+<tr>
+<td><strong>学习成本</strong></td>
+<td>中</td>
+<td>低</td>
+</tr>
+<tr>
+<td><strong>灵活性</strong></td>
+<td>中</td>
+<td>高</td>
+</tr>
+<tr>
+<td><strong>标准化</strong></td>
+<td>高</td>
+<td>中</td>
+</tr>
+<tr>
+<td><strong>推荐指数</strong></td>
+<td>⭐⭐⭐⭐</td>
+<td>⭐⭐⭐⭐</td>
+</tr>
+</tbody>
+</table>
+<p><strong>核心结论</strong>：</p>
+<ul>
+<li><strong>MCP 和 Skills 不是对立关系，而是互补关系</strong></li>
+<li><strong>MCP 解决&quot;如何连接&quot;的问题</strong> - 标准化接口</li>
+<li><strong>Skills 解决&quot;做什么&quot;的问题</strong> - 功能实现</li>
+<li><strong>最佳实践是结合使用</strong> - MCP 连接 + Skills 处理</li>
+</ul>
+<hr>
+<h2 id="参考资源">参考资源</h2>
+<ul>
+<li><a class="link" href="https://modelcontextprotocol.io/"  target="_blank" rel="noopener"
+    >MCP 官方文档</a></li>
+<li><a class="link" href="https://docs.openclaw.ai"  target="_blank" rel="noopener"
+    >OpenClaw 文档</a></li>
+<li><a class="link" href="https://www.anthropic.com/news/model-context-protocol"  target="_blank" rel="noopener"
+    >Anthropic MCP 介绍</a></li>
+<li><a class="link" href="https://github.com/modelcontextprotocol"  target="_blank" rel="noopener"
+    >GitHub - modelcontextprotocol</a></li>
+</ul>
+<hr>
+<p><em>分类：AI Agent / MCP / Skills</em></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/ai-agent/">AI Agent</a>
+        
+            <a href="/tags/mcp/">MCP</a>
+        
+            <a href="/tags/skills/">Skills</a>
+        
+            <a href="/tags/openclaw/">OpenClaw</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/ai-%E6%99%BA%E8%83%BD%E4%BD%93%E5%BC%80%E5%8F%91%E9%80%9F%E6%9F%A5%E6%89%8B%E5%86%8C/">
+        
+        
+            <div class="article-image">
+                <img src="/p/ai-%E6%99%BA%E8%83%BD%E4%BD%93%E5%BC%80%E5%8F%91%E9%80%9F%E6%9F%A5%E6%89%8B%E5%86%8C/1.0a7c8044cb262efce3cc1c3d74e338bd_hufc87676f5c03c42ba4fd49855ef25156_1205177_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-CnyARMsmLvzjzBw9dOM4vQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">AI 智能体开发速查手册</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%B7%B1%E5%85%A5%E6%8E%A2%E7%B4%A2-langgraph/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%B7%B1%E5%85%A5%E6%8E%A2%E7%B4%A2-langgraph/1.aa343f2b772deb1d00623b7bed972c8d_huba2bd994f0da4e171194ad980a76e763_1196516_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-qjQ/K3ct6x0AYjt77ZcsjQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">深入探索 LangGraph</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/langgraph%E9%A2%84%E6%9E%84%E5%BB%BAagent/">
+        
+        
+            <div class="article-image">
+                <img src="/p/langgraph%E9%A2%84%E6%9E%84%E5%BB%BAagent/1.0a7c8044cb262efce3cc1c3d74e338bd_hufc87676f5c03c42ba4fd49855ef25156_1205177_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-CnyARMsmLvzjzBw9dOM4vQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LangGraph预构建Agent</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/img.0cf458ef54fa450e9d1ac9086d930efe_huecad56dbf45667eb4f21f35c2388c063_52872_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-DPRY71T6RQ6dGskIbZMO/g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">智能知识检索系统</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/img.91bf08890296485b5b595123bb1b9c01_hufef087fddda0fa8512a3bf0acfa96939_57649_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-kb8IiQKWSFtbWVEjuxucAQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">检索增强生成（RAG）</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2026 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#一背景介绍">一、背景介绍</a></li>
+    <li><a href="#二核心概念对比">二、核心概念对比</a>
+      <ol>
+        <li><a href="#1-mcp-model-context-protocol">1. MCP (Model Context Protocol)</a></li>
+        <li><a href="#2-skills-技能系统">2. Skills (技能系统)</a></li>
+      </ol>
+    </li>
+    <li><a href="#三架构对比">三、架构对比</a></li>
+    <li><a href="#四核心差异分析">四、核心差异分析</a>
+      <ol>
+        <li><a href="#1-设计目标">1. 设计目标</a></li>
+        <li><a href="#2-技术实现">2. 技术实现</a></li>
+        <li><a href="#3-使用场景对比">3. 使用场景对比</a></li>
+      </ol>
+    </li>
+    <li><a href="#五代码示例对比">五、代码示例对比</a>
+      <ol>
+        <li><a href="#mcp-server-示例">MCP Server 示例</a></li>
+        <li><a href="#skills-示例">Skills 示例</a></li>
+      </ol>
+    </li>
+    <li><a href="#六优劣势分析">六、优劣势分析</a>
+      <ol>
+        <li><a href="#mcp-优势">MCP 优势</a></li>
+        <li><a href="#mcp-劣势">MCP 劣势</a></li>
+        <li><a href="#skills-优势">Skills 优势</a></li>
+        <li><a href="#skills-劣势">Skills 劣势</a></li>
+      </ol>
+    </li>
+    <li><a href="#七选择建议">七、选择建议</a>
+      <ol>
+        <li><a href="#决策树说明">决策树说明</a></li>
+      </ol>
+    </li>
+    <li><a href="#八未来趋势">八、未来趋势</a>
+      <ol>
+        <li><a href="#融合趋势">融合趋势</a></li>
+      </ol>
+    </li>
+    <li><a href="#九实践建议">九、实践建议</a>
+      <ol>
+        <li><a href="#对于开发者">对于开发者</a></li>
+        <li><a href="#对于企业">对于企业</a></li>
+      </ol>
+    </li>
+    <li><a href="#十总结">十、总结</a></li>
+    <li><a href="#参考资源">参考资源</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

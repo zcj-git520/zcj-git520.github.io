@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>AI Agent on Chengji Zhao&#39;s blog</title>
+    <link>https://zcj-git520.github.io/tags/ai-agent/</link>
+    <description>Recent content in AI Agent on Chengji Zhao&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sun, 22 Mar 2026 23:25:00 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/tags/ai-agent/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MCP 与 Skills 有什么区别</title>
+      <link>https://zcj-git520.github.io/p/mcp-%E4%B8%8E-skills-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/</link>
+      <pubDate>Sun, 22 Mar 2026 23:25:00 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/mcp-%E4%B8%8E-skills-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/</guid>
+      <description>MCP 与 Skills 有什么区别 一、背景介绍 随着 AI Agent（智能体）技术的快速发展，如何让大模型与外部系统交互成为了核心问题。目前业界主要有两种方案：
+ MCP (Model Context Protocol) - 由 Anthropic 提出的模型上下文协议 Skills (技能系统) - OpenClaw 等平台的技能扩展机制  本文将从多个维度对比这两种方案，帮助开发者理解它们的区别和适用场景。
+二、核心概念对比 1. MCP (Model Context Protocol)    属性 描述     定义 模型上下文协议，标准化的 AI 模型与外部数据源连接协议   提出者 Anthropic (Claude 团队)   核心思想 统一接口规范，让 AI 模型能够安全地访问外部数据   架构模式 客户端 - 服务器模式    2. Skills (技能系统)    属性 描述     定义 AI Agent 的功能扩展单元，封装特定能力的代码模块   代表平台 OpenClaw、AutoGen 等   核心思想 将功能模块化，Agent 按需调用技能完成任务   架构模式 插件化/模块化架构    三、架构对比 graph TB subgraph MCP 架构 A1[AI 模型] --&amp;gt;|MCP 协议 | A2[MCP Client] A2 --&amp;gt;|标准化接口 | A3[MCP Server] A3 --&amp;gt; A4[数据源 1] A3 --&amp;gt; A5[数据源 2] A3 --&amp;gt; A6[工具/服务] end subgraph Skills 架构 B1[AI Agent] --&amp;gt;|技能调用 | B2[Skills 管理器] B2 --&amp;gt; B3[Skill 1] B2 --&amp;gt; B4[Skill 2] B2 --&amp;gt; B5[Skill 3] B3 --&amp;gt; B6[外部系统] end MCP 与 Skills 架构对比</description>
+    </item>
+    
+  </channel>
+</rss>

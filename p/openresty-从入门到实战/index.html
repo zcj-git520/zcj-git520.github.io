@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='OpenResty 从入门到实战：基于 Nginx 与 Lua 的高性能 Web 开发指南 在高并发 Web 服务领域，Nginx 凭借其轻量高效的非阻塞 I/O 模型占据半壁江山，而 Lua 则以小巧快速的特性成为脚本语言中的佼佼者。当两者相遇，便诞生了 OpenResty 这一高性能 Web 平台。本文将从基础认知、安装部署、核心原理到实战示例，带您全面掌握 OpenResty 的应用精髓。
+一、OpenResty 是什么？ OpenResty 并非全新的技术框架，而是一个基于 Nginx 与 Lua 构建的高性能 Web 平台。它内部集成了海量精良的 Lua 库、第三方模块及依赖项，核心目标是让 Web 服务直接运行在 Nginx 内部，充分复用 Nginx 的非阻塞 I/O 优势 —— 不仅能高效响应 HTTP 客户端请求，还能对 MySQL、Redis 等远程后端实现一致的高性能交互。
+其技术基石由两部分构成：
+  Nginx：轻量级高性能 Web 服务器，以高并发、低内存占用著称，采用事件驱动的非阻塞架构，是处理海量请求的理想载体。
+  Lua &amp;amp; LuaJIT：Lua 是一种轻量可移植的脚本语言，而 LuaJIT 作为即时编译器，能将频繁执行的 Lua 代码编译为本地机器码，大幅提升执行效率，OpenResty 默认启用 LuaJIT。
+  借助这一技术组合，OpenResty 可轻松搭建超高并发、高扩展性的动态 Web 应用、服务及网关，广泛应用于流量网关、API 网关、缓存层等场景。'><title>OpenResty 从入门到实战</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/openresty-%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%AE%9E%E6%88%98/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='OpenResty 从入门到实战'>
+<meta property='og:description' content='OpenResty 从入门到实战：基于 Nginx 与 Lua 的高性能 Web 开发指南 在高并发 Web 服务领域，Nginx 凭借其轻量高效的非阻塞 I/O 模型占据半壁江山，而 Lua 则以小巧快速的特性成为脚本语言中的佼佼者。当两者相遇，便诞生了 OpenResty 这一高性能 Web 平台。本文将从基础认知、安装部署、核心原理到实战示例，带您全面掌握 OpenResty 的应用精髓。
+一、OpenResty 是什么？ OpenResty 并非全新的技术框架，而是一个基于 Nginx 与 Lua 构建的高性能 Web 平台。它内部集成了海量精良的 Lua 库、第三方模块及依赖项，核心目标是让 Web 服务直接运行在 Nginx 内部，充分复用 Nginx 的非阻塞 I/O 优势 —— 不仅能高效响应 HTTP 客户端请求，还能对 MySQL、Redis 等远程后端实现一致的高性能交互。
+其技术基石由两部分构成：
+  Nginx：轻量级高性能 Web 服务器，以高并发、低内存占用著称，采用事件驱动的非阻塞架构，是处理海量请求的理想载体。
+  Lua &amp;amp; LuaJIT：Lua 是一种轻量可移植的脚本语言，而 LuaJIT 作为即时编译器，能将频繁执行的 Lua 代码编译为本地机器码，大幅提升执行效率，OpenResty 默认启用 LuaJIT。
+  借助这一技术组合，OpenResty 可轻松搭建超高并发、高扩展性的动态 Web 应用、服务及网关，广泛应用于流量网关、API 网关、缓存层等场景。'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/openresty-%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%AE%9E%E6%88%98/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2024-06-25T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2024-06-25T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/openresty-%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%AE%9E%E6%88%98/1.png' />
+<meta name="twitter:title" content="OpenResty 从入门到实战">
+<meta name="twitter:description" content="OpenResty 从入门到实战：基于 Nginx 与 Lua 的高性能 Web 开发指南 在高并发 Web 服务领域，Nginx 凭借其轻量高效的非阻塞 I/O 模型占据半壁江山，而 Lua 则以小巧快速的特性成为脚本语言中的佼佼者。当两者相遇，便诞生了 OpenResty 这一高性能 Web 平台。本文将从基础认知、安装部署、核心原理到实战示例，带您全面掌握 OpenResty 的应用精髓。
+一、OpenResty 是什么？ OpenResty 并非全新的技术框架，而是一个基于 Nginx 与 Lua 构建的高性能 Web 平台。它内部集成了海量精良的 Lua 库、第三方模块及依赖项，核心目标是让 Web 服务直接运行在 Nginx 内部，充分复用 Nginx 的非阻塞 I/O 优势 —— 不仅能高效响应 HTTP 客户端请求，还能对 MySQL、Redis 等远程后端实现一致的高性能交互。
+其技术基石由两部分构成：
+  Nginx：轻量级高性能 Web 服务器，以高并发、低内存占用著称，采用事件驱动的非阻塞架构，是处理海量请求的理想载体。
+  Lua &amp;amp; LuaJIT：Lua 是一种轻量可移植的脚本语言，而 LuaJIT 作为即时编译器，能将频繁执行的 Lua 代码编译为本地机器码，大幅提升执行效率，OpenResty 默认启用 LuaJIT。
+  借助这一技术组合，OpenResty 可轻松搭建超高并发、高扩展性的动态 Web 应用、服务及网关，广泛应用于流量网关、API 网关、缓存层等场景。"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/openresty-%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%AE%9E%E6%88%98/1.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/openresty-%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%AE%9E%E6%88%98/">
+                <img src="/p/openresty-%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%AE%9E%E6%88%98/1_hu7cefbbd02a926c85691b727737e655c5_274458_800x0_resize_box_3.png"
+                        srcset="/p/openresty-%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%AE%9E%E6%88%98/1_hu7cefbbd02a926c85691b727737e655c5_274458_800x0_resize_box_3.png 800w, /p/openresty-%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%AE%9E%E6%88%98/1_hu7cefbbd02a926c85691b727737e655c5_274458_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="716" 
+                        loading="lazy"
+                        alt="Featured image of post OpenResty 从入门到实战" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/computer/" style="background-color: #2a9d8f; color: #fff;">
+                知识学习
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/openresty-%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%AE%9E%E6%88%98/">OpenResty 从入门到实战</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jun 25, 2024</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 4 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h1 id="openresty-从入门到实战基于-nginx-与-lua-的高性能-web-开发指南">OpenResty 从入门到实战：基于 Nginx 与 Lua 的高性能 Web 开发指南</h1>
+<p>在高并发 Web 服务领域，Nginx 凭借其轻量高效的非阻塞 I/O 模型占据半壁江山，而 Lua 则以小巧快速的特性成为脚本语言中的佼佼者。当两者相遇，便诞生了 OpenResty 这一高性能 Web 平台。本文将从基础认知、安装部署、核心原理到实战示例，带您全面掌握 OpenResty 的应用精髓。</p>
+<h2 id="一openresty-是什么">一、OpenResty 是什么？</h2>
+<p>OpenResty 并非全新的技术框架，而是一个基于 Nginx 与 Lua 构建的高性能 Web 平台。它内部集成了海量精良的 Lua 库、第三方模块及依赖项，核心目标是让 Web 服务直接运行在 Nginx 内部，充分复用 Nginx 的非阻塞 I/O 优势 —— 不仅能高效响应 HTTP 客户端请求，还能对 MySQL、Redis 等远程后端实现一致的高性能交互。</p>
+<p>其技术基石由两部分构成：</p>
+<ul>
+<li>
+<p><strong>Nginx</strong>：轻量级高性能 Web 服务器，以高并发、低内存占用著称，采用事件驱动的非阻塞架构，是处理海量请求的理想载体。</p>
+</li>
+<li>
+<p><strong>Lua &amp; LuaJIT</strong>：Lua 是一种轻量可移植的脚本语言，而 LuaJIT 作为即时编译器，能将频繁执行的 Lua 代码编译为本地机器码，大幅提升执行效率，OpenResty 默认启用 LuaJIT。</p>
+</li>
+</ul>
+<p>借助这一技术组合，OpenResty 可轻松搭建超高并发、高扩展性的动态 Web 应用、服务及网关，广泛应用于流量网关、API 网关、缓存层等场景。</p>
+<h2 id="二openresty-安装与验证centos-环境">二、OpenResty 安装与验证（CentOS 环境）</h2>
+<p>OpenResty 的安装流程简洁高效，以下是基于 CentOS 系统的完整步骤：</p>
+<h3 id="1-安装依赖包">1. 安装依赖包</h3>
+<p>首先安装编译所需的基础依赖：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">yum install pcre-devel openssl-devel gcc curl
+</code></pre></div><h3 id="2-配置-yum-源">2. 配置 YUM 源</h3>
+<p>添加 OpenResty 官方 YUM 源以简化安装：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">wget https://openresty.org/package/centos/openresty.repo
+
+sudo mv openresty.repo /etc/yum.repos.d/openresty.repo
+
+sudo yum check-update
+</code></pre></div><h3 id="3-安装-openresty">3. 安装 OpenResty</h3>
+<p>执行安装命令并验证版本：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">yum -y install openresty
+
+<span class="c1"># 验证安装，成功则输出 Nginx 版本（含 OpenResty 标识）</span>
+
+/usr/local/openresty/nginx/sbin/nginx -v
+</code></pre></div><h3 id="4-启动与测试">4. 启动与测试</h3>
+<p>OpenResty 的核心是 Nginx，因此启动与配置方式与 Nginx 一脉相承：</p>
+<ol>
+<li><strong>修改配置文件</strong>：编辑 <code>/usr/local/openresty/nginx/conf/nginx.conf</code>，添加含 Lua 代码的 location 块：</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">server <span class="o">{</span>
+
+   listen 80<span class="p">;</span>
+
+   server_name localhost<span class="p">;</span>
+
+   location /test <span class="o">{</span>
+
+       content_by_lua_block <span class="o">{</span>
+
+           ngx.say<span class="o">(</span><span class="s2">&#34;Hello, LuaJIT!&#34;</span><span class="o">)</span>
+
+       <span class="o">}</span>
+
+   <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div><p>2.<strong>检查配置并启动</strong>：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 语法检查，确保配置无误</span>
+
+sudo /usr/local/openresty/nginx/sbin/nginx -t
+
+<span class="c1"># 启动服务</span>
+
+sudo /usr/local/openresty/nginx/sbin/nginx
+
+<span class="c1"># 若已启动，重新加载配置</span>
+
+sudo /usr/local/openresty/nginx/sbin/nginx -s reload
+</code></pre></div><p>​	3.<strong>验证结果</strong>：访问 <code>http://localhost/test</code>，页面应返回 <code>Hello, LuaJIT!</code>，表明 OpenResty 已正常运行。</p>
+<h2 id="三openresty-核心工作原理">三、OpenResty 核心工作原理</h2>
+<p>OpenResty 的高效运行本质是对 Nginx 请求处理流程的深度扩展，其核心逻辑围绕「Nginx 执行阶段 + Lua 指令注入」展开。</p>
+<h3 id="1-nginx-的-11-个请求处理阶段">1. Nginx 的 11 个请求处理阶段</h3>
+<p>Nginx 处理 HTTP 请求时会按固定顺序经过 11 个阶段，可从源码 <code>ngx_http_core_module.h</code> 中看到定义：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">enum</span> <span class="p">{</span>
+
+   <span class="n">NGX_HTTP_POST_READ_PHASE</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>        <span class="c1">// 读取请求后
+</span><span class="c1"></span>
+   <span class="n">NGX_HTTP_SERVER_REWRITE_PHASE</span><span class="p">,</span>       <span class="c1">// 服务器级重写
+</span><span class="c1"></span>
+   <span class="n">NGX_HTTP_FIND_CONFIG_PHASE</span><span class="p">,</span>          <span class="c1">// 查找配置
+</span><span class="c1"></span>
+   <span class="n">NGX_HTTP_REWRITE_PHASE</span><span class="p">,</span>              <span class="c1">// 重写
+</span><span class="c1"></span>
+   <span class="n">NGX_HTTP_POST_REWRITE_PHASE</span><span class="p">,</span>         <span class="c1">// 重写后
+</span><span class="c1"></span>
+   <span class="n">NGX_HTTP_PREACCESS_PHASE</span><span class="p">,</span>            <span class="c1">// 访问前
+</span><span class="c1"></span>
+   <span class="n">NGX_HTTP_ACCESS_PHASE</span><span class="p">,</span>               <span class="c1">// 访问控制
+</span><span class="c1"></span>
+   <span class="n">NGX_HTTP_POST_ACCESS_PHASE</span><span class="p">,</span>          <span class="c1">// 访问后
+</span><span class="c1"></span>
+   <span class="n">NGX_HTTP_PRECONTENT_PHASE</span><span class="p">,</span>           <span class="c1">// 内容前
+</span><span class="c1"></span>
+   <span class="n">NGX_HTTP_CONTENT_PHASE</span><span class="p">,</span>              <span class="c1">// 内容处理
+</span><span class="c1"></span>
+   <span class="n">NGX_HTTP_LOG_PHASE</span>                   <span class="c1">// 日志记录
+</span><span class="c1"></span>
+<span class="p">}</span> <span class="n">ngx_http_phases</span><span class="p">;</span>
+</code></pre></div><h3 id="2-openresty-的-lua-指令映射">2. OpenResty 的 Lua 指令映射</h3>
+<p>巧合的是，OpenResty 提供了 11 个 <code>*_by_lua</code> 指令，与 Nginx 的 11 个阶段一一对应。这些指令允许开发者在请求处理的特定阶段注入 Lua 代码，实现自定义逻辑。</p>
+<p>例如：</p>
+<ul>
+<li>
+<p><code>access_by_lua_block</code>：在 <code>NGX_HTTP_ACCESS_PHASE</code> 阶段执行，用于访问控制（如 IP 限流）；</p>
+</li>
+<li>
+<p><code>content_by_lua_block</code>：在 <code>NGX_HTTP_CONTENT_PHASE</code> 阶段执行，用于生成响应内容；</p>
+</li>
+<li>
+<p><code>log_by_lua_block</code>：在 <code>NGX_HTTP_LOG_PHASE</code> 阶段执行，用于自定义日志。</p>
+</li>
+</ul>
+<p>这种「阶段注入」机制让开发者既能复用 Nginx 的原生性能，又能通过 Lua 实现灵活的业务逻辑，实现了性能与扩展性的平衡。</p>
+<h2 id="四openresty-核心模块详解">四、OpenResty 核心模块详解</h2>
+<p>OpenResty 的强大之处在于其丰富的集成模块，这些模块扩展了 Nginx 的原生能力，以下是最常用的核心模块及实战示例。</p>
+<h3 id="1-ngx_lua-模块核心基础">1. ngx_lua 模块（核心基础）</h3>
+<p>ngx_lua 是 OpenResty 的灵魂模块，提供 Lua 脚本与 Nginx 的无缝集成，支持在配置中嵌入 Lua 代码实现动态逻辑。</p>
+<p><strong>示例：基础响应生成</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">server <span class="o">{</span>
+
+   listen 80<span class="p">;</span>
+
+   server_name example.com<span class="p">;</span>
+
+   location /lua_demo <span class="o">{</span>
+
+       default_type <span class="s1">&#39;text/plain&#39;</span><span class="p">;</span>
+
+       content_by_lua_block <span class="o">{</span>
+
+           -- 获取客户端 IP
+
+           <span class="nb">local</span> <span class="nv">client_ip</span> <span class="o">=</span> ngx.var.remote_addr
+
+           -- 生成动态响应
+
+           ngx.say<span class="o">(</span><span class="s2">&#34;Hello, OpenResty! Your IP is: &#34;</span>, client_ip<span class="o">)</span>
+
+       <span class="o">}</span>
+
+   <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div><p>访问 <code>/lua_demo</code> 会返回包含客户端 IP 的文本响应，体现了 Lua 与 Nginx 变量的结合使用。</p>
+<h3 id="2-ngx_stream_lua-模块tcpudp-处理">2. ngx_stream_lua 模块（TCP/UDP 处理）</h3>
+<p>与 ngx_lua 针对 HTTP 不同，ngx_stream_lua 专注于 TCP/UDP 流量处理，可用于构建自定义代理或协议解析服务。</p>
+<p><strong>示例：TCP 数据接收</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">stream <span class="o">{</span>
+
+   server <span class="o">{</span>
+
+       listen 12345<span class="p">;</span>  <span class="c1"># 监听 TCP 端口</span>
+
+       content_by_lua_block <span class="o">{</span>
+
+           -- 获取连接套接字
+
+           <span class="nb">local</span> sock, <span class="nv">err</span> <span class="o">=</span> ngx.req.socket<span class="o">()</span>
+
+           <span class="k">if</span> not sock <span class="k">then</span>
+
+               ngx.log<span class="o">(</span>ngx.ERR, <span class="s2">&#34;Socket error: &#34;</span>, err<span class="o">)</span>
+
+               <span class="k">return</span>
+
+           end
+
+           -- 读取客户端数据
+
+           <span class="nb">local</span> data, <span class="nv">err</span> <span class="o">=</span> sock:receive<span class="o">()</span>
+
+           <span class="k">if</span> data <span class="k">then</span>
+
+               ngx.say<span class="o">(</span><span class="s2">&#34;Received from client: &#34;</span>, data<span class="o">)</span>
+
+           <span class="k">else</span>
+
+               ngx.log<span class="o">(</span>ngx.ERR, <span class="s2">&#34;Read error: &#34;</span>, err<span class="o">)</span>
+
+           end
+
+       <span class="o">}</span>
+
+   <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div><p>通过 <code>telnet ``localhost`` 12345</code> 发送数据，服务端会打印接收的内容。</p>
+<h3 id="3-ngx_http_headers_more-模块http-头部控制">3. ngx_http_headers_more 模块（HTTP 头部控制）</h3>
+<p>扩展了 Nginx 对 HTTP 头部的操作能力，支持添加、修改、删除响应头，比原生 <code>add_header</code> 指令更灵活。</p>
+<p><strong>示例：自定义头部与隐私保护</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">server <span class="o">{</span>
+
+   listen 80<span class="p">;</span>
+
+   server_name example.com<span class="p">;</span>
+
+   <span class="c1"># 添加自定义业务头部</span>
+
+   location /add_header <span class="o">{</span>
+
+       more_set_headers <span class="s2">&#34;X-Service: OpenResty&#34;</span><span class="p">;</span>
+
+       more_set_headers <span class="s2">&#34;X-Version: 1.0&#34;</span><span class="p">;</span>
+
+       <span class="k">return</span> <span class="m">200</span> <span class="s2">&#34;Custom headers added&#34;</span><span class="p">;</span>
+
+   <span class="o">}</span>
+
+   <span class="c1"># 移除默认 Server 头部（隐藏技术栈）</span>
+
+   location /hide_server <span class="o">{</span>
+
+       more_clear_headers <span class="s2">&#34;Server&#34;</span><span class="p">;</span>
+
+       <span class="k">return</span> <span class="m">200</span> <span class="s2">&#34;Server header removed&#34;</span><span class="p">;</span>
+
+   <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div><h3 id="4-ngx_http_redis-模块redis-交互">4. ngx_http_redis 模块（Redis 交互）</h3>
+<p>提供与 Redis 数据库的直接交互能力，无需通过后端服务中转，可用于缓存读取、计数器等场景。</p>
+<p><strong>示例：Redis 数据读取</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">http <span class="o">{</span>
+
+   server <span class="o">{</span>
+
+       listen 80<span class="p">;</span>
+
+       server_name example.com<span class="p">;</span>
+
+       location /redis_demo <span class="o">{</span>
+
+           default_type <span class="s1">&#39;text/plain&#39;</span><span class="p">;</span>
+
+           content_by_lua_block <span class="o">{</span>
+
+               -- 加载 Redis 模块
+
+               <span class="nb">local</span> <span class="nv">redis</span> <span class="o">=</span> require <span class="s2">&#34;ngx.redis&#34;</span>
+
+               <span class="nb">local</span> <span class="nv">red</span> <span class="o">=</span> redis:new<span class="o">()</span>
+
+               -- 设置超时
+
+               red:set_timeout<span class="o">(</span>1000<span class="o">)</span>
+
+               -- 连接 Redis（本地默认端口）
+
+               <span class="nb">local</span> ok, <span class="nv">err</span> <span class="o">=</span> red:connect<span class="o">(</span><span class="s2">&#34;127.0.0.1&#34;</span>, 6379<span class="o">)</span>
+
+               <span class="k">if</span> not ok <span class="k">then</span>
+
+                   ngx.say<span class="o">(</span><span class="s2">&#34;Redis connect failed: &#34;</span>, err<span class="o">)</span>
+
+                   <span class="k">return</span>
+
+               end
+
+               -- 读取 key 为 <span class="s2">&#34;username&#34;</span> 的值
+
+               <span class="nb">local</span> res, <span class="nv">err</span> <span class="o">=</span> red:get<span class="o">(</span><span class="s2">&#34;username&#34;</span><span class="o">)</span>
+
+               <span class="k">if</span> <span class="nv">res</span> <span class="o">==</span> ngx.null <span class="k">then</span>
+
+                   <span class="nv">res</span> <span class="o">=</span> <span class="s2">&#34;Unknown&#34;</span>
+
+               end
+
+               ngx.say<span class="o">(</span><span class="s2">&#34;Username from Redis: &#34;</span>, res<span class="o">)</span>
+
+               -- 释放连接到连接池
+
+               red:set_keepalive<span class="o">(</span>10000, 100<span class="o">)</span>
+
+           <span class="o">}</span>
+
+       <span class="o">}</span>
+
+   <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div><h3 id="5-ngx_brotli-模块高效压缩">5. ngx_brotli 模块（高效压缩）</h3>
+<p>支持 Brotli 压缩算法，相比 Gzip 有更高的压缩比，尤其适合文本类内容（HTML、JS、CSS）。</p>
+<p><strong>示例：启用 Brotli 压缩</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">http <span class="o">{</span>
+
+   <span class="c1"># 全局启用 Brotli 压缩</span>
+
+   brotli on<span class="p">;</span>
+
+   <span class="c1"># 压缩级别（1-11，6 为平衡值）</span>
+
+   brotli_comp_level 6<span class="p">;</span>
+
+   <span class="c1"># 对静态文件启用压缩</span>
+
+   brotli_static on<span class="p">;</span>
+
+   <span class="c1"># 压缩的 MIME 类型</span>
+
+   brotli_types text/plain text/css application/json application/javascript<span class="p">;</span>
+
+   server <span class="o">{</span>
+
+       listen 80<span class="p">;</span>
+
+       server_name example.com<span class="p">;</span>
+
+       location /compressed <span class="o">{</span>
+
+           default_type <span class="s1">&#39;text/plain&#39;</span><span class="p">;</span>
+
+           content_by_lua_block <span class="o">{</span>
+
+               -- 长文本示例，会被 Brotli 压缩传输
+
+               <span class="nb">local</span> <span class="nv">long_text</span> <span class="o">=</span> string.rep<span class="o">(</span><span class="s2">&#34;OpenResty Demo &#34;</span>, 100<span class="o">)</span>
+
+               ngx.say<span class="o">(</span>long_text<span class="o">)</span>
+
+           <span class="o">}</span>
+
+       <span class="o">}</span>
+
+   <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div><h2 id="五实战案例api-接口限流">五、实战案例：API 接口限流</h2>
+<p>结合前面的知识，我们实现一个实用场景：对 API 接口进行 IP 级别的请求频率限制，防止恶意请求。</p>
+<h3 id="实现思路">实现思路</h3>
+<ol>
+<li>
+<p>使用 <code>lua_shared_dict</code> 定义共享内存，存储每个 IP 的请求计数；</p>
+</li>
+<li>
+<p>在 <code>access_by_lua_block</code> 阶段（访问控制阶段）统计请求次数；</p>
+</li>
+<li>
+<p>若 60 秒内请求超过 10 次，返回 429（Too Many Requests）。</p>
+</li>
+</ol>
+<h3 id="完整配置">完整配置</h3>
+<pre tabindex="0"><code>http {
+
+   # 定义 10MB 共享内存，用于存储限流数据
+
+   lua_shared_dict ip_limit 10m;
+
+   server {
+
+       listen 80;
+
+       server_name api.example.com;
+
+       location /api {
+
+           # 访问控制阶段执行限流逻辑
+
+           access_by_lua_block {
+
+               local limit_dict = ngx.shared.ip_limit
+
+               local client_ip = ngx.var.remote_addr  # 客户端 IP 作为键
+
+               local max_req = 10  # 最大请求数
+
+               local expire = 60   # 过期时间（秒）
+
+               # 获取当前请求数
+
+               local req_count, err = limit_dict:get(client_ip)
+
+               if req_count then
+
+                   # 超过限制，返回 429
+
+                   if req_count &gt; max_req then
+
+                       ngx.exit(ngx.HTTP_TOO_MANY_REQUESTS)
+
+                   else
+
+                       # 未超过，计数 +1
+
+                       limit_dict:incr(client_ip, 1)
+
+                   end
+
+               else
+
+                   # 首次请求，初始化计数并设置过期时间
+
+                   limit_dict:set(client_ip, 1, expire)
+
+               end
+
+           }
+
+           # 内容处理阶段返回 API 响应
+
+           default_type 'application/json';
+
+           content_by_lua_block {
+
+               ngx.say('{&quot;code&quot;: 200, &quot;message&quot;: &quot;success&quot;, &quot;data&quot;: {}}')
+
+           }
+
+       }
+
+   }
+
+}
+</code></pre><h3 id="测试验证">测试验证</h3>
+<p>使用 <code>ab</code> 工具模拟高并发请求：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">ab -n <span class="m">20</span> -c <span class="m">5</span> http://api.example.com/api/
+</code></pre></div><p>结果中前 10 次请求返回 200，后 10 次返回 429，限流逻辑生效。</p>
+<h2 id="六总结">六、总结</h2>
+<p>OpenResty 通过「Nginx 性能底座 + Lua 灵活扩展」的组合，解决了传统 Web 服务中「高性能」与「高扩展性」难以兼顾的问题。从简单的动态响应到复杂的 API 网关、流量控制，OpenResty 都能胜任。</p>
+<p>本文仅覆盖了 OpenResty 的基础与核心能力，其生态中还有更多实用模块（如 <code>ngx_http_geoip2</code> 地理位置解析、<code>ngx_http_lua_upstream</code> 上游管理等）等待探索。建议结合官方文档深入学习，根据实际业务场景灵活运用，充分发挥其高性能优势。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/mcp-%E4%B8%8E-skills-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/p/mcp-%E4%B8%8E-skills-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/mcp-vs-skills.svg" loading="lazy" data-key="" data-hash="/p/mcp-%E4%B8%8E-skills-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/mcp-vs-skills.svg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">MCP 与 Skills 有什么区别</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/ai-%E6%99%BA%E8%83%BD%E4%BD%93%E5%BC%80%E5%8F%91%E9%80%9F%E6%9F%A5%E6%89%8B%E5%86%8C/">
+        
+        
+            <div class="article-image">
+                <img src="/p/ai-%E6%99%BA%E8%83%BD%E4%BD%93%E5%BC%80%E5%8F%91%E9%80%9F%E6%9F%A5%E6%89%8B%E5%86%8C/1.0a7c8044cb262efce3cc1c3d74e338bd_hufc87676f5c03c42ba4fd49855ef25156_1205177_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-CnyARMsmLvzjzBw9dOM4vQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">AI 智能体开发速查手册</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%B7%B1%E5%85%A5%E6%8E%A2%E7%B4%A2-langgraph/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%B7%B1%E5%85%A5%E6%8E%A2%E7%B4%A2-langgraph/1.aa343f2b772deb1d00623b7bed972c8d_huba2bd994f0da4e171194ad980a76e763_1196516_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-qjQ/K3ct6x0AYjt77ZcsjQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">深入探索 LangGraph</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/langgraph%E9%A2%84%E6%9E%84%E5%BB%BAagent/">
+        
+        
+            <div class="article-image">
+                <img src="/p/langgraph%E9%A2%84%E6%9E%84%E5%BB%BAagent/1.0a7c8044cb262efce3cc1c3d74e338bd_hufc87676f5c03c42ba4fd49855ef25156_1205177_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-CnyARMsmLvzjzBw9dOM4vQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LangGraph预构建Agent</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/img.0cf458ef54fa450e9d1ac9086d930efe_huecad56dbf45667eb4f21f35c2388c063_52872_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-DPRY71T6RQ6dGskIbZMO/g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">智能知识检索系统</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2026 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#一openresty-是什么">一、OpenResty 是什么？</a></li>
+    <li><a href="#二openresty-安装与验证centos-环境">二、OpenResty 安装与验证（CentOS 环境）</a>
+      <ol>
+        <li><a href="#1-安装依赖包">1. 安装依赖包</a></li>
+        <li><a href="#2-配置-yum-源">2. 配置 YUM 源</a></li>
+        <li><a href="#3-安装-openresty">3. 安装 OpenResty</a></li>
+        <li><a href="#4-启动与测试">4. 启动与测试</a></li>
+      </ol>
+    </li>
+    <li><a href="#三openresty-核心工作原理">三、OpenResty 核心工作原理</a>
+      <ol>
+        <li><a href="#1-nginx-的-11-个请求处理阶段">1. Nginx 的 11 个请求处理阶段</a></li>
+        <li><a href="#2-openresty-的-lua-指令映射">2. OpenResty 的 Lua 指令映射</a></li>
+      </ol>
+    </li>
+    <li><a href="#四openresty-核心模块详解">四、OpenResty 核心模块详解</a>
+      <ol>
+        <li><a href="#1-ngx_lua-模块核心基础">1. ngx_lua 模块（核心基础）</a></li>
+        <li><a href="#2-ngx_stream_lua-模块tcpudp-处理">2. ngx_stream_lua 模块（TCP/UDP 处理）</a></li>
+        <li><a href="#3-ngx_http_headers_more-模块http-头部控制">3. ngx_http_headers_more 模块（HTTP 头部控制）</a></li>
+        <li><a href="#4-ngx_http_redis-模块redis-交互">4. ngx_http_redis 模块（Redis 交互）</a></li>
+        <li><a href="#5-ngx_brotli-模块高效压缩">5. ngx_brotli 模块（高效压缩）</a></li>
+      </ol>
+    </li>
+    <li><a href="#五实战案例api-接口限流">五、实战案例：API 接口限流</a>
+      <ol>
+        <li><a href="#实现思路">实现思路</a></li>
+        <li><a href="#完整配置">完整配置</a></li>
+        <li><a href="#测试验证">测试验证</a></li>
+      </ol>
+    </li>
+    <li><a href="#六总结">六、总结</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

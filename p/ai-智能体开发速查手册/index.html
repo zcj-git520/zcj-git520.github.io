@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='AI 智能体开发速查手册  快速参考指南 - 常用代码、命令和配置
+  🚀 快速开始 环境搭建 # 创建虚拟环境 python -m venv venv venv\Scripts\activate # Windows source venv/bin/activate # Linux/Mac # 安装核心依赖 pip install langchain langchain-community langchain-openai pip install chromadb faiss-cpu pip install fastapi uvicorn python-dotenv pip install openai deepseek 基础项目结构 my-agent/├── .env # 环境变量├── requirements.txt # 依赖├── main.py # 入口├── agent/│ ├── __init__.py│ ├── core.py # 核心逻辑│ ├── prompts.'><title>AI 智能体开发速查手册</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/ai-%E6%99%BA%E8%83%BD%E4%BD%93%E5%BC%80%E5%8F%91%E9%80%9F%E6%9F%A5%E6%89%8B%E5%86%8C/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='AI 智能体开发速查手册'>
+<meta property='og:description' content='AI 智能体开发速查手册  快速参考指南 - 常用代码、命令和配置
+  🚀 快速开始 环境搭建 # 创建虚拟环境 python -m venv venv venv\Scripts\activate # Windows source venv/bin/activate # Linux/Mac # 安装核心依赖 pip install langchain langchain-community langchain-openai pip install chromadb faiss-cpu pip install fastapi uvicorn python-dotenv pip install openai deepseek 基础项目结构 my-agent/├── .env # 环境变量├── requirements.txt # 依赖├── main.py # 入口├── agent/│ ├── __init__.py│ ├── core.py # 核心逻辑│ ├── prompts.'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/ai-%E6%99%BA%E8%83%BD%E4%BD%93%E5%BC%80%E5%8F%91%E9%80%9F%E6%9F%A5%E6%89%8B%E5%86%8C/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2026-01-25T22:00:38&#43;08:00'/><meta property='article:modified_time' content='2026-01-25T22:00:38&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/ai-%E6%99%BA%E8%83%BD%E4%BD%93%E5%BC%80%E5%8F%91%E9%80%9F%E6%9F%A5%E6%89%8B%E5%86%8C/1.png' />
+<meta name="twitter:title" content="AI 智能体开发速查手册">
+<meta name="twitter:description" content="AI 智能体开发速查手册  快速参考指南 - 常用代码、命令和配置
+  🚀 快速开始 环境搭建 # 创建虚拟环境 python -m venv venv venv\Scripts\activate # Windows source venv/bin/activate # Linux/Mac # 安装核心依赖 pip install langchain langchain-community langchain-openai pip install chromadb faiss-cpu pip install fastapi uvicorn python-dotenv pip install openai deepseek 基础项目结构 my-agent/├── .env # 环境变量├── requirements.txt # 依赖├── main.py # 入口├── agent/│ ├── __init__.py│ ├── core.py # 核心逻辑│ ├── prompts."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/ai-%E6%99%BA%E8%83%BD%E4%BD%93%E5%BC%80%E5%8F%91%E9%80%9F%E6%9F%A5%E6%89%8B%E5%86%8C/1.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/ai-%E6%99%BA%E8%83%BD%E4%BD%93%E5%BC%80%E5%8F%91%E9%80%9F%E6%9F%A5%E6%89%8B%E5%86%8C/">
+                <img src="/p/ai-%E6%99%BA%E8%83%BD%E4%BD%93%E5%BC%80%E5%8F%91%E9%80%9F%E6%9F%A5%E6%89%8B%E5%86%8C/1_hufc87676f5c03c42ba4fd49855ef25156_1205177_800x0_resize_box_3.png"
+                        srcset="/p/ai-%E6%99%BA%E8%83%BD%E4%BD%93%E5%BC%80%E5%8F%91%E9%80%9F%E6%9F%A5%E6%89%8B%E5%86%8C/1_hufc87676f5c03c42ba4fd49855ef25156_1205177_800x0_resize_box_3.png 800w, /p/ai-%E6%99%BA%E8%83%BD%E4%BD%93%E5%BC%80%E5%8F%91%E9%80%9F%E6%9F%A5%E6%89%8B%E5%86%8C/1_hufc87676f5c03c42ba4fd49855ef25156_1205177_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="542" 
+                        loading="lazy"
+                        alt="Featured image of post AI 智能体开发速查手册" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/computer/" style="background-color: #2a9d8f; color: #fff;">
+                知识学习
+            </a>
+        
+            <a href="/categories/ai/" style="background-color: #2a9d8f; color: #fff;">
+                AI
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/ai-%E6%99%BA%E8%83%BD%E4%BD%93%E5%BC%80%E5%8F%91%E9%80%9F%E6%9F%A5%E6%89%8B%E5%86%8C/">AI 智能体开发速查手册</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jan 25, 2026</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 5 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h1 id="ai-智能体开发速查手册">AI 智能体开发速查手册</h1>
+<blockquote>
+<p>快速参考指南 - 常用代码、命令和配置</p>
+</blockquote>
+<hr>
+<h2 id="-快速开始">🚀 快速开始</h2>
+<h3 id="环境搭建">环境搭建</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># 创建虚拟环境</span>
+python -m venv venv
+venv<span class="se">\S</span>cripts<span class="se">\a</span>ctivate  <span class="c1"># Windows</span>
+<span class="nb">source</span> venv/bin/activate  <span class="c1"># Linux/Mac</span>
+
+<span class="c1"># 安装核心依赖</span>
+pip install langchain langchain-community langchain-openai
+pip install chromadb faiss-cpu
+pip install fastapi uvicorn python-dotenv
+pip install openai deepseek
+</code></pre></div><h3 id="基础项目结构">基础项目结构</h3>
+<pre tabindex="0"><code>my-agent/
+├── .env                    # 环境变量
+├── requirements.txt        # 依赖
+├── main.py                 # 入口
+├── agent/
+│   ├── __init__.py
+│   ├── core.py             # 核心逻辑
+│   ├── prompts.py          # 提示模板
+│   └── tools.py            # 工具函数
+└── knowledge/              # 知识库
+</code></pre><hr>
+<h2 id="-prompt-模板">📝 Prompt 模板</h2>
+<h3 id="系统提示词模板">系统提示词模板</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="n">SYSTEM_PROMPT</span> <span class="o">=</span> <span class="s2">&#34;&#34;&#34;你是一位</span><span class="si">{role}</span><span class="s2">，具有以下特点：
+</span><span class="s2">- 专业领域：</span><span class="si">{expertise}</span><span class="s2">
+</span><span class="s2">- 沟通风格：</span><span class="si">{style}</span><span class="s2">
+</span><span class="s2">- 输出格式：</span><span class="si">{format}</span><span class="s2">
+</span><span class="s2">
+</span><span class="s2">约束条件：
+</span><span class="s2">1. </span><span class="si">{constraint1}</span><span class="s2">
+</span><span class="s2">2. </span><span class="si">{constraint2}</span><span class="s2">
+</span><span class="s2">3. 不知道的内容请诚实告知，不要编造
+</span><span class="s2">
+</span><span class="s2">当前时间：</span><span class="si">{current_time}</span><span class="s2">
+</span><span class="s2">&#34;&#34;&#34;</span>
+</code></pre></div><h3 id="few-shot-示例">Few-Shot 示例</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="n">FEW_SHOT_EXAMPLES</span> <span class="o">=</span> <span class="s2">&#34;&#34;&#34;
+</span><span class="s2">用户：今天天气怎么样？
+</span><span class="s2">助手：我需要知道您所在的城市才能查询天气。请告诉我城市名称。
+</span><span class="s2">
+</span><span class="s2">用户：北京天气
+</span><span class="s2">助手：北京今天晴，气温 15-25°C，空气质量良。
+</span><span class="s2">
+</span><span class="s2">用户：上海明天会下雨吗？
+</span><span class="s2">助手：上海明天有小雨，气温 18-22°C，建议携带雨具。
+</span><span class="s2">&#34;&#34;&#34;</span>
+</code></pre></div><h3 id="cot思维链模板">CoT（思维链）模板</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="n">COT_PROMPT</span> <span class="o">=</span> <span class="s2">&#34;&#34;&#34;请逐步思考这个问题：
+</span><span class="s2">
+</span><span class="s2">1. 首先，理解问题的核心是什么
+</span><span class="s2">2. 然后，分析需要的信息和步骤
+</span><span class="s2">3. 接着，执行每个步骤
+</span><span class="s2">4. 最后，总结答案
+</span><span class="s2">
+</span><span class="s2">问题：</span><span class="si">{question}</span><span class="s2">
+</span><span class="s2">
+</span><span class="s2">思考过程：
+</span><span class="s2">&#34;&#34;&#34;</span>
+</code></pre></div><hr>
+<h2 id="-langchain-常用代码">🔧 LangChain 常用代码</h2>
+<h3 id="基础-llm-调用">基础 LLM 调用</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">langchain_openai</span> <span class="kn">import</span> <span class="n">ChatOpenAI</span>
+<span class="kn">from</span> <span class="nn">langchain_core.messages</span> <span class="kn">import</span> <span class="n">HumanMessage</span><span class="p">,</span> <span class="n">SystemMessage</span>
+
+<span class="n">llm</span> <span class="o">=</span> <span class="n">ChatOpenAI</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">&#34;gpt-4&#34;</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+    <span class="n">api_key</span><span class="o">=</span><span class="s2">&#34;your-key&#34;</span><span class="p">,</span>
+    <span class="n">base_url</span><span class="o">=</span><span class="s2">&#34;https://api.openai.com/v1&#34;</span>
+<span class="p">)</span>
+
+<span class="n">messages</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">SystemMessage</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="s2">&#34;你是一个有帮助的助手&#34;</span><span class="p">),</span>
+    <span class="n">HumanMessage</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="s2">&#34;你好&#34;</span><span class="p">)</span>
+<span class="p">]</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">llm</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">messages</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</code></pre></div><h3 id="rag-检索链">RAG 检索链</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">langchain_chroma</span> <span class="kn">import</span> <span class="n">Chroma</span>
+<span class="kn">from</span> <span class="nn">langchain_openai</span> <span class="kn">import</span> <span class="n">OpenAIEmbeddings</span>
+<span class="kn">from</span> <span class="nn">langchain.chains</span> <span class="kn">import</span> <span class="n">create_retrieval_chain</span>
+<span class="kn">from</span> <span class="nn">langchain.chains.combine_documents</span> <span class="kn">import</span> <span class="n">create_stuff_documents_chain</span>
+<span class="kn">from</span> <span class="nn">langchain_core.prompts</span> <span class="kn">import</span> <span class="n">ChatPromptTemplate</span>
+
+<span class="c1"># 向量存储</span>
+<span class="n">embeddings</span> <span class="o">=</span> <span class="n">OpenAIEmbeddings</span><span class="p">()</span>
+<span class="n">vectorstore</span> <span class="o">=</span> <span class="n">Chroma</span><span class="p">(</span>
+    <span class="n">collection_name</span><span class="o">=</span><span class="s2">&#34;my_docs&#34;</span><span class="p">,</span>
+    <span class="n">embedding_function</span><span class="o">=</span><span class="n">embeddings</span><span class="p">,</span>
+    <span class="n">persist_directory</span><span class="o">=</span><span class="s2">&#34;./chroma_db&#34;</span>
+<span class="p">)</span>
+
+<span class="c1"># 检索器</span>
+<span class="n">retriever</span> <span class="o">=</span> <span class="n">vectorstore</span><span class="o">.</span><span class="n">as_retriever</span><span class="p">(</span>
+    <span class="n">search_type</span><span class="o">=</span><span class="s2">&#34;similarity_score_threshold&#34;</span><span class="p">,</span>
+    <span class="n">search_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&#34;score_threshold&#34;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">,</span> <span class="s2">&#34;k&#34;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c1"># 问答提示</span>
+<span class="n">qa_prompt</span> <span class="o">=</span> <span class="n">ChatPromptTemplate</span><span class="o">.</span><span class="n">from_template</span><span class="p">(</span><span class="s2">&#34;&#34;&#34;
+</span><span class="s2">基于以下上下文回答问题。如果不知道答案，请说不知道。
+</span><span class="s2">
+</span><span class="s2">上下文：</span><span class="si">{context}</span><span class="s2">
+</span><span class="s2">
+</span><span class="s2">问题：</span><span class="si">{input}</span><span class="s2">
+</span><span class="s2">
+</span><span class="s2">答案：
+</span><span class="s2">&#34;&#34;&#34;</span><span class="p">)</span>
+
+<span class="c1"># 创建链</span>
+<span class="n">document_chain</span> <span class="o">=</span> <span class="n">create_stuff_documents_chain</span><span class="p">(</span><span class="n">llm</span><span class="p">,</span> <span class="n">qa_prompt</span><span class="p">)</span>
+<span class="n">retrieval_chain</span> <span class="o">=</span> <span class="n">create_retrieval_chain</span><span class="p">(</span><span class="n">retriever</span><span class="p">,</span> <span class="n">document_chain</span><span class="p">)</span>
+
+<span class="c1"># 查询</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">retrieval_chain</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">&#34;input&#34;</span><span class="p">:</span> <span class="s2">&#34;你的问题&#34;</span><span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&#34;answer&#34;</span><span class="p">])</span>
+</code></pre></div><h3 id="agent-创建">Agent 创建</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">langchain.agents</span> <span class="kn">import</span> <span class="n">create_tool_calling_agent</span><span class="p">,</span> <span class="n">AgentExecutor</span>
+<span class="kn">from</span> <span class="nn">langchain_core.tools</span> <span class="kn">import</span> <span class="n">Tool</span>
+
+<span class="c1"># 定义工具</span>
+<span class="k">def</span> <span class="nf">search_web</span><span class="p">(</span><span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="s2">&#34;&#34;&#34;搜索互联网&#34;&#34;&#34;</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&#34;搜索结果：</span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s2">&#34;</span>
+
+<span class="k">def</span> <span class="nf">calculator</span><span class="p">(</span><span class="n">expression</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="s2">&#34;&#34;&#34;计算数学表达式&#34;&#34;&#34;</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="n">expression</span><span class="p">))</span>
+
+<span class="n">tools</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Tool</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&#34;web_search&#34;</span><span class="p">,</span>
+        <span class="n">func</span><span class="o">=</span><span class="n">search_web</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&#34;搜索互联网获取信息&#34;</span>
+    <span class="p">),</span>
+    <span class="n">Tool</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&#34;calculator&#34;</span><span class="p">,</span>
+        <span class="n">func</span><span class="o">=</span><span class="n">calculator</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&#34;执行数学计算&#34;</span>
+    <span class="p">)</span>
+<span class="p">]</span>
+
+<span class="c1"># 创建 Agent</span>
+<span class="n">prompt</span> <span class="o">=</span> <span class="n">ChatPromptTemplate</span><span class="o">.</span><span class="n">from_messages</span><span class="p">([</span>
+    <span class="p">(</span><span class="s2">&#34;system&#34;</span><span class="p">,</span> <span class="s2">&#34;你是一个有帮助的助手，可以使用工具来回答问题&#34;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&#34;human&#34;</span><span class="p">,</span> <span class="s2">&#34;</span><span class="si">{input}</span><span class="s2">&#34;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&#34;placeholder&#34;</span><span class="p">,</span> <span class="s2">&#34;</span><span class="si">{agent_scratchpad}</span><span class="s2">&#34;</span><span class="p">)</span>
+<span class="p">])</span>
+
+<span class="n">agent</span> <span class="o">=</span> <span class="n">create_tool_calling_agent</span><span class="p">(</span><span class="n">llm</span><span class="p">,</span> <span class="n">tools</span><span class="p">,</span> <span class="n">prompt</span><span class="p">)</span>
+<span class="n">executor</span> <span class="o">=</span> <span class="n">AgentExecutor</span><span class="p">(</span>
+    <span class="n">agent</span><span class="o">=</span><span class="n">agent</span><span class="p">,</span>
+    <span class="n">tools</span><span class="o">=</span><span class="n">tools</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">handle_parsing_errors</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="c1"># 执行</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">executor</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">&#34;input&#34;</span><span class="p">:</span> <span class="s2">&#34;计算 123*456 并搜索相关结果&#34;</span><span class="p">})</span>
+</code></pre></div><hr>
+<h2 id="-向量数据库操作">🗄️ 向量数据库操作</h2>
+<h3 id="chromadb">ChromaDB</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">chromadb</span>
+<span class="kn">from</span> <span class="nn">chromadb.config</span> <span class="kn">import</span> <span class="n">Settings</span>
+
+<span class="c1"># 初始化客户端</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">chromadb</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">Settings</span><span class="p">(</span>
+    <span class="n">persist_directory</span><span class="o">=</span><span class="s2">&#34;./chroma_data&#34;</span><span class="p">,</span>
+    <span class="n">anonymized_telemetry</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">))</span>
+
+<span class="c1"># 创建集合</span>
+<span class="n">collection</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">create_collection</span><span class="p">(</span><span class="s2">&#34;documents&#34;</span><span class="p">)</span>
+
+<span class="c1"># 添加文档</span>
+<span class="n">collection</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+    <span class="n">documents</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;文档内容 1&#34;</span><span class="p">,</span> <span class="s2">&#34;文档内容 2&#34;</span><span class="p">],</span>
+    <span class="n">metadatas</span><span class="o">=</span><span class="p">[{</span><span class="s2">&#34;source&#34;</span><span class="p">:</span> <span class="s2">&#34;file1&#34;</span><span class="p">},</span> <span class="p">{</span><span class="s2">&#34;source&#34;</span><span class="p">:</span> <span class="s2">&#34;file2&#34;</span><span class="p">}],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;doc1&#34;</span><span class="p">,</span> <span class="s2">&#34;doc2&#34;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># 查询</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+    <span class="n">query_texts</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;查询内容&#34;</span><span class="p">],</span>
+    <span class="n">n_results</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;documents&#34;</span><span class="p">,</span> <span class="s2">&#34;metadatas&#34;</span><span class="p">,</span> <span class="s2">&#34;distances&#34;</span><span class="p">]</span>
+<span class="p">)</span>
+</code></pre></div><h3 id="faiss">FAISS</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">langchain.vectorstores</span> <span class="kn">import</span> <span class="n">FAISS</span>
+<span class="kn">from</span> <span class="nn">langchain_openai</span> <span class="kn">import</span> <span class="n">OpenAIEmbeddings</span>
+
+<span class="n">embeddings</span> <span class="o">=</span> <span class="n">OpenAIEmbeddings</span><span class="p">()</span>
+
+<span class="c1"># 从文档创建</span>
+<span class="n">vectorstore</span> <span class="o">=</span> <span class="n">FAISS</span><span class="o">.</span><span class="n">from_documents</span><span class="p">(</span><span class="n">documents</span><span class="p">,</span> <span class="n">embeddings</span><span class="p">)</span>
+
+<span class="c1"># 保存和加载</span>
+<span class="n">vectorstore</span><span class="o">.</span><span class="n">save_local</span><span class="p">(</span><span class="s2">&#34;./faiss_index&#34;</span><span class="p">)</span>
+<span class="n">vectorstore</span> <span class="o">=</span> <span class="n">FAISS</span><span class="o">.</span><span class="n">load_local</span><span class="p">(</span><span class="s2">&#34;./faiss_index&#34;</span><span class="p">,</span> <span class="n">embeddings</span><span class="p">)</span>
+
+<span class="c1"># 相似度搜索</span>
+<span class="n">docs</span> <span class="o">=</span> <span class="n">vectorstore</span><span class="o">.</span><span class="n">similarity_search</span><span class="p">(</span><span class="s2">&#34;查询&#34;</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">docs_score</span> <span class="o">=</span> <span class="n">vectorstore</span><span class="o">.</span><span class="n">similarity_search_with_score</span><span class="p">(</span><span class="s2">&#34;查询&#34;</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</code></pre></div><hr>
+<h2 id="-function-calling">🛠️ Function Calling</h2>
+<h3 id="openai-格式">OpenAI 格式</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">openai</span> <span class="kn">import</span> <span class="n">OpenAI</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">OpenAI</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="s2">&#34;your-key&#34;</span><span class="p">)</span>
+
+<span class="n">tools</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;function&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;function&#34;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;get_current_weather&#34;</span><span class="p">,</span>
+            <span class="s2">&#34;description&#34;</span><span class="p">:</span> <span class="s2">&#34;获取当前天气&#34;</span><span class="p">,</span>
+            <span class="s2">&#34;parameters&#34;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;object&#34;</span><span class="p">,</span>
+                <span class="s2">&#34;properties&#34;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&#34;location&#34;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;string&#34;</span><span class="p">,</span>
+                        <span class="s2">&#34;description&#34;</span><span class="p">:</span> <span class="s2">&#34;城市名称&#34;</span>
+                    <span class="p">},</span>
+                    <span class="s2">&#34;unit&#34;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;string&#34;</span><span class="p">,</span>
+                        <span class="s2">&#34;enum&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;celsius&#34;</span><span class="p">,</span> <span class="s2">&#34;fahrenheit&#34;</span><span class="p">]</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="s2">&#34;required&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;location&#34;</span><span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">&#34;gpt-4&#34;</span><span class="p">,</span>
+    <span class="n">messages</span><span class="o">=</span><span class="p">[{</span><span class="s2">&#34;role&#34;</span><span class="p">:</span> <span class="s2">&#34;user&#34;</span><span class="p">,</span> <span class="s2">&#34;content&#34;</span><span class="p">:</span> <span class="s2">&#34;北京天气怎么样？&#34;</span><span class="p">}],</span>
+    <span class="n">tools</span><span class="o">=</span><span class="n">tools</span><span class="p">,</span>
+    <span class="n">tool_choice</span><span class="o">=</span><span class="s2">&#34;auto&#34;</span>
+<span class="p">)</span>
+
+<span class="c1"># 处理工具调用</span>
+<span class="n">message</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span>
+<span class="k">if</span> <span class="n">message</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">tool_call</span> <span class="ow">in</span> <span class="n">message</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">:</span>
+        <span class="n">func_name</span> <span class="o">=</span> <span class="n">tool_call</span><span class="o">.</span><span class="n">function</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">tool_call</span><span class="o">.</span><span class="n">function</span><span class="o">.</span><span class="n">arguments</span><span class="p">)</span>
+        <span class="c1"># 执行函数</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s2">(**</span><span class="si">{</span><span class="n">args</span><span class="si">}</span><span class="s2">)&#34;</span><span class="p">)</span>
+</code></pre></div><h3 id="多轮工具调用">多轮工具调用</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">run_agent_with_tools</span><span class="p">(</span><span class="n">user_input</span><span class="p">,</span> <span class="n">max_iterations</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">messages</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&#34;role&#34;</span><span class="p">:</span> <span class="s2">&#34;user&#34;</span><span class="p">,</span> <span class="s2">&#34;content&#34;</span><span class="p">:</span> <span class="n">user_input</span><span class="p">}]</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_iterations</span><span class="p">):</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="s2">&#34;gpt-4&#34;</span><span class="p">,</span>
+            <span class="n">messages</span><span class="o">=</span><span class="n">messages</span><span class="p">,</span>
+            <span class="n">tools</span><span class="o">=</span><span class="n">tools</span>
+        <span class="p">)</span>
+        
+        <span class="n">message</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span>
+        <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">message</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">message</span><span class="o">.</span><span class="n">content</span>
+        
+        <span class="c1"># 执行工具调用</span>
+        <span class="k">for</span> <span class="n">tool_call</span> <span class="ow">in</span> <span class="n">message</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">execute_tool</span><span class="p">(</span><span class="n">tool_call</span><span class="p">)</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s2">&#34;role&#34;</span><span class="p">:</span> <span class="s2">&#34;tool&#34;</span><span class="p">,</span>
+                <span class="s2">&#34;tool_call_id&#34;</span><span class="p">:</span> <span class="n">tool_call</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                <span class="s2">&#34;content&#34;</span><span class="p">:</span> <span class="n">result</span>
+            <span class="p">})</span>
+    
+    <span class="k">return</span> <span class="s2">&#34;达到最大迭代次数&#34;</span>
+</code></pre></div><hr>
+<h2 id="-文档处理">📦 文档处理</h2>
+<h3 id="加载器">加载器</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">langchain.document_loaders</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">PyPDFLoader</span><span class="p">,</span>
+    <span class="n">Docx2txtLoader</span><span class="p">,</span>
+    <span class="n">TextLoader</span><span class="p">,</span>
+    <span class="n">UnstructuredMarkdownLoader</span><span class="p">,</span>
+    <span class="n">WebBaseLoader</span>
+<span class="p">)</span>
+
+<span class="c1"># PDF</span>
+<span class="n">pdf_loader</span> <span class="o">=</span> <span class="n">PyPDFLoader</span><span class="p">(</span><span class="s2">&#34;document.pdf&#34;</span><span class="p">)</span>
+<span class="n">pdf_docs</span> <span class="o">=</span> <span class="n">pdf_loader</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+
+<span class="c1"># Word</span>
+<span class="n">docx_loader</span> <span class="o">=</span> <span class="n">Docx2txtLoader</span><span class="p">(</span><span class="s2">&#34;document.docx&#34;</span><span class="p">)</span>
+<span class="n">docx_docs</span> <span class="o">=</span> <span class="n">docx_loader</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+
+<span class="c1"># 网页</span>
+<span class="n">web_loader</span> <span class="o">=</span> <span class="n">WebBaseLoader</span><span class="p">(</span><span class="s2">&#34;https://example.com&#34;</span><span class="p">)</span>
+<span class="n">web_docs</span> <span class="o">=</span> <span class="n">web_loader</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+
+<span class="c1"># 批量加载</span>
+<span class="kn">from</span> <span class="nn">langchain.document_loaders</span> <span class="kn">import</span> <span class="n">DirectoryLoader</span>
+<span class="n">dir_loader</span> <span class="o">=</span> <span class="n">DirectoryLoader</span><span class="p">(</span><span class="s2">&#34;./docs&#34;</span><span class="p">,</span> <span class="n">glob</span><span class="o">=</span><span class="s2">&#34;**/*.pdf&#34;</span><span class="p">)</span>
+<span class="n">all_docs</span> <span class="o">=</span> <span class="n">dir_loader</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+</code></pre></div><h3 id="文本分块">文本分块</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">langchain.text_splitter</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">RecursiveCharacterTextSplitter</span><span class="p">,</span>
+    <span class="n">CharacterTextSplitter</span><span class="p">,</span>
+    <span class="n">TokenTextSplitter</span>
+<span class="p">)</span>
+
+<span class="c1"># 递归分块（推荐）</span>
+<span class="n">splitter</span> <span class="o">=</span> <span class="n">RecursiveCharacterTextSplitter</span><span class="p">(</span>
+    <span class="n">chunk_size</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+    <span class="n">chunk_overlap</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">length_function</span><span class="o">=</span><span class="nb">len</span><span class="p">,</span>
+    <span class="n">separators</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;</span><span class="se">\n\n</span><span class="s2">&#34;</span><span class="p">,</span> <span class="s2">&#34;</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">,</span> <span class="s2">&#34;。&#34;</span><span class="p">,</span> <span class="s2">&#34;！&#34;</span><span class="p">,</span> <span class="s2">&#34;？&#34;</span><span class="p">,</span> <span class="s2">&#34; &#34;</span><span class="p">,</span> <span class="s2">&#34;&#34;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="n">chunks</span> <span class="o">=</span> <span class="n">splitter</span><span class="o">.</span><span class="n">split_documents</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span>
+
+<span class="c1"># Token 分块</span>
+<span class="n">token_splitter</span> <span class="o">=</span> <span class="n">TokenTextSplitter</span><span class="p">(</span>
+    <span class="n">chunk_size</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span>
+    <span class="n">chunk_overlap</span><span class="o">=</span><span class="mi">50</span>
+<span class="p">)</span>
+</code></pre></div><hr>
+<h2 id="-api-部署">🌐 API 部署</h2>
+<h3 id="fastapi-示例">FastAPI 示例</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">fastapi</span> <span class="kn">import</span> <span class="n">FastAPI</span><span class="p">,</span> <span class="n">HTTPException</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">asynccontextmanager</span>
+
+<span class="k">class</span> <span class="nc">QueryRequest</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">question</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span>
+
+<span class="k">class</span> <span class="nc">QueryResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">answer</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">sources</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
+<span class="nd">@asynccontextmanager</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">lifespan</span><span class="p">(</span><span class="n">app</span><span class="p">:</span> <span class="n">FastAPI</span><span class="p">):</span>
+    <span class="c1"># 启动时加载模型</span>
+    <span class="k">global</span> <span class="n">agent</span>
+    <span class="n">agent</span> <span class="o">=</span> <span class="n">create_agent</span><span class="p">()</span>
+    <span class="k">yield</span>
+    <span class="c1"># 关闭时清理</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">(</span><span class="n">lifespan</span><span class="o">=</span><span class="n">lifespan</span><span class="p">)</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&#34;/query&#34;</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">QueryResponse</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">query_endpoint</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">QueryRequest</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span>
+            <span class="s2">&#34;input&#34;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">question</span><span class="p">,</span>
+            <span class="s2">&#34;top_k&#34;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">top_k</span>
+        <span class="p">})</span>
+        <span class="k">return</span> <span class="n">QueryResponse</span><span class="p">(</span>
+            <span class="n">answer</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">&#34;answer&#34;</span><span class="p">],</span>
+            <span class="n">sources</span><span class="o">=</span><span class="n">result</span><span class="p">[</span><span class="s2">&#34;source_documents&#34;</span><span class="p">]</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&#34;/health&#34;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">health_check</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&#34;status&#34;</span><span class="p">:</span> <span class="s2">&#34;healthy&#34;</span><span class="p">}</span>
+
+<span class="c1"># 运行</span>
+<span class="c1"># uvicorn main:app --host 0.0.0.0 --port 8000</span>
+</code></pre></div><h3 id="docker-配置">Docker 配置</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-dockerfile" data-lang="dockerfile"><span class="c"># Dockerfile</span><span class="err">
+</span><span class="err"></span><span class="k">FROM</span><span class="s"> python:3.11-slim</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="k">WORKDIR</span><span class="s"> /app</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="k">COPY</span> requirements.txt .<span class="err">
+</span><span class="err"></span><span class="k">RUN</span> pip install --no-cache-dir -r requirements.txt<span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="k">COPY</span> . .<span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="k">EXPOSE</span><span class="s"> 8000</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="k">CMD</span> <span class="p">[</span><span class="s2">&#34;uvicorn&#34;</span><span class="p">,</span> <span class="s2">&#34;main:app&#34;</span><span class="p">,</span> <span class="s2">&#34;--host&#34;</span><span class="p">,</span> <span class="s2">&#34;0.0.0.0&#34;</span><span class="p">,</span> <span class="s2">&#34;--port&#34;</span><span class="p">,</span> <span class="s2">&#34;8000&#34;</span><span class="p">]</span><span class="err">
+</span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="c"># docker-compose.yml</span><span class="w">
+</span><span class="w"></span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;3.8&#39;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="nt">services</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">agent-api</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">build</span><span class="p">:</span><span class="w"> </span><span class="l">.</span><span class="w">
+</span><span class="w">    </span><span class="nt">ports</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span>- <span class="s2">&#34;8000:8000&#34;</span><span class="w">
+</span><span class="w">    </span><span class="nt">environment</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span>- <span class="l">OPENAI_API_KEY=${OPENAI_API_KEY}</span><span class="w">
+</span><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span>- <span class="l">./knowledge:/app/knowledge</span><span class="w">
+</span><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l">unless-stopped</span><span class="w">
+</span><span class="w">  
+</span><span class="w">  </span><span class="nt">chromadb</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">chromadb/chroma</span><span class="w">
+</span><span class="w">    </span><span class="nt">ports</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span>- <span class="s2">&#34;8001:8000&#34;</span><span class="w">
+</span><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span>- <span class="l">chroma_data:/chroma</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="nt">volumes</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">chroma_data</span><span class="p">:</span><span class="w">
+</span></code></pre></div><hr>
+<h2 id="-调试技巧">🔍 调试技巧</h2>
+<h3 id="启用详细日志">启用详细日志</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># LangChain 调试</span>
+<span class="kn">from</span> <span class="nn">langchain.globals</span> <span class="kn">import</span> <span class="n">set_debug</span><span class="p">,</span> <span class="n">set_verbose</span>
+<span class="n">set_debug</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">set_verbose</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div><h3 id="token-计数">Token 计数</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">tiktoken</span>
+
+<span class="k">def</span> <span class="nf">count_tokens</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&#34;gpt-4&#34;</span><span class="p">):</span>
+    <span class="n">encoding</span> <span class="o">=</span> <span class="n">tiktoken</span><span class="o">.</span><span class="n">encoding_for_model</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">encoding</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
+
+<span class="c1"># 计算对话 token</span>
+<span class="n">total_tokens</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+    <span class="n">count_tokens</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="s2">&#34;content&#34;</span><span class="p">])</span> 
+    <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">messages</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;总 Token 数：</span><span class="si">{</span><span class="n">total_tokens</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+</code></pre></div><h3 id="性能分析">性能分析</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+
+<span class="k">def</span> <span class="nf">timing</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;</span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> 耗时：</span><span class="si">{</span><span class="n">end</span><span class="o">-</span><span class="n">start</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">秒&#34;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+    <span class="k">return</span> <span class="n">wrapper</span>
+
+<span class="nd">@timing</span>
+<span class="k">def</span> <span class="nf">expensive_operation</span><span class="p">():</span>
+    <span class="c1"># 你的代码</span>
+    <span class="k">pass</span>
+</code></pre></div><hr>
+<h2 id="-成本优化">💰 成本优化</h2>
+<h3 id="策略清单">策略清单</h3>
+<ol>
+<li><strong>使用小模型处理简单任务</strong></li>
+<li><strong>缓存常见查询结果</strong></li>
+<li><strong>压缩 Prompt 长度</strong></li>
+<li><strong>流式输出减少等待</strong></li>
+<li><strong>批量处理请求</strong></li>
+</ol>
+<h3 id="缓存实现">缓存实现</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">hashlib</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
+
+<span class="k">def</span> <span class="nf">cache_key</span><span class="p">(</span><span class="n">messages</span><span class="p">):</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">messages</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">content</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+
+<span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">cached_llm_call</span><span class="p">(</span><span class="n">cache_key_str</span><span class="p">):</span>
+    <span class="c1"># 从缓存获取或调用 LLM</span>
+    <span class="k">pass</span>
+</code></pre></div><hr>
+<h2 id="-监控指标">📊 监控指标</h2>
+<h3 id="关键指标">关键指标</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">prometheus_client</span> <span class="kn">import</span> <span class="n">Counter</span><span class="p">,</span> <span class="n">Histogram</span><span class="p">,</span> <span class="n">start_http_server</span>
+
+<span class="c1"># 定义指标</span>
+<span class="n">REQUEST_COUNT</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="s1">&#39;agent_requests_total&#39;</span><span class="p">,</span> <span class="s1">&#39;总请求数&#39;</span><span class="p">)</span>
+<span class="n">REQUEST_LATENCY</span> <span class="o">=</span> <span class="n">Histogram</span><span class="p">(</span><span class="s1">&#39;agent_request_latency_seconds&#39;</span><span class="p">,</span> <span class="s1">&#39;请求延迟&#39;</span><span class="p">)</span>
+<span class="n">TOKEN_USAGE</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="s1">&#39;agent_tokens_total&#39;</span><span class="p">,</span> <span class="s1">&#39;Token 使用量&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">])</span>
+
+<span class="c1"># 记录</span>
+<span class="n">REQUEST_COUNT</span><span class="o">.</span><span class="n">inc</span><span class="p">()</span>
+<span class="k">with</span> <span class="n">REQUEST_LATENCY</span><span class="o">.</span><span class="n">time</span><span class="p">():</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+<span class="n">TOKEN_USAGE</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;prompt&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">inc</span><span class="p">(</span><span class="n">prompt_tokens</span><span class="p">)</span>
+<span class="n">TOKEN_USAGE</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;completion&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">inc</span><span class="p">(</span><span class="n">completion_tokens</span><span class="p">)</span>
+</code></pre></div><hr>
+<h2 id="-最佳实践">🎯 最佳实践</h2>
+<h3 id="prompt-设计">Prompt 设计</h3>
+<p>✅ 好的做法：</p>
+<ul>
+<li>明确角色和任务</li>
+<li>提供具体示例</li>
+<li>设定输出格式</li>
+<li>包含约束条件</li>
+</ul>
+<p>❌ 避免：</p>
+<ul>
+<li>模糊的指令</li>
+<li>过长的上下文</li>
+<li>矛盾的要求</li>
+<li>忽略边界情况</li>
+</ul>
+<h3 id="代码组织">代码组织</h3>
+<pre tabindex="0"><code># 推荐结构
+agent/
+├── config.py          # 配置
+├── prompts.py         # 提示模板
+├── tools.py           # 工具函数
+├── chains.py          # 链定义
+├── agents.py          # Agent 定义
+└── utils/
+    ├── embedding.py   # 嵌入相关
+    ├── storage.py     # 存储相关
+    └── monitoring.py  # 监控相关
+</code></pre><h3 id="错误处理">错误处理</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">tenacity</span> <span class="kn">import</span> <span class="n">retry</span><span class="p">,</span> <span class="n">stop_after_attempt</span><span class="p">,</span> <span class="n">wait_exponential</span>
+
+<span class="nd">@retry</span><span class="p">(</span>
+    <span class="n">stop</span><span class="o">=</span><span class="n">stop_after_attempt</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
+    <span class="n">wait</span><span class="o">=</span><span class="n">wait_exponential</span><span class="p">(</span><span class="n">multiplier</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">call_llm_with_retry</span><span class="p">(</span><span class="n">messages</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">llm</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">messages</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">RateLimitError</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&#34;速率限制，重试中...&#34;</span><span class="p">)</span>
+        <span class="k">raise</span>
+    <span class="k">except</span> <span class="n">APIError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;API 错误：</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+        <span class="k">raise</span>
+</code></pre></div><hr>
+<h2 id="-常用命令">📚 常用命令</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># 检查 Python 版本</span>
+python --version
+
+<span class="c1"># 安装依赖</span>
+pip install -r requirements.txt
+
+<span class="c1"># 导出依赖</span>
+pip freeze &gt; requirements.txt
+
+<span class="c1"># 运行 FastAPI</span>
+uvicorn main:app --reload
+
+<span class="c1"># Docker 操作</span>
+docker build -t my-agent .
+docker-compose up -d
+docker-compose logs -f
+
+<span class="c1"># 测试 API</span>
+curl -X POST http://localhost:8000/query <span class="se">\
+</span><span class="se"></span>  -H <span class="s2">&#34;Content-Type: application/json&#34;</span> <span class="se">\
+</span><span class="se"></span>  -d <span class="s1">&#39;{&#34;question&#34;: &#34;你好&#34;}&#39;</span>
+</code></pre></div><hr>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/mcp-%E4%B8%8E-skills-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/p/mcp-%E4%B8%8E-skills-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/mcp-vs-skills.svg" loading="lazy" data-key="" data-hash="/p/mcp-%E4%B8%8E-skills-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/mcp-vs-skills.svg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">MCP 与 Skills 有什么区别</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%B7%B1%E5%85%A5%E6%8E%A2%E7%B4%A2-langgraph/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%B7%B1%E5%85%A5%E6%8E%A2%E7%B4%A2-langgraph/1.aa343f2b772deb1d00623b7bed972c8d_huba2bd994f0da4e171194ad980a76e763_1196516_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-qjQ/K3ct6x0AYjt77ZcsjQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">深入探索 LangGraph</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/langgraph%E9%A2%84%E6%9E%84%E5%BB%BAagent/">
+        
+        
+            <div class="article-image">
+                <img src="/p/langgraph%E9%A2%84%E6%9E%84%E5%BB%BAagent/1.0a7c8044cb262efce3cc1c3d74e338bd_hufc87676f5c03c42ba4fd49855ef25156_1205177_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-CnyARMsmLvzjzBw9dOM4vQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LangGraph预构建Agent</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/img.0cf458ef54fa450e9d1ac9086d930efe_huecad56dbf45667eb4f21f35c2388c063_52872_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-DPRY71T6RQ6dGskIbZMO/g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">智能知识检索系统</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%A3%80%E7%B4%A2%E5%A2%9E%E5%BC%BA%E7%94%9F%E6%88%90rag/img.91bf08890296485b5b595123bb1b9c01_hufef087fddda0fa8512a3bf0acfa96939_57649_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-kb8IiQKWSFtbWVEjuxucAQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">检索增强生成（RAG）</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2026 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#-快速开始">🚀 快速开始</a>
+      <ol>
+        <li><a href="#环境搭建">环境搭建</a></li>
+        <li><a href="#基础项目结构">基础项目结构</a></li>
+      </ol>
+    </li>
+    <li><a href="#-prompt-模板">📝 Prompt 模板</a>
+      <ol>
+        <li><a href="#系统提示词模板">系统提示词模板</a></li>
+        <li><a href="#few-shot-示例">Few-Shot 示例</a></li>
+        <li><a href="#cot思维链模板">CoT（思维链）模板</a></li>
+      </ol>
+    </li>
+    <li><a href="#-langchain-常用代码">🔧 LangChain 常用代码</a>
+      <ol>
+        <li><a href="#基础-llm-调用">基础 LLM 调用</a></li>
+        <li><a href="#rag-检索链">RAG 检索链</a></li>
+        <li><a href="#agent-创建">Agent 创建</a></li>
+      </ol>
+    </li>
+    <li><a href="#-向量数据库操作">🗄️ 向量数据库操作</a>
+      <ol>
+        <li><a href="#chromadb">ChromaDB</a></li>
+        <li><a href="#faiss">FAISS</a></li>
+      </ol>
+    </li>
+    <li><a href="#-function-calling">🛠️ Function Calling</a>
+      <ol>
+        <li><a href="#openai-格式">OpenAI 格式</a></li>
+        <li><a href="#多轮工具调用">多轮工具调用</a></li>
+      </ol>
+    </li>
+    <li><a href="#-文档处理">📦 文档处理</a>
+      <ol>
+        <li><a href="#加载器">加载器</a></li>
+        <li><a href="#文本分块">文本分块</a></li>
+      </ol>
+    </li>
+    <li><a href="#-api-部署">🌐 API 部署</a>
+      <ol>
+        <li><a href="#fastapi-示例">FastAPI 示例</a></li>
+        <li><a href="#docker-配置">Docker 配置</a></li>
+      </ol>
+    </li>
+    <li><a href="#-调试技巧">🔍 调试技巧</a>
+      <ol>
+        <li><a href="#启用详细日志">启用详细日志</a></li>
+        <li><a href="#token-计数">Token 计数</a></li>
+        <li><a href="#性能分析">性能分析</a></li>
+      </ol>
+    </li>
+    <li><a href="#-成本优化">💰 成本优化</a>
+      <ol>
+        <li><a href="#策略清单">策略清单</a></li>
+        <li><a href="#缓存实现">缓存实现</a></li>
+      </ol>
+    </li>
+    <li><a href="#-监控指标">📊 监控指标</a>
+      <ol>
+        <li><a href="#关键指标">关键指标</a></li>
+      </ol>
+    </li>
+    <li><a href="#-最佳实践">🎯 最佳实践</a>
+      <ol>
+        <li><a href="#prompt-设计">Prompt 设计</a></li>
+        <li><a href="#代码组织">代码组织</a></li>
+        <li><a href="#错误处理">错误处理</a></li>
+      </ol>
+    </li>
+    <li><a href="#-常用命令">📚 常用命令</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
