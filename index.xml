@@ -6,7 +6,519 @@
         <description>Recent content on Chengji Zhao&#39;s blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Sun, 22 Mar 2026 23:25:00 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sun, 22 Mar 2026 23:59:00 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>2026 年 AI 领域最新进展与核心知识点</title>
+        <link>https://zcj-git520.github.io/p/2026-%E5%B9%B4-ai-%E9%A2%86%E5%9F%9F%E6%9C%80%E6%96%B0%E8%BF%9B%E5%B1%95%E4%B8%8E%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86%E7%82%B9/</link>
+        <pubDate>Sun, 22 Mar 2026 23:59:00 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/2026-%E5%B9%B4-ai-%E9%A2%86%E5%9F%9F%E6%9C%80%E6%96%B0%E8%BF%9B%E5%B1%95%E4%B8%8E%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86%E7%82%B9/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/p/2026-%E5%B9%B4-ai-%E9%A2%86%E5%9F%9F%E6%9C%80%E6%96%B0%E8%BF%9B%E5%B1%95%E4%B8%8E%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86%E7%82%B9/1.png" alt="Featured image of post 2026 年 AI 领域最新进展与核心知识点" /&gt;&lt;h1 id=&#34;2026-年-ai-领域最新进展与核心知识点&#34;&gt;2026 年 AI 领域最新进展与核心知识点&lt;/h1&gt;
+&lt;blockquote&gt;
+&lt;p&gt;本文汇总 2025-2026 年人工智能领域的关键技术突破、发展趋势和实用知识点&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;-2026-ai-发展概览&#34;&gt;📈 2026 AI 发展概览&lt;/h2&gt;
+&lt;p&gt;2026 年是人工智能从&amp;quot;工具&amp;quot;向&amp;quot;伙伴&amp;quot;转变的关键一年。主要趋势包括：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;多模态融合&lt;/strong&gt;：文本、图像、音频、视频的无缝整合&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Agent 自主化&lt;/strong&gt;：AI 智能体能够独立规划并执行复杂任务&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;边缘 AI 普及&lt;/strong&gt;：本地化推理成为主流，隐私与效率兼顾&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;垂直领域深化&lt;/strong&gt;：医疗、法律、教育等专业领域 AI 应用成熟&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;-大语言模型新进展&#34;&gt;🧠 大语言模型新进展&lt;/h2&gt;
+&lt;h3 id=&#34;模型架构演进&#34;&gt;模型架构演进&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;传统 Transformer → MoE 混合专家 → 状态空间模型 (SSM)
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;关键技术点：&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;混合专家模型 (MoE)&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;稀疏激活，仅调用部分参数&lt;/li&gt;
+&lt;li&gt;推理速度提升 3-5 倍&lt;/li&gt;
+&lt;li&gt;代表：Mixtral、Grok 系列&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;状态空间模型 (SSM/Mamba)&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;线性复杂度，适合长上下文&lt;/li&gt;
+&lt;li&gt;内存效率比 Transformer 高 10 倍&lt;/li&gt;
+&lt;li&gt;2026 年成为长文本处理首选&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;多 token 预测&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;单次推理输出多个 token&lt;/li&gt;
+&lt;li&gt;生成速度提升 2-4 倍&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;上下文窗口突破&#34;&gt;上下文窗口突破&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;模型类型&lt;/th&gt;
+&lt;th&gt;2025 年&lt;/th&gt;
+&lt;th&gt;2026 年&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;标准模型&lt;/td&gt;
+&lt;td&gt;128K&lt;/td&gt;
+&lt;td&gt;512K-1M&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;长文本专用&lt;/td&gt;
+&lt;td&gt;1M&lt;/td&gt;
+&lt;td&gt;10M+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;检索增强&lt;/td&gt;
+&lt;td&gt;无限&lt;/td&gt;
+&lt;td&gt;无限 + 自动索引&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;-ai-agent-技术栈&#34;&gt;🤖 AI Agent 技术栈&lt;/h2&gt;
+&lt;h3 id=&#34;核心组件&#34;&gt;核心组件&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 2026 年主流 Agent 框架结构&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;agent_stack&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;s2&#34;&gt;&amp;#34;planning&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;s2&#34;&gt;&amp;#34;task_decomposition&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;自动拆解复杂任务&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+        &lt;span class=&#34;s2&#34;&gt;&amp;#34;self_reflection&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;执行后反思优化&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+        &lt;span class=&#34;s2&#34;&gt;&amp;#34;multi_agent_collab&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;多智能体协作&amp;#34;&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;},&lt;/span&gt;
+    &lt;span class=&#34;s2&#34;&gt;&amp;#34;memory&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;s2&#34;&gt;&amp;#34;short_term&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;对话上下文缓存&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+        &lt;span class=&#34;s2&#34;&gt;&amp;#34;long_term&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;向量数据库 + 知识图谱&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+        &lt;span class=&#34;s2&#34;&gt;&amp;#34;episodic&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;历史行为记录&amp;#34;&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;},&lt;/span&gt;
+    &lt;span class=&#34;s2&#34;&gt;&amp;#34;tools&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;s2&#34;&gt;&amp;#34;web_search&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;实时信息检索&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+        &lt;span class=&#34;s2&#34;&gt;&amp;#34;code_execution&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;安全沙箱运行&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+        &lt;span class=&#34;s2&#34;&gt;&amp;#34;api_integration&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;第三方服务调用&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+        &lt;span class=&#34;s2&#34;&gt;&amp;#34;file_operations&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;本地文件处理&amp;#34;&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;},&lt;/span&gt;
+    &lt;span class=&#34;s2&#34;&gt;&amp;#34;evaluation&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;s2&#34;&gt;&amp;#34;self_check&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;输出质量自检&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+        &lt;span class=&#34;s2&#34;&gt;&amp;#34;human_feedback&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;用户反馈学习&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+        &lt;span class=&#34;s2&#34;&gt;&amp;#34;automated_testing&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;单元测试验证&amp;#34;&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;主流框架对比&#34;&gt;主流框架对比&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;框架&lt;/th&gt;
+&lt;th&gt;特点&lt;/th&gt;
+&lt;th&gt;适用场景&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;LangChain&lt;/td&gt;
+&lt;td&gt;生态完善，组件丰富&lt;/td&gt;
+&lt;td&gt;快速原型开发&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;LlamaIndex&lt;/td&gt;
+&lt;td&gt;数据连接能力强&lt;/td&gt;
+&lt;td&gt;RAG 应用&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;AutoGen&lt;/td&gt;
+&lt;td&gt;多 Agent 协作&lt;/td&gt;
+&lt;td&gt;复杂任务编排&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;CrewAI&lt;/td&gt;
+&lt;td&gt;角色化 Agent&lt;/td&gt;
+&lt;td&gt;团队模拟场景&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Semantic Kernel&lt;/td&gt;
+&lt;td&gt;微软生态集成&lt;/td&gt;
+&lt;td&gt;企业级应用&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;-rag-技术进阶&#34;&gt;🔍 RAG 技术进阶&lt;/h2&gt;
+&lt;h3 id=&#34;2026-年最佳实践&#34;&gt;2026 年最佳实践&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 高级 RAG 流水线&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;advanced_rag_pipeline&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;&amp;#34;&amp;#34;
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;1. 文档预处理
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;   ├─ 智能分块 (语义感知)
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;   ├─ 多粒度索引 (段落/章节/文档)
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;   └─ 元数据增强 (时间/来源/可信度)
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;2. 检索优化
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;   ├─ 混合检索 (稠密 + 稀疏)
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;   ├─ 查询重写 (多视角扩展)
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;   └─ 重排序 (Cross-Encoder)
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;3. 生成增强
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;   ├─ 引用标注 (可追溯来源)
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;   ├─ 置信度评分
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;   └─ 冲突检测与解决
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;&amp;#34;&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;向量数据库选型&#34;&gt;向量数据库选型&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;数据库&lt;/th&gt;
+&lt;th&gt;特点&lt;/th&gt;
+&lt;th&gt;规模&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Chroma&lt;/td&gt;
+&lt;td&gt;轻量级，易集成&lt;/td&gt;
+&lt;td&gt;&amp;lt;100 万&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Qdrant&lt;/td&gt;
+&lt;td&gt;高性能，过滤强&lt;/td&gt;
+&lt;td&gt;100 万 -1 亿&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Milvus&lt;/td&gt;
+&lt;td&gt;分布式，可扩展&lt;/td&gt;
+&lt;td&gt;&amp;gt;1 亿&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Pinecone&lt;/td&gt;
+&lt;td&gt;托管服务，免运维&lt;/td&gt;
+&lt;td&gt;任意规模&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Weaviate&lt;/td&gt;
+&lt;td&gt;图 + 向量混合&lt;/td&gt;
+&lt;td&gt;中大规模&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;-function-calling-与工具使用&#34;&gt;🎯 Function Calling 与工具使用&lt;/h2&gt;
+&lt;h3 id=&#34;标准化协议&#34;&gt;标准化协议&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;#34;tool_definition&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;nt&#34;&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;function&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+    &lt;span class=&#34;nt&#34;&gt;&amp;#34;function&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+      &lt;span class=&#34;nt&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;search_knowledge_base&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+      &lt;span class=&#34;nt&#34;&gt;&amp;#34;description&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;在知识库中搜索相关信息&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+      &lt;span class=&#34;nt&#34;&gt;&amp;#34;parameters&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;nt&#34;&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;object&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+        &lt;span class=&#34;nt&#34;&gt;&amp;#34;properties&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+          &lt;span class=&#34;nt&#34;&gt;&amp;#34;query&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+            &lt;span class=&#34;nt&#34;&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;string&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+            &lt;span class=&#34;nt&#34;&gt;&amp;#34;description&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;搜索关键词&amp;#34;&lt;/span&gt;
+          &lt;span class=&#34;p&#34;&gt;},&lt;/span&gt;
+          &lt;span class=&#34;nt&#34;&gt;&amp;#34;filters&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+            &lt;span class=&#34;nt&#34;&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;object&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+            &lt;span class=&#34;nt&#34;&gt;&amp;#34;properties&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+              &lt;span class=&#34;nt&#34;&gt;&amp;#34;date_range&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;string&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;},&lt;/span&gt;
+              &lt;span class=&#34;nt&#34;&gt;&amp;#34;category&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;string&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+            &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+          &lt;span class=&#34;p&#34;&gt;},&lt;/span&gt;
+          &lt;span class=&#34;nt&#34;&gt;&amp;#34;top_k&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+            &lt;span class=&#34;nt&#34;&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;integer&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+            &lt;span class=&#34;nt&#34;&gt;&amp;#34;default&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;5&lt;/span&gt;
+          &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+        &lt;span class=&#34;p&#34;&gt;},&lt;/span&gt;
+        &lt;span class=&#34;nt&#34;&gt;&amp;#34;required&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;query&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;
+      &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+  &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;工具调用最佳实践&#34;&gt;工具调用最佳实践&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;工具描述清晰&lt;/strong&gt;：明确输入输出和用途&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;错误处理完善&lt;/strong&gt;：优雅降级和重试机制&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;结果格式化&lt;/strong&gt;：统一返回格式便于解析&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;权限控制&lt;/strong&gt;：敏感操作需要确认&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;-安全与对齐&#34;&gt;🔐 安全与对齐&lt;/h2&gt;
+&lt;h3 id=&#34;关键安全机制&#34;&gt;关键安全机制&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;输入层 → 内容过滤 → 提示注入检测 → 敏感信息脱敏
+         ↓
+处理层 → 沙箱执行 → 资源限制 → 行为监控
+         ↓
+输出层 → 内容审核 → 事实核查 → 偏见检测
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;对齐技术&#34;&gt;对齐技术&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;RLHF 2.0&lt;/strong&gt;：多轮反馈强化学习&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;DPO (直接偏好优化)&lt;/strong&gt;：无需奖励模型&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;宪法 AI&lt;/strong&gt;：基于原则的自我约束&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;可解释性&lt;/strong&gt;：决策过程可视化&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;-部署与优化&#34;&gt;💻 部署与优化&lt;/h2&gt;
+&lt;h3 id=&#34;推理优化技术&#34;&gt;推理优化技术&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 2026 年主流优化方案&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;optimization_techniques&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;s2&#34;&gt;&amp;#34;quantization&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;s2&#34;&gt;&amp;#34;int8&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;通用场景，精度损失&amp;lt;1%&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+        &lt;span class=&#34;s2&#34;&gt;&amp;#34;int4&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;边缘设备，精度损失 2-3%&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+        &lt;span class=&#34;s2&#34;&gt;&amp;#34;fp8&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;新一代标准，平衡性能与精度&amp;#34;&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;},&lt;/span&gt;
+    &lt;span class=&#34;s2&#34;&gt;&amp;#34;distillation&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;s2&#34;&gt;&amp;#34;task_specific&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;针对特定任务蒸馏&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+        &lt;span class=&#34;s2&#34;&gt;&amp;#34;general_purpose&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;通用能力保留&amp;#34;&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;},&lt;/span&gt;
+    &lt;span class=&#34;s2&#34;&gt;&amp;#34;speculative_decoding&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;s2&#34;&gt;&amp;#34;draft_model&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;小模型快速生成草稿&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+        &lt;span class=&#34;s2&#34;&gt;&amp;#34;verify&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;大模型验证修正&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+        &lt;span class=&#34;s2&#34;&gt;&amp;#34;speedup&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;2-3 倍加速&amp;#34;&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;},&lt;/span&gt;
+    &lt;span class=&#34;s2&#34;&gt;&amp;#34;batching&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;s2&#34;&gt;&amp;#34;static&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;固定批次大小&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+        &lt;span class=&#34;s2&#34;&gt;&amp;#34;dynamic&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;根据负载调整&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+        &lt;span class=&#34;s2&#34;&gt;&amp;#34;continuous&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;持续批处理&amp;#34;&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;部署方案对比&#34;&gt;部署方案对比&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;方案&lt;/th&gt;
+&lt;th&gt;延迟&lt;/th&gt;
+&lt;th&gt;成本&lt;/th&gt;
+&lt;th&gt;适用场景&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;云端 API&lt;/td&gt;
+&lt;td&gt;中&lt;/td&gt;
+&lt;td&gt;按量付费&lt;/td&gt;
+&lt;td&gt;快速启动&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;私有云&lt;/td&gt;
+&lt;td&gt;低&lt;/td&gt;
+&lt;td&gt;固定成本&lt;/td&gt;
+&lt;td&gt;企业级&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;边缘部署&lt;/td&gt;
+&lt;td&gt;极低&lt;/td&gt;
+&lt;td&gt;硬件投入&lt;/td&gt;
+&lt;td&gt;实时应用&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;混合架构&lt;/td&gt;
+&lt;td&gt;灵活&lt;/td&gt;
+&lt;td&gt;优化平衡&lt;/td&gt;
+&lt;td&gt;大规模&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;-评估与监控&#34;&gt;📊 评估与监控&lt;/h2&gt;
+&lt;h3 id=&#34;关键指标&#34;&gt;关键指标&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;nt&#34;&gt;性能指标&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;- &lt;span class=&#34;l&#34;&gt;响应延迟 (P50/P95/P99)&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;- &lt;span class=&#34;l&#34;&gt;吞吐量 (requests/sec)&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;- &lt;span class=&#34;l&#34;&gt;Token 生成速度 (tokens/sec)&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;- &lt;span class=&#34;l&#34;&gt;并发处理能力&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;质量指标&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;- &lt;span class=&#34;l&#34;&gt;准确性 (任务完成率)&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;- &lt;span class=&#34;l&#34;&gt;一致性 (相同输入输出稳定性)&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;- &lt;span class=&#34;l&#34;&gt;安全性 (有害内容拦截率)&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;- &lt;span class=&#34;l&#34;&gt;用户满意度 (NPS 评分)&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;成本指标&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;- &lt;span class=&#34;l&#34;&gt;单次请求成本&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;- &lt;span class=&#34;l&#34;&gt;Token 利用率&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;- &lt;span class=&#34;l&#34;&gt;缓存命中率&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;- &lt;span class=&#34;l&#34;&gt;资源使用效率&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;监控工具栈&#34;&gt;监控工具栈&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Prometheus + Grafana → 指标采集与可视化
+ELK Stack → 日志分析
+Jaeger → 链路追踪
+Custom Dashboard → 业务指标监控
+&lt;/code&gt;&lt;/pre&gt;&lt;hr&gt;
+&lt;h2 id=&#34;-实战代码示例&#34;&gt;🚀 实战代码示例&lt;/h2&gt;
+&lt;h3 id=&#34;快速构建-ai-agent&#34;&gt;快速构建 AI Agent&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;kn&#34;&gt;from&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;langchain_openai&lt;/span&gt; &lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ChatOpenAI&lt;/span&gt;
+&lt;span class=&#34;kn&#34;&gt;from&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;langchain.agents&lt;/span&gt; &lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;create_tool_calling_agent&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;AgentExecutor&lt;/span&gt;
+&lt;span class=&#34;kn&#34;&gt;from&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;langchain_core.prompts&lt;/span&gt; &lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ChatPromptTemplate&lt;/span&gt;
+&lt;span class=&#34;kn&#34;&gt;from&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;langchain_community.tools&lt;/span&gt; &lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;DuckDuckRunSearch&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 初始化模型&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;llm&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ChatOpenAI&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;model&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;gpt-4.5&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;temperature&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;0.7&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;streaming&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;kc&#34;&gt;True&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 定义工具&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;tools&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;DuckDuckRunSearch&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(),&lt;/span&gt;
+    &lt;span class=&#34;c1&#34;&gt;# 添加自定义工具&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 创建提示模板&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;prompt&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ChatPromptTemplate&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;from_messages&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;([&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;system&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;&amp;#34;&amp;#34;你是一个智能助手，可以使用工具来回答问题。
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;    
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;可用工具：
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;{tool_names}&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;回答要求：
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;1. 优先使用工具获取准确信息
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;2. 不确定时明确告知用户
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;3. 保持回答简洁专业&amp;#34;&amp;#34;&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;human&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;{input}&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;placeholder&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;{agent_scratchpad}&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 创建 Agent&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;agent&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;create_tool_calling_agent&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;llm&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;tools&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;prompt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;executor&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;AgentExecutor&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;agent&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;agent&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;tools&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;tools&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;verbose&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;kc&#34;&gt;True&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;handle_parsing_errors&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;kc&#34;&gt;True&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;max_iterations&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;5&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 执行&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;result&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;executor&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;invoke&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;({&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;input&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;查询 2026 年 AI 领域的最新突破&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;})&lt;/span&gt;
+&lt;span class=&#34;nb&#34;&gt;print&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;result&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;output&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;rag-系统实现&#34;&gt;RAG 系统实现&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span class=&#34;kn&#34;&gt;from&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;langchain_chroma&lt;/span&gt; &lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Chroma&lt;/span&gt;
+&lt;span class=&#34;kn&#34;&gt;from&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;langchain_openai&lt;/span&gt; &lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;OpenAIEmbeddings&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ChatOpenAI&lt;/span&gt;
+&lt;span class=&#34;kn&#34;&gt;from&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;langchain.chains&lt;/span&gt; &lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;create_retrieval_chain&lt;/span&gt;
+&lt;span class=&#34;kn&#34;&gt;from&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;langchain.chains.combine_documents&lt;/span&gt; &lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;create_stuff_documents_chain&lt;/span&gt;
+&lt;span class=&#34;kn&#34;&gt;from&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;langchain_core.prompts&lt;/span&gt; &lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ChatPromptTemplate&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 向量存储&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;embeddings&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;OpenAIEmbeddings&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;model&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;text-embedding-3-large&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;vectorstore&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Chroma&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;collection_name&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;knowledge_base&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;embedding_function&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;embeddings&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;persist_directory&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;./chroma_db&amp;#34;&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 检索器&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;retriever&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;vectorstore&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;as_retriever&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;search_type&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;similarity_score_threshold&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;search_kwargs&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;score_threshold&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;0.75&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;k&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;5&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 问答提示&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;qa_prompt&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ChatPromptTemplate&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;from_template&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;&amp;#34;&amp;#34;
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;你是一个专业助手。请基于以下上下文回答问题。
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;要求：
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;1. 只根据上下文回答，不要编造
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;2. 如果上下文不足以回答，明确告知
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;3. 引用相关来源
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;4. 回答简洁清晰
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;上下文：
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;{context}&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;问题：&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;{input}&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;答案：
+&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;&amp;#34;&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 创建链&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;llm&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ChatOpenAI&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;model&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;gpt-4.5&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;temperature&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;0.3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;document_chain&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;create_stuff_documents_chain&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;llm&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;qa_prompt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;retrieval_chain&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;create_retrieval_chain&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;retriever&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;document_chain&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 查询&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;result&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;retrieval_chain&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;invoke&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;({&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;input&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;什么是 MoE 架构？&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;})&lt;/span&gt;
+&lt;span class=&#34;nb&#34;&gt;print&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;sa&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;答案：&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;result&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;answer&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id=&#34;-学习资源推荐&#34;&gt;📚 学习资源推荐&lt;/h2&gt;
+&lt;h3 id=&#34;官方文档&#34;&gt;官方文档&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://python.langchain.com/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;LangChain Docs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://docs.llamaindex.ai/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;LlamaIndex Docs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://huggingface.co/docs&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Hugging Face&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;论文与报告&#34;&gt;论文与报告&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;《Attention Is All You Need》(Transformer 奠基)&lt;/li&gt;
+&lt;li&gt;《LoRA: Low-Rank Adaptation》(高效微调)&lt;/li&gt;
+&lt;li&gt;《RAG 技术综述 2026》(最新进展)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;实践平台&#34;&gt;实践平台&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Hugging Face Spaces&lt;/li&gt;
+&lt;li&gt;Google Colab&lt;/li&gt;
+&lt;li&gt;Kaggle Notebooks&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;-2026-年关键趋势总结&#34;&gt;🎯 2026 年关键趋势总结&lt;/h2&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;趋势&lt;/th&gt;
+&lt;th&gt;影响&lt;/th&gt;
+&lt;th&gt;行动建议&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Agent 自主化&lt;/td&gt;
+&lt;td&gt;任务自动化程度提升&lt;/td&gt;
+&lt;td&gt;学习 Agent 框架&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;多模态融合&lt;/td&gt;
+&lt;td&gt;交互方式更自然&lt;/td&gt;
+&lt;td&gt;掌握多模态处理&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;边缘 AI&lt;/td&gt;
+&lt;td&gt;隐私与效率兼顾&lt;/td&gt;
+&lt;td&gt;了解模型压缩&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;垂直深化&lt;/td&gt;
+&lt;td&gt;专业领域应用成熟&lt;/td&gt;
+&lt;td&gt;深耕细分领域&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;安全对齐&lt;/td&gt;
+&lt;td&gt;可信 AI 成为标配&lt;/td&gt;
+&lt;td&gt;重视安全实践&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;-结语&#34;&gt;💡 结语&lt;/h2&gt;
+&lt;p&gt;2026 年的 AI 技术正在从&amp;quot;能用&amp;quot;向&amp;quot;好用&amp;quot;转变。关键不在于追逐最新模型，而在于：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;理解核心原理&lt;/strong&gt;：掌握底层逻辑而非表面用法&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;注重工程实践&lt;/strong&gt;：将技术转化为可靠产品&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;关注安全伦理&lt;/strong&gt;：负责任地开发和使用 AI&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;持续学习更新&lt;/strong&gt;：保持对新技术的敏感度&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;AI 不是替代人类，而是增强人类能力。善用工具，创造价值。&lt;/p&gt;
+&lt;hr&gt;
+&lt;blockquote&gt;
+&lt;p&gt;本文持续更新，欢迎反馈与建议。&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+        </item>
+        <item>
         <title>MCP 与 Skills 有什么区别</title>
         <link>https://zcj-git520.github.io/p/mcp-%E4%B8%8E-skills-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/</link>
         <pubDate>Sun, 22 Mar 2026 23:25:00 +0800</pubDate>

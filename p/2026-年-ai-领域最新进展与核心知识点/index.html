@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='2026 年 AI 领域最新进展与核心知识点  本文汇总 2025-2026 年人工智能领域的关键技术突破、发展趋势和实用知识点
+  📈 2026 AI 发展概览 2026 年是人工智能从&amp;quot;工具&amp;quot;向&amp;quot;伙伴&amp;quot;转变的关键一年。主要趋势包括：
+ 多模态融合：文本、图像、音频、视频的无缝整合 Agent 自主化：AI 智能体能够独立规划并执行复杂任务 边缘 AI 普及：本地化推理成为主流，隐私与效率兼顾 垂直领域深化：医疗、法律、教育等专业领域 AI 应用成熟   🧠 大语言模型新进展 模型架构演进 传统 Transformer → MoE 混合专家 → 状态空间模型 (SSM) 关键技术点：
+  混合专家模型 (MoE)
+ 稀疏激活，仅调用部分参数 推理速度提升 3-5 倍 代表：Mixtral、Grok 系列    状态空间模型 (SSM/Mamba)
+ 线性复杂度，适合长上下文 内存效率比 Transformer 高 10 倍 2026 年成为长文本处理首选    多 token 预测'><title>2026 年 AI 领域最新进展与核心知识点</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/2026-%E5%B9%B4-ai-%E9%A2%86%E5%9F%9F%E6%9C%80%E6%96%B0%E8%BF%9B%E5%B1%95%E4%B8%8E%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86%E7%82%B9/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='2026 年 AI 领域最新进展与核心知识点'>
+<meta property='og:description' content='2026 年 AI 领域最新进展与核心知识点  本文汇总 2025-2026 年人工智能领域的关键技术突破、发展趋势和实用知识点
+  📈 2026 AI 发展概览 2026 年是人工智能从&amp;quot;工具&amp;quot;向&amp;quot;伙伴&amp;quot;转变的关键一年。主要趋势包括：
+ 多模态融合：文本、图像、音频、视频的无缝整合 Agent 自主化：AI 智能体能够独立规划并执行复杂任务 边缘 AI 普及：本地化推理成为主流，隐私与效率兼顾 垂直领域深化：医疗、法律、教育等专业领域 AI 应用成熟   🧠 大语言模型新进展 模型架构演进 传统 Transformer → MoE 混合专家 → 状态空间模型 (SSM) 关键技术点：
+  混合专家模型 (MoE)
+ 稀疏激活，仅调用部分参数 推理速度提升 3-5 倍 代表：Mixtral、Grok 系列    状态空间模型 (SSM/Mamba)
+ 线性复杂度，适合长上下文 内存效率比 Transformer 高 10 倍 2026 年成为长文本处理首选    多 token 预测'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/2026-%E5%B9%B4-ai-%E9%A2%86%E5%9F%9F%E6%9C%80%E6%96%B0%E8%BF%9B%E5%B1%95%E4%B8%8E%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86%E7%82%B9/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2026-03-22T23:59:00&#43;08:00'/><meta property='article:modified_time' content='2026-03-22T23:59:00&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/2026-%E5%B9%B4-ai-%E9%A2%86%E5%9F%9F%E6%9C%80%E6%96%B0%E8%BF%9B%E5%B1%95%E4%B8%8E%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86%E7%82%B9/1.png' />
+<meta name="twitter:title" content="2026 年 AI 领域最新进展与核心知识点">
+<meta name="twitter:description" content="2026 年 AI 领域最新进展与核心知识点  本文汇总 2025-2026 年人工智能领域的关键技术突破、发展趋势和实用知识点
+  📈 2026 AI 发展概览 2026 年是人工智能从&amp;quot;工具&amp;quot;向&amp;quot;伙伴&amp;quot;转变的关键一年。主要趋势包括：
+ 多模态融合：文本、图像、音频、视频的无缝整合 Agent 自主化：AI 智能体能够独立规划并执行复杂任务 边缘 AI 普及：本地化推理成为主流，隐私与效率兼顾 垂直领域深化：医疗、法律、教育等专业领域 AI 应用成熟   🧠 大语言模型新进展 模型架构演进 传统 Transformer → MoE 混合专家 → 状态空间模型 (SSM) 关键技术点：
+  混合专家模型 (MoE)
+ 稀疏激活，仅调用部分参数 推理速度提升 3-5 倍 代表：Mixtral、Grok 系列    状态空间模型 (SSM/Mamba)
+ 线性复杂度，适合长上下文 内存效率比 Transformer 高 10 倍 2026 年成为长文本处理首选    多 token 预测"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/2026-%E5%B9%B4-ai-%E9%A2%86%E5%9F%9F%E6%9C%80%E6%96%B0%E8%BF%9B%E5%B1%95%E4%B8%8E%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86%E7%82%B9/1.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/2026-%E5%B9%B4-ai-%E9%A2%86%E5%9F%9F%E6%9C%80%E6%96%B0%E8%BF%9B%E5%B1%95%E4%B8%8E%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86%E7%82%B9/">
+                <img src="/p/2026-%E5%B9%B4-ai-%E9%A2%86%E5%9F%9F%E6%9C%80%E6%96%B0%E8%BF%9B%E5%B1%95%E4%B8%8E%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86%E7%82%B9/1_hu627ccad35150ba5c25206c4fe774bc3e_21463_800x0_resize_box_3.png"
+                        srcset="/p/2026-%E5%B9%B4-ai-%E9%A2%86%E5%9F%9F%E6%9C%80%E6%96%B0%E8%BF%9B%E5%B1%95%E4%B8%8E%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86%E7%82%B9/1_hu627ccad35150ba5c25206c4fe774bc3e_21463_800x0_resize_box_3.png 800w, /p/2026-%E5%B9%B4-ai-%E9%A2%86%E5%9F%9F%E6%9C%80%E6%96%B0%E8%BF%9B%E5%B1%95%E4%B8%8E%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86%E7%82%B9/1_hu627ccad35150ba5c25206c4fe774bc3e_21463_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="946" 
+                        loading="lazy"
+                        alt="Featured image of post 2026 年 AI 领域最新进展与核心知识点" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/computer/" style="background-color: #2a9d8f; color: #fff;">
+                知识学习
+            </a>
+        
+            <a href="/categories/ai/" style="background-color: #2a9d8f; color: #fff;">
+                AI
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/2026-%E5%B9%B4-ai-%E9%A2%86%E5%9F%9F%E6%9C%80%E6%96%B0%E8%BF%9B%E5%B1%95%E4%B8%8E%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86%E7%82%B9/">2026 年 AI 领域最新进展与核心知识点</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Mar 22, 2026</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 4 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h1 id="2026-年-ai-领域最新进展与核心知识点">2026 年 AI 领域最新进展与核心知识点</h1>
+<blockquote>
+<p>本文汇总 2025-2026 年人工智能领域的关键技术突破、发展趋势和实用知识点</p>
+</blockquote>
+<hr>
+<h2 id="-2026-ai-发展概览">📈 2026 AI 发展概览</h2>
+<p>2026 年是人工智能从&quot;工具&quot;向&quot;伙伴&quot;转变的关键一年。主要趋势包括：</p>
+<ul>
+<li><strong>多模态融合</strong>：文本、图像、音频、视频的无缝整合</li>
+<li><strong>Agent 自主化</strong>：AI 智能体能够独立规划并执行复杂任务</li>
+<li><strong>边缘 AI 普及</strong>：本地化推理成为主流，隐私与效率兼顾</li>
+<li><strong>垂直领域深化</strong>：医疗、法律、教育等专业领域 AI 应用成熟</li>
+</ul>
+<hr>
+<h2 id="-大语言模型新进展">🧠 大语言模型新进展</h2>
+<h3 id="模型架构演进">模型架构演进</h3>
+<pre tabindex="0"><code>传统 Transformer → MoE 混合专家 → 状态空间模型 (SSM)
+</code></pre><p><strong>关键技术点：</strong></p>
+<ol>
+<li>
+<p><strong>混合专家模型 (MoE)</strong></p>
+<ul>
+<li>稀疏激活，仅调用部分参数</li>
+<li>推理速度提升 3-5 倍</li>
+<li>代表：Mixtral、Grok 系列</li>
+</ul>
+</li>
+<li>
+<p><strong>状态空间模型 (SSM/Mamba)</strong></p>
+<ul>
+<li>线性复杂度，适合长上下文</li>
+<li>内存效率比 Transformer 高 10 倍</li>
+<li>2026 年成为长文本处理首选</li>
+</ul>
+</li>
+<li>
+<p><strong>多 token 预测</strong></p>
+<ul>
+<li>单次推理输出多个 token</li>
+<li>生成速度提升 2-4 倍</li>
+</ul>
+</li>
+</ol>
+<h3 id="上下文窗口突破">上下文窗口突破</h3>
+<table>
+<thead>
+<tr>
+<th>模型类型</th>
+<th>2025 年</th>
+<th>2026 年</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>标准模型</td>
+<td>128K</td>
+<td>512K-1M</td>
+</tr>
+<tr>
+<td>长文本专用</td>
+<td>1M</td>
+<td>10M+</td>
+</tr>
+<tr>
+<td>检索增强</td>
+<td>无限</td>
+<td>无限 + 自动索引</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="-ai-agent-技术栈">🤖 AI Agent 技术栈</h2>
+<h3 id="核心组件">核心组件</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># 2026 年主流 Agent 框架结构</span>
+<span class="n">agent_stack</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&#34;planning&#34;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&#34;task_decomposition&#34;</span><span class="p">:</span> <span class="s2">&#34;自动拆解复杂任务&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;self_reflection&#34;</span><span class="p">:</span> <span class="s2">&#34;执行后反思优化&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;multi_agent_collab&#34;</span><span class="p">:</span> <span class="s2">&#34;多智能体协作&#34;</span>
+    <span class="p">},</span>
+    <span class="s2">&#34;memory&#34;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&#34;short_term&#34;</span><span class="p">:</span> <span class="s2">&#34;对话上下文缓存&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;long_term&#34;</span><span class="p">:</span> <span class="s2">&#34;向量数据库 + 知识图谱&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;episodic&#34;</span><span class="p">:</span> <span class="s2">&#34;历史行为记录&#34;</span>
+    <span class="p">},</span>
+    <span class="s2">&#34;tools&#34;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&#34;web_search&#34;</span><span class="p">:</span> <span class="s2">&#34;实时信息检索&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;code_execution&#34;</span><span class="p">:</span> <span class="s2">&#34;安全沙箱运行&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;api_integration&#34;</span><span class="p">:</span> <span class="s2">&#34;第三方服务调用&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;file_operations&#34;</span><span class="p">:</span> <span class="s2">&#34;本地文件处理&#34;</span>
+    <span class="p">},</span>
+    <span class="s2">&#34;evaluation&#34;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&#34;self_check&#34;</span><span class="p">:</span> <span class="s2">&#34;输出质量自检&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;human_feedback&#34;</span><span class="p">:</span> <span class="s2">&#34;用户反馈学习&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;automated_testing&#34;</span><span class="p">:</span> <span class="s2">&#34;单元测试验证&#34;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><h3 id="主流框架对比">主流框架对比</h3>
+<table>
+<thead>
+<tr>
+<th>框架</th>
+<th>特点</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LangChain</td>
+<td>生态完善，组件丰富</td>
+<td>快速原型开发</td>
+</tr>
+<tr>
+<td>LlamaIndex</td>
+<td>数据连接能力强</td>
+<td>RAG 应用</td>
+</tr>
+<tr>
+<td>AutoGen</td>
+<td>多 Agent 协作</td>
+<td>复杂任务编排</td>
+</tr>
+<tr>
+<td>CrewAI</td>
+<td>角色化 Agent</td>
+<td>团队模拟场景</td>
+</tr>
+<tr>
+<td>Semantic Kernel</td>
+<td>微软生态集成</td>
+<td>企业级应用</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="-rag-技术进阶">🔍 RAG 技术进阶</h2>
+<h3 id="2026-年最佳实践">2026 年最佳实践</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># 高级 RAG 流水线</span>
+<span class="n">advanced_rag_pipeline</span> <span class="o">=</span> <span class="s2">&#34;&#34;&#34;
+</span><span class="s2">1. 文档预处理
+</span><span class="s2">   ├─ 智能分块 (语义感知)
+</span><span class="s2">   ├─ 多粒度索引 (段落/章节/文档)
+</span><span class="s2">   └─ 元数据增强 (时间/来源/可信度)
+</span><span class="s2">
+</span><span class="s2">2. 检索优化
+</span><span class="s2">   ├─ 混合检索 (稠密 + 稀疏)
+</span><span class="s2">   ├─ 查询重写 (多视角扩展)
+</span><span class="s2">   └─ 重排序 (Cross-Encoder)
+</span><span class="s2">
+</span><span class="s2">3. 生成增强
+</span><span class="s2">   ├─ 引用标注 (可追溯来源)
+</span><span class="s2">   ├─ 置信度评分
+</span><span class="s2">   └─ 冲突检测与解决
+</span><span class="s2">&#34;&#34;&#34;</span>
+</code></pre></div><h3 id="向量数据库选型">向量数据库选型</h3>
+<table>
+<thead>
+<tr>
+<th>数据库</th>
+<th>特点</th>
+<th>规模</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Chroma</td>
+<td>轻量级，易集成</td>
+<td>&lt;100 万</td>
+</tr>
+<tr>
+<td>Qdrant</td>
+<td>高性能，过滤强</td>
+<td>100 万 -1 亿</td>
+</tr>
+<tr>
+<td>Milvus</td>
+<td>分布式，可扩展</td>
+<td>&gt;1 亿</td>
+</tr>
+<tr>
+<td>Pinecone</td>
+<td>托管服务，免运维</td>
+<td>任意规模</td>
+</tr>
+<tr>
+<td>Weaviate</td>
+<td>图 + 向量混合</td>
+<td>中大规模</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="-function-calling-与工具使用">🎯 Function Calling 与工具使用</h2>
+<h3 id="标准化协议">标准化协议</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+  <span class="nt">&#34;tool_definition&#34;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;function&#34;</span><span class="p">,</span>
+    <span class="nt">&#34;function&#34;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;search_knowledge_base&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;description&#34;</span><span class="p">:</span> <span class="s2">&#34;在知识库中搜索相关信息&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;parameters&#34;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;object&#34;</span><span class="p">,</span>
+        <span class="nt">&#34;properties&#34;</span><span class="p">:</span> <span class="p">{</span>
+          <span class="nt">&#34;query&#34;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;string&#34;</span><span class="p">,</span>
+            <span class="nt">&#34;description&#34;</span><span class="p">:</span> <span class="s2">&#34;搜索关键词&#34;</span>
+          <span class="p">},</span>
+          <span class="nt">&#34;filters&#34;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;object&#34;</span><span class="p">,</span>
+            <span class="nt">&#34;properties&#34;</span><span class="p">:</span> <span class="p">{</span>
+              <span class="nt">&#34;date_range&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;string&#34;</span><span class="p">},</span>
+              <span class="nt">&#34;category&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;string&#34;</span><span class="p">}</span>
+            <span class="p">}</span>
+          <span class="p">},</span>
+          <span class="nt">&#34;top_k&#34;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;integer&#34;</span><span class="p">,</span>
+            <span class="nt">&#34;default&#34;</span><span class="p">:</span> <span class="mi">5</span>
+          <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&#34;required&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;query&#34;</span><span class="p">]</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><h3 id="工具调用最佳实践">工具调用最佳实践</h3>
+<ol>
+<li><strong>工具描述清晰</strong>：明确输入输出和用途</li>
+<li><strong>错误处理完善</strong>：优雅降级和重试机制</li>
+<li><strong>结果格式化</strong>：统一返回格式便于解析</li>
+<li><strong>权限控制</strong>：敏感操作需要确认</li>
+</ol>
+<hr>
+<h2 id="-安全与对齐">🔐 安全与对齐</h2>
+<h3 id="关键安全机制">关键安全机制</h3>
+<pre tabindex="0"><code>输入层 → 内容过滤 → 提示注入检测 → 敏感信息脱敏
+         ↓
+处理层 → 沙箱执行 → 资源限制 → 行为监控
+         ↓
+输出层 → 内容审核 → 事实核查 → 偏见检测
+</code></pre><h3 id="对齐技术">对齐技术</h3>
+<ul>
+<li><strong>RLHF 2.0</strong>：多轮反馈强化学习</li>
+<li><strong>DPO (直接偏好优化)</strong>：无需奖励模型</li>
+<li><strong>宪法 AI</strong>：基于原则的自我约束</li>
+<li><strong>可解释性</strong>：决策过程可视化</li>
+</ul>
+<hr>
+<h2 id="-部署与优化">💻 部署与优化</h2>
+<h3 id="推理优化技术">推理优化技术</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># 2026 年主流优化方案</span>
+<span class="n">optimization_techniques</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&#34;quantization&#34;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&#34;int8&#34;</span><span class="p">:</span> <span class="s2">&#34;通用场景，精度损失&lt;1%&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;int4&#34;</span><span class="p">:</span> <span class="s2">&#34;边缘设备，精度损失 2-3%&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;fp8&#34;</span><span class="p">:</span> <span class="s2">&#34;新一代标准，平衡性能与精度&#34;</span>
+    <span class="p">},</span>
+    <span class="s2">&#34;distillation&#34;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&#34;task_specific&#34;</span><span class="p">:</span> <span class="s2">&#34;针对特定任务蒸馏&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;general_purpose&#34;</span><span class="p">:</span> <span class="s2">&#34;通用能力保留&#34;</span>
+    <span class="p">},</span>
+    <span class="s2">&#34;speculative_decoding&#34;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&#34;draft_model&#34;</span><span class="p">:</span> <span class="s2">&#34;小模型快速生成草稿&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;verify&#34;</span><span class="p">:</span> <span class="s2">&#34;大模型验证修正&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;speedup&#34;</span><span class="p">:</span> <span class="s2">&#34;2-3 倍加速&#34;</span>
+    <span class="p">},</span>
+    <span class="s2">&#34;batching&#34;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&#34;static&#34;</span><span class="p">:</span> <span class="s2">&#34;固定批次大小&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;dynamic&#34;</span><span class="p">:</span> <span class="s2">&#34;根据负载调整&#34;</span><span class="p">,</span>
+        <span class="s2">&#34;continuous&#34;</span><span class="p">:</span> <span class="s2">&#34;持续批处理&#34;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><h3 id="部署方案对比">部署方案对比</h3>
+<table>
+<thead>
+<tr>
+<th>方案</th>
+<th>延迟</th>
+<th>成本</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>云端 API</td>
+<td>中</td>
+<td>按量付费</td>
+<td>快速启动</td>
+</tr>
+<tr>
+<td>私有云</td>
+<td>低</td>
+<td>固定成本</td>
+<td>企业级</td>
+</tr>
+<tr>
+<td>边缘部署</td>
+<td>极低</td>
+<td>硬件投入</td>
+<td>实时应用</td>
+</tr>
+<tr>
+<td>混合架构</td>
+<td>灵活</td>
+<td>优化平衡</td>
+<td>大规模</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="-评估与监控">📊 评估与监控</h2>
+<h3 id="关键指标">关键指标</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">性能指标</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span>- <span class="l">响应延迟 (P50/P95/P99)</span><span class="w">
+</span><span class="w">  </span>- <span class="l">吞吐量 (requests/sec)</span><span class="w">
+</span><span class="w">  </span>- <span class="l">Token 生成速度 (tokens/sec)</span><span class="w">
+</span><span class="w">  </span>- <span class="l">并发处理能力</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="nt">质量指标</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span>- <span class="l">准确性 (任务完成率)</span><span class="w">
+</span><span class="w">  </span>- <span class="l">一致性 (相同输入输出稳定性)</span><span class="w">
+</span><span class="w">  </span>- <span class="l">安全性 (有害内容拦截率)</span><span class="w">
+</span><span class="w">  </span>- <span class="l">用户满意度 (NPS 评分)</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="nt">成本指标</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span>- <span class="l">单次请求成本</span><span class="w">
+</span><span class="w">  </span>- <span class="l">Token 利用率</span><span class="w">
+</span><span class="w">  </span>- <span class="l">缓存命中率</span><span class="w">
+</span><span class="w">  </span>- <span class="l">资源使用效率</span><span class="w">
+</span></code></pre></div><h3 id="监控工具栈">监控工具栈</h3>
+<pre tabindex="0"><code>Prometheus + Grafana → 指标采集与可视化
+ELK Stack → 日志分析
+Jaeger → 链路追踪
+Custom Dashboard → 业务指标监控
+</code></pre><hr>
+<h2 id="-实战代码示例">🚀 实战代码示例</h2>
+<h3 id="快速构建-ai-agent">快速构建 AI Agent</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">langchain_openai</span> <span class="kn">import</span> <span class="n">ChatOpenAI</span>
+<span class="kn">from</span> <span class="nn">langchain.agents</span> <span class="kn">import</span> <span class="n">create_tool_calling_agent</span><span class="p">,</span> <span class="n">AgentExecutor</span>
+<span class="kn">from</span> <span class="nn">langchain_core.prompts</span> <span class="kn">import</span> <span class="n">ChatPromptTemplate</span>
+<span class="kn">from</span> <span class="nn">langchain_community.tools</span> <span class="kn">import</span> <span class="n">DuckDuckRunSearch</span>
+
+<span class="c1"># 初始化模型</span>
+<span class="n">llm</span> <span class="o">=</span> <span class="n">ChatOpenAI</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">&#34;gpt-4.5&#34;</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+    <span class="n">streaming</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="c1"># 定义工具</span>
+<span class="n">tools</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">DuckDuckRunSearch</span><span class="p">(),</span>
+    <span class="c1"># 添加自定义工具</span>
+<span class="p">]</span>
+
+<span class="c1"># 创建提示模板</span>
+<span class="n">prompt</span> <span class="o">=</span> <span class="n">ChatPromptTemplate</span><span class="o">.</span><span class="n">from_messages</span><span class="p">([</span>
+    <span class="p">(</span><span class="s2">&#34;system&#34;</span><span class="p">,</span> <span class="s2">&#34;&#34;&#34;你是一个智能助手，可以使用工具来回答问题。
+</span><span class="s2">    
+</span><span class="s2">可用工具：
+</span><span class="s2"></span><span class="si">{tool_names}</span><span class="s2">
+</span><span class="s2">
+</span><span class="s2">回答要求：
+</span><span class="s2">1. 优先使用工具获取准确信息
+</span><span class="s2">2. 不确定时明确告知用户
+</span><span class="s2">3. 保持回答简洁专业&#34;&#34;&#34;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&#34;human&#34;</span><span class="p">,</span> <span class="s2">&#34;</span><span class="si">{input}</span><span class="s2">&#34;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&#34;placeholder&#34;</span><span class="p">,</span> <span class="s2">&#34;</span><span class="si">{agent_scratchpad}</span><span class="s2">&#34;</span><span class="p">)</span>
+<span class="p">])</span>
+
+<span class="c1"># 创建 Agent</span>
+<span class="n">agent</span> <span class="o">=</span> <span class="n">create_tool_calling_agent</span><span class="p">(</span><span class="n">llm</span><span class="p">,</span> <span class="n">tools</span><span class="p">,</span> <span class="n">prompt</span><span class="p">)</span>
+<span class="n">executor</span> <span class="o">=</span> <span class="n">AgentExecutor</span><span class="p">(</span>
+    <span class="n">agent</span><span class="o">=</span><span class="n">agent</span><span class="p">,</span>
+    <span class="n">tools</span><span class="o">=</span><span class="n">tools</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">handle_parsing_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">max_iterations</span><span class="o">=</span><span class="mi">5</span>
+<span class="p">)</span>
+
+<span class="c1"># 执行</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">executor</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">&#34;input&#34;</span><span class="p">:</span> <span class="s2">&#34;查询 2026 年 AI 领域的最新突破&#34;</span><span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&#34;output&#34;</span><span class="p">])</span>
+</code></pre></div><h3 id="rag-系统实现">RAG 系统实现</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">langchain_chroma</span> <span class="kn">import</span> <span class="n">Chroma</span>
+<span class="kn">from</span> <span class="nn">langchain_openai</span> <span class="kn">import</span> <span class="n">OpenAIEmbeddings</span><span class="p">,</span> <span class="n">ChatOpenAI</span>
+<span class="kn">from</span> <span class="nn">langchain.chains</span> <span class="kn">import</span> <span class="n">create_retrieval_chain</span>
+<span class="kn">from</span> <span class="nn">langchain.chains.combine_documents</span> <span class="kn">import</span> <span class="n">create_stuff_documents_chain</span>
+<span class="kn">from</span> <span class="nn">langchain_core.prompts</span> <span class="kn">import</span> <span class="n">ChatPromptTemplate</span>
+
+<span class="c1"># 向量存储</span>
+<span class="n">embeddings</span> <span class="o">=</span> <span class="n">OpenAIEmbeddings</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">&#34;text-embedding-3-large&#34;</span><span class="p">)</span>
+<span class="n">vectorstore</span> <span class="o">=</span> <span class="n">Chroma</span><span class="p">(</span>
+    <span class="n">collection_name</span><span class="o">=</span><span class="s2">&#34;knowledge_base&#34;</span><span class="p">,</span>
+    <span class="n">embedding_function</span><span class="o">=</span><span class="n">embeddings</span><span class="p">,</span>
+    <span class="n">persist_directory</span><span class="o">=</span><span class="s2">&#34;./chroma_db&#34;</span>
+<span class="p">)</span>
+
+<span class="c1"># 检索器</span>
+<span class="n">retriever</span> <span class="o">=</span> <span class="n">vectorstore</span><span class="o">.</span><span class="n">as_retriever</span><span class="p">(</span>
+    <span class="n">search_type</span><span class="o">=</span><span class="s2">&#34;similarity_score_threshold&#34;</span><span class="p">,</span>
+    <span class="n">search_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&#34;score_threshold&#34;</span><span class="p">:</span> <span class="mf">0.75</span><span class="p">,</span> <span class="s2">&#34;k&#34;</span><span class="p">:</span> <span class="mi">5</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c1"># 问答提示</span>
+<span class="n">qa_prompt</span> <span class="o">=</span> <span class="n">ChatPromptTemplate</span><span class="o">.</span><span class="n">from_template</span><span class="p">(</span><span class="s2">&#34;&#34;&#34;
+</span><span class="s2">你是一个专业助手。请基于以下上下文回答问题。
+</span><span class="s2">
+</span><span class="s2">要求：
+</span><span class="s2">1. 只根据上下文回答，不要编造
+</span><span class="s2">2. 如果上下文不足以回答，明确告知
+</span><span class="s2">3. 引用相关来源
+</span><span class="s2">4. 回答简洁清晰
+</span><span class="s2">
+</span><span class="s2">上下文：
+</span><span class="s2"></span><span class="si">{context}</span><span class="s2">
+</span><span class="s2">
+</span><span class="s2">问题：</span><span class="si">{input}</span><span class="s2">
+</span><span class="s2">
+</span><span class="s2">答案：
+</span><span class="s2">&#34;&#34;&#34;</span><span class="p">)</span>
+
+<span class="c1"># 创建链</span>
+<span class="n">llm</span> <span class="o">=</span> <span class="n">ChatOpenAI</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">&#34;gpt-4.5&#34;</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">document_chain</span> <span class="o">=</span> <span class="n">create_stuff_documents_chain</span><span class="p">(</span><span class="n">llm</span><span class="p">,</span> <span class="n">qa_prompt</span><span class="p">)</span>
+<span class="n">retrieval_chain</span> <span class="o">=</span> <span class="n">create_retrieval_chain</span><span class="p">(</span><span class="n">retriever</span><span class="p">,</span> <span class="n">document_chain</span><span class="p">)</span>
+
+<span class="c1"># 查询</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">retrieval_chain</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">&#34;input&#34;</span><span class="p">:</span> <span class="s2">&#34;什么是 MoE 架构？&#34;</span><span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;答案：</span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;answer&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+</code></pre></div><hr>
+<h2 id="-学习资源推荐">📚 学习资源推荐</h2>
+<h3 id="官方文档">官方文档</h3>
+<ul>
+<li><a class="link" href="https://python.langchain.com/"  target="_blank" rel="noopener"
+    >LangChain Docs</a></li>
+<li><a class="link" href="https://docs.llamaindex.ai/"  target="_blank" rel="noopener"
+    >LlamaIndex Docs</a></li>
+<li><a class="link" href="https://huggingface.co/docs"  target="_blank" rel="noopener"
+    >Hugging Face</a></li>
+</ul>
+<h3 id="论文与报告">论文与报告</h3>
+<ul>
+<li>《Attention Is All You Need》(Transformer 奠基)</li>
+<li>《LoRA: Low-Rank Adaptation》(高效微调)</li>
+<li>《RAG 技术综述 2026》(最新进展)</li>
+</ul>
+<h3 id="实践平台">实践平台</h3>
+<ul>
+<li>Hugging Face Spaces</li>
+<li>Google Colab</li>
+<li>Kaggle Notebooks</li>
+</ul>
+<hr>
+<h2 id="-2026-年关键趋势总结">🎯 2026 年关键趋势总结</h2>
+<table>
+<thead>
+<tr>
+<th>趋势</th>
+<th>影响</th>
+<th>行动建议</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Agent 自主化</td>
+<td>任务自动化程度提升</td>
+<td>学习 Agent 框架</td>
+</tr>
+<tr>
+<td>多模态融合</td>
+<td>交互方式更自然</td>
+<td>掌握多模态处理</td>
+</tr>
+<tr>
+<td>边缘 AI</td>
+<td>隐私与效率兼顾</td>
+<td>了解模型压缩</td>
+</tr>
+<tr>
+<td>垂直深化</td>
+<td>专业领域应用成熟</td>
+<td>深耕细分领域</td>
+</tr>
+<tr>
+<td>安全对齐</td>
+<td>可信 AI 成为标配</td>
+<td>重视安全实践</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="-结语">💡 结语</h2>
+<p>2026 年的 AI 技术正在从&quot;能用&quot;向&quot;好用&quot;转变。关键不在于追逐最新模型，而在于：</p>
+<ol>
+<li><strong>理解核心原理</strong>：掌握底层逻辑而非表面用法</li>
+<li><strong>注重工程实践</strong>：将技术转化为可靠产品</li>
+<li><strong>关注安全伦理</strong>：负责任地开发和使用 AI</li>
+<li><strong>持续学习更新</strong>：保持对新技术的敏感度</li>
+</ol>
+<p>AI 不是替代人类，而是增强人类能力。善用工具，创造价值。</p>
+<hr>
+<blockquote>
+<p>本文持续更新，欢迎反馈与建议。</p>
+</blockquote>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/mcp-%E4%B8%8E-skills-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="/p/mcp-%E4%B8%8E-skills-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/mcp-vs-skills.svg" loading="lazy" data-key="" data-hash="/p/mcp-%E4%B8%8E-skills-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/mcp-vs-skills.svg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">MCP 与 Skills 有什么区别</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/ai-%E6%99%BA%E8%83%BD%E4%BD%93%E5%BC%80%E5%8F%91%E9%80%9F%E6%9F%A5%E6%89%8B%E5%86%8C/">
+        
+        
+            <div class="article-image">
+                <img src="/p/ai-%E6%99%BA%E8%83%BD%E4%BD%93%E5%BC%80%E5%8F%91%E9%80%9F%E6%9F%A5%E6%89%8B%E5%86%8C/1.0a7c8044cb262efce3cc1c3d74e338bd_hufc87676f5c03c42ba4fd49855ef25156_1205177_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-CnyARMsmLvzjzBw9dOM4vQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">AI 智能体开发速查手册</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%B7%B1%E5%85%A5%E6%8E%A2%E7%B4%A2-langgraph/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%B7%B1%E5%85%A5%E6%8E%A2%E7%B4%A2-langgraph/1.aa343f2b772deb1d00623b7bed972c8d_huba2bd994f0da4e171194ad980a76e763_1196516_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-qjQ/K3ct6x0AYjt77ZcsjQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">深入探索 LangGraph</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/langgraph%E9%A2%84%E6%9E%84%E5%BB%BAagent/">
+        
+        
+            <div class="article-image">
+                <img src="/p/langgraph%E9%A2%84%E6%9E%84%E5%BB%BAagent/1.0a7c8044cb262efce3cc1c3d74e338bd_hufc87676f5c03c42ba4fd49855ef25156_1205177_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-CnyARMsmLvzjzBw9dOM4vQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">LangGraph预构建Agent</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E6%99%BA%E8%83%BD%E7%9F%A5%E8%AF%86%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/img.0cf458ef54fa450e9d1ac9086d930efe_huecad56dbf45667eb4f21f35c2388c063_52872_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-DPRY71T6RQ6dGskIbZMO/g==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">智能知识检索系统</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2026 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#-2026-ai-发展概览">📈 2026 AI 发展概览</a></li>
+    <li><a href="#-大语言模型新进展">🧠 大语言模型新进展</a>
+      <ol>
+        <li><a href="#模型架构演进">模型架构演进</a></li>
+        <li><a href="#上下文窗口突破">上下文窗口突破</a></li>
+      </ol>
+    </li>
+    <li><a href="#-ai-agent-技术栈">🤖 AI Agent 技术栈</a>
+      <ol>
+        <li><a href="#核心组件">核心组件</a></li>
+        <li><a href="#主流框架对比">主流框架对比</a></li>
+      </ol>
+    </li>
+    <li><a href="#-rag-技术进阶">🔍 RAG 技术进阶</a>
+      <ol>
+        <li><a href="#2026-年最佳实践">2026 年最佳实践</a></li>
+        <li><a href="#向量数据库选型">向量数据库选型</a></li>
+      </ol>
+    </li>
+    <li><a href="#-function-calling-与工具使用">🎯 Function Calling 与工具使用</a>
+      <ol>
+        <li><a href="#标准化协议">标准化协议</a></li>
+        <li><a href="#工具调用最佳实践">工具调用最佳实践</a></li>
+      </ol>
+    </li>
+    <li><a href="#-安全与对齐">🔐 安全与对齐</a>
+      <ol>
+        <li><a href="#关键安全机制">关键安全机制</a></li>
+        <li><a href="#对齐技术">对齐技术</a></li>
+      </ol>
+    </li>
+    <li><a href="#-部署与优化">💻 部署与优化</a>
+      <ol>
+        <li><a href="#推理优化技术">推理优化技术</a></li>
+        <li><a href="#部署方案对比">部署方案对比</a></li>
+      </ol>
+    </li>
+    <li><a href="#-评估与监控">📊 评估与监控</a>
+      <ol>
+        <li><a href="#关键指标">关键指标</a></li>
+        <li><a href="#监控工具栈">监控工具栈</a></li>
+      </ol>
+    </li>
+    <li><a href="#-实战代码示例">🚀 实战代码示例</a>
+      <ol>
+        <li><a href="#快速构建-ai-agent">快速构建 AI Agent</a></li>
+        <li><a href="#rag-系统实现">RAG 系统实现</a></li>
+      </ol>
+    </li>
+    <li><a href="#-学习资源推荐">📚 学习资源推荐</a>
+      <ol>
+        <li><a href="#官方文档">官方文档</a></li>
+        <li><a href="#论文与报告">论文与报告</a></li>
+        <li><a href="#实践平台">实践平台</a></li>
+      </ol>
+    </li>
+    <li><a href="#-2026-年关键趋势总结">🎯 2026 年关键趋势总结</a></li>
+    <li><a href="#-结语">💡 结语</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

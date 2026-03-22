@@ -6,7 +6,21 @@
     <description>Recent content in 知识学习 on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sun, 22 Mar 2026 23:25:00 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/computer/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 22 Mar 2026 23:59:00 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/computer/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>2026 年 AI 领域最新进展与核心知识点</title>
+      <link>https://zcj-git520.github.io/p/2026-%E5%B9%B4-ai-%E9%A2%86%E5%9F%9F%E6%9C%80%E6%96%B0%E8%BF%9B%E5%B1%95%E4%B8%8E%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86%E7%82%B9/</link>
+      <pubDate>Sun, 22 Mar 2026 23:59:00 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/2026-%E5%B9%B4-ai-%E9%A2%86%E5%9F%9F%E6%9C%80%E6%96%B0%E8%BF%9B%E5%B1%95%E4%B8%8E%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86%E7%82%B9/</guid>
+      <description>2026 年 AI 领域最新进展与核心知识点  本文汇总 2025-2026 年人工智能领域的关键技术突破、发展趋势和实用知识点
+  📈 2026 AI 发展概览 2026 年是人工智能从&amp;quot;工具&amp;quot;向&amp;quot;伙伴&amp;quot;转变的关键一年。主要趋势包括：
+ 多模态融合：文本、图像、音频、视频的无缝整合 Agent 自主化：AI 智能体能够独立规划并执行复杂任务 边缘 AI 普及：本地化推理成为主流，隐私与效率兼顾 垂直领域深化：医疗、法律、教育等专业领域 AI 应用成熟   🧠 大语言模型新进展 模型架构演进 传统 Transformer → MoE 混合专家 → 状态空间模型 (SSM) 关键技术点：
+  混合专家模型 (MoE)
+ 稀疏激活，仅调用部分参数 推理速度提升 3-5 倍 代表：Mixtral、Grok 系列    状态空间模型 (SSM/Mamba)
+ 线性复杂度，适合长上下文 内存效率比 Transformer 高 10 倍 2026 年成为长文本处理首选    多 token 预测</description>
+    </item>
+    
     <item>
       <title>MCP 与 Skills 有什么区别</title>
       <link>https://zcj-git520.github.io/p/mcp-%E4%B8%8E-skills-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB/</link>
