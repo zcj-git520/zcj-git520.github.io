@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+  <rect width="800" height="500" fill="#0d0d0d"/>
+  <rect x="0" y="0" width="800" height="30" fill="#1a1a1a"/>
+  <circle cx="20" cy="15" r="6" fill="#ff5f56"/>
+  <circle cx="40" cy="15" r="6" fill="#ffbd2e"/>
+  <circle cx="60" cy="15" r="6" fill="#27c93f"/>
+  <text x="100" y="20" font-family="monospace" font-size="12" fill="#666">claude - my-project</text>
+  <text x="20" y="80" font-family="monospace" font-size="14" fill="#00d9ff">❯</text>
+  <text x="40" y="80" font-family="monospace" font-size="14" fill="#fff">claude</text>
+  <text x="180" y="80" font-family="monospace" font-size="14" fill="#666">what does this project do?</text>
+  <text x="20" y="120" font-family="monospace" font-size="12" fill="#888">Analyzing project structure...</text>
+  <rect x="20" y="140" width="300" height="8" rx="4" fill="#333"/>
+  <text x="20" y="170" font-family="monospace" font-size="12" fill="#888">⏺ Reading file: src/main.ts</text>
+  <text x="20" y="195" font-family="monospace" font-size="12" fill="#888">⏺ Reading file: package.json</text>
+  <text x="20" y="220" font-family="monospace" font-size="12" fill="#888">⏺ Found 24 files</text>
+  <text x="20" y="260" font-family="monospace" font-size="13" fill="#fff">This is a Node.js + Express REST API project for task management.</text>
+  <text x="20" y="285" font-family="monospace" font-size="12" fill="#888">- Tech stack: Express, TypeScript, PostgreSQL</text>
+  <text x="20" y="310" font-family="monospace" font-size="12" fill="#888">- Key files: src/routes/*.ts, src/models/*.ts</text>
+  <text x="20" y="350" font-family="monospace" font-size="14" fill="#00d9ff">❯</text>
+  <text x="40" y="350" font-family="monospace" font-size="14" fill="#fff">/help</text>
+  <text x="20" y="80" font-family="monospace" font-size="14" fill="#00d9ff">❯</text>
+</svg>

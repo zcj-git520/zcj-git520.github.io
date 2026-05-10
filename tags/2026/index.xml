@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>2026 on Chengji Zhao&#39;s blog</title>
+    <link>https://zcj-git520.github.io/tags/2026/</link>
+    <description>Recent content in 2026 on Chengji Zhao&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Mon, 10 Mar 2025 10:00:00 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/tags/2026/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Claude Code 完全新手指南（2026版）：从入门到精通</title>
+      <link>https://zcj-git520.github.io/p/claude-code-%E5%AE%8C%E5%85%A8%E6%96%B0%E6%89%8B%E6%8C%87%E5%8D%972026%E7%89%88%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E7%B2%BE%E9%80%9A/</link>
+      <pubDate>Mon, 10 Mar 2025 10:00:00 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/claude-code-%E5%AE%8C%E5%85%A8%E6%96%B0%E6%89%8B%E6%8C%87%E5%8D%972026%E7%89%88%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E7%B2%BE%E9%80%9A/</guid>
+      <description>很多开发者用了 Claude Code 一段时间后，感觉「好像也没那么神奇」——写出来的代码时对时错，改着改着把不该动的文件也改了，长时间对话后回答开始偏题。问题不在工具本身，在于缺少一套正确的使用框架。
+ 这份《Claude Code 完全新手指南》共 12 章，从最基础的安装配置讲起，深入 Agent Loop 工作原理、上下文管理策略、CLAUDE.md 项目记忆配置，再到 Subagents 专用子代理、Hooks 自动化触发器、Worktree 并行任务隔离等进阶功能，最后提供三套直接可用的实战 SOP。
+ Claude Code 终端界面
+第一章 认识 Claude Code 1.1 一句话理解 Claude Code Claude Code 是 Anthropic 基于 Claude 模型打造的终端 AI 编程 Agent。它不是聊天机器人，也不是代码补全插件——它是一个可以直接操作你代码仓库的 AI 软件工程师：
+ 理解整个代码库（多文件、多语言、多层依赖） 自主规划任务，跨文件编写和修改代码 执行 Shell 命令、运行测试、验证结果 处理 Git 工作流（commit / PR / merge conflict） 通过 MCP 协议连接数据库、API 等外部工具  核心认知——你的角色转变
+Claude Code 最核心的变化：你的角色从「写代码」变成「描述需求 + 设定边界 + 审查结果」。</description>
+    </item>
+    
+  </channel>
+</rss>

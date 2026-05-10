@@ -995,12 +995,802 @@ Custom Dashboard → 业务指标监控
 </description>
         </item>
         <item>
+        <title>Claude Code 完全新手指南（2026版）：从入门到精通</title>
+        <link>https://zcj-git520.github.io/p/claude-code-%E5%AE%8C%E5%85%A8%E6%96%B0%E6%89%8B%E6%8C%87%E5%8D%972026%E7%89%88%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E7%B2%BE%E9%80%9A/</link>
+        <pubDate>Fri, 20 Mar 2026 10:00:00 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/claude-code-%E5%AE%8C%E5%85%A8%E6%96%B0%E6%89%8B%E6%8C%87%E5%8D%972026%E7%89%88%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E7%B2%BE%E9%80%9A/</guid>
+        <description>&lt;blockquote&gt;
+&lt;p&gt;很多开发者用了 Claude Code 一段时间后，感觉「好像也没那么神奇」——写出来的代码时对时错，改着改着把不该动的文件也改了，长时间对话后回答开始偏题。问题不在工具本身，在于缺少一套正确的使用框架。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;这份《Claude Code 完全新手指南》共 12 章，从最基础的安装配置讲起，深入 Agent Loop 工作原理、上下文管理策略、CLAUDE.md 项目记忆配置，再到 Subagents 专用子代理、Hooks 自动化触发器、Worktree 并行任务隔离等进阶功能，最后提供三套直接可用的实战 SOP。&lt;/p&gt;
+&lt;h2 id=&#34;第一章-认识-claude-code&#34;&gt;第一章 认识 Claude Code&lt;/h2&gt;
+&lt;h3 id=&#34;11-一句话理解-claude-code&#34;&gt;1.1 一句话理解 Claude Code&lt;/h3&gt;
+&lt;p&gt;Claude Code 是 Anthropic 基于 Claude 模型打造的终端 AI 编程 Agent。它不是聊天机器人，也不是代码补全插件——它是一个可以直接操作你代码仓库的 AI 软件工程师：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;理解整个代码库（多文件、多语言、多层依赖）&lt;/li&gt;
+&lt;li&gt;自主规划任务，跨文件编写和修改代码&lt;/li&gt;
+&lt;li&gt;执行 Shell 命令、运行测试、验证结果&lt;/li&gt;
+&lt;li&gt;处理 Git 工作流（commit / PR / merge conflict）&lt;/li&gt;
+&lt;li&gt;通过 MCP 协议连接数据库、API 等外部工具&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;核心认知——你的角色转变&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Claude Code 最核心的变化：你的角色从「写代码」变成「描述需求 + 设定边界 + 审查结果」。&lt;/p&gt;
+&lt;p&gt;Claude 越能干，你越要注意：给清晰边界和验证标准，是用好它的关键。没有边界，它会改出你不想要的代码；没有验证标准，它不知道什么叫做对。&lt;/p&gt;
+&lt;h3 id=&#34;12-与-ai-ide-的核心区别&#34;&gt;1.2 与 AI IDE 的核心区别&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;工具&lt;/th&gt;
+&lt;th&gt;本质&lt;/th&gt;
+&lt;th&gt;使用方式&lt;/th&gt;
+&lt;th&gt;最适合场景&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Claude Code&lt;/td&gt;
+&lt;td&gt;CLI Agent&lt;/td&gt;
+&lt;td&gt;终端命令行&lt;/td&gt;
+&lt;td&gt;Repo 级自动化、大规模重构、DevOps&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Cursor&lt;/td&gt;
+&lt;td&gt;AI IDE&lt;/td&gt;
+&lt;td&gt;编辑器（内联）&lt;/td&gt;
+&lt;td&gt;逐行辅助、实时补全、单文件精细操作&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Windsurf&lt;/td&gt;
+&lt;td&gt;AI IDE&lt;/td&gt;
+&lt;td&gt;编辑器（内联）&lt;/td&gt;
+&lt;td&gt;代码上下文感知、内联建议&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Claude.ai&lt;/td&gt;
+&lt;td&gt;网页版&lt;/td&gt;
+&lt;td&gt;浏览器&lt;/td&gt;
+&lt;td&gt;轻量查询、移动端、无需安装&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;blockquote&gt;
+&lt;p&gt;两者互补，不是替代。Cursor 适合精细的逐行操作，Claude Code 适合大任务自动化。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;13-claude-code-能力全景&#34;&gt;1.3 Claude Code 能力全景&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;代码开发&lt;/strong&gt;：读懂整个 repo → 按需求写代码 → 跨多文件实现功能 → 安装依赖&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;调试修复&lt;/strong&gt;：复现 bug → 追踪根因 → 修改代码 → 运行测试验证&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;重构升级&lt;/strong&gt;：JS→TS 迁移、框架版本升级、模块化拆分、架构调整&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;测试自动化&lt;/strong&gt;：为现有代码补写单元测试、集成测试，修复失败用例&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Git 工作流&lt;/strong&gt;：生成 commit message、解决冲突、创建 PR、代码审查&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;文档生成&lt;/strong&gt;：README、API 文档、CHANGELOG、架构说明&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;外部集成&lt;/strong&gt;：通过 MCP 查询数据库、调用 API、控制浏览器&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;CI/CD 自动化&lt;/strong&gt;：配合 GitHub Actions 做自动代码审查和流水线生成&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;第二章-安装与账号配置&#34;&gt;第二章 安装与账号配置&lt;/h2&gt;
+&lt;h3 id=&#34;21-订阅要求&#34;&gt;2.1 订阅要求&lt;/h3&gt;
+&lt;p&gt;Claude Code 需要付费订阅，无免费版本：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;方案&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;th&gt;适合人群&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Claude Pro&lt;/td&gt;
+&lt;td&gt;claude.ai 订阅，包含 Claude Code 访问权限&lt;/td&gt;
+&lt;td&gt;个人开发者、初学者&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Claude Max&lt;/td&gt;
+&lt;td&gt;更高用量上限 + 高峰期优先 + 新功能优先体验&lt;/td&gt;
+&lt;td&gt;重度日常使用者&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;API 按量付费&lt;/td&gt;
+&lt;td&gt;Anthropic Console 充值，按 token 计费&lt;/td&gt;
+&lt;td&gt;评估阶段、轻量使用&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Team / Enterprise&lt;/td&gt;
+&lt;td&gt;团队协作 + 共享 CLAUDE.md + 管理后台&lt;/td&gt;
+&lt;td&gt;开发团队&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;blockquote&gt;
+&lt;p&gt;新手建议：先充值约 20 美元 API 额度，用自己真实工作流评估 1-2 周，再决定是否订阅 Max。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;登录地址：claude.com 或 console.anthropic.com&lt;/p&gt;
+&lt;h3 id=&#34;22-系统要求&#34;&gt;2.2 系统要求&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;操作系统：macOS 12+、Linux（Ubuntu 20.04+ / Debian 10+）、Windows 原生或 WSL2&lt;/li&gt;
+&lt;li&gt;网络：需要互联网连接（模型调用为云端 API）&lt;/li&gt;
+&lt;li&gt;强烈建议：项目目录是 Git 仓库（Claude Code 深度集成 Git 工作流）&lt;/li&gt;
+&lt;li&gt;可选：安装 gh CLI（&lt;code&gt;brew install gh&lt;/code&gt;），让 Claude 直接创建 issue、开 PR、读 PR 评论&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;23-安装方法&#34;&gt;2.3 安装方法&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;macOS / Linux / WSL（推荐）&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 官方安装脚本——无需 Node.js，安装后自动后台更新&lt;/span&gt;
+curl -fsSL https://claude.ai/install.sh &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; bash
+
+&lt;span class=&#34;c1&#34;&gt;# 验证安装&lt;/span&gt;
+claude --version
+
+&lt;span class=&#34;c1&#34;&gt;# Homebrew 安装（需手动升级）&lt;/span&gt;
+brew install --cask claude-code
+brew upgrade --cask claude-code
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Windows&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;c&#34;&gt;# 方式一：PowerShell 一键安装（推荐）&lt;/span&gt;
+&lt;span class=&#34;nb&#34;&gt;irm &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;https&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;//&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;claude&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ai&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;install&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ps1&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;iex
+&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;&lt;/span&gt;
+&lt;span class=&#34;c&#34;&gt;# 方式二：WinGet（需手动升级）&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;winget&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;install&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Anthropic&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ClaudeCode&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;winget&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;upgrade&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Anthropic&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ClaudeCode&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;IDE 插件集成&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;VS Code：扩展市场搜索「Claude Code」安装，支持 @ 引用文件（含行号范围）、内联 Diff、多标签并行对话&lt;/li&gt;
+&lt;li&gt;JetBrains（IDEA / PyCharm / WebStorm）：JetBrains Marketplace 安装，启动快捷键 Cmd+Esc (Mac) / Ctrl+Esc (Windows)，支持可视化 diff&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;24-首次登录&#34;&gt;2.4 首次登录&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; ~/your-project
+claude  &lt;span class=&#34;c1&#34;&gt;# 首次启动，弹出浏览器授权&lt;/span&gt;
+claude /doctor  &lt;span class=&#34;c1&#34;&gt;# 运行诊断，确认一切正常&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;完成 OAuth 授权后凭证本地保存，后续无需重复登录。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;第三章-核心概念&#34;&gt;第三章 核心概念&lt;/h2&gt;
+&lt;h3 id=&#34;31-agent-loop代理循环&#34;&gt;3.1 Agent Loop（代理循环）&lt;/h3&gt;
+&lt;p&gt;Claude Code 采用循环代理模式——不是一问一答，而是持续执行直到任务完成：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;收集上下文&lt;/strong&gt;：读取相关文件、搜索代码、运行命令了解现状&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;规划任务&lt;/strong&gt;：分析要做什么、按什么顺序、影响哪些文件&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;执行操作&lt;/strong&gt;：编辑文件、执行 Shell 命令、调用 MCP 工具&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;验证结果&lt;/strong&gt;：运行测试、检查错误、对比预期行为&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;自我纠正&lt;/strong&gt;：验证失败则分析原因，重新执行&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;循环重复，直到任务完成或你按 Ctrl+C 中断。&lt;/p&gt;
+&lt;h3 id=&#34;32-上下文是有限资源&#34;&gt;3.2 上下文是有限资源&lt;/h3&gt;
+&lt;p&gt;这是使用 Claude Code 最重要的认知之一。上下文窗口（约 20 万 token）会消耗你说的每一句话、Claude 读取的每个文件、每个命令的输出，以及压缩后的历史摘要。上下文一旦过长，Claude 就会开始「遗忘」前面的指令，输出质量明显下降。&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;命令&lt;/th&gt;
+&lt;th&gt;作用&lt;/th&gt;
+&lt;th&gt;何时使用&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;/clear&lt;/td&gt;
+&lt;td&gt;清空全部对话历史&lt;/td&gt;
+&lt;td&gt;切换任务前（必须养成习惯）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/compact [说明]&lt;/td&gt;
+&lt;td&gt;智能压缩历史，保留摘要&lt;/td&gt;
+&lt;td&gt;上下文超过 70% 时&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/context&lt;/td&gt;
+&lt;td&gt;可视化显示上下文使用比例&lt;/td&gt;
+&lt;td&gt;长时间工作时随时检查&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/cost&lt;/td&gt;
+&lt;td&gt;查看当前会话 token 用量&lt;/td&gt;
+&lt;td&gt;了解成本，优化使用习惯&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;重要原则&lt;/strong&gt;：同一个问题修正超过两次，直接 /clear 用更精确的提示重新开始。新会话 + 好提示 &amp;gt; 长会话 + 累积修正。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;33-三种权限模式&#34;&gt;3.3 三种权限模式&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;模式&lt;/th&gt;
+&lt;th&gt;触发方式&lt;/th&gt;
+&lt;th&gt;行为&lt;/th&gt;
+&lt;th&gt;适用场景&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Normal Mode（默认）&lt;/td&gt;
+&lt;td&gt;默认启动&lt;/td&gt;
+&lt;td&gt;重大操作前弹窗请求批准&lt;/td&gt;
+&lt;td&gt;日常开发任务&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Plan Mode&lt;/td&gt;
+&lt;td&gt;Shift+Tab 两次 / /plan&lt;/td&gt;
+&lt;td&gt;只读分析，不执行任何修改&lt;/td&gt;
+&lt;td&gt;复杂任务先分析再执行&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Auto-Accept&lt;/td&gt;
+&lt;td&gt;&amp;ndash;dangerously-skip-permissions&lt;/td&gt;
+&lt;td&gt;自动批准所有操作&lt;/td&gt;
+&lt;td&gt;CI/CD 等完全自动化场景&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;34-模型选择策略&#34;&gt;3.4 模型选择策略&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;模型&lt;/th&gt;
+&lt;th&gt;定位&lt;/th&gt;
+&lt;th&gt;适用场景&lt;/th&gt;
+&lt;th&gt;切换命令&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Claude Sonnet 4.6&lt;/td&gt;
+&lt;td&gt;默认，综合最优&lt;/td&gt;
+&lt;td&gt;80% 日常编码任务&lt;/td&gt;
+&lt;td&gt;无需切换&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Claude Opus 4.6&lt;/td&gt;
+&lt;td&gt;最强推理能力&lt;/td&gt;
+&lt;td&gt;���杂架构设计、难以定位的 bug&lt;/td&gt;
+&lt;td&gt;claude &amp;ndash;model opus&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Claude Haiku&lt;/td&gt;
+&lt;td&gt;最快，最省费用&lt;/td&gt;
+&lt;td&gt;简单查询、预算受限场景&lt;/td&gt;
+&lt;td&gt;claude &amp;ndash;model haiku&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;第四章-快速入门30-分钟第一个任务&#34;&gt;第四章 快速入门——30 分钟第一个任务&lt;/h2&gt;
+&lt;h3 id=&#34;41-启动与基本对话&#34;&gt;4.1 启动与基本对话&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; ~/my-project  &lt;span class=&#34;c1&#34;&gt;# 进入真实项目目录&lt;/span&gt;
+claude  &lt;span class=&#34;c1&#34;&gt;# 启动&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;然后可以问：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;这个项目是做什么的？给我结构概览和技术栈总结。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;42-四种基础输入方式&#34;&gt;4.2 四种基础输入方式&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;自然语言&lt;/strong&gt;：帮我在 src/utils.js 添加一个格式化日期的函数&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;@ 文件引用&lt;/strong&gt;：&lt;code&gt;@src/api/users.js 这里的分页逻辑有 bug&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;! Shell 执行&lt;/strong&gt;：&lt;code&gt;!git status 然后告诉我有哪些未提交的改动&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;粘贴错误&lt;/strong&gt;：直接粘贴终端报错，Claude 分析根因&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;43-第一个完整任务示例&#34;&gt;4.3 第一个完整任务示例&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;mkdir todo-api &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; todo-api &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; git init
+claude
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;blockquote&gt;
+&lt;p&gt;用 Node.js + Express 创建一个 Todo REST API，包含增删改查接口、参数验证和错误处理。先告诉我你的实现计划，等我确认后再写代码。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;方案可以，开始实现，做完跑测试。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;为所有接口写 Jest 单元测试，先写失败测试，测试能正确运行后再修复让测试通过。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;第五章-claudemd给-claude-持久记忆&#34;&gt;第五章 CLAUDE.md——给 Claude 持久记忆&lt;/h2&gt;
+&lt;h3 id=&#34;51-什么是-claudemd&#34;&gt;5.1 什么是 CLAUDE.md？&lt;/h3&gt;
+&lt;p&gt;CLAUDE.md 是 Claude Code 每次启动时自动读取的配置文件，让 Claude 始终了解你的规范。&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;文件位置&lt;/th&gt;
+&lt;th&gt;作用范围&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;项目根目录/CLAUDE.md&lt;/td&gt;
+&lt;td&gt;当前项目，提交到 git&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;.claude/CLAUDE.md&lt;/td&gt;
+&lt;td&gt;当前项目（更整洁）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;CLAUDE.local.md&lt;/td&gt;
+&lt;td&gt;当前项目，不提交&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;~/.claude/CLAUDE.md&lt;/td&gt;
+&lt;td&gt;全局，所有项目&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;52-快速创建&#34;&gt;5.2 快速创建&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;claude
+&amp;gt; /init  &lt;span class=&#34;c1&#34;&gt;# 生成后手动补充你最重要的规范&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;53-专业-claudemd-模板&#34;&gt;5.3 专业 CLAUDE.md 模板&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-markdown&#34; data-lang=&#34;markdown&#34;&gt;&lt;span class=&#34;gh&#34;&gt;# 项目名称 - Claude 工作指南
+&lt;/span&gt;&lt;span class=&#34;gh&#34;&gt;&lt;/span&gt;
+&lt;span class=&#34;gu&#34;&gt;## 项目概述
+&lt;/span&gt;&lt;span class=&#34;gu&#34;&gt;&lt;/span&gt;一句话描述项目用途和边界。
+
+&lt;span class=&#34;gu&#34;&gt;## 技术栈
+&lt;/span&gt;&lt;span class=&#34;gu&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;-&lt;/span&gt; 后端：Spring Boot 3.x, Java 17, MyBatis Plus
+&lt;span class=&#34;k&#34;&gt;-&lt;/span&gt; 前端：React 18, TypeScript, Ant Design
+&lt;span class=&#34;k&#34;&gt;-&lt;/span&gt; 数据库：MySQL 8.0
+
+&lt;span class=&#34;gu&#34;&gt;## 常用命令
+&lt;/span&gt;&lt;span class=&#34;gu&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;-&lt;/span&gt; 启动后端：./gradlew bootRun
+&lt;span class=&#34;k&#34;&gt;-&lt;/span&gt; 启动前端：cd frontend &lt;span class=&#34;err&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; pnpm dev
+&lt;span class=&#34;k&#34;&gt;-&lt;/span&gt; 跑单个测试：./gradlew test --tests &amp;#39;UserServiceTest&amp;#39;
+
+&lt;span class=&#34;gu&#34;&gt;## 代码规范
+&lt;/span&gt;&lt;span class=&#34;gu&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;-&lt;/span&gt; 所有 API 返回用 Result 统一包装
+&lt;span class=&#34;k&#34;&gt;-&lt;/span&gt; Service 层只包含业务逻辑，不直接操作数据库
+&lt;span class=&#34;k&#34;&gt;-&lt;/span&gt; 禁止在 Controller 层写业务逻辑
+
+&lt;span class=&#34;gu&#34;&gt;## 禁止事项
+&lt;/span&gt;&lt;span class=&#34;gu&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;-&lt;/span&gt; IMPORTANT: 不要修改 prisma/migrations/ 下的文件
+&lt;span class=&#34;k&#34;&gt;-&lt;/span&gt; IMPORTANT: 所有数据库改动通过 Flyway Migration 文件
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id=&#34;第六章-完整命令速查手册&#34;&gt;第六章 完整命令速查手册&lt;/h2&gt;
+&lt;h3 id=&#34;61-启动参数&#34;&gt;6.1 启动参数&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;命令&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;claude&lt;/td&gt;
+&lt;td&gt;默认启动（交互模式）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;claude &amp;ndash;model opus&lt;/td&gt;
+&lt;td&gt;启动时指定模型&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;claude &amp;ndash;permission-mode plan&lt;/td&gt;
+&lt;td&gt;以 Plan Mode 启动&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;claude &amp;ndash;worktree feature-xxx&lt;/td&gt;
+&lt;td&gt;在隔离 Worktree 中启动&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;claude &amp;ndash;continue&lt;/td&gt;
+&lt;td&gt;继续最近一次对话&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;claude &amp;ndash;dangerously-skip-permissions&lt;/td&gt;
+&lt;td&gt;跳过所有权限检查&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;62-headless-模式非交互&#34;&gt;6.2 Headless 模式（非交互）&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;claude -p &lt;span class=&#34;s2&#34;&gt;&amp;#34;解释项目结构&amp;#34;&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;# 单次查询后退出&lt;/span&gt;
+claude -p &lt;span class=&#34;s2&#34;&gt;&amp;#34;列出所有 API 接口&amp;#34;&lt;/span&gt; --output-format json
+cat error.log &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; claude -p &lt;span class=&#34;s2&#34;&gt;&amp;#34;分析这个错误的根因&amp;#34;&lt;/span&gt;
+git diff HEAD &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; claude -p &lt;span class=&#34;s2&#34;&gt;&amp;#34;审查这次改动有无安全隐患&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;63-会话内命令&#34;&gt;6.3 会话内命令&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;命令&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;/clear&lt;/td&gt;
+&lt;td&gt;清空对话历史&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/compact&lt;/td&gt;
+&lt;td&gt;压缩对话&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/context&lt;/td&gt;
+&lt;td&gt;查看上下文使用比例&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/cost&lt;/td&gt;
+&lt;td&gt;查看 token 用量&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/model&lt;/td&gt;
+&lt;td&gt;切换模型&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/config&lt;/td&gt;
+&lt;td&gt;打开设置界面&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/doctor&lt;/td&gt;
+&lt;td&gt;运行健康检查&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/init&lt;/td&gt;
+&lt;td&gt;生成 CLAUDE.md 模板&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/exit&lt;/td&gt;
+&lt;td&gt;退出&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;64-键盘快捷键&#34;&gt;6.4 键盘快捷键&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;快捷键&lt;/th&gt;
+&lt;th&gt;功能&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Shift + Tab（两次）&lt;/td&gt;
+&lt;td&gt;进入 Plan Mode&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Ctrl + C&lt;/td&gt;
+&lt;td&gt;中断当前操作&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Ctrl + G&lt;/td&gt;
+&lt;td&gt;用系统编辑器编写多行提示词&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Ctrl + B&lt;/td&gt;
+&lt;td&gt;将任务切到后台&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Esc&lt;/td&gt;
+&lt;td&gt;中断当前操作&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;↑ / ↓&lt;/td&gt;
+&lt;td&gt;浏览历史输入记录&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;第七章-进阶技巧&#34;&gt;第七章 进阶技巧&lt;/h2&gt;
+&lt;h3 id=&#34;71-plan-mode-的正确姿势&#34;&gt;7.1 Plan Mode 的正确姿势&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;按 Shift+Tab 两次进入 Plan Mode&lt;/li&gt;
+&lt;li&gt;描述你要做的事，让 Claude 分析影响面和执行步骤&lt;/li&gt;
+&lt;li&gt;仔细审查输出的规划，可以继续追问&lt;/li&gt;
+&lt;li&gt;确认无误后，按 Shift+Tab 切回 Normal Mode 执行&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;探索 → 规划 → 执行 三步法&lt;/strong&gt;&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Step 1：分析现有实现，给我一个方案
+Step 2：方案可以，开始实现
+Step 3：Claude 执行，完成后跑测试验证
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;72-黄金提示词公式&#34;&gt;7.2 黄金提示词公式&lt;/h3&gt;
+&lt;p&gt;【目标】+【位置】+【验证】+【约束】&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;好的示例&lt;/strong&gt;：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;为 @src/api/users.ts 中的 getUserById 函数添加 Redis 缓存，缓存有效期 5 分钟，使用现有的 @src/lib/redis.ts 客户端。实现后运行 pnpm test 确保所有测试通过，禁止修改函数签名和返回类型。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;73-描述症状不是猜测原因&#34;&gt;7.3 描述症状，不是猜测原因&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;差的问法&lt;/strong&gt;：修复登录 bug&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;好的问法&lt;/strong&gt;：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;用户反馈会话超时后登录失败。检查 @src/auth/ 下的认证流程，特别是 token 刷新逻辑。先写失败测试复现，再修复，修完跑测试验证。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;74-mcp-服务器集成&#34;&gt;7.4 MCP 服务器集成&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 添加 MCP 服务器&lt;/span&gt;
+claude mcp add context7 npx @context7/mcp
+claude mcp add playwright npx &lt;span class=&#34;s1&#34;&gt;&amp;#39;@playwright/mcp@latest&amp;#39;&lt;/span&gt;
+claude mcp add github npx @github/mcp
+
+&lt;span class=&#34;c1&#34;&gt;# 查看已添加的服务器&lt;/span&gt;
+claude mcp list
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id=&#34;第八章-subagents独立上下文的专用助手&#34;&gt;第八章 Subagents——独立上下文的专用助手&lt;/h2&gt;
+&lt;h3 id=&#34;81-什么是-subagent&#34;&gt;8.1 什么是 Subagent？&lt;/h3&gt;
+&lt;p&gt;Subagent 是在独立上下文窗口里运行的专用 AI 助手，有自定义的系统提示和工具权限限制。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;核心价值&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;隔离大量输出——测试报告不会污染主会话上下文&lt;/li&gt;
+&lt;li&gt;强制工具限制——只读代理无法写文件，安全可控&lt;/li&gt;
+&lt;li&gt;并行探索——多个 Subagent 同时在不同模块并行调查&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;82-创建自定义-subagent&#34;&gt;8.2 创建自定义 Subagent&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;mkdir -p .claude/agents
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;创建 &lt;code&gt;.claude/agents/code-reviewer.md&lt;/code&gt;：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-markdown&#34; data-lang=&#34;markdown&#34;&gt;---
+name: code-reviewer
+description: 代码审查专家。代码修改后主动使用。
+tools: Read, Grep, Glob, Bash
+model: inherit
+---
+
+你是资深代码审查专家。
+调用时：
+&lt;span class=&#34;k&#34;&gt;1.&lt;/span&gt; 运行 git diff 查看最近变更
+&lt;span class=&#34;k&#34;&gt;2.&lt;/span&gt; 聚焦修改的文件立即开始审查
+
+按优先级组织反馈：
+&lt;span class=&#34;k&#34;&gt;-&lt;/span&gt; [严重] 必须修复，存在 bug 或安全漏洞
+&lt;span class=&#34;k&#34;&gt;-&lt;/span&gt; [警告] 应该修复
+&lt;span class=&#34;k&#34;&gt;-&lt;/span&gt; [建议] 可考虑改进
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id=&#34;第九章-hooks自动化触发器&#34;&gt;第九章 Hooks——自动化触发器&lt;/h2&gt;
+&lt;h3 id=&#34;91-什么是-hooks&#34;&gt;9.1 什么是 Hooks？&lt;/h3&gt;
+&lt;p&gt;Hooks 是在特定事件发生时自动执行的 Shell 命令，让 Claude Code 的操作触发外部自动化行为。&lt;/p&gt;
+&lt;h3 id=&#34;92-实用-hooks-配置示例&#34;&gt;9.2 实用 Hooks 配置示例&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;#34;hooks&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;nt&#34;&gt;&amp;#34;PostToolUse&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;
+      &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;nt&#34;&gt;&amp;#34;matcher&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Edit|Write&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+        &lt;span class=&#34;nt&#34;&gt;&amp;#34;hooks&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;
+          &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+            &lt;span class=&#34;nt&#34;&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;command&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+            &lt;span class=&#34;nt&#34;&gt;&amp;#34;command&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;npm run lint -- --fix --quiet&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+            &lt;span class=&#34;nt&#34;&gt;&amp;#34;timeout&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;30000&lt;/span&gt;
+          &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+        &lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;
+      &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;
+  &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id=&#34;第十章-worktree并行任务隔离&#34;&gt;第十章 Worktree——并行任务隔离&lt;/h2&gt;
+&lt;h3 id=&#34;101-什么是-worktree&#34;&gt;10.1 什么是 Worktree？&lt;/h3&gt;
+&lt;p&gt;Worktree 基于 Git 的 worktree 功能，让你在独立的目录中对同一仓库的不同分支并行工作。&lt;/p&gt;
+&lt;h3 id=&#34;102-基本用法&#34;&gt;10.2 基本用法&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 在隔离 Worktree 中启动&lt;/span&gt;
+claude --worktree feature-auth
+
+&lt;span class=&#34;c1&#34;&gt;# 同时在两个终端运行&lt;/span&gt;
+claude --worktree feature-user-export
+claude --worktree bugfix-login-timeout
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;103-writer--reviewer-双会话模式&#34;&gt;10.3 Writer / Reviewer 双会话模式&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 终端 1：实现会话&lt;/span&gt;
+claude --worktree feature-payment
+&amp;gt; 实现支付模块，完成后告诉我
+
+&lt;span class=&#34;c1&#34;&gt;# 终端 2：审查会话（全新上下文）&lt;/span&gt;
+claude
+&amp;gt; 审查 @src/payment/ 下最近一次 git commit 的改动，重点检查：边界情况、安全隐患、与现有代码风格一致性。
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id=&#34;第十一章-实战-sop&#34;&gt;第十一章 实战 SOP&lt;/h2&gt;
+&lt;h3 id=&#34;111-sop-a老项目重构&#34;&gt;11.1 SOP A：老项目重构&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;阶段&lt;/th&gt;
+&lt;th&gt;目标&lt;/th&gt;
+&lt;th&gt;关键操作&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Phase 0&lt;/td&gt;
+&lt;td&gt;摸底&lt;/td&gt;
+&lt;td&gt;Plan Mode + Subagent 扫描，生成技术债报告&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Phase 1&lt;/td&gt;
+&lt;td&gt;安全网&lt;/td&gt;
+&lt;td&gt;先补测试，固定现有行为&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Phase 2&lt;/td&gt;
+&lt;td&gt;规划&lt;/td&gt;
+&lt;td&gt;Plan Mode 生成重构清单，人工审核&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Phase 3&lt;/td&gt;
+&lt;td&gt;执行&lt;/td&gt;
+&lt;td&gt;Worktree 隔离，每步验证&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Phase 4&lt;/td&gt;
+&lt;td&gt;收尾&lt;/td&gt;
+&lt;td&gt;全量对比验证，创建 PR&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;112-sop-b快速需求迭代&#34;&gt;11.2 SOP B：快速需求迭代&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;阶段&lt;/th&gt;
+&lt;th&gt;目标&lt;/th&gt;
+&lt;th&gt;时间估计&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Phase 0&lt;/td&gt;
+&lt;td&gt;需求规格化&lt;/td&gt;
+&lt;td&gt;5-10 分钟&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Phase 1&lt;/td&gt;
+&lt;td&gt;影响面评估&lt;/td&gt;
+&lt;td&gt;5 分钟&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Phase 2&lt;/td&gt;
+&lt;td&gt;并行开发&lt;/td&gt;
+&lt;td&gt;并行节省 30-50%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Phase 3&lt;/td&gt;
+&lt;td&gt;互审&lt;/td&gt;
+&lt;td&gt;15 分钟&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Phase 4&lt;/td&gt;
+&lt;td&gt;交付&lt;/td&gt;
+&lt;td&gt;10 分钟&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;113-sop-c全新项目研发&#34;&gt;11.3 SOP C：全新项目研发&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;阶段&lt;/th&gt;
+&lt;th&gt;目标&lt;/th&gt;
+&lt;th&gt;关键操作&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Phase 0&lt;/td&gt;
+&lt;td&gt;架构决策&lt;/td&gt;
+&lt;td&gt;ADR 文档化&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Phase 1&lt;/td&gt;
+&lt;td&gt;项目初始化&lt;/td&gt;
+&lt;td&gt;CLAUDE.md + Subagents + Hooks 一次配齐&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Phase 2&lt;/td&gt;
+&lt;td&gt;骨架生成&lt;/td&gt;
+&lt;td&gt;Plan Mode 确认后生成&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Phase 3&lt;/td&gt;
+&lt;td&gt;迭代开发&lt;/td&gt;
+&lt;td&gt;SPEC → Plan → Code → Verify → Commit&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Phase 4&lt;/td&gt;
+&lt;td&gt;CI/CD 接入&lt;/td&gt;
+&lt;td&gt;GitHub Actions + Claude PR 审查&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;第十二章-常见错误与避坑指南&#34;&gt;第十二章 常见错误与避坑指南&lt;/h2&gt;
+&lt;h3 id=&#34;121-使用习惯类错误&#34;&gt;12.1 使用习惯类错误&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;❌ 不清空上下文就切换任务&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;解决：每次切换任务前执行 /clear，养成习惯。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;❌ 提示词太模糊&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;解决：使用黄金提示词公式：目标 + 文件位置 + 验证标准 + 约束条件。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;❌ 不先规划就执行大改动&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;解决：改动超过 3 个文件，先用 Plan Mode 看清楚规划后再执行。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;❌ 完全信任 AI 不审查输出&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;解决：AI 生成的代码必须经过人工审查，重点看边界条件、错误处理、权限检查。&lt;/p&gt;
+&lt;h3 id=&#34;122-技术配置类错误&#34;&gt;12.2 技术配置类错误&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;❌ CLAUDE.md 写太长&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;解决：精简 CLAUDE.md，只留「Claude 最容易弄错的事」。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;❌ Claude 读了太多不必要的文件&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;解决：用 @ 精确引用文件而非整个目录。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;附录&#34;&gt;附录&lt;/h2&gt;
+&lt;h3 id=&#34;a-完整斜杠命令速查&#34;&gt;A. 完整斜杠命令速查&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;命令&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;/clear&lt;/td&gt;
+&lt;td&gt;清空对话历史&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/compact&lt;/td&gt;
+&lt;td&gt;压缩对话&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/context&lt;/td&gt;
+&lt;td&gt;查看上下文使用比例&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/cost&lt;/td&gt;
+&lt;td&gt;查看 token 用量&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/export&lt;/td&gt;
+&lt;td&gt;导出当前对话&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/model&lt;/td&gt;
+&lt;td&gt;切换模型&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/config&lt;/td&gt;
+&lt;td&gt;打开设置&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/permissions&lt;/td&gt;
+&lt;td&gt;管理工具权限&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/doctor&lt;/td&gt;
+&lt;td&gt;健康检查&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/init&lt;/td&gt;
+&lt;td&gt;生成 CLAUDE.md 模板&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/memory&lt;/td&gt;
+&lt;td&gt;查看自动记忆&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/hooks&lt;/td&gt;
+&lt;td&gt;查看 Hooks 配置&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/mcp&lt;/td&gt;
+&lt;td&gt;管理 MCP 服务器&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/agents&lt;/td&gt;
+&lt;td&gt;管理 Subagents&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/exit&lt;/td&gt;
+&lt;td&gt;退出&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;b-推荐-claude-目录结构&#34;&gt;B. 推荐 .claude/ 目录结构&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;.claude/
+├── settings.json          # 权限 + Hooks 配置
+├── CLAUDE.md            # 项目级记忆
+├── agents/              # 自定义 Subagents
+│   ├── code-reviewer.md
+│   └── debugger.md
+├── skills/             # 按需加载的知识片段
+└── specs/              # 功能需求规格
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;c-官方资源&#34;&gt;C. 官方资源&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;完整文档：code.claude.com/docs&lt;/li&gt;
+&lt;li&gt;Anthropic Console：console.anthropic.com&lt;/li&gt;
+&lt;li&gt;社区资源：github.com/anthropics/awesome-claude-code&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;总结&#34;&gt;总结&lt;/h2&gt;
+&lt;p&gt;Claude Code 的本质：&lt;strong&gt;一个可以直接操作代码仓库的 AI 软件工程师&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;打开终端，输入 &lt;code&gt;claude&lt;/code&gt;，开始你的第一个任务 🚀&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>Claude Code 安装和使用指南</title>
         <link>https://zcj-git520.github.io/p/claude-code-%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/</link>
         <pubDate>Tue, 10 Feb 2026 10:00:00 +0800</pubDate>
         
         <guid>https://zcj-git520.github.io/p/claude-code-%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/</guid>
-        <description>&lt;img src="https://zcj-git520.github.io/1.jpeg" alt="Featured image of post Claude Code 安装和使用指南" /&gt;&lt;h1 id=&#34;claude-codeai-驱动的编程助手&#34;&gt;Claude Code：AI 驱动的编程助手&lt;/h1&gt;
+        <description>&lt;h1 id=&#34;claude-codeai-驱动的编程助手&#34;&gt;Claude Code：AI 驱动的编程助手&lt;/h1&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Claude Code 是 Anthropic 公司推出的 AI 编程助手，它能够阅读代码库、编辑文件、运行命令，帮助开发者完成各种编码任务。&lt;/p&gt;
 &lt;/blockquote&gt;
@@ -3290,6 +4080,814 @@ swarm = create_swarm(
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;代码仓库路径&#34;&gt;代码仓库路径&lt;/h2&gt;
 &lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/zcj-git520/AiLargeModel&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;zcj-git520/AiLargeModel: 大模型应用开发学习&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Claude Code 完全新手指南（2026版）：从入门到精通</title>
+        <link>https://zcj-git520.github.io/p/claude-code-%E5%AE%8C%E5%85%A8%E6%96%B0%E6%89%8B%E6%8C%87%E5%8D%972026%E7%89%88%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E7%B2%BE%E9%80%9A/</link>
+        <pubDate>Mon, 10 Mar 2025 10:00:00 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/claude-code-%E5%AE%8C%E5%85%A8%E6%96%B0%E6%89%8B%E6%8C%87%E5%8D%972026%E7%89%88%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E7%B2%BE%E9%80%9A/</guid>
+        <description>&lt;blockquote&gt;
+&lt;p&gt;很多开发者用了 Claude Code 一段时间后，感觉「好像也没那么神奇」——写出来的代码时对时错，改着改着把不该动的文件也改了，长时间对话后回答开始偏题。问题不在工具本身，在于缺少一套正确的使用框架。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;这份《Claude Code 完全新手指南》共 12 章，从最基础的安装配置讲起，深入 Agent Loop 工作原理、上下文管理策略、CLAUDE.md 项目记忆配置，再到 Subagents 专用子代理、Hooks 自动化触发器、Worktree 并行任务隔离等进阶功能，最后提供三套直接可用的实战 SOP。&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;figure 
+	&gt;
+	&lt;a href=&#34;https://zcj-git520.github.io/images/claude-code-2026-terminal.png&#34; &gt;
+		&lt;img src=&#34;https://zcj-git520.github.io/images/claude-code-2026-terminal.png&#34;
+			
+			
+			
+			loading=&#34;lazy&#34;
+			alt=&#34;Claude Code 终端界面&#34;&gt;
+	&lt;/a&gt;
+	
+	&lt;figcaption&gt;Claude Code 终端界面&lt;/figcaption&gt;
+	
+&lt;/figure&gt;&lt;/p&gt;
+&lt;h2 id=&#34;第一章-认识-claude-code&#34;&gt;第一章 认识 Claude Code&lt;/h2&gt;
+&lt;h3 id=&#34;11-一句话理解-claude-code&#34;&gt;1.1 一句话理解 Claude Code&lt;/h3&gt;
+&lt;p&gt;Claude Code 是 Anthropic 基于 Claude 模型打造的终端 AI 编程 Agent。它不是聊天机器人，也不是代码补全插件——它是一个可以直接操作你代码仓库的 AI 软件工程师：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;理解整个代码库（多文件、多语言、多层依赖）&lt;/li&gt;
+&lt;li&gt;自主规划任务，跨文件编写和修改代码&lt;/li&gt;
+&lt;li&gt;执行 Shell 命令、运行测试、验证结果&lt;/li&gt;
+&lt;li&gt;处理 Git 工作流（commit / PR / merge conflict）&lt;/li&gt;
+&lt;li&gt;通过 MCP 协议连接数据库、API 等外部工具&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;核心认知——你的角色转变&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Claude Code 最核心的变化：你的角色从「写代码」变成「描述需求 + 设定边界 + 审查结果」。&lt;/p&gt;
+&lt;p&gt;Claude 越能干，你越要注意：给清晰边界和验证标准，是用好它的关键。没有边界，它会改出你不想要的代码；没有验证标准，它不知道什么叫做对。&lt;/p&gt;
+&lt;h3 id=&#34;12-与-ai-ide-的核心区别&#34;&gt;1.2 与 AI IDE 的核心区别&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;工具&lt;/th&gt;
+&lt;th&gt;本质&lt;/th&gt;
+&lt;th&gt;使用方式&lt;/th&gt;
+&lt;th&gt;最适合场景&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Claude Code&lt;/td&gt;
+&lt;td&gt;CLI Agent&lt;/td&gt;
+&lt;td&gt;终端命令行&lt;/td&gt;
+&lt;td&gt;Repo 级自动化、大规模重构、DevOps&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Cursor&lt;/td&gt;
+&lt;td&gt;AI IDE&lt;/td&gt;
+&lt;td&gt;编辑器（内联）&lt;/td&gt;
+&lt;td&gt;逐行辅助、实时补全、单文件精细操作&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Windsurf&lt;/td&gt;
+&lt;td&gt;AI IDE&lt;/td&gt;
+&lt;td&gt;编辑器（内联）&lt;/td&gt;
+&lt;td&gt;代码上下文感知、内联建议&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Claude.ai&lt;/td&gt;
+&lt;td&gt;网页版&lt;/td&gt;
+&lt;td&gt;浏览器&lt;/td&gt;
+&lt;td&gt;轻量查询、移动端、无需安装&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;blockquote&gt;
+&lt;p&gt;两者互补，不是替代。Cursor 适合精细的逐行操作，Claude Code 适合大任务自动化。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;13-claude-code-能力全景&#34;&gt;1.3 Claude Code 能力全景&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;代码开发&lt;/strong&gt;：读懂整个 repo → 按需求写代码 → 跨多文件实现功能 → 安装依赖&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;调试修复&lt;/strong&gt;：复现 bug → 追踪根因 → 修改代码 → 运行测试验证&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;重构升级&lt;/strong&gt;：JS→TS 迁移、框架版本升级、模块化拆分、架构调整&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;测试自动化&lt;/strong&gt;：为现有代码补写单元测试、集成测试，修复失败用例&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Git 工作流&lt;/strong&gt;：生成 commit message、解决冲突、创建 PR、代码审查&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;文档生成&lt;/strong&gt;：README、API 文档、CHANGELOG、架构说明&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;外部集成&lt;/strong&gt;：通过 MCP 查询数据库、调用 API、控制浏览器&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;CI/CD 自动化&lt;/strong&gt;：配合 GitHub Actions 做自动代码审查和流水线生成&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;第二章-安装与账号配置&#34;&gt;第二章 安装与账号配置&lt;/h2&gt;
+&lt;h3 id=&#34;21-订阅要求&#34;&gt;2.1 订阅要求&lt;/h3&gt;
+&lt;p&gt;Claude Code 需要付费订阅，无免费版本：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;方案&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;th&gt;适合人群&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Claude Pro&lt;/td&gt;
+&lt;td&gt;claude.ai 订阅，包含 Claude Code 访问权限&lt;/td&gt;
+&lt;td&gt;个人开发者、初学者&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Claude Max&lt;/td&gt;
+&lt;td&gt;更高用量上限 + 高峰期优先 + 新功能优先体验&lt;/td&gt;
+&lt;td&gt;重度日常使用者&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;API 按量付费&lt;/td&gt;
+&lt;td&gt;Anthropic Console 充值，按 token 计费&lt;/td&gt;
+&lt;td&gt;评估阶段、轻量使用&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Team / Enterprise&lt;/td&gt;
+&lt;td&gt;团队协作 + 共享 CLAUDE.md + 管理后台&lt;/td&gt;
+&lt;td&gt;开发团队&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;blockquote&gt;
+&lt;p&gt;新手建议：先充值约 20 美元 API 额度，用自己真实工作流评估 1-2 周，再决定是否订阅 Max。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;登录地址：claude.com 或 console.anthropic.com&lt;/p&gt;
+&lt;h3 id=&#34;22-系统要求&#34;&gt;2.2 系统要求&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;操作系统：macOS 12+、Linux（Ubuntu 20.04+ / Debian 10+）、Windows 原生或 WSL2&lt;/li&gt;
+&lt;li&gt;网络：需要互联网连接（模型调用为云端 API）&lt;/li&gt;
+&lt;li&gt;强烈建议：项目目录是 Git 仓库（Claude Code 深度集成 Git 工作流）&lt;/li&gt;
+&lt;li&gt;可选：安装 gh CLI（&lt;code&gt;brew install gh&lt;/code&gt;），让 Claude 直接创建 issue、开 PR、读 PR 评论&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;23-安装方法&#34;&gt;2.3 安装方法&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;macOS / Linux / WSL（推荐）&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 官方安装脚本——无需 Node.js，安装后自动后台更新&lt;/span&gt;
+curl -fsSL https://claude.ai/install.sh &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; bash
+
+&lt;span class=&#34;c1&#34;&gt;# 验证安装&lt;/span&gt;
+claude --version
+
+&lt;span class=&#34;c1&#34;&gt;# Homebrew 安装（需手动升级）&lt;/span&gt;
+brew install --cask claude-code
+brew upgrade --cask claude-code
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;Windows&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;c&#34;&gt;# 方式一：PowerShell 一键安装（推荐）&lt;/span&gt;
+&lt;span class=&#34;nb&#34;&gt;irm &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;https&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;//&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;claude&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ai&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;install&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ps1&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;iex
+&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;&lt;/span&gt;
+&lt;span class=&#34;c&#34;&gt;# 方式二：WinGet（需手动升级）&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;winget&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;install&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Anthropic&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ClaudeCode&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;winget&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;upgrade&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Anthropic&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ClaudeCode&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;IDE 插件集成&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;VS Code：扩展市场搜索「Claude Code」安装，支持 @ 引用文件（含行号范围）、内联 Diff、多标签并行对话&lt;/li&gt;
+&lt;li&gt;JetBrains（IDEA / PyCharm / WebStorm）：JetBrains Marketplace 安装，启动快捷键 Cmd+Esc (Mac) / Ctrl+Esc (Windows)，支持可视化 diff&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;24-首次登录&#34;&gt;2.4 首次登录&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; ~/your-project
+claude  &lt;span class=&#34;c1&#34;&gt;# 首次启动，弹出浏览器授权&lt;/span&gt;
+claude /doctor  &lt;span class=&#34;c1&#34;&gt;# 运行诊断，确认一切正常&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;完成 OAuth 授权后凭证本地保存，后续无需重复登录。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;第三章-核心概念&#34;&gt;第三章 核心概念&lt;/h2&gt;
+&lt;h3 id=&#34;31-agent-loop代理循环&#34;&gt;3.1 Agent Loop（代理循环）&lt;/h3&gt;
+&lt;p&gt;Claude Code 采用循环代理模式——不是一问一答，而是持续执行直到任务完成：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;收集上下文&lt;/strong&gt;：读取相关文件、搜索代码、运行命令了解现状&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;规划任务&lt;/strong&gt;：分析要做什么、按什么顺序、影响哪些文件&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;执行操作&lt;/strong&gt;：编辑文件、执行 Shell 命令、调用 MCP 工具&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;验证结果&lt;/strong&gt;：运行测试、检查错误、对比预期行为&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;自我纠正&lt;/strong&gt;：验证失败则分析原因，重新执行&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;循环重复，直到任务完成或你按 Ctrl+C 中断。&lt;/p&gt;
+&lt;h3 id=&#34;32-上下文是有限资源&#34;&gt;3.2 上下文是有限资源&lt;/h3&gt;
+&lt;p&gt;这是使用 Claude Code 最重要的认知之一。上下文窗口（约 20 万 token）会消耗你说的每一句话、Claude 读取的每个文件、每个命令的输出，以及压缩后的历史摘要。上下文一旦过长，Claude 就会开始「遗忘」前面的指令，输出质量明显下降。&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;命令&lt;/th&gt;
+&lt;th&gt;作用&lt;/th&gt;
+&lt;th&gt;何时使用&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;/clear&lt;/td&gt;
+&lt;td&gt;清空全部对话历史&lt;/td&gt;
+&lt;td&gt;切换任务前（必须养成习惯）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/compact [说明]&lt;/td&gt;
+&lt;td&gt;智能压缩历史，保留摘要&lt;/td&gt;
+&lt;td&gt;上下文超过 70% 时&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/context&lt;/td&gt;
+&lt;td&gt;可视化显示上下文使用比例&lt;/td&gt;
+&lt;td&gt;长时间工作时随时检查&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/cost&lt;/td&gt;
+&lt;td&gt;查看当前会话 token 用量&lt;/td&gt;
+&lt;td&gt;了解成本，优化使用习惯&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;重要原则&lt;/strong&gt;：同一个问题修正超过两次，直接 /clear 用更精确的提示重新开始。新会话 + 好提示 &amp;gt; 长会话 + 累积修正。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;33-三种权限模式&#34;&gt;3.3 三种权限模式&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;模式&lt;/th&gt;
+&lt;th&gt;触发方式&lt;/th&gt;
+&lt;th&gt;行为&lt;/th&gt;
+&lt;th&gt;适用场景&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Normal Mode（默认）&lt;/td&gt;
+&lt;td&gt;默认启动&lt;/td&gt;
+&lt;td&gt;重大操作前弹窗请求批准&lt;/td&gt;
+&lt;td&gt;日常开发任务&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Plan Mode&lt;/td&gt;
+&lt;td&gt;Shift+Tab 两次 / /plan&lt;/td&gt;
+&lt;td&gt;只读分析，不执行任何修改&lt;/td&gt;
+&lt;td&gt;复杂任务先分析再执行&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Auto-Accept&lt;/td&gt;
+&lt;td&gt;&amp;ndash;dangerously-skip-permissions&lt;/td&gt;
+&lt;td&gt;自动批准所有操作&lt;/td&gt;
+&lt;td&gt;CI/CD 等完全自动化场景&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;34-模型选择策略&#34;&gt;3.4 模型选择策略&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;模型&lt;/th&gt;
+&lt;th&gt;定位&lt;/th&gt;
+&lt;th&gt;适用场景&lt;/th&gt;
+&lt;th&gt;切换命令&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Claude Sonnet 4.6&lt;/td&gt;
+&lt;td&gt;默认，综合最优&lt;/td&gt;
+&lt;td&gt;80% 日常编码任务&lt;/td&gt;
+&lt;td&gt;无需切换&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Claude Opus 4.6&lt;/td&gt;
+&lt;td&gt;最强推理能力&lt;/td&gt;
+&lt;td&gt;���杂架构设计、难以定位的 bug&lt;/td&gt;
+&lt;td&gt;claude &amp;ndash;model opus&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Claude Haiku&lt;/td&gt;
+&lt;td&gt;最快，最省费用&lt;/td&gt;
+&lt;td&gt;简单查询、预算受限场景&lt;/td&gt;
+&lt;td&gt;claude &amp;ndash;model haiku&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;第四章-快速入门30-分钟第一个任务&#34;&gt;第四章 快速入门——30 分钟第一个任务&lt;/h2&gt;
+&lt;h3 id=&#34;41-启动与基本对话&#34;&gt;4.1 启动与基本对话&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; ~/my-project  &lt;span class=&#34;c1&#34;&gt;# 进入真实项目目录&lt;/span&gt;
+claude  &lt;span class=&#34;c1&#34;&gt;# 启动&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;然后可以问：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;这个项目是做什么的？给我结构概览和技术栈总结。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;42-四种基础输入方式&#34;&gt;4.2 四种基础输入方式&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;自然语言&lt;/strong&gt;：帮我在 src/utils.js 添加一个格式化日期的函数&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;@ 文件引用&lt;/strong&gt;：&lt;code&gt;@src/api/users.js 这里的分页逻辑有 bug&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;! Shell 执行&lt;/strong&gt;：&lt;code&gt;!git status 然后告诉我有哪些未提交的改动&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;粘贴错误&lt;/strong&gt;：直接粘贴终端报错，Claude 分析根因&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;43-第一个完整任务示例&#34;&gt;4.3 第一个完整任务示例&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;mkdir todo-api &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; todo-api &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; git init
+claude
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;blockquote&gt;
+&lt;p&gt;用 Node.js + Express 创建一个 Todo REST API，包含增删改查接口、参数验证和错误处理。先告诉我你的实现计划，等我确认后再写代码。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;方案可以，开始实现，做完跑测试。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;为所有接口写 Jest 单元测试，先写失败测试，测试能正确运行后再修复让测试通过。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;第五章-claudemd给-claude-持久记忆&#34;&gt;第五章 CLAUDE.md——给 Claude 持久记忆&lt;/h2&gt;
+&lt;h3 id=&#34;51-什么是-claudemd&#34;&gt;5.1 什么是 CLAUDE.md？&lt;/h3&gt;
+&lt;p&gt;CLAUDE.md 是 Claude Code 每次启动时自动读取的配置文件，让 Claude 始终了解你的规范。&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;文件位置&lt;/th&gt;
+&lt;th&gt;作用范围&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;项目根目录/CLAUDE.md&lt;/td&gt;
+&lt;td&gt;当前项目，提交到 git&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;.claude/CLAUDE.md&lt;/td&gt;
+&lt;td&gt;当前项目（更整洁）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;CLAUDE.local.md&lt;/td&gt;
+&lt;td&gt;当前项目，不提交&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;~/.claude/CLAUDE.md&lt;/td&gt;
+&lt;td&gt;全局，所有项目&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;52-快速创建&#34;&gt;5.2 快速创建&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;claude
+&amp;gt; /init  &lt;span class=&#34;c1&#34;&gt;# 生成后手动补充你最重要的规范&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;53-专业-claudemd-模板&#34;&gt;5.3 专业 CLAUDE.md 模板&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-markdown&#34; data-lang=&#34;markdown&#34;&gt;&lt;span class=&#34;gh&#34;&gt;# 项目名称 - Claude 工作指南
+&lt;/span&gt;&lt;span class=&#34;gh&#34;&gt;&lt;/span&gt;
+&lt;span class=&#34;gu&#34;&gt;## 项目概述
+&lt;/span&gt;&lt;span class=&#34;gu&#34;&gt;&lt;/span&gt;一句话描述项目用途和边界。
+
+&lt;span class=&#34;gu&#34;&gt;## 技术栈
+&lt;/span&gt;&lt;span class=&#34;gu&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;-&lt;/span&gt; 后端：Spring Boot 3.x, Java 17, MyBatis Plus
+&lt;span class=&#34;k&#34;&gt;-&lt;/span&gt; 前端：React 18, TypeScript, Ant Design
+&lt;span class=&#34;k&#34;&gt;-&lt;/span&gt; 数据库：MySQL 8.0
+
+&lt;span class=&#34;gu&#34;&gt;## 常用命令
+&lt;/span&gt;&lt;span class=&#34;gu&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;-&lt;/span&gt; 启动后端：./gradlew bootRun
+&lt;span class=&#34;k&#34;&gt;-&lt;/span&gt; 启动前端：cd frontend &lt;span class=&#34;err&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; pnpm dev
+&lt;span class=&#34;k&#34;&gt;-&lt;/span&gt; 跑单个测试：./gradlew test --tests &amp;#39;UserServiceTest&amp;#39;
+
+&lt;span class=&#34;gu&#34;&gt;## 代码规范
+&lt;/span&gt;&lt;span class=&#34;gu&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;-&lt;/span&gt; 所有 API 返回用 Result 统一包装
+&lt;span class=&#34;k&#34;&gt;-&lt;/span&gt; Service 层只包含业务逻辑，不直接操作数据库
+&lt;span class=&#34;k&#34;&gt;-&lt;/span&gt; 禁止在 Controller 层写业务逻辑
+
+&lt;span class=&#34;gu&#34;&gt;## 禁止事项
+&lt;/span&gt;&lt;span class=&#34;gu&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;-&lt;/span&gt; IMPORTANT: 不要修改 prisma/migrations/ 下的文件
+&lt;span class=&#34;k&#34;&gt;-&lt;/span&gt; IMPORTANT: 所有数据库改动通过 Flyway Migration 文件
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id=&#34;第六章-完整命令速查手册&#34;&gt;第六章 完整命令速查手册&lt;/h2&gt;
+&lt;h3 id=&#34;61-启动参数&#34;&gt;6.1 启动参数&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;命令&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;claude&lt;/td&gt;
+&lt;td&gt;默认启动（交互模式）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;claude &amp;ndash;model opus&lt;/td&gt;
+&lt;td&gt;启动时指定模型&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;claude &amp;ndash;permission-mode plan&lt;/td&gt;
+&lt;td&gt;以 Plan Mode 启动&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;claude &amp;ndash;worktree feature-xxx&lt;/td&gt;
+&lt;td&gt;在隔离 Worktree 中启动&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;claude &amp;ndash;continue&lt;/td&gt;
+&lt;td&gt;继续最近一次对话&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;claude &amp;ndash;dangerously-skip-permissions&lt;/td&gt;
+&lt;td&gt;跳过所有权限检查&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;62-headless-模式非交互&#34;&gt;6.2 Headless 模式（非交互）&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;claude -p &lt;span class=&#34;s2&#34;&gt;&amp;#34;解释项目结构&amp;#34;&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;# 单次查询后退出&lt;/span&gt;
+claude -p &lt;span class=&#34;s2&#34;&gt;&amp;#34;列出所有 API 接口&amp;#34;&lt;/span&gt; --output-format json
+cat error.log &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; claude -p &lt;span class=&#34;s2&#34;&gt;&amp;#34;分析这个错误的根因&amp;#34;&lt;/span&gt;
+git diff HEAD &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; claude -p &lt;span class=&#34;s2&#34;&gt;&amp;#34;审查这次改动有无安全隐患&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;63-会话内命令&#34;&gt;6.3 会话内命令&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;命令&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;/clear&lt;/td&gt;
+&lt;td&gt;清空对话历史&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/compact&lt;/td&gt;
+&lt;td&gt;压缩对话&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/context&lt;/td&gt;
+&lt;td&gt;查看上下文使用比例&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/cost&lt;/td&gt;
+&lt;td&gt;查看 token 用量&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/model&lt;/td&gt;
+&lt;td&gt;切换模型&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/config&lt;/td&gt;
+&lt;td&gt;打开设置界面&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/doctor&lt;/td&gt;
+&lt;td&gt;运行健康检查&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/init&lt;/td&gt;
+&lt;td&gt;生成 CLAUDE.md 模板&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/exit&lt;/td&gt;
+&lt;td&gt;退出&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;64-键盘快捷键&#34;&gt;6.4 键盘快捷键&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;快捷键&lt;/th&gt;
+&lt;th&gt;功能&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Shift + Tab（两次）&lt;/td&gt;
+&lt;td&gt;进入 Plan Mode&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Ctrl + C&lt;/td&gt;
+&lt;td&gt;中断当前操作&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Ctrl + G&lt;/td&gt;
+&lt;td&gt;用系统编辑器编写多行提示词&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Ctrl + B&lt;/td&gt;
+&lt;td&gt;将任务切到后台&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Esc&lt;/td&gt;
+&lt;td&gt;中断当前操作&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;↑ / ↓&lt;/td&gt;
+&lt;td&gt;浏览历史输入记录&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;第七章-进阶技巧&#34;&gt;第七章 进阶技巧&lt;/h2&gt;
+&lt;h3 id=&#34;71-plan-mode-的正确姿势&#34;&gt;7.1 Plan Mode 的正确姿势&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;按 Shift+Tab 两次进入 Plan Mode&lt;/li&gt;
+&lt;li&gt;描述你要做的事，让 Claude 分析影响面和执行步骤&lt;/li&gt;
+&lt;li&gt;仔细审查输出的规划，可以继续追问&lt;/li&gt;
+&lt;li&gt;确认无误后，按 Shift+Tab 切回 Normal Mode 执行&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;探索 → 规划 → 执行 三步法&lt;/strong&gt;&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Step 1：分析现有实现，给我一个方案
+Step 2：方案可以，开始实现
+Step 3：Claude 执行，完成后跑测试验证
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;72-黄金提示词公式&#34;&gt;7.2 黄金提示词公式&lt;/h3&gt;
+&lt;p&gt;【目标】+【位置】+【验证】+【约束】&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;好的示例&lt;/strong&gt;：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;为 @src/api/users.ts 中的 getUserById 函数添加 Redis 缓存，缓存有效期 5 分钟，使用现有的 @src/lib/redis.ts 客户端。实现后运行 pnpm test 确保所有测试通过，禁止修改函数签名和返回类型。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;73-描述症状不是猜测原因&#34;&gt;7.3 描述症状，不是猜测原因&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;差的问法&lt;/strong&gt;：修复登录 bug&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;好的问法&lt;/strong&gt;：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;用户反馈会话超时后登录失败。检查 @src/auth/ 下的认证流程，特别是 token 刷新逻辑。先写失败测试复现，再修复，修完跑测试验证。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;74-mcp-服务器集成&#34;&gt;7.4 MCP 服务器集成&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 添加 MCP 服务器&lt;/span&gt;
+claude mcp add context7 npx @context7/mcp
+claude mcp add playwright npx &lt;span class=&#34;s1&#34;&gt;&amp;#39;@playwright/mcp@latest&amp;#39;&lt;/span&gt;
+claude mcp add github npx @github/mcp
+
+&lt;span class=&#34;c1&#34;&gt;# 查看已添加的服务器&lt;/span&gt;
+claude mcp list
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id=&#34;第八章-subagents独立上下文的专用助手&#34;&gt;第八章 Subagents——独立上下文的专用助手&lt;/h2&gt;
+&lt;h3 id=&#34;81-什么是-subagent&#34;&gt;8.1 什么是 Subagent？&lt;/h3&gt;
+&lt;p&gt;Subagent 是在独立上下文窗口里运行的专用 AI 助手，有自定义的系统提示和工具权限限制。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;核心价值&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;隔离大量输出——测试报告不会污染主会话上下文&lt;/li&gt;
+&lt;li&gt;强制工具限制——只读代理无法写文件，安全可控&lt;/li&gt;
+&lt;li&gt;并行探索——多个 Subagent 同时在不同模块并行调查&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;82-创建自定义-subagent&#34;&gt;8.2 创建自定义 Subagent&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;mkdir -p .claude/agents
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;创建 &lt;code&gt;.claude/agents/code-reviewer.md&lt;/code&gt;：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-markdown&#34; data-lang=&#34;markdown&#34;&gt;---
+name: code-reviewer
+description: 代码审查专家。代码修改后主动使用。
+tools: Read, Grep, Glob, Bash
+model: inherit
+---
+
+你是资深代码审查专家。
+调用时：
+&lt;span class=&#34;k&#34;&gt;1.&lt;/span&gt; 运行 git diff 查看最近变更
+&lt;span class=&#34;k&#34;&gt;2.&lt;/span&gt; 聚焦修改的文件立即开始审查
+
+按优先级组织反馈：
+&lt;span class=&#34;k&#34;&gt;-&lt;/span&gt; [严重] 必须修复，存在 bug 或安全漏洞
+&lt;span class=&#34;k&#34;&gt;-&lt;/span&gt; [警告] 应该修复
+&lt;span class=&#34;k&#34;&gt;-&lt;/span&gt; [建议] 可考虑改进
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id=&#34;第九章-hooks自动化触发器&#34;&gt;第九章 Hooks——自动化触发器&lt;/h2&gt;
+&lt;h3 id=&#34;91-什么是-hooks&#34;&gt;9.1 什么是 Hooks？&lt;/h3&gt;
+&lt;p&gt;Hooks 是在特定事件发生时自动执行的 Shell 命令，让 Claude Code 的操作触发外部自动化行为。&lt;/p&gt;
+&lt;h3 id=&#34;92-实用-hooks-配置示例&#34;&gt;9.2 实用 Hooks 配置示例&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;#34;hooks&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;nt&#34;&gt;&amp;#34;PostToolUse&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;
+      &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;nt&#34;&gt;&amp;#34;matcher&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Edit|Write&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+        &lt;span class=&#34;nt&#34;&gt;&amp;#34;hooks&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;
+          &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+            &lt;span class=&#34;nt&#34;&gt;&amp;#34;type&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;command&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+            &lt;span class=&#34;nt&#34;&gt;&amp;#34;command&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;npm run lint -- --fix --quiet&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+            &lt;span class=&#34;nt&#34;&gt;&amp;#34;timeout&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;30000&lt;/span&gt;
+          &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+        &lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;
+      &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;
+  &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id=&#34;第十章-worktree并行任务隔离&#34;&gt;第十章 Worktree——并行任务隔离&lt;/h2&gt;
+&lt;h3 id=&#34;101-什么是-worktree&#34;&gt;10.1 什么是 Worktree？&lt;/h3&gt;
+&lt;p&gt;Worktree 基于 Git 的 worktree 功能，让你在独立的目录中对同一仓库的不同分支并行工作。&lt;/p&gt;
+&lt;h3 id=&#34;102-基本用法&#34;&gt;10.2 基本用法&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 在隔离 Worktree 中启动&lt;/span&gt;
+claude --worktree feature-auth
+
+&lt;span class=&#34;c1&#34;&gt;# 同时在两个终端运行&lt;/span&gt;
+claude --worktree feature-user-export
+claude --worktree bugfix-login-timeout
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;103-writer--reviewer-双会话模式&#34;&gt;10.3 Writer / Reviewer 双会话模式&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 终端 1：实现会话&lt;/span&gt;
+claude --worktree feature-payment
+&amp;gt; 实现支付模块，完成后告诉我
+
+&lt;span class=&#34;c1&#34;&gt;# 终端 2：审查会话（全新上下文）&lt;/span&gt;
+claude
+&amp;gt; 审查 @src/payment/ 下最近一次 git commit 的改动，重点检查：边界情况、安全隐患、与现有代码风格一致性。
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id=&#34;第十一章-实战-sop&#34;&gt;第十一章 实战 SOP&lt;/h2&gt;
+&lt;h3 id=&#34;111-sop-a老项目重构&#34;&gt;11.1 SOP A：老项目重构&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;阶段&lt;/th&gt;
+&lt;th&gt;目标&lt;/th&gt;
+&lt;th&gt;关键操作&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Phase 0&lt;/td&gt;
+&lt;td&gt;摸底&lt;/td&gt;
+&lt;td&gt;Plan Mode + Subagent 扫描，生成技术债报告&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Phase 1&lt;/td&gt;
+&lt;td&gt;安全网&lt;/td&gt;
+&lt;td&gt;先补测试，固定现有行为&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Phase 2&lt;/td&gt;
+&lt;td&gt;规划&lt;/td&gt;
+&lt;td&gt;Plan Mode 生成重构清单，人工审核&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Phase 3&lt;/td&gt;
+&lt;td&gt;执行&lt;/td&gt;
+&lt;td&gt;Worktree 隔离，每步验证&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Phase 4&lt;/td&gt;
+&lt;td&gt;收尾&lt;/td&gt;
+&lt;td&gt;全量对比验证，创建 PR&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;112-sop-b快速需求迭代&#34;&gt;11.2 SOP B：快速需求迭代&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;阶段&lt;/th&gt;
+&lt;th&gt;目标&lt;/th&gt;
+&lt;th&gt;时间估计&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Phase 0&lt;/td&gt;
+&lt;td&gt;需求规格化&lt;/td&gt;
+&lt;td&gt;5-10 分钟&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Phase 1&lt;/td&gt;
+&lt;td&gt;影响面评估&lt;/td&gt;
+&lt;td&gt;5 分钟&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Phase 2&lt;/td&gt;
+&lt;td&gt;并行开发&lt;/td&gt;
+&lt;td&gt;并行节省 30-50%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Phase 3&lt;/td&gt;
+&lt;td&gt;互审&lt;/td&gt;
+&lt;td&gt;15 分钟&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Phase 4&lt;/td&gt;
+&lt;td&gt;交付&lt;/td&gt;
+&lt;td&gt;10 分钟&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;113-sop-c全新项目研发&#34;&gt;11.3 SOP C：全新项目研发&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;阶段&lt;/th&gt;
+&lt;th&gt;目标&lt;/th&gt;
+&lt;th&gt;关键操作&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Phase 0&lt;/td&gt;
+&lt;td&gt;架构决策&lt;/td&gt;
+&lt;td&gt;ADR 文档化&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Phase 1&lt;/td&gt;
+&lt;td&gt;项目初始化&lt;/td&gt;
+&lt;td&gt;CLAUDE.md + Subagents + Hooks 一次配齐&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Phase 2&lt;/td&gt;
+&lt;td&gt;骨架生成&lt;/td&gt;
+&lt;td&gt;Plan Mode 确认后生成&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Phase 3&lt;/td&gt;
+&lt;td&gt;迭代开发&lt;/td&gt;
+&lt;td&gt;SPEC → Plan → Code → Verify → Commit&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Phase 4&lt;/td&gt;
+&lt;td&gt;CI/CD 接入&lt;/td&gt;
+&lt;td&gt;GitHub Actions + Claude PR 审查&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;第十二章-常见错误与避坑指南&#34;&gt;第十二章 常见错误与避坑指南&lt;/h2&gt;
+&lt;h3 id=&#34;121-使用习惯类错误&#34;&gt;12.1 使用习惯类错误&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;❌ 不清空上下文就切换任务&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;解决：每次切换任务前执行 /clear，养成习惯。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;❌ 提示词太模糊&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;解决：使用黄金提示词公式：目标 + 文件位置 + 验证标准 + 约束条件。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;❌ 不先规划就执行大改动&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;解决：改动超过 3 个文件，先用 Plan Mode 看清楚规划后再执行。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;❌ 完全信任 AI 不审查输出&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;解决：AI 生成的代码必须经过人工审查，重点看边界条件、错误处理、权限检查。&lt;/p&gt;
+&lt;h3 id=&#34;122-技术配置类错误&#34;&gt;12.2 技术配置类错误&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;❌ CLAUDE.md 写太长&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;解决：精简 CLAUDE.md，只留「Claude 最容易弄错的事」。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;❌ Claude 读了太多不必要的文件&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;解决：用 @ 精确引用文件而非整个目录。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;附录&#34;&gt;附录&lt;/h2&gt;
+&lt;h3 id=&#34;a-完整斜杠命令速查&#34;&gt;A. 完整斜杠命令速查&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;命令&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;/clear&lt;/td&gt;
+&lt;td&gt;清空对话历史&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/compact&lt;/td&gt;
+&lt;td&gt;压缩对话&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/context&lt;/td&gt;
+&lt;td&gt;查看上下文使用比例&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/cost&lt;/td&gt;
+&lt;td&gt;查看 token 用量&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/export&lt;/td&gt;
+&lt;td&gt;导出当前对话&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/model&lt;/td&gt;
+&lt;td&gt;切换模型&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/config&lt;/td&gt;
+&lt;td&gt;打开设置&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/permissions&lt;/td&gt;
+&lt;td&gt;管理工具权限&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/doctor&lt;/td&gt;
+&lt;td&gt;健康检查&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/init&lt;/td&gt;
+&lt;td&gt;生成 CLAUDE.md 模板&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/memory&lt;/td&gt;
+&lt;td&gt;查看自动记忆&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/hooks&lt;/td&gt;
+&lt;td&gt;查看 Hooks 配置&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/mcp&lt;/td&gt;
+&lt;td&gt;管理 MCP 服务器&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/agents&lt;/td&gt;
+&lt;td&gt;管理 Subagents&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;/exit&lt;/td&gt;
+&lt;td&gt;退出&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id=&#34;b-推荐-claude-目录结构&#34;&gt;B. 推荐 .claude/ 目录结构&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;.claude/
+├── settings.json          # 权限 + Hooks 配置
+├── CLAUDE.md            # 项目级记忆
+├── agents/              # 自定义 Subagents
+│   ├── code-reviewer.md
+│   └── debugger.md
+├── skills/             # 按需加载的知识片段
+└── specs/              # 功能需求规格
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;c-官方资源&#34;&gt;C. 官方资源&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;完整文档：code.claude.com/docs&lt;/li&gt;
+&lt;li&gt;Anthropic Console：console.anthropic.com&lt;/li&gt;
+&lt;li&gt;社区资源：github.com/anthropics/awesome-claude-code&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;总结&#34;&gt;总结&lt;/h2&gt;
+&lt;p&gt;Claude Code 的本质：&lt;strong&gt;一个可以直接操作代码仓库的 AI 软件工程师&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;打开终端，输入 &lt;code&gt;claude&lt;/code&gt;，开始你的第一个任务 🚀&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;本文首发于 2025-03-10&lt;/em&gt;
+&lt;em&gt;持续分享 AI 编程工具深度教程 · 开发效率提升方法论&lt;/em&gt;&lt;/p&gt;
 </description>
         </item>
         <item>
