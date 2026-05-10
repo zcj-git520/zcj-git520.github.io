@@ -995,6 +995,112 @@ Custom Dashboard → 业务指标监控
 </description>
         </item>
         <item>
+        <title>Claude Code 安装和使用指南</title>
+        <link>https://zcj-git520.github.io/p/claude-code-%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/</link>
+        <pubDate>Tue, 10 Feb 2026 10:00:00 +0800</pubDate>
+        
+        <guid>https://zcj-git520.github.io/p/claude-code-%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/</guid>
+        <description>&lt;img src="https://zcj-git520.github.io/1.jpeg" alt="Featured image of post Claude Code 安装和使用指南" /&gt;&lt;h1 id=&#34;claude-codeai-驱动的编程助手&#34;&gt;Claude Code：AI 驱动的编程助手&lt;/h1&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Claude Code 是 Anthropic 公司推出的 AI 编程助手，它能够阅读代码库、编辑文件、运行命令，帮助开发者完成各种编码任务。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;为什么选择-claude-code&#34;&gt;为什么选择 Claude Code？&lt;/h2&gt;
+&lt;p&gt;在日常开发中，我们总是会遇到以下问题：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;重复性的代码不想写&lt;/li&gt;
+&lt;li&gt;Bug 定位半天找不到原因&lt;/li&gt;
+&lt;li&gt;写完代码还要自己跑测试&lt;/li&gt;
+&lt;li&gt;维护旧代码提心吊胆&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Claude Code 可以帮你解决这些问题。它能够：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;根据描述自动编写代码&lt;/li&gt;
+&lt;li&gt;分析错误并修复 Bug&lt;/li&gt;
+&lt;li&gt;编写和运行测试&lt;/li&gt;
+&lt;li&gt;重构和优化代码&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;安装方法&#34;&gt;安装方法&lt;/h2&gt;
+&lt;h3 id=&#34;windows-powershell-安装&#34;&gt;Windows PowerShell 安装&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span class=&#34;nb&#34;&gt;irm &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;https&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;//&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;claude&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ai&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;/&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;install&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ps1&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;iex
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;windows-cmd-安装&#34;&gt;Windows CMD 安装&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-batch&#34; data-lang=&#34;batch&#34;&gt;curl -fsSL https://claude.ai/install.cmd -o install.cmd &lt;span class=&#34;p&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; install.cmd &lt;span class=&#34;p&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;del&lt;/span&gt; install.cmd
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;macos--linux-安装&#34;&gt;macOS / Linux 安装&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;curl -fsSL https://claude.ai/install.sh &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; bash
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;使用-homebrewmacos&#34;&gt;使用 Homebrew（macOS）&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;brew install --cask claude-code
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;快速开始&#34;&gt;快速开始&lt;/h2&gt;
+&lt;h3 id=&#34;第一步登录账号&#34;&gt;第一步：登录账号&lt;/h3&gt;
+&lt;p&gt;首次使用需要登录 Claude 账号：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;claude
+&lt;span class=&#34;c1&#34;&gt;# 或者&lt;/span&gt;
+/login
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;支持的账号类型：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Claude Pro / Max / Team / Enterprise（推荐）&lt;/li&gt;
+&lt;li&gt;Claude Console（免费额度）&lt;/li&gt;
+&lt;li&gt;Amazon Bedrock / Google Vertex AI（企业用户）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;第二步进入项目目录&#34;&gt;第二步：进入项目目录&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; your-project
+claude
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;第三步开始对话&#34;&gt;第三步：开始对话&lt;/h3&gt;
+&lt;p&gt;启动后，你可以用自然语言描述需求，例如：&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;what does this project do?
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Claude Code 会分析你的代码库并给出回答。&lt;/p&gt;
+&lt;h2 id=&#34;常用命令&#34;&gt;常用命令&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;/help&lt;/code&gt; - 查看可用命令&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/resume&lt;/code&gt; - 继续之前的对话&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/login&lt;/code&gt; - 切换账号&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;exit&lt;/code&gt; - 退出会话&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;实际使用案例&#34;&gt;实际使用案例&lt;/h2&gt;
+&lt;h3 id=&#34;案例一编写测试&#34;&gt;案例一：编写测试&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;claude &lt;span class=&#34;s2&#34;&gt;&amp;#34;为 auth 模块编写测试用例并运行&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Claude Code 会：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;分析 auth 模块的代码&lt;/li&gt;
+&lt;li&gt;生成测试用例&lt;/li&gt;
+&lt;li&gt;运行测试并修复失败&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;案例二修复-bug&#34;&gt;案例二：修复 Bug&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;claude &lt;span class=&#34;s2&#34;&gt;&amp;#34;修复登录页面的 CSRF 错误&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Claude Code 会：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;搜索相关代码&lt;/li&gt;
+&lt;li&gt;定位问题根源&lt;/li&gt;
+&lt;li&gt;实现修复方案&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;案例三自动化任务&#34;&gt;案例三：自动化任务&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;claude &lt;span class=&#34;s2&#34;&gt;&amp;#34;更新所有依赖包并生成 release notes&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;多平台支持&#34;&gt;多平台支持&lt;/h2&gt;
+&lt;p&gt;Claude Code 不仅限于终端，还支持：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;VS Code&lt;/strong&gt; - 安装 Claude Code 扩展&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;JetBrains&lt;/strong&gt; - 安装 Claude Code 插件&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;桌面应用&lt;/strong&gt; - 独立的桌面客户端&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;网页版&lt;/strong&gt; - 浏览器直接使用&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Slack&lt;/strong&gt; - 集成到工作群&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;注意事项&#34;&gt;注意事项&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;首次使用需要账号登录&lt;/li&gt;
+&lt;li&gt;Windows 推荐安装 Git for Windows&lt;/li&gt;
+&lt;li&gt;某些功能需要付费订阅&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;总结&#34;&gt;总结&lt;/h2&gt;
+&lt;p&gt;Claude Code 是一个强大的 AI 编程助手，可以显著提升开发效率。它不仅能写代码，还能理解整个代码库，帮助你完成各种复杂的编码任务。&lt;/p&gt;
+&lt;p&gt;如果你经常需要：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;写重复性的代码&lt;/li&gt;
+&lt;li&gt;调试难以复现的 Bug&lt;/li&gt;
+&lt;li&gt;维护历史遗留项目&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;不妨试试 Claude Code，它可能会成为你的下一个编程利器。&lt;/p&gt;
+&lt;hr&gt;
+</description>
+        </item>
+        <item>
         <title>AI 智能体开发速查手册</title>
         <link>https://zcj-git520.github.io/p/ai-%E6%99%BA%E8%83%BD%E4%BD%93%E5%BC%80%E5%8F%91%E9%80%9F%E6%9F%A5%E6%89%8B%E5%86%8C/</link>
         <pubDate>Sun, 25 Jan 2026 22:00:38 +0800</pubDate>

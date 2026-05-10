@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>工具推荐 on Chengji Zhao&#39;s blog</title>
+    <link>https://zcj-git520.github.io/categories/%E5%B7%A5%E5%85%B7%E6%8E%A8%E8%8D%90/</link>
+    <description>Recent content in 工具推荐 on Chengji Zhao&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Tue, 10 Feb 2026 10:00:00 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/%E5%B7%A5%E5%85%B7%E6%8E%A8%E8%8D%90/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Claude Code 安装和使用指南</title>
+      <link>https://zcj-git520.github.io/p/claude-code-%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/</link>
+      <pubDate>Tue, 10 Feb 2026 10:00:00 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/claude-code-%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/</guid>
+      <description>Claude Code：AI 驱动的编程助手  Claude Code 是 Anthropic 公司推出的 AI 编程助手，它能够阅读代码库、编辑文件、运行命令，帮助开发者完成各种编码任务。
+ 为什么选择 Claude Code？ 在日常开发中，我们总是会遇到以下问题：
+ 重复性的代码不想写 Bug 定位半天找不到原因 写完代码还要自己跑测试 维护旧代码提心吊胆  Claude Code 可以帮你解决这些问题。它能够：
+ 根据描述自动编写代码 分析错误并修复 Bug 编写和运行测试 重构和优化代码  安装方法 Windows PowerShell 安装 irm https://claude.ai/install.ps1 | iex Windows CMD 安装 curl -fsSL https://claude.ai/install.cmd -o install.cmd &amp;amp;&amp;amp; install.cmd &amp;amp;&amp;amp; del install.cmd macOS / Linux 安装 curl -fsSL https://claude.ai/install.sh | bash 使用 Homebrew（macOS） brew install --cask claude-code 快速开始 第一步：登录账号 首次使用需要登录 Claude 账号：</description>
+    </item>
+    
+  </channel>
+</rss>
