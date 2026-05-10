@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="300" viewBox="0 0 800 300">
+  <rect width="800" height="300" fill="#0f172a"/>
+  <text x="400" y="35" font-family="Arial" font-size="18" fill="#fff" text-anchor="middle">Find Skills 使用流程</text>
+  
+  <!-- Step 1 -->
+  <rect x="40" y="70" width="150" height="60" rx="10" fill="#3b82f6"/>
+  <text x="115" y="100" font-family="Arial" font-size="14" fill="white" text-anchor="middle">Step 1</text>
+  <text x="115" y="120" font-family="Arial" font-size="12" fill="#bfdbfe" text-anchor="middle">理解需求</text>
+  
+  <text x="205" y="105" font-family="Arial" font-size="20" fill="#64748b">→</text>
+  
+  <!-- Step 2 -->
+  <rect x="220" y="70" width="150" height="60" rx="10" fill="#8b5cf6"/>
+  <text x="295" y="100" font-family="Arial" font-size="14" fill="white" text-anchor="middle">Step 2</text>
+  <text x="295" y="120" font-family="Arial" font-size="12" fill="#ede9fe" text-anchor="middle">查 Leaderboard</text>
+  
+  <text x="385" y="105" font-family="Arial" font-size="20" fill="#64748b">→</text>
+  
+  <!-- Step 3 -->
+  <rect x="400" y="70" width="150" height="60" rx="10" fill="#06b6d4"/>
+  <text x="475" y="100" font-family="Arial" font-size="14" fill="white" text-anchor="middle">Step 3</text>
+  <text x="475" y="120" font-family="Arial" font-size="12" fill="#cffafe" text-anchor="middle">搜索技能</text>
+  
+  <text x="565" y="105" font-family="Arial" font-size="20" fill="#64748b">→</text>
+  
+  <!-- Step 4 -->
+  <rect x="580" y="70" width="150" height="60" rx="10" fill="#22c55e"/>
+  <text x="655" y="100" font-family="Arial" font-size="14" fill="white" text-anchor="middle">Step 4</text>
+  <text x="655" y="120" font-family="Arial" font-size="12" fill="#dcfce7" text-anchor="middle">验证质量</text>
+  
+  <!-- Code example -->
+  <rect x="100" y="160" width="600" height="100" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="120" y="195" font-family="monospace" font-size="14" fill="#22d3ee"># 搜索技能</text>
+  <text x="120" y="220" font-family="monospace" font-size="13" fill="#fff">npx skills find react performance</text>
+  <text x="120" y="245" font-family="monospace" font-size="13" fill="#fff">npx skills add vercel-labs/agent-skills@react -g -y</text>
+</svg>

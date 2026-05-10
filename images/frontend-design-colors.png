@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="300" viewBox="0 0 800 300">
+  <rect width="800" height="300" fill="#f8fafc"/>
+  <text x="400" y="35" font-family="Arial" font-size="18" fill="#1e293b" text-anchor="middle">配色方案示例</text>
+  
+  <!-- Primary Colors -->
+  <text x="80" y="70" font-family="Arial" font-size="14" fill="#1e293b" text-anchor="middle">主色</text>
+  <rect x="40" y="85" width="80" height="50" rx="8" fill="#3b82f6"/>
+  <text x="80" y="155" font-family="monospace" font-size="12" fill="#64748b" text-anchor="middle">#3b82f6</text>
+  
+  <rect x="130" y="85" width="80" height="50" rx="8" fill="#2563eb"/>
+  <text x="170" y="155" font-family="monospace" font-size="12" fill="#64748b" text-anchor="middle">#2563eb</text>
+  
+  <rect x="220" y="85" width="80" height="50" rx="8" fill="#1d4ed8"/>
+  <text x="260" y="155" font-family="monospace" font-size="12" fill="#64748b" text-anchor="middle">#1d4ed8</text>
+  
+  <!-- Success -->
+  <text x="350" y="70" font-family="Arial" font-size="14" fill="#1e293b" text-anchor="middle">成功</text>
+  <rect x="310" y="85" width="80" height="50" rx="8" fill="#22c55e"/>
+  <text x="350" y="155" font-family="monospace" font-size="12" fill="#64748b" text-anchor="middle">#22c55e</text>
+  
+  <!-- Warning -->
+  <text x="460" y="70" font-family="Arial" font-size="14" fill="#1e293b" text-anchor="middle">警告</text>
+  <rect x="420" y="85" width="80" height="50" rx="8" fill="#f59e0b"/>
+  <text x="460" y="155" font-family="monospace" font-size="12" fill="#64748b" text-anchor="middle">#f59e0b</text>
+  
+  <!-- Error -->
+  <text x="570" y="70" font-family="Arial" font-size="14" fill="#1e293b" text-anchor="middle">错误</text>
+  <rect x="530" y="85" width="80" height="50" rx="8" fill="#ef4444"/>
+  <text x="570" y="155" font-family="monospace" font-size="12" fill="#64748b" text-anchor="middle">#ef4444</text>
+  
+  <!-- Neutral -->
+  <text x="680" y="70" font-family="Arial" font-size="14" fill="#1e293b" text-anchor="middle">中性</text>
+  <rect x="640" y="85" width="80" height="50" rx="8" fill="#64748b"/>
+  <text x="680" y="155" font-family="monospace" font-size="12" fill="#64748b" text-anchor="middle">#64748b</text>
+  
+  <!-- Dark Neutral -->
+  <text x="80" y="190" font-family="Arial" font-size="14" fill="#1e293b" text-anchor="middle">深色</text>
+  <rect x="40" y="205" width="80" height="50" rx="8" fill="#1e293b"/>
+  <text x="80" y="275" font-family="monospace" font-size="12" fill="#64748b" text-anchor="middle">#1e293b</text>
+  
+  <rect x="130" y="205" width="80" height="50" rx="8" fill="#334155"/>
+  <text x="170" y="275" font-family="monospace" font-size="12" fill="#64748b" text-anchor="middle">#334155</text>
+  
+  <rect x="220" y="205" width="80" height="50" rx="8" fill="#475569"/>
+  <text x="260" y="275" font-family="monospace" font-size="12" fill="#64748b" text-anchor="middle">#475569</text>
+  
+  <!-- Surface -->
+  <text x="380" y="190" font-family="Arial" font-size="14" fill="#1e293b" text-anchor="middle">背景</text>
+  <rect x="340" y="205" width="80" height="50" rx="8" fill="#f1f5f9"/>
+  <text x="380" y="275" font-family="monospace" font-size="12" fill="#64748b" text-anchor="middle">#f1f5f9</text>
+  
+  <rect x="430" y="205" width="80" height="50" rx="8" fill="#e2e8f0"/>
+  <text x="470" y="275" font-family="monospace" font-size="12" fill="#64748b" text-anchor="middle">#e2e8f0</text>
+  
+  <!-- Border -->
+  <text x="580" y="190" font-family="Arial" font-size="14" fill="#1e293b" text-anchor="middle">边框</text>
+  <rect x="540" y="205" width="80" height="50" rx="8" fill="#cbd5e1"/>
+  <text x="580" y="275" font-family="monospace" font-size="12" fill="#64748b" text-anchor="middle">#cbd5e1</text>
+  
+  <rect x="630" y="205" width="80" height="50" rx="8" fill="#94a3b8"/>
+  <text x="670" y="275" font-family="monospace" font-size="12" fill="#64748b" text-anchor="middle">#94a3b8</text>
+</svg>

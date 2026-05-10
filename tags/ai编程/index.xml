@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>AI编程 on Chengji Zhao&#39;s blog</title>
+    <link>https://zcj-git520.github.io/tags/ai%E7%BC%96%E7%A8%8B/</link>
+    <description>Recent content in AI编程 on Chengji Zhao&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Thu, 30 Apr 2026 10:00:00 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/tags/ai%E7%BC%96%E7%A8%8B/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Claude Code Skills 完全指南：发现和安装技能插件</title>
+      <link>https://zcj-git520.github.io/p/claude-code-skills-%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%E5%8F%91%E7%8E%B0%E5%92%8C%E5%AE%89%E8%A3%85%E6%8A%80%E8%83%BD%E6%8F%92%E4%BB%B6/</link>
+      <pubDate>Thu, 30 Apr 2026 10:00:00 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/claude-code-skills-%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%E5%8F%91%E7%8E%B0%E5%92%8C%E5%AE%89%E8%A3%85%E6%8A%80%E8%83%BD%E6%8F%92%E4%BB%B6/</guid>
+      <description>Claude Code 的 Skills 生态系统让 AI 具备专业化能力。本文将带你了解如何发现和安装 Skills，提升 AI 编程效率。
+ 一、什么是 Skills CLI？ Skills CLI（npx skills）是开放技能生态系统的包管理器。Skills 是模块化包，为 AI Agent 扩展专业能力。
+核心命令  npx skills find [query] - 交互式搜索或关键词搜索 npx skills add &amp;lt;package&amp;gt; - 从 GitHub 等来源安装技能 npx skills check - 检查技能更新 npx skills update - 更新所有已安装技能  浏览技能：https://skills.sh/
+ 二、何时使用 Find Skills 技能？ 当用户表达以下需求时使用：
+ 问&amp;quot;如何做 X&amp;quot;（X 可能是常见任务） 说&amp;quot;找一个做 X 的技能&amp;quot; 问&amp;quot;你能做 X 吗&amp;quot;（X 是专业能力） 想扩展 AI 能力 想搜索工具、模板或工作流   三、使用步骤 步骤 1：了解用户需求 识别：</description>
+    </item>
+    
+  </channel>
+</rss>

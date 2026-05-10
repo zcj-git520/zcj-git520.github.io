@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='前端设计不仅仅是让页面&amp;quot;好看&amp;quot;，更是让用户能用得舒心。本文将带你了解前端设计的核心概念、常用框架、以及 Claude Code frontend-design skill 的使用方法。
+ 一、什么是 frontend-design skill？ frontend-design 是 Claude Code 的官方技能，专门用于生成独特、生产级的前端界面。它能帮助：
+ 构建 Web 组件、页面或应用 生成创意十足、精细的代码 避免&amp;quot;AI slop&amp;quot;（通用的 AI 美学）  安装方法 /plugin marketplace add anthropics/frontend-design /plugin install frontend-design 或直接在插件市场搜索 &amp;ldquo;frontend-design&amp;rdquo; 安装。
+ 二、设计思维 在使用 frontend-design 之前，需要明确以下要素：
+1. 目的（Purpose） 这个界面解决什么问题？谁是用户？
+2. 风格（Tone） 选择一个极端的风格方向：
+ 极致简约 - brutalist / 极简主义 奢华精致 - luxury / refined 复古未来 - retro-futuristic 有机自然 - organic / natural 活泼俏皮 - playful / toy-like 杂志风格 - editorial / magazine 艺术装饰 - art deco / geometric 粉彩柔和 - soft / pastel 工业实用 - industrial / utilitarian  3.'><title>前端设计完全指南：打造用户体验优秀的 Web 应用</title>
+
+<link rel='canonical' href='https://zcj-git520.github.io/p/%E5%89%8D%E7%AB%AF%E8%AE%BE%E8%AE%A1%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%E6%89%93%E9%80%A0%E7%94%A8%E6%88%B7%E4%BD%93%E9%AA%8C%E4%BC%98%E7%A7%80%E7%9A%84-web-%E5%BA%94%E7%94%A8/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='前端设计完全指南：打造用户体验优秀的 Web 应用'>
+<meta property='og:description' content='前端设计不仅仅是让页面&amp;quot;好看&amp;quot;，更是让用户能用得舒心。本文将带你了解前端设计的核心概念、常用框架、以及 Claude Code frontend-design skill 的使用方法。
+ 一、什么是 frontend-design skill？ frontend-design 是 Claude Code 的官方技能，专门用于生成独特、生产级的前端界面。它能帮助：
+ 构建 Web 组件、页面或应用 生成创意十足、精细的代码 避免&amp;quot;AI slop&amp;quot;（通用的 AI 美学）  安装方法 /plugin marketplace add anthropics/frontend-design /plugin install frontend-design 或直接在插件市场搜索 &amp;ldquo;frontend-design&amp;rdquo; 安装。
+ 二、设计思维 在使用 frontend-design 之前，需要明确以下要素：
+1. 目的（Purpose） 这个界面解决什么问题？谁是用户？
+2. 风格（Tone） 选择一个极端的风格方向：
+ 极致简约 - brutalist / 极简主义 奢华精致 - luxury / refined 复古未来 - retro-futuristic 有机自然 - organic / natural 活泼俏皮 - playful / toy-like 杂志风格 - editorial / magazine 艺术装饰 - art deco / geometric 粉彩柔和 - soft / pastel 工业实用 - industrial / utilitarian  3.'>
+<meta property='og:url' content='https://zcj-git520.github.io/p/%E5%89%8D%E7%AB%AF%E8%AE%BE%E8%AE%A1%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%E6%89%93%E9%80%A0%E7%94%A8%E6%88%B7%E4%BD%93%E9%AA%8C%E4%BC%98%E7%A7%80%E7%9A%84-web-%E5%BA%94%E7%94%A8/'>
+<meta property='og:site_name' content='Chengji Zhao&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2026-04-25T10:00:00&#43;08:00'/><meta property='article:modified_time' content='2026-04-25T10:00:00&#43;08:00'/><meta property='og:image' content='https://zcj-git520.github.io/p/%E5%89%8D%E7%AB%AF%E8%AE%BE%E8%AE%A1%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%E6%89%93%E9%80%A0%E7%94%A8%E6%88%B7%E4%BD%93%E9%AA%8C%E4%BC%98%E7%A7%80%E7%9A%84-web-%E5%BA%94%E7%94%A8/1.png' />
+<meta name="twitter:title" content="前端设计完全指南：打造用户体验优秀的 Web 应用">
+<meta name="twitter:description" content="前端设计不仅仅是让页面&amp;quot;好看&amp;quot;，更是让用户能用得舒心。本文将带你了解前端设计的核心概念、常用框架、以及 Claude Code frontend-design skill 的使用方法。
+ 一、什么是 frontend-design skill？ frontend-design 是 Claude Code 的官方技能，专门用于生成独特、生产级的前端界面。它能帮助：
+ 构建 Web 组件、页面或应用 生成创意十足、精细的代码 避免&amp;quot;AI slop&amp;quot;（通用的 AI 美学）  安装方法 /plugin marketplace add anthropics/frontend-design /plugin install frontend-design 或直接在插件市场搜索 &amp;ldquo;frontend-design&amp;rdquo; 安装。
+ 二、设计思维 在使用 frontend-design 之前，需要明确以下要素：
+1. 目的（Purpose） 这个界面解决什么问题？谁是用户？
+2. 风格（Tone） 选择一个极端的风格方向：
+ 极致简约 - brutalist / 极简主义 奢华精致 - luxury / refined 复古未来 - retro-futuristic 有机自然 - organic / natural 活泼俏皮 - playful / toy-like 杂志风格 - editorial / magazine 艺术装饰 - art deco / geometric 粉彩柔和 - soft / pastel 工业实用 - industrial / utilitarian  3."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://zcj-git520.github.io/p/%E5%89%8D%E7%AB%AF%E8%AE%BE%E8%AE%A1%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%E6%89%93%E9%80%A0%E7%94%A8%E6%88%B7%E4%BD%93%E9%AA%8C%E4%BC%98%E7%A7%80%E7%9A%84-web-%E5%BA%94%E7%94%A8/1.png' />
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>返回</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/%E5%89%8D%E7%AB%AF%E8%AE%BE%E8%AE%A1%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%E6%89%93%E9%80%A0%E7%94%A8%E6%88%B7%E4%BD%93%E9%AA%8C%E4%BC%98%E7%A7%80%E7%9A%84-web-%E5%BA%94%E7%94%A8/">
+                <img src="/p/%E5%89%8D%E7%AB%AF%E8%AE%BE%E8%AE%A1%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%E6%89%93%E9%80%A0%E7%94%A8%E6%88%B7%E4%BD%93%E9%AA%8C%E4%BC%98%E7%A7%80%E7%9A%84-web-%E5%BA%94%E7%94%A8/1_hu8057b41c2af92218259894a5e5bed7c1_40964_800x0_resize_box_3.png"
+                        srcset="/p/%E5%89%8D%E7%AB%AF%E8%AE%BE%E8%AE%A1%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%E6%89%93%E9%80%A0%E7%94%A8%E6%88%B7%E4%BD%93%E9%AA%8C%E4%BC%98%E7%A7%80%E7%9A%84-web-%E5%BA%94%E7%94%A8/1_hu8057b41c2af92218259894a5e5bed7c1_40964_800x0_resize_box_3.png 800w, /p/%E5%89%8D%E7%AB%AF%E8%AE%BE%E8%AE%A1%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%E6%89%93%E9%80%A0%E7%94%A8%E6%88%B7%E4%BD%93%E9%AA%8C%E4%BC%98%E7%A7%80%E7%9A%84-web-%E5%BA%94%E7%94%A8/1_hu8057b41c2af92218259894a5e5bed7c1_40964_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="379" 
+                        loading="lazy"
+                        alt="Featured image of post 前端设计完全指南：打造用户体验优秀的 Web 应用" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E6%8A%80%E6%9C%AF%E6%95%99%E7%A8%8B/" >
+                技术教程
+            </a>
+        
+            <a href="/categories/claude-code/" >
+                Claude Code
+            </a>
+        
+            <a href="/categories/skills/" >
+                Skills
+            </a>
+        
+            <a href="/categories/%E6%8F%92%E4%BB%B6/" >
+                插件
+            </a>
+        
+            <a href="/categories/ai%E7%BC%96%E7%A8%8B/" >
+                AI编程
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/%E5%89%8D%E7%AB%AF%E8%AE%BE%E8%AE%A1%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%E6%89%93%E9%80%A0%E7%94%A8%E6%88%B7%E4%BD%93%E9%AA%8C%E4%BC%98%E7%A7%80%E7%9A%84-web-%E5%BA%94%E7%94%A8/">前端设计完全指南：打造用户体验优秀的 Web 应用</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Apr 25, 2026</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 4 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <blockquote>
+<p>前端设计不仅仅是让页面&quot;好看&quot;，更是让用户能用得舒心。本文将带你了解前端设计的核心概念、常用框架、以及 Claude Code frontend-design skill 的使用方法。</p>
+</blockquote>
+<h2 id="一什么是-frontend-design-skill">一、什么是 frontend-design skill？</h2>
+<p>frontend-design 是 Claude Code 的官方技能，专门用于生成独特、生产级的前端界面。它能帮助：</p>
+<ul>
+<li>构建 Web 组件、页面或应用</li>
+<li>生成创意十足、精细的代码</li>
+<li>避免&quot;AI slop&quot;（通用的 AI 美学）</li>
+</ul>
+<h3 id="安装方法">安装方法</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">/plugin marketplace add anthropics/frontend-design
+/plugin install frontend-design
+</code></pre></div><p>或直接在插件市场搜索 &ldquo;frontend-design&rdquo; 安装。</p>
+<hr>
+<h2 id="二设计思维">二、设计思维</h2>
+<p>在使用 frontend-design 之前，需要明确以下要素：</p>
+<h3 id="1-目的purpose">1. 目的（Purpose）</h3>
+<p>这个界面解决什么问题？谁是用户？</p>
+<h3 id="2-风格tone">2. 风格（Tone）</h3>
+<p>选择一个极端的风格方向：</p>
+<ul>
+<li><strong>极致简约</strong> - brutalist / 极简主义</li>
+<li><strong>奢华精致</strong> - luxury / refined</li>
+<li><strong>复古未来</strong> - retro-futuristic</li>
+<li><strong>有机自然</strong> - organic / natural</li>
+<li><strong>活泼俏皮</strong> - playful / toy-like</li>
+<li><strong>杂志风格</strong> - editorial / magazine</li>
+<li><strong>艺术装饰</strong> - art deco / geometric</li>
+<li><strong>粉彩柔和</strong> - soft / pastel</li>
+<li><strong>工业实用</strong> - industrial / utilitarian</li>
+</ul>
+<h3 id="3-约束constraints">3. 约束（Constraints）</h3>
+<p>技术要求（框架、性能、无障碍访问）。</p>
+<h3 id="4-差异化differentiation">4. 差异化（Differentiation）</h3>
+<p>什么是让用户记住的亮点？</p>
+<blockquote>
+<p><strong>关键</strong>：选择一个清晰的概念方向，精确执行。</p>
+</blockquote>
+<hr>
+<h2 id="三前端美学指南">三、前端美学指南</h2>
+<h3 id="1-字体排版">1. 字体排版</h3>
+<ul>
+<li>❌ 避免：Inter、Arial、Roboto、系统默认字体</li>
+<li>✅ 推荐：独特的显示字体 + 精致的正文字体</li>
+</ul>
+<h3 id="2-颜色与主题">2. 颜色与主题</h3>
+<ul>
+<li>使用 CSS 变量保持一致性</li>
+<li>主色 + 锐利的强调色</li>
+</ul>
+<h3 id="3-动画">3. 动画</h3>
+<ul>
+<li>优先使用 CSS 解决方案</li>
+<li>精心编排的页面加载动画</li>
+<li>悬停状态带来惊喜</li>
+</ul>
+<h3 id="4-空间布局">4. 空间布局</h3>
+<ul>
+<li>不对称、重叠、对角线流动</li>
+<li>打破网格、留白</li>
+</ul>
+<h3 id="5-背景与视觉细节">5. 背景与视觉细节</h3>
+<ul>
+<li>渐变网格、噪点纹理</li>
+<li>几何图案、戏剧性阴影</li>
+</ul>
+<h3 id="-避免">❌ 避免</h3>
+<ul>
+<li>滥用字体（Inter、Roboto）</li>
+<li>紫色渐变 + 白色背景</li>
+<li>缺乏特性的设计</li>
+</ul>
+<hr>
+<h2 id="四使用方法">四、使用方法</h2>
+<h3 id="基本使用">基本使用</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">claude
+<span class="c1"># 然后描述需求</span>
+创建一个登录页面，风格：极简奢华，用户：设计师
+</code></pre></div><h3 id="指定风格">指定风格</h3>
+<pre tabindex="0"><code>做一个数据分析仪表板，风格：赛博朋克
+</code></pre><hr>
+<h2 id="五实战示例">五、实战示例</h2>
+<h3 id="示例-1登录页面">示例 1：登录页面</h3>
+<pre tabindex="0"><code>创建一个登录页面：
+- 风格：极致简约，黑色白色为主
+- 用户：创意设计师
+- 特点：有一个令人惊喜的交互动画
+使用 React + CSS Modules
+</code></pre><h3 id="示例-2仪表板">示例 2：仪表板</h3>
+<pre tabindex="0"><code>创建一个数据监控仪表板：
+- 风格：赛博朋克，深色主题 + 霓虹色
+- 功能：显示服务器指标、实时图表
+</code></pre><h3 id="示例-3博客卡片">示例 3：博客卡片</h3>
+<pre tabindex="0"><code>创建一个博客卡片组件：
+- 风格：杂志风格，大胆的排版
+- 悬停效果：优雅的放大动画
+</code></pre><hr>
+<h2 id="六常见问题">六、常见问题</h2>
+<p><strong>Q1：生成的代码太普通怎么办？</strong>
+A：更具体地描述风格方向，提供参考案例。</p>
+<p><strong>Q2：如何选择字体？</strong>
+A：使用 Google Fonts，选择有特色的字体组合。</p>
+<p><strong>Q3：动画太多影响性能？</strong>
+A：优先使用 CSS 动画，用 will-change 优化。</p>
+<hr>
+<h2 id="七总结">七、总结</h2>
+<p>frontend-design skill 的核心：</p>
+<ol>
+<li><strong>避免 generic</strong> - 不做&quot;AI 标准件&quot;</li>
+<li><strong>风格明确</strong> - 选择方向并执行彻底</li>
+<li><strong>生产级</strong> - 生成真正可用的代码</li>
+<li><strong>注重细节</strong> - 每个细节都精心设计</li>
+</ol>
+<p>记住：<strong>当你跳出框框思考并完全投入独特愿景时，Claude 能创造真正非凡的作品</strong>。</p>
+<hr>
+<blockquote>
+<p>如果你经常感觉生成的代码&quot;太普通&quot;、&ldquo;像 AI 生成的&rdquo;，试试 frontend-design skill。</p>
+</blockquote>
+<h2 id="什么是前端设计">什么是前端设计？</h2>
+<p>前端设计（Frontend Design）涵盖了你与 Web 应用交互时看到和操作的一切。它包括：</p>
+<ul>
+<li><strong>UI 设计</strong>（用户界面）- 视觉元素、布局、颜色</li>
+<li><strong>UX 设计</strong>（用户体验）- 交互流程、操作体验</li>
+<li><strong>响应式设计</strong> - 适配不同设备</li>
+</ul>
+<hr>
+<h2 id="前端设计核心原则">前端设计核心原则</h2>
+<h3 id="1-一致性">1. 一致性</h3>
+<p>保持视觉和交互的一致性：</p>
+<ul>
+<li>相同的按钮样式在类似场景中保持一致</li>
+<li>相同的交互行为（如点击反馈）</li>
+<li>统一的颜色体系和字体</li>
+</ul>
+<h3 id="2-层次分明">2. 层次分明</h3>
+<p>通过视觉层次引导用户注意力：</p>
+<ul>
+<li>重要信息使用更大字体或更醒目的颜色</li>
+<li>相关内容分组显示</li>
+<li>使用留白分隔不同内容区块</li>
+</ul>
+<h3 id="3-反馈及时">3. 反馈及时</h3>
+<p>每个操作都应有明确的反馈：</p>
+<ul>
+<li>按钮点击效果</li>
+<li>加载状态提示</li>
+<li>操作成功/失败提示</li>
+</ul>
+<h3 id="4-简洁直观">4. 简洁直观</h3>
+<p>减少用户的认知负担：</p>
+<ul>
+<li>不必要的元素不显示</li>
+<li>操作路径尽可能短</li>
+<li>使用直观的图标和文字</li>
+</ul>
+<hr>
+<h2 id="常用前端框架">常用前端框架</h2>
+<h3 id="css-框架">CSS 框架</h3>
+<table>
+<thead>
+<tr>
+<th>框架</th>
+<th>特点</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tailwind CSS</td>
+<td>原子化 CSS，按需生成</td>
+<td>快速开发、定制化要求高</td>
+</tr>
+<tr>
+<td>Bootstrap</td>
+<td>组件丰富，易上手</td>
+<td>快速原型、中后台系统</td>
+</tr>
+<tr>
+<td>UnoCSS</td>
+<td>Headless，按需生成</td>
+<td>追求极致性能</td>
+</tr>
+<tr>
+<td>Chakra UI</td>
+<td>React 组件库</td>
+<td>React 项目</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ui-组件库">UI 组件库</h3>
+<table>
+<thead>
+<tr>
+<th>组件库</th>
+<th>框架</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ant Design</td>
+<td>React</td>
+<td>企业级中后台</td>
+</tr>
+<tr>
+<td>Element Plus</td>
+<td>Vue 3</td>
+<td>企业级中后台</td>
+</tr>
+<tr>
+<td>Radix UI</td>
+<td>React</td>
+<td>无样式，可定制</td>
+</tr>
+<tr>
+<td>Shadcn UI</td>
+<td>React</td>
+<td>现代、简洁</td>
+</tr>
+</tbody>
+</table>
+<h3 id="js-框架">JS 框架</h3>
+<table>
+<thead>
+<tr>
+<th>框架</th>
+<th>特点</th>
+<th>学习曲线</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>React</td>
+<td>组件化、生态丰富</td>
+<td>中等</td>
+</tr>
+<tr>
+<td>Vue</td>
+<td>渐进式、易上手</td>
+<td>较低</td>
+</tr>
+<tr>
+<td>Svelte</td>
+<td>编译时、无虚拟 DOM</td>
+<td>低</td>
+</tr>
+<tr>
+<td>Angular</td>
+<td>完整性、企业级</td>
+<td>较高</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="响应式设计">响应式设计</h2>
+<h3 id="移动优先策略">移动优先策略</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-css" data-lang="css"><span class="c">/* 基础样式（移动端） */</span>
+<span class="p">.</span><span class="nc">card</span> <span class="p">{</span>
+  <span class="k">padding</span><span class="p">:</span> <span class="mi">16</span><span class="kt">px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c">/* 平板及以上 */</span>
+<span class="p">@</span><span class="k">media</span> <span class="o">(</span><span class="nt">min-width</span><span class="o">:</span> <span class="nt">768px</span><span class="o">)</span> <span class="p">{</span>
+  <span class="p">.</span><span class="nc">card</span> <span class="p">{</span>
+    <span class="k">padding</span><span class="p">:</span> <span class="mi">24</span><span class="kt">px</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c">/* 桌面端 */</span>
+<span class="p">@</span><span class="k">media</span> <span class="o">(</span><span class="nt">min-width</span><span class="o">:</span> <span class="nt">1024px</span><span class="o">)</span> <span class="p">{</span>
+  <span class="p">.</span><span class="nc">card</span> <span class="p">{</span>
+    <span class="k">padding</span><span class="p">:</span> <span class="mi">32</span><span class="kt">px</span><span class="p">;</span>
+    <span class="k">max-width</span><span class="p">:</span> <span class="mi">1200</span><span class="kt">px</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><h3 id="常用断点">常用断点</h3>
+<table>
+<thead>
+<tr>
+<th>设备</th>
+<th>断点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>手机</td>
+<td>&lt; 640px</td>
+</tr>
+<tr>
+<td>平板</td>
+<td>640px - 1024px</td>
+</tr>
+<tr>
+<td>桌面</td>
+<td>&gt; 1024px</td>
+</tr>
+<tr>
+<td>大屏桌面</td>
+<td>&gt; 1440px</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="设计系统">设计系统</h2>
+<h3 id="什么是设计系统">什么是设计系统？</h3>
+<p>设计系统是一套完整的设计规范，包含：</p>
+<ul>
+<li><strong>设计令牌</strong> - 颜色、间距、字体</li>
+<li><strong>组件</strong> - 按钮、输入框、卡片</li>
+<li><strong>模式</strong> - 常见交互模式</li>
+</ul>
+<h3 id="设计令牌示例">设计令牌示例</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-css" data-lang="css"><span class="p">:</span><span class="nd">root</span> <span class="p">{</span>
+  <span class="c">/* 颜色 */</span>
+  <span class="nv">--color-primary</span><span class="p">:</span> <span class="mh">#3b82f6</span><span class="p">;</span>
+  <span class="nv">--color-success</span><span class="p">:</span> <span class="mh">#22c55e</span><span class="p">;</span>
+  <span class="nv">--color-warning</span><span class="p">:</span> <span class="mh">#f59e0b</span><span class="p">;</span>
+  <span class="nv">--color-error</span><span class="p">:</span> <span class="mh">#ef4444</span><span class="p">;</span>
+  
+  <span class="c">/* 间距 */</span>
+  <span class="nv">--spacing-xs</span><span class="p">:</span> <span class="mi">4</span><span class="kt">px</span><span class="p">;</span>
+  <span class="nv">--spacing-sm</span><span class="p">:</span> <span class="mi">8</span><span class="kt">px</span><span class="p">;</span>
+  <span class="nv">--spacing-md</span><span class="p">:</span> <span class="mi">16</span><span class="kt">px</span><span class="p">;</span>
+  <span class="nv">--spacing-lg</span><span class="p">:</span> <span class="mi">24</span><span class="kt">px</span><span class="p">;</span>
+  <span class="nv">--spacing-xl</span><span class="p">:</span> <span class="mi">32</span><span class="kt">px</span><span class="p">;</span>
+  
+  <span class="c">/* 圆角 */</span>
+  <span class="nv">--radius-sm</span><span class="p">:</span> <span class="mi">4</span><span class="kt">px</span><span class="p">;</span>
+  <span class="nv">--radius-md</span><span class="p">:</span> <span class="mi">8</span><span class="kt">px</span><span class="p">;</span>
+  <span class="nv">--radius-lg</span><span class="p">:</span> <span class="mi">12</span><span class="kt">px</span><span class="p">;</span>
+  <span class="nv">--radius-full</span><span class="p">:</span> <span class="mi">9999</span><span class="kt">px</span><span class="p">;</span>
+  
+  <span class="c">/* 字体 */</span>
+  <span class="nv">--font-sans</span><span class="p">:</span> <span class="n">system-ui</span><span class="p">,</span> <span class="o">-</span><span class="n">apple-system</span><span class="p">,</span> <span class="kc">sans-serif</span><span class="p">;</span>
+  <span class="nv">--font-mono</span><span class="p">:</span> <span class="n">ui-monospace</span><span class="p">,</span> <span class="kc">monospace</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><h3 id="组件规范示例">组件规范示例</h3>
+<p><strong>按钮组件</strong>：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-css" data-lang="css"><span class="p">.</span><span class="nc">btn</span> <span class="p">{</span>
+  <span class="k">display</span><span class="p">:</span> <span class="kc">inline-flex</span><span class="p">;</span>
+  <span class="k">align-items</span><span class="p">:</span> <span class="kc">center</span><span class="p">;</span>
+  <span class="k">justify-content</span><span class="p">:</span> <span class="kc">center</span><span class="p">;</span>
+  <span class="k">padding</span><span class="p">:</span> <span class="nf">var</span><span class="p">(</span><span class="o">--</span><span class="n">spacing</span><span class="o">-</span><span class="n">sm</span><span class="p">)</span> <span class="nf">var</span><span class="p">(</span><span class="o">--</span><span class="n">spacing</span><span class="o">-</span><span class="n">md</span><span class="p">);</span>
+  <span class="k">border-radius</span><span class="p">:</span> <span class="nf">var</span><span class="p">(</span><span class="o">--</span><span class="n">radius</span><span class="o">-</span><span class="n">md</span><span class="p">);</span>
+  <span class="k">font-weight</span><span class="p">:</span> <span class="mi">500</span><span class="p">;</span>
+  <span class="k">transition</span><span class="p">:</span> <span class="kc">all</span> <span class="mf">0.2</span><span class="kt">s</span> <span class="kc">ease</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">btn-primary</span> <span class="p">{</span>
+  <span class="k">background</span><span class="p">:</span> <span class="nf">var</span><span class="p">(</span><span class="o">--</span><span class="kc">color</span><span class="o">-</span><span class="n">primary</span><span class="p">);</span>
+  <span class="k">color</span><span class="p">:</span> <span class="kc">white</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">btn-primary</span><span class="p">:</span><span class="nd">hover</span> <span class="p">{</span>
+  <span class="k">background</span><span class="p">:</span> <span class="mh">#2563eb</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">btn-primary</span><span class="p">:</span><span class="nd">active</span> <span class="p">{</span>
+  <span class="k">transform</span><span class="p">:</span> <span class="nb">scale</span><span class="p">(</span><span class="mf">0.98</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div><hr>
+<h2 id="颜色搭配">颜色搭配</h2>
+<h3 id="颜色功能">颜色功能</h3>
+<table>
+<thead>
+<tr>
+<th>颜色类型</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主色</td>
+<td>主要品牌色，用于关键元素</td>
+</tr>
+<tr>
+<td>辅助色</td>
+<td>次要元素、强调</td>
+</tr>
+<tr>
+<td>中性色</td>
+<td>文字、背景、边框</td>
+</tr>
+<tr>
+<td>功能色</td>
+<td>成功、警告、错误状态</td>
+</tr>
+</tbody>
+</table>
+<h3 id="实用工具">实用工具</h3>
+<ul>
+<li><a class="link" href="https://coolors.co"  target="_blank" rel="noopener"
+    >Color Palette Generator</a></li>
+<li><a class="link" href="https://tailwindcss.com/docs/customizing-colors"  target="_blank" rel="noopener"
+    >Tailwind Colors</a></li>
+<li><a class="link" href="https://yeun.github.io/open-color/"  target="_blank" rel="noopener"
+    >Open Color</a></li>
+</ul>
+<hr>
+<h2 id="字体排版">字体排版</h2>
+<h3 id="字体选择原则">字体选择原则</h3>
+<ol>
+<li><strong>易读性</strong> - 选择清晰易读的字体</li>
+<li><strong>匹配度</strong> - 与品牌调性匹配</li>
+<li><strong>加载速度</strong> - 优先使用系统字体或性能优化的 web 字体</li>
+</ol>
+<h3 id="推荐字体组合">推荐字体组合</h3>
+<p><strong>现代简洁</strong>：</p>
+<ul>
+<li>标题：Inter / SF Pro Display</li>
+<li>正文：Inter / SF Pro Text</li>
+</ul>
+<p><strong>正式商务</strong>：</p>
+<ul>
+<li>标题：Playfair Display</li>
+<li>正文：Source Serif Pro</li>
+</ul>
+<p><strong>技术风格</strong>：</p>
+<ul>
+<li>等宽字体：JetBrains Mono / Fira Code</li>
+</ul>
+<h3 id="字号规范">字号规范</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-css" data-lang="css"><span class="p">:</span><span class="nd">root</span> <span class="p">{</span>
+  <span class="nv">--font-xs</span><span class="p">:</span> <span class="mf">0.75</span><span class="kt">rem</span><span class="p">;</span>    <span class="c">/* 12px */</span>
+  <span class="nv">--font-sm</span><span class="p">:</span> <span class="mf">0.875</span><span class="kt">rem</span><span class="p">;</span>  <span class="c">/* 14px */</span>
+  <span class="nv">--font-base</span><span class="p">:</span> <span class="mi">1</span><span class="kt">rem</span><span class="p">;</span>    <span class="c">/* 16px */</span>
+  <span class="nv">--font-lg</span><span class="p">:</span> <span class="mf">1.125</span><span class="kt">rem</span><span class="p">;</span>  <span class="c">/* 18px */</span>
+  <span class="nv">--font-xl</span><span class="p">:</span> <span class="mf">1.25</span><span class="kt">rem</span><span class="p">;</span>  <span class="c">/* 20px */</span>
+  <span class="nv">--font-2xl</span><span class="p">:</span> <span class="mf">1.5</span><span class="kt">rem</span><span class="p">;</span> <span class="c">/* 24px */</span>
+  <span class="nv">--font-3xl</span><span class="p">:</span> <span class="mf">1.875</span><span class="kt">rem</span><span class="p">;</span> <span class="c">/* 30px */</span>
+  <span class="nv">--font-4xl</span><span class="p">:</span> <span class="mf">2.25</span><span class="kt">rem</span><span class="p">;</span> <span class="c">/* 36px */</span>
+<span class="p">}</span>
+</code></pre></div><hr>
+<h2 id="常见设计模式">常见设计模式</h2>
+<h3 id="1-卡片布局">1. 卡片布局</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-tsx" data-lang="tsx"><span class="kd">function</span> <span class="nx">Card</span><span class="p">({</span> <span class="nx">title</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">footer</span> <span class="p">})</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;card&#34;</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;card-header&#34;</span><span class="p">&gt;{</span><span class="nx">title</span><span class="p">}&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;card-body&#34;</span><span class="p">&gt;{</span><span class="nx">content</span><span class="p">}&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+      <span class="p">{</span><span class="nx">footer</span> <span class="o">&amp;&amp;</span> <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;card-footer&#34;</span><span class="p">&gt;{</span><span class="nx">footer</span><span class="p">}&lt;/</span><span class="nt">div</span><span class="p">&gt;}</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div><h3 id="2-列表视图">2. 列表视图</h3>
+<ul>
+<li>简洁的列表项设计</li>
+<li>悬停效果</li>
+<li>操作按钮（编辑、删除）</li>
+</ul>
+<h3 id="3-表单布局">3. 表单布局</h3>
+<ul>
+<li>标签对齐（上方/左侧）</li>
+<li>错误提示位置</li>
+<li>必填标识</li>
+</ul>
+<h3 id="4-导航设计">4. 导航设计</h3>
+<ul>
+<li>顶部导航 - 适用于中后台</li>
+<li>侧边导航 - 适用于管理后台</li>
+<li>底部导航 - 适用于移动端</li>
+</ul>
+<hr>
+<h2 id="常用工具">常用工具</h2>
+<h3 id="设计工具">设计工具</h3>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Figma</td>
+<td>UI 设计</td>
+</tr>
+<tr>
+<td>Sketch</td>
+<td>UI 设计（macOS）</td>
+</tr>
+<tr>
+<td>Adobe XD</td>
+<td>UI 设计</td>
+</tr>
+<tr>
+<td>FigJam</td>
+<td>头脑风暴、白板</td>
+</tr>
+</tbody>
+</table>
+<h3 id="开发工具">开发工具</h3>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CSS Variables</td>
+<td>主题系统</td>
+</tr>
+<tr>
+<td>clsx / cn</td>
+<td>条件类名</td>
+</tr>
+<tr>
+<td>Framer Motion</td>
+<td>动画</td>
+</tr>
+<tr>
+<td>Storybook</td>
+<td>组件文档</td>
+</tr>
+</tbody>
+</table>
+<h3 id="资源">资源</h3>
+<table>
+<thead>
+<tr>
+<th>资源</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Unsplash</td>
+<td>免费图片</td>
+</tr>
+<tr>
+<td>Lucide</td>
+<td>开源图标</td>
+</tr>
+<tr>
+<td>Heroicons</td>
+<td>Heroicons 图标</td>
+</tr>
+<tr>
+<td>Google Fonts</td>
+<td>Web 字体</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="前端设计检查清单">前端设计检查清单</h2>
+<h3 id="上线前检查">上线前检查</h3>
+<ul>
+<li><input disabled="" type="checkbox"> 响应式布局正常（移动端、平板、桌面）</li>
+<li><input disabled="" type="checkbox"> 所有交互有反馈（点击、加载、成功/失败）</li>
+<li><input disabled="" type="checkbox"> 颜色对比度符合 WCAG 标准</li>
+<li><input disabled="" type="checkbox"> 字体大小合适（最小 12px）</li>
+<li><input disabled="" type="checkbox"> 按钮可点击区域足够大（至少 44px）</li>
+<li><input disabled="" type="checkbox"> 表单验证提示清晰</li>
+<li><input disabled="" type="checkbox"> 加载状态显示</li>
+<li><input disabled="" type="checkbox"> 错误边界处理</li>
+<li><input disabled="" type="checkbox"> 暗色模式支持（可选）</li>
+</ul>
+<hr>
+<h2 id="总结">总结</h2>
+<p>好的前端设计不是一蹴而就的，需要：</p>
+<ol>
+<li><strong>理解用户</strong> - 他们如何使用你的产品</li>
+<li><strong>保持一致</strong> - 统一的视觉和交互</li>
+<li><strong>注重细节</strong> - 反馈、状态、边界情况</li>
+<li><strong>持续优化</strong> - 根据用户反馈改进</li>
+</ol>
+<p>记住：最好的设计是让用户感受不到设计的存在，用户能顺畅完成任务，就是好的设计。</p>
+<hr>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">相关文章</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/claude-code-skills-%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%E5%8F%91%E7%8E%B0%E5%92%8C%E5%AE%89%E8%A3%85%E6%8A%80%E8%83%BD%E6%8F%92%E4%BB%B6/">
+        
+        
+            <div class="article-image">
+                <img src="/p/claude-code-skills-%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%E5%8F%91%E7%8E%B0%E5%92%8C%E5%AE%89%E8%A3%85%E6%8A%80%E8%83%BD%E6%8F%92%E4%BB%B6/1.d7d23728e389067ff4e386f49a4850e1_hu3d48fba3084c007f8dcaeabe3403699e_40270_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-19I3KOOJBn/044b0mkhQ4Q==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Claude Code Skills 完全指南：发现和安装技能插件</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/superpowersclaude-code-%E9%9C%80%E6%B1%82%E5%B7%A5%E7%A8%8B%E5%8C%96%E8%BE%85%E5%8A%A9%E6%8F%92%E4%BB%B6/">
+        
+        
+            <div class="article-image">
+                <img src="/p/superpowersclaude-code-%E9%9C%80%E6%B1%82%E5%B7%A5%E7%A8%8B%E5%8C%96%E8%BE%85%E5%8A%A9%E6%8F%92%E4%BB%B6/1.581e5797c35ed7fd8150c8109f4847a0_hu37a8afbb461ea21eed823f02b40ccac9_38471_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-WB5Xl8Ne1/2BUMgQn0hHoA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Superpowers：Claude Code 需求工程化辅助插件</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/claude-code-%E5%AE%8C%E5%85%A8%E6%96%B0%E6%89%8B%E6%8C%87%E5%8D%972026%E7%89%88%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E7%B2%BE%E9%80%9A/">
+        
+        
+            <div class="article-image">
+                <img src="/p/claude-code-%E5%AE%8C%E5%85%A8%E6%96%B0%E6%89%8B%E6%8C%87%E5%8D%972026%E7%89%88%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E7%B2%BE%E9%80%9A/1.3e0eff4ca8b1724f08db6a279d069106_hucd354e32d3ee3583b46050dda97fe1c4_30364_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-Pg7/TKixck8I22onnQaRBg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Claude Code 完全新手指南（2026版）：从入门到精通</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2026 Chengji Zhao&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.2.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">目录</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#一什么是-frontend-design-skill">一、什么是 frontend-design skill？</a>
+      <ol>
+        <li><a href="#安装方法">安装方法</a></li>
+      </ol>
+    </li>
+    <li><a href="#二设计思维">二、设计思维</a>
+      <ol>
+        <li><a href="#1-目的purpose">1. 目的（Purpose）</a></li>
+        <li><a href="#2-风格tone">2. 风格（Tone）</a></li>
+        <li><a href="#3-约束constraints">3. 约束（Constraints）</a></li>
+        <li><a href="#4-差异化differentiation">4. 差异化（Differentiation）</a></li>
+      </ol>
+    </li>
+    <li><a href="#三前端美学指南">三、前端美学指南</a>
+      <ol>
+        <li><a href="#1-字体排版">1. 字体排版</a></li>
+        <li><a href="#2-颜色与主题">2. 颜色与主题</a></li>
+        <li><a href="#3-动画">3. 动画</a></li>
+        <li><a href="#4-空间布局">4. 空间布局</a></li>
+        <li><a href="#5-背景与视觉细节">5. 背景与视觉细节</a></li>
+        <li><a href="#-避免">❌ 避免</a></li>
+      </ol>
+    </li>
+    <li><a href="#四使用方法">四、使用方法</a>
+      <ol>
+        <li><a href="#基本使用">基本使用</a></li>
+        <li><a href="#指定风格">指定风格</a></li>
+      </ol>
+    </li>
+    <li><a href="#五实战示例">五、实战示例</a>
+      <ol>
+        <li><a href="#示例-1登录页面">示例 1：登录页面</a></li>
+        <li><a href="#示例-2仪表板">示例 2：仪表板</a></li>
+        <li><a href="#示例-3博客卡片">示例 3：博客卡片</a></li>
+      </ol>
+    </li>
+    <li><a href="#六常见问题">六、常见问题</a></li>
+    <li><a href="#七总结">七、总结</a></li>
+    <li><a href="#什么是前端设计">什么是前端设计？</a></li>
+    <li><a href="#前端设计核心原则">前端设计核心原则</a>
+      <ol>
+        <li><a href="#1-一致性">1. 一致性</a></li>
+        <li><a href="#2-层次分明">2. 层次分明</a></li>
+        <li><a href="#3-反馈及时">3. 反馈及时</a></li>
+        <li><a href="#4-简洁直观">4. 简洁直观</a></li>
+      </ol>
+    </li>
+    <li><a href="#常用前端框架">常用前端框架</a>
+      <ol>
+        <li><a href="#css-框架">CSS 框架</a></li>
+        <li><a href="#ui-组件库">UI 组件库</a></li>
+        <li><a href="#js-框架">JS 框架</a></li>
+      </ol>
+    </li>
+    <li><a href="#响应式设计">响应式设计</a>
+      <ol>
+        <li><a href="#移动优先策略">移动优先策略</a></li>
+        <li><a href="#常用断点">常用断点</a></li>
+      </ol>
+    </li>
+    <li><a href="#设计系统">设计系统</a>
+      <ol>
+        <li><a href="#什么是设计系统">什么是设计系统？</a></li>
+        <li><a href="#设计令牌示例">设计令牌示例</a></li>
+        <li><a href="#组件规范示例">组件规范示例</a></li>
+      </ol>
+    </li>
+    <li><a href="#颜色搭配">颜色搭配</a>
+      <ol>
+        <li><a href="#颜色功能">颜色功能</a></li>
+        <li><a href="#实用工具">实用工具</a></li>
+      </ol>
+    </li>
+    <li><a href="#字体排版">字体排版</a>
+      <ol>
+        <li><a href="#字体选择原则">字体选择原则</a></li>
+        <li><a href="#推荐字体组合">推荐字体组合</a></li>
+        <li><a href="#字号规范">字号规范</a></li>
+      </ol>
+    </li>
+    <li><a href="#常见设计模式">常见设计模式</a>
+      <ol>
+        <li><a href="#1-卡片布局">1. 卡片布局</a></li>
+        <li><a href="#2-列表视图">2. 列表视图</a></li>
+        <li><a href="#3-表单布局">3. 表单布局</a></li>
+        <li><a href="#4-导航设计">4. 导航设计</a></li>
+      </ol>
+    </li>
+    <li><a href="#常用工具">常用工具</a>
+      <ol>
+        <li><a href="#设计工具">设计工具</a></li>
+        <li><a href="#开发工具">开发工具</a></li>
+        <li><a href="#资源">资源</a></li>
+      </ol>
+    </li>
+    <li><a href="#前端设计检查清单">前端设计检查清单</a>
+      <ol>
+        <li><a href="#上线前检查">上线前检查</a></li>
+      </ol>
+    </li>
+    <li><a href="#总结">总结</a></li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

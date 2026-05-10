@@ -6,19 +6,18 @@
     <description>Recent content in Claude Code on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Mon, 10 Mar 2025 10:00:00 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/tags/claude-code/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 30 Apr 2026 10:00:00 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/tags/claude-code/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Claude Code 完全新手指南（2026版）：从入门到精通</title>
-      <link>https://zcj-git520.github.io/p/claude-code-%E5%AE%8C%E5%85%A8%E6%96%B0%E6%89%8B%E6%8C%87%E5%8D%972026%E7%89%88%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E7%B2%BE%E9%80%9A/</link>
-      <pubDate>Mon, 10 Mar 2025 10:00:00 +0800</pubDate>
+      <title>Claude Code Skills 完全指南：发现和安装技能插件</title>
+      <link>https://zcj-git520.github.io/p/claude-code-skills-%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%E5%8F%91%E7%8E%B0%E5%92%8C%E5%AE%89%E8%A3%85%E6%8A%80%E8%83%BD%E6%8F%92%E4%BB%B6/</link>
+      <pubDate>Thu, 30 Apr 2026 10:00:00 +0800</pubDate>
       
-      <guid>https://zcj-git520.github.io/p/claude-code-%E5%AE%8C%E5%85%A8%E6%96%B0%E6%89%8B%E6%8C%87%E5%8D%972026%E7%89%88%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E7%B2%BE%E9%80%9A/</guid>
-      <description>很多开发者用了 Claude Code 一段时间后，感觉「好像也没那么神奇」——写出来的代码时对时错，改着改着把不该动的文件也改了，长时间对话后回答开始偏题。问题不在工具本身，在于缺少一套正确的使用框架。
- 这份《Claude Code 完全新手指南》共 12 章，从最基础的安装配置讲起，深入 Agent Loop 工作原理、上下文管理策略、CLAUDE.md 项目记忆配置，再到 Subagents 专用子代理、Hooks 自动化触发器、Worktree 并行任务隔离等进阶功能，最后提供三套直接可用的实战 SOP。
- Claude Code 终端界面
-第一章 认识 Claude Code 1.1 一句话理解 Claude Code Claude Code 是 Anthropic 基于 Claude 模型打造的终端 AI 编程 Agent。它不是聊天机器人，也不是代码补全插件——它是一个可以直接操作你代码仓库的 AI 软件工程师：
- 理解整个代码库（多文件、多语言、多层依赖） 自主规划任务，跨文件编写和修改代码 执行 Shell 命令、运行测试、验证结果 处理 Git 工作流（commit / PR / merge conflict） 通过 MCP 协议连接数据库、API 等外部工具  核心认知——你的角色转变
-Claude Code 最核心的变化：你的角色从「写代码」变成「描述需求 + 设定边界 + 审查结果」。</description>
+      <guid>https://zcj-git520.github.io/p/claude-code-skills-%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%E5%8F%91%E7%8E%B0%E5%92%8C%E5%AE%89%E8%A3%85%E6%8A%80%E8%83%BD%E6%8F%92%E4%BB%B6/</guid>
+      <description>Claude Code 的 Skills 生态系统让 AI 具备专业化能力。本文将带你了解如何发现和安装 Skills，提升 AI 编程效率。
+ 一、什么是 Skills CLI？ Skills CLI（npx skills）是开放技能生态系统的包管理器。Skills 是模块化包，为 AI Agent 扩展专业能力。
+核心命令  npx skills find [query] - 交互式搜索或关键词搜索 npx skills add &amp;lt;package&amp;gt; - 从 GitHub 等来源安装技能 npx skills check - 检查技能更新 npx skills update - 更新所有已安装技能  浏览技能：https://skills.sh/
+ 二、何时使用 Find Skills 技能？ 当用户表达以下需求时使用：
+ 问&amp;quot;如何做 X&amp;quot;（X 可能是常见任务） 说&amp;quot;找一个做 X 的技能&amp;quot; 问&amp;quot;你能做 X 吗&amp;quot;（X 是专业能力） 想扩展 AI 能力 想搜索工具、模板或工作流   三、使用步骤 步骤 1：了解用户需求 识别：</description>
     </item>
     
   </channel>

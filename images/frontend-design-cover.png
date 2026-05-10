@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400" viewBox="0 0 800 400">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a"/>
+      <stop offset="100%" style="stop-color:#1e293b"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#06b6d4"/>
+      <stop offset="100%" style="stop-color:#8b5cf6"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="400" fill="url(#bg)"/>
+  
+  <!-- Grid pattern -->
+  <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+    <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#334155" stroke-width="0.5"/>
+  </pattern>
+  <rect width="800" height="400" fill="url(#grid)" opacity="0.3"/>
+  
+  <rect x="40" y="40" width="720" height="320" rx="20" fill="none" stroke="url(#accent)" stroke-width="2" opacity="0.4"/>
+  <text x="400" y="160" font-family="Arial, sans-serif" font-size="52" font-weight="bold" fill="white" text-anchor="middle">Frontend Design</text>
+  <text x="400" y="220" font-family="Arial, sans-serif" font-size="22" fill="#06b6d4" text-anchor="middle">前端设计完全指南</text>
+  <text x="400" y="260" font-family="Arial, sans-serif" font-size="16" fill="#94a3b8" text-anchor="middle">打造用户体验优秀的 Web 应用</text>
+  
+  <!-- UI elements decoration -->
+  <rect x="120" y="300" width="80" height="40" rx="6" fill="#8b5cf6" opacity="0.6"/>
+  <rect x="210" y="300" width="80" height="40" rx="6" fill="#06b6d4" opacity="0.6"/>
+  <rect x="300" y="300" width="80" height="40" rx="6" fill="#22c55e" opacity="0.6"/>
+  <rect x="420" y="300" width="140" height="40" rx="6" fill="#f59e0b" opacity="0.6"/>
+  <rect x="570" y="300" width="140" height="40" rx="6" fill="#ef4444" opacity="0.6"/>
+</svg>

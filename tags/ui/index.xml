@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>UI on Chengji Zhao&#39;s blog</title>
+    <link>https://zcj-git520.github.io/tags/ui/</link>
+    <description>Recent content in UI on Chengji Zhao&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language><atom:link href="https://zcj-git520.github.io/tags/ui/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>前端设计完全指南：打造用户体验优秀的 Web 应用</title>
+      <link>https://zcj-git520.github.io/p/%E5%89%8D%E7%AB%AF%E8%AE%BE%E8%AE%A1%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%E6%89%93%E9%80%A0%E7%94%A8%E6%88%B7%E4%BD%93%E9%AA%8C%E4%BC%98%E7%A7%80%E7%9A%84-web-%E5%BA%94%E7%94%A8/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://zcj-git520.github.io/p/%E5%89%8D%E7%AB%AF%E8%AE%BE%E8%AE%A1%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97%E6%89%93%E9%80%A0%E7%94%A8%E6%88%B7%E4%BD%93%E9%AA%8C%E4%BC%98%E7%A7%80%E7%9A%84-web-%E5%BA%94%E7%94%A8/</guid>
+      <description>前端设计不仅仅是让页面&amp;quot;好看&amp;quot;，更是让用户能用得舒心。本文将带你了解前端设计的核心概念、常用框架、以及 Claude Code frontend-design skill 的使用方法。
+ 一、什么是 frontend-design skill？ frontend-design 是 Claude Code 的官方技能，专门用于生成独特、生产级的前端界面。它能帮助：
+ 构建 Web 组件、页面或应用 生成创意十足、精细的代码 避免&amp;quot;AI slop&amp;quot;（通用的 AI 美学）  安装方法 /plugin marketplace add anthropics/frontend-design /plugin install frontend-design 或直接在插件市场搜索 &amp;ldquo;frontend-design&amp;rdquo; 安装。
+ 二、设计思维 在使用 frontend-design 之前，需要明确以下要素：
+1. 目的（Purpose） 这个界面解决什么问题？谁是用户？
+2. 风格（Tone） 选择一个极端的风格方向：
+ 极致简约 - brutalist / 极简主义 奢华精致 - luxury / refined 复古未来 - retro-futuristic 有机自然 - organic / natural 活泼俏皮 - playful / toy-like 杂志风格 - editorial / magazine 艺术装饰 - art deco / geometric 粉彩柔和 - soft / pastel 工业实用 - industrial / utilitarian  3.</description>
+    </item>
+    
+  </channel>
+</rss>

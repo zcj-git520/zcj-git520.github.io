@@ -6,31 +6,49 @@
     <description>Recent content in Categories on Chengji Zhao&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Wed, 15 Apr 2026 10:00:00 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 30 Apr 2026 10:00:00 +0800</lastBuildDate><atom:link href="https://zcj-git520.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>AI编程</title>
+      <link>https://zcj-git520.github.io/categories/ai%E7%BC%96%E7%A8%8B/</link>
+      <pubDate>Thu, 30 Apr 2026 10:00:00 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/categories/ai%E7%BC%96%E7%A8%8B/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>Claude Code</title>
       <link>https://zcj-git520.github.io/categories/claude-code/</link>
-      <pubDate>Wed, 15 Apr 2026 10:00:00 +0800</pubDate>
+      <pubDate>Thu, 30 Apr 2026 10:00:00 +0800</pubDate>
       
       <guid>https://zcj-git520.github.io/categories/claude-code/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>Superpowers</title>
-      <link>https://zcj-git520.github.io/categories/superpowers/</link>
-      <pubDate>Wed, 15 Apr 2026 10:00:00 +0800</pubDate>
+      <title>Skills</title>
+      <link>https://zcj-git520.github.io/categories/skills/</link>
+      <pubDate>Thu, 30 Apr 2026 10:00:00 +0800</pubDate>
       
-      <guid>https://zcj-git520.github.io/categories/superpowers/</guid>
+      <guid>https://zcj-git520.github.io/categories/skills/</guid>
       <description></description>
     </item>
     
     <item>
       <title>技术教程</title>
       <link>https://zcj-git520.github.io/categories/%E6%8A%80%E6%9C%AF%E6%95%99%E7%A8%8B/</link>
-      <pubDate>Wed, 15 Apr 2026 10:00:00 +0800</pubDate>
+      <pubDate>Thu, 30 Apr 2026 10:00:00 +0800</pubDate>
       
       <guid>https://zcj-git520.github.io/categories/%E6%8A%80%E6%9C%AF%E6%95%99%E7%A8%8B/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>插件</title>
+      <link>https://zcj-git520.github.io/categories/%E6%8F%92%E4%BB%B6/</link>
+      <pubDate>Thu, 30 Apr 2026 10:00:00 +0800</pubDate>
+      
+      <guid>https://zcj-git520.github.io/categories/%E6%8F%92%E4%BB%B6/</guid>
       <description></description>
     </item>
     
